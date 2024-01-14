@@ -4,58 +4,6 @@ import (
 	"github.com/NubeIO/schema"
 )
 
-type portDataType string
-
-const (
-	portTypeAny    portDataType = "any"
-	portTypeFloat  portDataType = "float"
-	portTypeString portDataType = "string"
-	portTypeBool   portDataType = "bool"
-)
-
-type flowDirection string
-
-const (
-	DirectionSubscriber flowDirection = "subscriber"
-	DirectionPublisher  flowDirection = "publisher"
-)
-
-type portDirection string
-
-const (
-	input  portDirection = "input"
-	output portDirection = "output"
-)
-
-type Details struct {
-	Category    string  `json:"category"`
-	ParentID    *string `json:"parentID"`
-	HasServices bool    `json:"hasServices"`
-}
-
-type Port struct {
-	ID          string        `json:"id"`
-	Name        string        `json:"name"`
-	Value       interface{}   `json:"value,omitempty"`
-	LastUpdated string        `json:"lastUpdated,omitempty"` // last time it got a message
-	Direction   portDirection `json:"direction"`
-	DataType    portDataType  `json:"dataType"`
-}
-
-type Settings struct {
-	Value interface{} `json:"value"`
-}
-
-// Connection defines a structure for input subscriptions.
-type Connection struct {
-	SourceUUID    string        `json:"source"`
-	SourcePort    string        `json:"sourceHandle"`
-	TargetUUID    string        `json:"target"`
-	TargetPort    string        `json:"targetHandle"`
-	FlowDirection flowDirection `json:"flowDirection"` // subscriber is if it's in an input and publisher if It's for an output
-
-}
-
 type Node interface {
 	New(nodeUUID, name string, bus *EventBus, settings *Settings) Node
 	Start()
@@ -73,6 +21,10 @@ type Node interface {
 	GetApplicationUse() string
 	GetID() string
 	GetNodeName() string
+
+	BusChannel(inputID string) (chan *Message, bool)
+	MessageBus() map[string]chan *Message
+	PublishMessage(port *Port, setLastValue ...bool)
 
 	// ports
 	NewPort(port *Port)
@@ -101,6 +53,7 @@ type Node interface {
 	// scheam
 	GetSchema() *schema.Generated
 	AddSchema()
+	BuildSchema(schema *schema.Generated)
 
 	// details
 	SetDetails(details *Details)
