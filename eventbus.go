@@ -7,9 +7,9 @@ import (
 )
 
 type Message struct {
-	Port     *Port  `json:"port"`
-	NodeUUID string `json:"nodeUUID"`
-	NodeID   string `json:"nodeID"`
+	Port       *Port  `json:"port"`
+	ObjectUUID string `json:"objectUUID"`
+	ObjectID   string `json:"objectID"`
 }
 
 // EventBus manages event subscriptions and publishes events.
@@ -59,14 +59,14 @@ func (eb *EventBus) Unsubscribe(topic string, ch chan *Message) {
 
 // Publish publishes an event to all subscribers of a topic. t
 //
-//	topic; nodeUUID-portID   eg abc123-out1
+//	topic; objectUUID-portID   eg abc123-out1
 func (eb *EventBus) Publish(topic string, data *Message) {
 	eb.mu.Lock()
 	defer eb.mu.Unlock()
 	fmt.Printf("Publist on topic: %s\n", topic)
 	for _, ch := range eb.handlers[topic] {
 		go func(ch chan *Message) {
-			fmt.Printf("Publist nodeUUID: %s  value: %v \n", data.NodeUUID, data.Port.Value)
+			fmt.Printf("Publist obejctUUID: %s  value: %v \n", data.ObjectUUID, data.Port.Value)
 			ch <- data
 		}(ch)
 	}

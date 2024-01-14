@@ -4,8 +4,8 @@ import (
 	"github.com/NubeIO/schema"
 )
 
-type Node interface {
-	New(nodeUUID, name string, bus *EventBus, settings *Settings) Node
+type Object interface {
+	New(objectUUID, name string, bus *EventBus, settings *Settings) Object
 	Start()
 	Delete()
 	SetHotFix()
@@ -14,13 +14,13 @@ type Node interface {
 	Loaded() bool
 	NotLoaded() bool
 
-	// node details/info
+	// object details/info
 	GetUUID() string
 	GetParentUUID() string
 	GetPluginName() string
 	GetApplicationUse() string
 	GetID() string
-	GetNodeName() string
+	GetObjectName() string
 
 	BusChannel(inputID string) (chan *Message, bool)
 	MessageBus() map[string]chan *Message
@@ -43,7 +43,7 @@ type Node interface {
 	GetOutputs() []*Port
 
 	// values
-	GetAllNodeValues() []*NodeValue
+	GetAllObjectValues() []*ObjectValue
 	GetAllPortValues() []*Port
 	GetAllInputValues() []*Port
 	GetAllOutputValues() []*Port
@@ -73,19 +73,19 @@ type Node interface {
 	GetSettings() *Settings
 	UpdateSettings(settings *Settings)
 
-	// runtime nodes
-	AddRuntime(runtimeNodes map[string]Node) // gives each node access to every other node
-	GetRuntimeNodes() map[string]Node
-	AddToNodeToRuntime(node Node) Node
-	RemoveNodeFromRuntime()
+	// runtime objects
+	AddRuntime(runtimeObjects map[string]Object) // gives each object access to every other object
+	GetRuntimeObjects() map[string]Object
+	AddToObjectToRuntime(object Object) Object
+	RemoveObjectFromRuntime()
 
-	// child nodes
-	RegisterChildNode(child Node)
-	GetChildNodes() []Node
-	GetChildNode(uuid string) Node
-	GetChildsByType(nodeID string) []Node
-	GetPortValuesChildNode(uuid string) []*Port
-	SetLastValueChildNode(uuid string, port *Port)
+	// child objects
+	RegisterChildObject(child Object)
+	GetChildObjects() []Object
+	GetChildObject(uuid string) Object
+	GetChildsByType(objectID string) []Object
+	GetPortValuesChildObject(uuid string) []*Port
+	SetLastValueChildObject(uuid string, port *Port)
 
 	// options
 	AddOptions(opts *Options)
@@ -96,10 +96,10 @@ type Node interface {
 	SupportsServices() bool
 }
 
-type NodeValue struct {
-	NodeId   string  `json:"nodeId"`
-	NodeUUID string  `json:"nodeUUID"`
-	Ports    []*Port `json:"ports"`
+type ObjectValue struct {
+	ObjectId   string  `json:"objectId"`
+	ObjectUUID string  `json:"objectUUID"`
+	Ports      []*Port `json:"ports"`
 }
 
 func NewOptions(opts *Options) *Options {
@@ -107,8 +107,8 @@ func NewOptions(opts *Options) *Options {
 }
 
 type Options struct {
-	addToNodesMap bool
-	Meta          *Meta `json:"meta"`
+	addToObjectsMap bool
+	Meta            *Meta `json:"meta"`
 }
 
 type Position struct {
