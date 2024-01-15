@@ -24,9 +24,10 @@ const (
 )
 
 type Details struct {
-	Category    string  `json:"category"`
-	ParentID    *string `json:"parentID"`
-	HasServices bool    `json:"hasServices"`
+	Category               string                            `json:"category"`
+	ObjectType             ObjectType                        `json:"objectType"`             // driver, logic, service
+	ObjectTypeRequirements map[string]ObjectTypeRequirements `json:"ObjectTypeRequirements"` // maxOne, isParent
+	ParentID               *string                           `json:"parentID"`
 }
 
 type Port struct {

@@ -52,26 +52,20 @@ type Object interface {
 
 	// scheam
 	GetSchema() *schema.Generated
-	AddSchema()
-	BuildSchema(schema *schema.Generated)
+
+	// settings
+	GetSettings() *Settings
+	AddUpdateSettings(settings *Settings)
 
 	// details
 	SetDetails(details *Details)
 	GetDetails() *Details
+	AddObjectTypeRequirement(requirement ...ObjectTypeRequirements)
+	GetTypeRequirement() map[string]ObjectTypeRequirements
 
 	// data
 	AddData(key string, data any)
 	GetDataByKey(key string, out interface{}) error
-
-	// meta
-	GetData() map[string]any
-	setMeta(opts *Options)
-	GetMeta() *Meta
-
-	// settings
-	AddSettings(settings *Settings)
-	GetSettings() *Settings
-	UpdateSettings(settings *Settings)
 
 	// runtime objects
 	AddRuntime(runtimeObjects map[string]Object) // gives each object access to every other object
@@ -80,6 +74,8 @@ type Object interface {
 	RemoveObjectFromRuntime()
 
 	// child objects
+	AddDefinedChildObjects(objectID ...string) // to show the UI a objects childs that are defined by the plugin developer
+	GetDefinedChildObjects() []string
 	RegisterChildObject(child Object)
 	GetChildObjects() []Object
 	GetChildObject(uuid string) Object
@@ -91,9 +87,16 @@ type Object interface {
 	AddOptions(opts *Options)
 	GetOptions() *Options
 
-	// wants Services
-	AddServices()
-	SupportsServices() bool
+	// meta
+	GetData() map[string]any
+	setMeta(opts *Options)
+	GetMeta() *Meta
+
+	// validation
+	RunValidation()                           // for example, you want to add a new network so lets run some checks eg; is network interface available
+	GetValidation() map[string]any            // get them
+	SetValidationResult(data map[string]any)  // set them
+	AddValidationResult(key string, data any) // add one
 }
 
 type ObjectValue struct {
