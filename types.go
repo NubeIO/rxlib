@@ -10,6 +10,12 @@ const (
 	MandatoryService ObjectType = "mandatory-service" // mandatoryService: this would be something like time service, and can not be added or removed
 )
 
+type ObjectTypeTag string
+
+const (
+	Networking ObjectTypeTag = "networking"
+)
+
 type ObjectTypeRequirement string
 
 const (

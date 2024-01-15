@@ -2,6 +2,7 @@ package rxlib
 
 import (
 	"github.com/NubeIO/schema"
+	"github.com/gin-gonic/gin"
 )
 
 type Object interface {
@@ -62,6 +63,8 @@ type Object interface {
 	GetDetails() *Details
 	AddObjectTypeRequirement(requirement ...ObjectTypeRequirements)
 	GetTypeRequirement() map[string]ObjectTypeRequirements
+	AddObjectTypeTags(objectTypeTag ...ObjectTypeTag)
+	GetObjectTypeTags() []ObjectTypeTag
 
 	// data
 	AddData(key string, data any)
@@ -97,6 +100,12 @@ type Object interface {
 	GetValidation() map[string]any            // get them
 	SetValidationResult(data map[string]any)  // set them
 	AddValidationResult(key string, data any) // add one
+
+	GetDependencies() *Dependencies
+	AddDependencies(dependencies *Dependencies)
+
+	RequiresRouter() bool
+	AddRouterGroup(c *gin.RouterGroup)
 }
 
 type ObjectValue struct {
