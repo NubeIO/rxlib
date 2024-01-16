@@ -14,6 +14,7 @@ type ObjectTypeTag string
 
 const (
 	Networking ObjectTypeTag = "networking"
+	IpAddress  ObjectTypeTag = "ip-address"
 )
 
 type ObjectTypeRequirement string
@@ -24,22 +25,34 @@ const (
 	IsChild                 ObjectTypeRequirement = "is-child"     // isChild: is a child like a device
 	HasChildren             ObjectTypeRequirement = "has-children" // hasChildren: like a modbus network has a device the device is the child
 	SupportsAddingComponent ObjectTypeRequirement = "supports-component"
+	SupportsWebRoute        ObjectTypeRequirement = "supports-router"
 )
 
-var RequirementMaxOne = struct {
-	Type        ObjectTypeRequirement
-	Description string
-}{
-	Type:        MaxOne,
-	Description: "user can only add one. for example a plugin for setting IP/network address",
+// RequirementWebRouter needs a web router
+func RequirementWebRouter() ObjectTypeRequirements {
+	v := ObjectTypeRequirements{
+		Type:        SupportsWebRoute,
+		Description: "Has rest-api endpoints",
+	}
+	return v
 }
 
-var RequirementIsParent = struct {
-	Type        ObjectTypeRequirement
-	Description string
-}{
-	Type:        IsParent,
-	Description: "IsParent: is a parent object like a network and a device would be a child object",
+// RequirementMaxOne this object can only be added once
+func RequirementMaxOne() ObjectTypeRequirements {
+	v := ObjectTypeRequirements{
+		Type:        MaxOne,
+		Description: "user can only add one. for example a plugin for setting IP/network address",
+	}
+	return v
+}
+
+// RequirementIsParent this object can have child objects
+func RequirementIsParent() ObjectTypeRequirements {
+	v := ObjectTypeRequirements{
+		Type:        IsParent,
+		Description: "IsParent: is a parent object like a network and a device would be a child object",
+	}
+	return v
 }
 
 type ObjectTypeRequirements struct {

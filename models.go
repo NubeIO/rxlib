@@ -23,10 +23,6 @@ const (
 	Output PortDirection = "output"
 )
 
-type Dependencies struct {
-	RequiresRouter bool
-}
-
 type Details struct {
 	Category               string                            `json:"category"`
 	ObjectType             ObjectType                        `json:"objectType"` // driver, logic, service
