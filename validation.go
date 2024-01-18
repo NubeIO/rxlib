@@ -125,7 +125,7 @@ func (ev *ErrorsAndValidation) SetError(m *ValidationMessage) {
 }
 
 func (ev *ErrorsAndValidation) SetHaltReason(m *ValidationMessage) {
-	ev.Type = TypeValidation
+	ev.Type = TypeHalt
 	var message string
 	if m.Error != nil {
 		message = m.Error.Error()

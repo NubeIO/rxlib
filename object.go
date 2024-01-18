@@ -81,20 +81,10 @@ type Object interface {
 	SetLastValueChildObject(uuid string, port *Port)
 
 	// validation
-	RunValidation()                                     // for example, you want to add a new network so lets run some checks eg; is network interface available
-	GetValidation() map[string]ErrorsAndValidation      // get them
-	SetValidation(data map[string]ErrorsAndValidation)  // set them
-	AddValidation(key string, data ErrorsAndValidation) // add one
-	NewValidation(key string, issue string)
-	NewError(key string, err error)
-	NewHalt(key, issue, explanation string)
-	DeleteValidation(key string) bool
-	SetValidationFlag(bool)
-	SetErrorFlag(bool)
-	SetHaltFlag(bool)     // we may halt/disable the operation of the object execution do a error
-	HaltFlag() bool       // for example, we halt the operation for an object as a key requirement has not been filled, for example a database connection could not be made so disable the running of the logic in the object
-	ValidationFlag() bool // an error is somthing that is not a validation error, this is somthing that we may not want to show the user
-	ErrorFlag() bool
+	ValidationBuilder
+	RunValidation() // for example, you want to add a new network so lets run some checks eg; is network interface available
+
+	// if the object is running, stopped or halted due to a error
 	SetObjectStatus(value ObjectStatus)
 	GetObjectStatus() ObjectStatus
 
