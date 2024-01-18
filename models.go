@@ -3,6 +3,7 @@ package rxlib
 type PortDataType string
 
 const (
+	PortTypeJSON   PortDataType = "json"
 	PortTypeAny    PortDataType = "any"
 	PortTypeFloat  PortDataType = "float"
 	PortTypeString PortDataType = "string"
@@ -22,14 +23,6 @@ const (
 	Input  PortDirection = "input"
 	Output PortDirection = "output"
 )
-
-//type Details struct {
-//	Category               string                                       `json:"category"`
-//	ObjectType             ObjectType                                   `json:"objectType"` // driver, logic, service
-//	ObjectTypeTags         []ObjectTypeTag                              `json:"objectTypeTags"`
-//	ObjectTypeRequirements map[ObjectRequirement]ObjectTypeRequirements `json:"ObjectTypeRequirements"` // maxOne, isParent
-//	ParentID               *string                                      `json:"parentID"`
-//}
 
 type Port struct {
 	ID          string        `json:"id"`

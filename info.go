@@ -29,6 +29,7 @@ type requirements struct {
 type Info struct {
 	Settings     *Settings       `json:"settings"`
 	ObjectID     string          `json:"objectID"`
+	ObjectType   ObjectType      `json:"objectType"`
 	ObjectUUID   string          `json:"objectUUID"`
 	ObjectName   string          `json:"objectName"`
 	ParentUUID   string          `json:"parentUUID,omitempty"`
@@ -47,6 +48,10 @@ type InfoBuilder interface {
 	// id
 	SetID(objectID string) InfoBuilder
 	GetID() string
+
+	// object type is for example a driver, service, logic
+	SetObjectType(objectID ObjectType) InfoBuilder
+	GetObjectType() ObjectType
 
 	// uuid
 	GetUUID() string
@@ -102,12 +107,26 @@ type infoBuilder struct {
 	info *Info
 }
 
+func (builder *infoBuilder) Build() *Info {
+	builder.checks()
+	return builder.info
+}
+
 func (builder *infoBuilder) SetID(objectID string) InfoBuilder {
 	builder.info.ObjectID = objectID
 	return builder
 }
 func (builder *infoBuilder) GetID() string {
 	return builder.info.ObjectID
+}
+
+func (builder *infoBuilder) SetObjectType(objectType ObjectType) InfoBuilder {
+	builder.info.ObjectType = objectType
+	return builder
+}
+
+func (builder *infoBuilder) GetObjectType() ObjectType {
+	return builder.info.ObjectType
 }
 
 func (builder *infoBuilder) GetUUID() string {
@@ -263,11 +282,6 @@ func (builder *infoBuilder) checks() {
 	if builder.info.Category == "" {
 		crashMe("info.Category")
 	}
-}
-
-func (builder *infoBuilder) Build() *Info {
-	builder.checks()
-	return builder.info
 }
 
 func ensurePermissions(info *Info) {

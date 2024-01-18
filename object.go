@@ -7,23 +7,21 @@ import (
 
 type Object interface {
 	New(object Object, settings *Settings, meta *Meta, opts ...any) Object
+
+	// info
+	ObjectInfo
+	SetInfo(info *Info)
+	GetInfo() *Info
+
+	// start the prociessing
 	Start()
+
 	Delete()
 	SetHotFix()
 	HotFix() bool
 	SetLoaded(set bool)
 	Loaded() bool
 	NotLoaded() bool
-
-	//// object details/info
-	//GetID() string
-	//GetUUID() string
-	//GetParentUUID() string
-
-	// info
-	ObjectInfo
-	SetInfo(info *Info)
-	GetInfo() *Info
 
 	GetObjectName() string
 
@@ -101,24 +99,6 @@ type Object interface {
 	GetObjectStatus() ObjectStatus
 
 	AddRouterGroup(c *gin.RouterGroup)
-}
-
-// ErrorsValidation error, validation
-type ErrorsValidation string
-
-const (
-	TypeHalt       ErrorsValidation = "halt"
-	TypeError      ErrorsValidation = "error"
-	TypeValidation ErrorsValidation = "validation"
-)
-
-type ErrorsAndValidation struct {
-	Type              ErrorsValidation `json:"type"`
-	Error             error            `json:"-"`
-	ErrorMessage      string           `json:"errorMessage,omitempty"`
-	HaltReason        string           `json:"haltReason,omitempty"`
-	HaltExplanation   string           `json:"haltExplanation,omitempty"`
-	ValidationMessage string           `json:"validationMessage,omitempty"`
 }
 
 type ObjectValue struct {
