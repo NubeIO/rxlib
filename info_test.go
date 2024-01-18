@@ -10,7 +10,7 @@ func TestNewObjectInfo(t *testing.T) {
 
 	// Set some values using the InfoBuilder methods
 	info := builder.
-		SetObjectID("123").
+		SetID("123").
 		SetPluginName("MyPlugin")
 
 	fmt.Printf("%+v\n", info.Build())

@@ -41,9 +41,7 @@ type Port struct {
 }
 
 type Settings struct {
-	NodeName    string      `json:"nodeName"` // name set by the user in the UI
-	DisableNode bool        // will stop the logic
-	Value       interface{} `json:"value"`
+	Value interface{} `json:"value"` // comes from UI from the JSON schema
 }
 
 // Connection defines a structure for input subscriptions.

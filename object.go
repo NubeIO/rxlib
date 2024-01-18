@@ -17,9 +17,7 @@ type Object interface {
 
 	// object details/info
 	GetID() string
-	SetID(uuid string)
 	GetUUID() string
-	SetUUID(uuid string)
 	GetParentUUID() string
 
 	// info
@@ -67,6 +65,7 @@ type Object interface {
 	AddUpdateSettings(settings *Settings)
 
 	// data TODO maybe add a cache timeout, also a GetTheDelete() and a Delete()
+	GetData() map[string]any
 	AddData(key string, data any) // addData is a way for a node to store something in memory
 	GetDataByKey(key string, out interface{}) error
 
@@ -86,15 +85,6 @@ type Object interface {
 	GetChildsByType(objectID string) []Object
 	GetPortValuesChildObject(uuid string) []*Port
 	SetLastValueChildObject(uuid string, port *Port)
-
-	// options
-	AddOptions(opts *Options)
-	GetOptions() *Options
-
-	// meta
-	GetData() map[string]any
-	setMeta(opts *Options)
-	GetMeta() *Meta
 
 	// validation
 	RunValidation()                                     // for example, you want to add a new network so lets run some checks eg; is network interface available
@@ -131,7 +121,7 @@ type ErrorsAndValidation struct {
 	Error             error            `json:"-"`
 	ErrorMessage      string           `json:"errorMessage,omitempty"`
 	HaltReason        string           `json:"haltReason,omitempty"`
-	HaltExplination   string           `json:"haltExplination,omitempty"`
+	HaltExplanation   string           `json:"haltExplanation,omitempty"`
 	ValidationMessage string           `json:"validationMessage,omitempty"`
 }
 
@@ -141,21 +131,13 @@ type ObjectValue struct {
 	Ports      []*Port `json:"ports"`
 }
 
-func NewOptions(opts *Options) *Options {
-	return opts
-}
-
-type Options struct {
-	addToObjectsMap bool
-	Meta            *Meta `json:"meta"`
-}
-
 type Position struct {
 	PositionY int `json:"positionY"`
 	PositionX int `json:"positionX"`
 }
 
 type Meta struct {
+	ObjectName string   `json:"objectName"` // comes from UI need to set in objectInfo
+	ParentUUID string   `json:"parentUUID"` // comes from UI need to set in objectInfo
 	Position   Position `json:"position"`
-	ParentUUID string   `json:"parentUUID"`
 }

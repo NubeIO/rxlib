@@ -2,6 +2,7 @@ package rxlib
 
 import (
 	"fmt"
+	"log"
 )
 
 type ObjectInfo interface {
@@ -9,31 +10,34 @@ type ObjectInfo interface {
 }
 
 type permissions struct {
-	AllPermissions bool `json:"allPermissions"`
-	CanBeCreated   bool `json:"canBeCreated"`
-	CanBeDeleted   bool `json:"canBeDeleted"`
-	CanBeUpdated   bool `json:"canBeUpdated"`
-	ReadOnly       bool `json:"readOnly"`
+	AllPermissions bool `json:"allPermissions,omitempty"`
+	CanBeCreated   bool `json:"canBeCreated,omitempty"`
+	CanBeDeleted   bool `json:"canBeDeleted,omitempty"`
+	CanBeUpdated   bool `json:"canBeUpdated,omitempty"`
+	ReadOnly       bool `json:"readOnly,omitempty"`
 }
 
 type requirements struct {
-	SupportsWebRoute        bool `json:"supportsWebRoute"`
-	AllowRuntimeAccess      bool `json:"allowRuntimeAccess"`
-	MaxOne                  bool `json:"maxOne"`
-	IsParent                bool `json:"isParent"`
-	HasChildren             bool `json:"hasChildren"`
-	SupportsAddingComponent bool `json:"supportsAddingComponent"`
+	SupportsWebRoute        bool `json:"supportsWebRoute,omitempty"`
+	AllowRuntimeAccess      bool `json:"allowRuntimeAccess,omitempty"`
+	MaxOne                  bool `json:"maxOne,omitempty"`
+	IsParent                bool `json:"isParent,omitempty"`
+	HasChildren             bool `json:"hasChildren,omitempty"`
+	SupportsAddingComponent bool `json:"supportsAddingComponent,omitempty"`
 }
 
 type Info struct {
+	Settings     *Settings       `json:"settings"`
 	ObjectID     string          `json:"objectID"`
 	ObjectUUID   string          `json:"objectUUID"`
 	ObjectName   string          `json:"objectName"`
+	ParentUUID   string          `json:"parentUUID,omitempty"`
 	Category     string          `json:"category"`
 	PluginName   string          `json:"pluginName"`
 	Permissions  *permissions    `json:"permissions"`
 	Requirements *requirements   `json:"requirements"`
-	ObjectTags   []ObjectTypeTag `json:"objectTags"`
+	ObjectTags   []ObjectTypeTag `json:"objectTags,omitempty"`
+	Meta         *Meta           `json:"meta"`
 }
 
 type InfoBuilder interface {
@@ -41,19 +45,31 @@ type InfoBuilder interface {
 	String() string
 
 	// id
-	SetObjectID(objectID string) InfoBuilder
+	SetID(objectID string) InfoBuilder
 
 	// uuid
-	SetObjectUUID(objectUUID string) InfoBuilder
-	GetObjectUUID() string
+	GetUUID() string
 
 	// name
-	SetObjectName(objectName string) InfoBuilder
-	GetObjectName() string
+	GetName() string
+
+	// category
+	GetCategory() string
 
 	// plugin
 	SetPluginName(pluginName string) InfoBuilder
 	GetPluginName() string
+
+	// settings
+	SetSettings(settings *Settings) InfoBuilder
+	GetSettings() *Settings
+
+	// meta, meta will also set the object-name at parentUUID
+	SetMeta(meta *Meta) InfoBuilder
+	GetMeta() *Meta
+
+	// parent uuid
+	GetParentUUID() string
 
 	// permissions
 	GetPermissions() *permissions
@@ -85,14 +101,53 @@ type infoBuilder struct {
 	info *Info
 }
 
-func (builder *infoBuilder) SetObjectID(objectID string) InfoBuilder {
+func (builder *infoBuilder) SetID(objectID string) InfoBuilder {
 	builder.info.ObjectID = objectID
 	return builder
+}
+
+func (builder *infoBuilder) GetUUID() string {
+	return builder.info.ObjectUUID
+}
+
+func (builder *infoBuilder) GetName() string {
+	return builder.info.ObjectName
+}
+
+func (builder *infoBuilder) GetCategory() string {
+	return builder.info.Category
 }
 
 func (builder *infoBuilder) SetPluginName(pluginName string) InfoBuilder {
 	builder.info.PluginName = pluginName
 	return builder
+}
+
+func (builder *infoBuilder) SetSettings(settings *Settings) InfoBuilder {
+	builder.info.Settings = settings
+	return builder
+}
+
+func (builder *infoBuilder) GetSettings() *Settings {
+	return builder.info.Settings
+}
+
+func (builder *infoBuilder) SetMeta(meta *Meta) InfoBuilder {
+	if meta == nil {
+		log.Fatal("rxlib.SetMeta() meta is nil")
+	}
+	builder.info.Meta = meta
+	builder.info.ObjectName = meta.ObjectName
+	builder.info.ParentUUID = meta.ParentUUID
+	return builder
+}
+
+func (builder *infoBuilder) GetMeta() *Meta {
+	return builder.info.Meta
+}
+
+func (builder *infoBuilder) GetParentUUID() string {
+	return builder.info.ParentUUID
 }
 
 func (builder *infoBuilder) GetPluginName() string {
@@ -188,28 +243,6 @@ func (builder *infoBuilder) GetPermissions() *permissions {
 
 func (builder *infoBuilder) GetRequirements() *requirements {
 	return builder.info.Requirements
-}
-
-// SetObjectUUID sets the ObjectUUID for the InfoBuilder.
-func (builder *infoBuilder) SetObjectUUID(objectUUID string) InfoBuilder {
-	builder.info.ObjectUUID = objectUUID
-	return builder
-}
-
-// SetObjectName sets the ObjectName for the InfoBuilder.
-func (builder *infoBuilder) SetObjectName(objectName string) InfoBuilder {
-	builder.info.ObjectName = objectName
-	return builder
-}
-
-// GetObjectUUID returns the ObjectUUID associated with the InfoBuilder.
-func (builder *infoBuilder) GetObjectUUID() string {
-	return builder.info.ObjectUUID
-}
-
-// GetObjectName returns the ObjectName associated with the InfoBuilder.
-func (builder *infoBuilder) GetObjectName() string {
-	return builder.info.ObjectName
 }
 
 func (builder *infoBuilder) Build() *Info {
