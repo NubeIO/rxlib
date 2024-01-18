@@ -23,13 +23,13 @@ const (
 	Output PortDirection = "output"
 )
 
-type Details struct {
-	Category               string                                       `json:"category"`
-	ObjectType             ObjectType                                   `json:"objectType"` // driver, logic, service
-	ObjectTypeTags         []ObjectTypeTag                              `json:"objectTypeTags"`
-	ObjectTypeRequirements map[ObjectRequirement]ObjectTypeRequirements `json:"ObjectTypeRequirements"` // maxOne, isParent
-	ParentID               *string                                      `json:"parentID"`
-}
+//type Details struct {
+//	Category               string                                       `json:"category"`
+//	ObjectType             ObjectType                                   `json:"objectType"` // driver, logic, service
+//	ObjectTypeTags         []ObjectTypeTag                              `json:"objectTypeTags"`
+//	ObjectTypeRequirements map[ObjectRequirement]ObjectTypeRequirements `json:"ObjectTypeRequirements"` // maxOne, isParent
+//	ParentID               *string                                      `json:"parentID"`
+//}
 
 type Port struct {
 	ID          string        `json:"id"`
@@ -41,7 +41,9 @@ type Port struct {
 }
 
 type Settings struct {
-	Value interface{} `json:"value"`
+	NodeName    string      `json:"nodeName"` // name set by the user in the UI
+	DisableNode bool        // will stop the logic
+	Value       interface{} `json:"value"`
 }
 
 // Connection defines a structure for input subscriptions.

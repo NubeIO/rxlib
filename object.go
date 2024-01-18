@@ -5,51 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Info struct {
-	ObjectID    string
-	ObjectUUID  string
-	Name        string
-	PluginName  string
-	Application string
-}
-
-// ObjectInfo
-//   - ObjectID
-//   - ObjectUUID
-//   - Name
-//   - PluginName
-//   - Application
-func ObjectInfo(s ...string) *Info {
-	setup := &Info{
-		ObjectID:   "",
-		ObjectUUID: "",
-		Name:       "",
-		PluginName: "",
-	}
-
-	// Check the length of s and assign values accordingly
-	if len(s) > 0 {
-		setup.ObjectID = s[0]
-	}
-	if len(s) > 1 {
-		setup.ObjectUUID = s[1]
-	}
-	if len(s) > 2 {
-		setup.Name = s[2]
-	}
-	if len(s) > 3 {
-		setup.PluginName = s[3]
-	}
-	if len(s) > 4 {
-		setup.PluginName = s[4]
-	}
-
-	return setup
-}
-
 type Object interface {
-	New(info *Info, object Object) Object
-	New3(objectUUID, name string, bus *EventBus, settings *Settings) Object
+	New(objectUUID string, object Object, settings *Settings, opts ...any) Object
 	Start()
 	Delete()
 	SetHotFix()
@@ -64,8 +21,12 @@ type Object interface {
 	GetUUID() string
 	SetUUID(uuid string)
 	GetParentUUID() string
-	GetPluginName() string
-	GetApplicationUse() string
+
+	// info
+	ObjectInfo
+	SetInfo(info *Info)
+	GetInfo() *Info
+
 	GetObjectName() string
 
 	BusChannel(inputID string) (chan *Message, bool)
@@ -104,17 +65,6 @@ type Object interface {
 	// settings
 	GetSettings() *Settings
 	AddUpdateSettings(settings *Settings)
-
-	// details
-	SetDetails(details *Details)
-	GetDetails() *Details
-	AddObjectTypeRequirement(value ObjectTypeRequirements)
-	AddObjectTypeRequirements(requirement ...ObjectTypeRequirements) // ObjectTypeRequirements is somthing like an object can only be added once
-	GetTypeRequirements() map[ObjectRequirement]ObjectTypeRequirements
-	GetTypeRequirement(key ObjectRequirement) ObjectTypeRequirements
-	TypeRequirementExists(key ObjectRequirement) bool
-	AddObjectTypeTags(objectTypeTag ...ObjectTypeTag)
-	GetObjectTypeTags() []ObjectTypeTag
 
 	// data TODO maybe add a cache timeout, also a GetTheDelete() and a Delete()
 	AddData(key string, data any) // addData is a way for a node to store something in memory
