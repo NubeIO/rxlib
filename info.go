@@ -30,9 +30,6 @@ type Info struct {
 	Settings     *Settings       `json:"settings"`
 	ObjectID     string          `json:"objectID"`
 	ObjectType   ObjectType      `json:"objectType"`
-	ObjectUUID   string          `json:"objectUUID"`
-	ObjectName   string          `json:"objectName"`
-	ParentUUID   string          `json:"parentUUID,omitempty"`
 	Category     string          `json:"category"`
 	PluginName   string          `json:"pluginName"`
 	Permissions  *permissions    `json:"permissions"`
@@ -50,16 +47,20 @@ type InfoBuilder interface {
 	GetID() string
 
 	// object type is for example a driver, service, logic
-	SetObjectType(objectID ObjectType) InfoBuilder
+	SetObjectType(objectType ObjectType) InfoBuilder
 	GetObjectType() ObjectType
 
-	// uuid
+	// uuid, set from Meta
 	GetUUID() string
 
-	// name
+	// name, set from Meta
 	GetName() string
 
+	// parent uuid, set from Meta
+	GetParentUUID() string
+
 	// category
+	SetCategory(value string) InfoBuilder
 	GetCategory() string
 
 	// plugin
@@ -73,9 +74,6 @@ type InfoBuilder interface {
 	// meta, meta will also set the object-name at parentUUID
 	SetMeta(meta *Meta) InfoBuilder
 	GetMeta() *Meta
-
-	// parent uuid
-	GetParentUUID() string
 
 	// permissions
 	GetPermissions() *permissions
@@ -116,6 +114,7 @@ func (builder *infoBuilder) SetID(objectID string) InfoBuilder {
 	builder.info.ObjectID = objectID
 	return builder
 }
+
 func (builder *infoBuilder) GetID() string {
 	return builder.info.ObjectID
 }
@@ -130,11 +129,16 @@ func (builder *infoBuilder) GetObjectType() ObjectType {
 }
 
 func (builder *infoBuilder) GetUUID() string {
-	return builder.info.ObjectUUID
+	return builder.info.Meta.ObjectUUID
 }
 
 func (builder *infoBuilder) GetName() string {
-	return builder.info.ObjectName
+	return builder.info.Meta.ObjectName
+}
+
+func (builder *infoBuilder) SetCategory(value string) InfoBuilder {
+	builder.info.Category = value
+	return builder
 }
 
 func (builder *infoBuilder) GetCategory() string {
@@ -156,12 +160,12 @@ func (builder *infoBuilder) GetSettings() *Settings {
 }
 
 func (builder *infoBuilder) SetMeta(meta *Meta) InfoBuilder {
-	if meta == nil {
-		log.Fatal("rxlib.SetMeta() meta is nil")
-	}
 	builder.info.Meta = meta
-	builder.info.ObjectName = meta.ObjectName
-	builder.info.ParentUUID = meta.ParentUUID
+	if meta.ObjectUUID == "" {
+		meta.ObjectUUID = GenerateCustomUUID()
+	}
+	builder.info.Meta.ObjectName = meta.ObjectName
+	builder.info.Meta.ParentUUID = meta.ParentUUID
 	return builder
 }
 
@@ -170,7 +174,7 @@ func (builder *infoBuilder) GetMeta() *Meta {
 }
 
 func (builder *infoBuilder) GetParentUUID() string {
-	return builder.info.ParentUUID
+	return builder.info.Meta.ParentUUID
 }
 
 func (builder *infoBuilder) GetPluginName() string {
@@ -270,17 +274,20 @@ func (builder *infoBuilder) GetRequirements() *requirements {
 
 func (builder *infoBuilder) checks() {
 	// checks
+	if builder.info.Meta == nil {
+		crashMe("info.info.Meta")
+	}
 	if builder.info.PluginName == "" {
 		crashMe("info.PluginName")
-	}
-	if builder.info.ObjectUUID == "" {
-		crashMe("info.ObjectUUID")
 	}
 	if builder.info.ObjectID == "" {
 		crashMe("info.ObjectID")
 	}
 	if builder.info.Category == "" {
 		crashMe("info.Category")
+	}
+	if builder.info.ObjectType == "" {
+		crashMe("info.ObjectType")
 	}
 }
 

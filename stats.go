@@ -18,6 +18,9 @@ type CustomStatus struct {
 type StatsBuilder interface {
 	SetStatus(status ObjectStatus) StatsBuilder
 	SetLoopCount(count int) StatsBuilder
+	GetLoopCount() int
+	IncrementLoopCount() int
+	ResetLoopCount()
 	GetStats() *ObjectStats
 	AddCustomStat(name string, stat *CustomStatus) StatsBuilder
 	GetCustomStat(name string) (*CustomStatus, bool)
@@ -44,6 +47,19 @@ func (builder *statsBuilder) SetStatus(status ObjectStatus) StatsBuilder {
 func (builder *statsBuilder) SetLoopCount(count int) StatsBuilder {
 	builder.ObjectStats.LoopCount = count
 	return builder
+}
+
+func (builder *statsBuilder) GetLoopCount() int {
+	return builder.ObjectStats.LoopCount
+}
+
+func (builder *statsBuilder) IncrementLoopCount() int {
+	builder.ObjectStats.LoopCount++
+	return builder.ObjectStats.LoopCount
+}
+
+func (builder *statsBuilder) ResetLoopCount() {
+	builder.ObjectStats.LoopCount = 0
 }
 
 func (builder *statsBuilder) GetStats() *ObjectStats {

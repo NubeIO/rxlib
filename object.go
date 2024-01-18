@@ -46,6 +46,7 @@ type Object interface {
 
 	// ouputs
 	GetOutputs() []*Port
+	GetOutput(id string) *Port
 
 	// values
 	GetAllObjectValues() []*ObjectValue
@@ -80,13 +81,12 @@ type Object interface {
 	GetPortValuesChildObject(uuid string) []*Port
 	SetLastValueChildObject(uuid string, port *Port)
 
-	// validation
+	// ValidationBuilder validation for example, you want to add a new network so lets run some checks eg; is network interface available
 	ValidationBuilder
-	RunValidation() // for example, you want to add a new network so lets run some checks eg; is network interface available
+	RunValidation()
 
-	// if the object is running, stopped or halted due to a error
-	SetObjectStatus(value ObjectStatus)
-	GetObjectStatus() ObjectStatus
+	//StatsBuilder if the object is running, stopped or halted due to a error
+	StatsBuilder
 
 	AddRouterGroup(c *gin.RouterGroup)
 }
@@ -103,7 +103,8 @@ type Position struct {
 }
 
 type Meta struct {
-	ObjectName string   `json:"objectName"` // comes from UI need to set in objectInfo
-	ParentUUID string   `json:"parentUUID"` // comes from UI need to set in objectInfo
+	ObjectUUID string   `json:"objectUUID"`           // comes from UI need to set in objectInfo
+	ObjectName string   `json:"objectName"`           // comes from UI need to set in objectInfo
+	ParentUUID string   `json:"parentUUID,omitempty"` // comes from UI need to set in objectInfo
 	Position   Position `json:"position"`
 }

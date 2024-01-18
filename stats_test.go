@@ -9,7 +9,7 @@ func TestNewStatsBuilder(t *testing.T) {
 	builder := NewStatsBuilder()
 
 	// Set the status and loop count using the builder.
-	builder.SetStatus(StatsHalted).SetLoopCount(10)
+	builder.SetStatus(StatsHalted).SetLoopCount(1)
 
 	// Add custom stats using the builder.
 	customStat1 := &CustomStatus{Name: "CustomStat1", Field: "Value1"}
@@ -29,5 +29,14 @@ func TestNewStatsBuilder(t *testing.T) {
 		fmt.Printf("%s: %+v\n", name, customStat)
 	}
 
+	builder.IncrementLoopCount()
+	builder.IncrementLoopCount()
+	builder.IncrementLoopCount()
+	builder.IncrementLoopCount()
+	builder.IncrementLoopCount()
+	builder.IncrementLoopCount()
+
 	fmt.Printf("%+v\n", stats)
+
+	fmt.Println(GenerateCustomUUID("node"))
 }
