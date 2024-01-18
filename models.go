@@ -24,11 +24,11 @@ const (
 )
 
 type Details struct {
-	Category               string                            `json:"category"`
-	ObjectType             ObjectType                        `json:"objectType"` // driver, logic, service
-	ObjectTypeTags         []ObjectTypeTag                   `json:"objectTypeTags"`
-	ObjectTypeRequirements map[string]ObjectTypeRequirements `json:"ObjectTypeRequirements"` // maxOne, isParent
-	ParentID               *string                           `json:"parentID"`
+	Category               string                                       `json:"category"`
+	ObjectType             ObjectType                                   `json:"objectType"` // driver, logic, service
+	ObjectTypeTags         []ObjectTypeTag                              `json:"objectTypeTags"`
+	ObjectTypeRequirements map[ObjectRequirement]ObjectTypeRequirements `json:"ObjectTypeRequirements"` // maxOne, isParent
+	ParentID               *string                                      `json:"parentID"`
 }
 
 type Port struct {

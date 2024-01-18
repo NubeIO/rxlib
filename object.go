@@ -63,7 +63,9 @@ type Object interface {
 	GetDetails() *Details
 	AddObjectTypeRequirement(value ObjectTypeRequirements)
 	AddObjectTypeRequirements(requirement ...ObjectTypeRequirements) // ObjectTypeRequirements is somthing like an object can only be added once
-	GetTypeRequirement() map[string]ObjectTypeRequirements
+	GetTypeRequirements() map[ObjectRequirement]ObjectTypeRequirements
+	GetTypeRequirement(key ObjectRequirement) ObjectTypeRequirements
+	TypeRequirementExists(key ObjectRequirement) bool
 	AddObjectTypeTags(objectTypeTag ...ObjectTypeTag)
 	GetObjectTypeTags() []ObjectTypeTag
 
@@ -72,10 +74,10 @@ type Object interface {
 	GetDataByKey(key string, out interface{}) error
 
 	// runtime objects
-	AddRuntime(runtimeObjects map[string]Object) // gives each object access to every other object
+	AddRuntimeToObject(runtimeObjects map[string]Object) // gives each object access to every other object
 	GetRuntimeObjects() map[string]Object
-	AddToObjectToRuntime(object Object) Object
 	RemoveObjectFromRuntime()
+	//AddObjectToRuntime(object Object)
 
 	// child objects
 	AddDefinedChildObjects(objectID ...string) // to show the UI a objects childs that are defined by the plugin developer
@@ -83,6 +85,7 @@ type Object interface {
 	RegisterChildObject(child Object)
 	GetChildObjects() []Object
 	GetChildObject(uuid string) Object
+	DeleteChildObject(uuid string) error
 	GetChildsByType(objectID string) []Object
 	GetPortValuesChildObject(uuid string) []*Port
 	SetLastValueChildObject(uuid string, port *Port)
@@ -111,8 +114,9 @@ type Object interface {
 	HaltFlag() bool       // for example, we halt the operation for an object as a key requirement has not been filled, for example a database connection could not be made so disable the running of the logic in the object
 	ValidationFlag() bool // an error is somthing that is not a validation error, this is somthing that we may not want to show the user
 	ErrorFlag() bool
+	SetObjectStatus(value ObjectStatus)
+	GetObjectStatus() ObjectStatus
 
-	RequiresRouter() bool
 	AddRouterGroup(c *gin.RouterGroup)
 }
 
