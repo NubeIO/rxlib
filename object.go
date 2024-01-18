@@ -6,7 +6,7 @@ import (
 )
 
 type Object interface {
-	New(objectUUID string, object Object, settings *Settings, opts ...any) Object
+	New(object Object, settings *Settings, meta *Meta, opts ...any) Object
 	Start()
 	Delete()
 	SetHotFix()
@@ -15,10 +15,10 @@ type Object interface {
 	Loaded() bool
 	NotLoaded() bool
 
-	// object details/info
-	GetID() string
-	GetUUID() string
-	GetParentUUID() string
+	//// object details/info
+	//GetID() string
+	//GetUUID() string
+	//GetParentUUID() string
 
 	// info
 	ObjectInfo
@@ -59,10 +59,6 @@ type Object interface {
 
 	// scheam
 	GetSchema() *schema.Generated
-
-	// settings
-	GetSettings() *Settings
-	AddUpdateSettings(settings *Settings)
 
 	// data TODO maybe add a cache timeout, also a GetTheDelete() and a Delete()
 	GetData() map[string]any

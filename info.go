@@ -46,6 +46,7 @@ type InfoBuilder interface {
 
 	// id
 	SetID(objectID string) InfoBuilder
+	GetID() string
 
 	// uuid
 	GetUUID() string
@@ -104,6 +105,9 @@ type infoBuilder struct {
 func (builder *infoBuilder) SetID(objectID string) InfoBuilder {
 	builder.info.ObjectID = objectID
 	return builder
+}
+func (builder *infoBuilder) GetID() string {
+	return builder.info.ObjectID
 }
 
 func (builder *infoBuilder) GetUUID() string {
@@ -245,7 +249,24 @@ func (builder *infoBuilder) GetRequirements() *requirements {
 	return builder.info.Requirements
 }
 
+func (builder *infoBuilder) checks() {
+	// checks
+	if builder.info.PluginName == "" {
+		crashMe("info.PluginName")
+	}
+	if builder.info.ObjectUUID == "" {
+		crashMe("info.ObjectUUID")
+	}
+	if builder.info.ObjectID == "" {
+		crashMe("info.ObjectID")
+	}
+	if builder.info.Category == "" {
+		crashMe("info.Category")
+	}
+}
+
 func (builder *infoBuilder) Build() *Info {
+	builder.checks()
 	return builder.info
 }
 
@@ -267,4 +288,8 @@ func (builder *infoBuilder) String() string {
 
 func (info *Info) String() string {
 	return fmt.Sprintf("ObjectID: %s\nPluginName: %s\nCategory: %s\nPermissions: %+v", info.ObjectID, info.PluginName, info.Category, info.Permissions)
+}
+
+func crashMe(name string) {
+	log.Fatalf("rxlib.Checks() %s is empty", name)
 }
