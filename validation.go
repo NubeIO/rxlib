@@ -14,25 +14,23 @@ const (
 )
 
 type ErrorsAndValidation struct {
-	Type              ErrorsValidation `json:"type"`
-	Error             *NewValidation   `json:"-"`
-	ErrorMessage      *NewValidation   `json:"errorMessage,omitempty"`
-	HaltReason        *NewValidation   `json:"haltReason,omitempty"`
-	HaltExplanation   *NewValidation   `json:"haltExplanation,omitempty"`
-	ValidationMessage *NewValidation   `json:"validationMessage,omitempty"`
+	Type        ErrorsValidation `json:"type"`
+	ObjectError *NewValidation   `json:"error"`
+	Halt        *NewValidation   `json:"haltReason,omitempty"`
+	Validation  *NewValidation   `json:"validationMessage,omitempty"`
 }
 
 type NewValidation struct {
-	Message   string    `json:"message"`
-	Error     error     `json:"-"`
-	Timestamp time.Time `json:"timestamp"`
-	Timesince string    `json:"json"`
+	Message     string    `json:"message"`
+	Explanation string    `json:"explanation"`
+	Error       error     `json:"-"`
+	Timestamp   time.Time `json:"timestamp"`
+	Timesince   string    `json:"timesince,omitempty"`
 }
 
 type ValidationBuilder interface {
 	AddValidation(key string) ValidationBuilder
-	RemoveValidation(key string) *ObjectBuilder
-
+	RemoveValidation(key string) ValidationBuilder
 	GetValidations() map[string]*ErrorsAndValidation
 	GetValidation(key string) (*ErrorsAndValidation, bool)
 }
@@ -53,15 +51,7 @@ func NewObjectBuilder() ValidationBuilder {
 	}
 }
 
-func (ev *ErrorsAndValidation) SetError(err error) {
-	ev.Type = TypeError
-	ev.Error = &NewValidation{
-		Error:     err,
-		Timestamp: time.Now().UTC(),
-	}
-}
-
-func (builder *ObjectBuilder) RemoveValidation(key string) *ObjectBuilder {
+func (builder *ObjectBuilder) RemoveValidation(key string) ValidationBuilder {
 	delete(builder.validations, key)
 	return builder
 }
@@ -69,20 +59,14 @@ func (builder *ObjectBuilder) RemoveValidation(key string) *ObjectBuilder {
 func (builder *ObjectBuilder) GetValidationWithTimeSince(key string) (*ErrorsAndValidation, bool) {
 	v, exists := builder.validations[key]
 	if exists {
-		if v.Error != nil {
-			v.Error.Timesince = timeSince(v.Error.Timestamp)
+		if v.ObjectError != nil {
+			v.ObjectError.Timesince = timeSince(v.ObjectError.Timestamp)
 		}
-		if v.ErrorMessage != nil {
-			v.ErrorMessage.Timesince = timeSince(v.ErrorMessage.Timestamp)
+		if v.Halt != nil {
+			v.Halt.Timesince = timeSince(v.Halt.Timestamp)
 		}
-		if v.HaltReason != nil {
-			v.HaltReason.Timesince = timeSince(v.HaltReason.Timestamp)
-		}
-		if v.HaltExplanation != nil {
-			v.HaltExplanation.Timesince = timeSince(v.HaltExplanation.Timestamp)
-		}
-		if v.ValidationMessage != nil {
-			v.ValidationMessage.Timesince = timeSince(v.ValidationMessage.Timestamp)
+		if v.Validation != nil {
+			v.Validation.Timesince = timeSince(v.Validation.Timestamp)
 		}
 		return v, true
 	}
@@ -92,20 +76,14 @@ func (builder *ObjectBuilder) GetValidationWithTimeSince(key string) (*ErrorsAnd
 
 func (builder *ObjectBuilder) GetValidationsWithTimeSince() map[string]*ErrorsAndValidation {
 	for key, v := range builder.validations {
-		if v.Error != nil {
-			v.Error.Timesince = timeSince(v.Error.Timestamp)
+		if v.ObjectError != nil {
+			v.ObjectError.Timesince = timeSince(v.ObjectError.Timestamp)
 		}
-		if v.ErrorMessage != nil {
-			v.ErrorMessage.Timesince = timeSince(v.ErrorMessage.Timestamp)
+		if v.Halt != nil {
+			v.Halt.Timesince = timeSince(v.Halt.Timestamp)
 		}
-		if v.HaltReason != nil {
-			v.HaltReason.Timesince = timeSince(v.HaltReason.Timestamp)
-		}
-		if v.HaltExplanation != nil {
-			v.HaltExplanation.Timesince = timeSince(v.HaltExplanation.Timestamp)
-		}
-		if v.ValidationMessage != nil {
-			v.ValidationMessage.Timesince = timeSince(v.ValidationMessage.Timestamp)
+		if v.Validation != nil {
+			v.Validation.Timesince = timeSince(v.Validation.Timestamp)
 		}
 		builder.validations[key] = v
 	}
@@ -124,32 +102,66 @@ func (builder *ObjectBuilder) GetValidation(key string) (*ErrorsAndValidation, b
 	return nil, false
 }
 
-func (ev *ErrorsAndValidation) SetErrorMessage(message string) {
-	ev.ErrorMessage = &NewValidation{
-		Message:   message,
-		Timestamp: time.Now().UTC(),
+type ValidationMessage struct {
+	Error       error  `json:"error"`
+	Message     string `json:"message"`
+	Explanation string `json:"explanation"`
+}
+
+func (ev *ErrorsAndValidation) SetError(m *ValidationMessage) {
+	ev.Type = TypeError
+	var message string
+	if m.Error != nil {
+		message = m.Error.Error()
+	} else {
+		message = m.Message
+	}
+	ev.ObjectError = &NewValidation{
+		Error:       m.Error,
+		Message:     message,
+		Explanation: m.Explanation,
+		Timestamp:   time.Now().UTC(),
 	}
 }
 
-func (ev *ErrorsAndValidation) SetHaltReason(reason string) {
-	ev.HaltReason = &NewValidation{
-		Message:   reason,
-		Timestamp: time.Now().UTC(),
+func (ev *ErrorsAndValidation) SetHaltReason(m *ValidationMessage) {
+	ev.Type = TypeValidation
+	var message string
+	if m.Error != nil {
+		message = m.Error.Error()
+	} else {
+		message = m.Message
+	}
+	ev.Halt = &NewValidation{
+		Error:       m.Error,
+		Message:     message,
+		Explanation: m.Explanation,
+		Timestamp:   time.Now().UTC(),
 	}
 }
 
-func (ev *ErrorsAndValidation) SetHaltExplanation(explanation string) {
-	ev.HaltExplanation = &NewValidation{
-		Message:   explanation,
-		Timestamp: time.Now().UTC(),
+func (ev *ErrorsAndValidation) SetValidation(m *ValidationMessage) {
+	ev.Type = TypeValidation
+	var message string
+	if m.Error != nil {
+		message = m.Error.Error()
+	} else {
+		message = m.Message
+	}
+	ev.Validation = &NewValidation{
+		Error:       m.Error,
+		Message:     message,
+		Explanation: m.Explanation,
+		Timestamp:   time.Now().UTC(),
 	}
 }
 
-func (ev *ErrorsAndValidation) SetValidationMessage(message string) {
-	ev.ValidationMessage = &NewValidation{
-		Message:   message,
-		Timestamp: time.Now().UTC(),
-	}
+func (ev *ErrorsAndValidation) ToString() string {
+	return fmt.Sprintf("&{Type:%s Error:%v Halt:%v  Validation:%v}",
+		ev.Type,
+		ev.ObjectError,
+		ev.Halt,
+		ev.Validation)
 }
 
 func timeSince(t time.Time) string {
