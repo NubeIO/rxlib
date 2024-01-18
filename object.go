@@ -5,8 +5,51 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type Info struct {
+	ObjectID    string
+	ObjectUUID  string
+	Name        string
+	PluginName  string
+	Application string
+}
+
+// ObjectInfo
+//   - ObjectID
+//   - ObjectUUID
+//   - Name
+//   - PluginName
+//   - Application
+func ObjectInfo(s ...string) *Info {
+	setup := &Info{
+		ObjectID:   "",
+		ObjectUUID: "",
+		Name:       "",
+		PluginName: "",
+	}
+
+	// Check the length of s and assign values accordingly
+	if len(s) > 0 {
+		setup.ObjectID = s[0]
+	}
+	if len(s) > 1 {
+		setup.ObjectUUID = s[1]
+	}
+	if len(s) > 2 {
+		setup.Name = s[2]
+	}
+	if len(s) > 3 {
+		setup.PluginName = s[3]
+	}
+	if len(s) > 4 {
+		setup.PluginName = s[4]
+	}
+
+	return setup
+}
+
 type Object interface {
-	New(objectUUID, name string, bus *EventBus, settings *Settings) Object
+	New(info *Info, object Object) Object
+	New3(objectUUID, name string, bus *EventBus, settings *Settings) Object
 	Start()
 	Delete()
 	SetHotFix()
@@ -16,11 +59,13 @@ type Object interface {
 	NotLoaded() bool
 
 	// object details/info
+	GetID() string
+	SetID(uuid string)
 	GetUUID() string
+	SetUUID(uuid string)
 	GetParentUUID() string
 	GetPluginName() string
 	GetApplicationUse() string
-	GetID() string
 	GetObjectName() string
 
 	BusChannel(inputID string) (chan *Message, bool)
@@ -29,6 +74,8 @@ type Object interface {
 
 	// ports
 	NewPort(port *Port)
+	NewInputPort(id, name string, dataType PortDataType)
+	NewOutputPort(id, name string, dataType PortDataType)
 
 	// connections
 	AddConnection(connection *Connection)
