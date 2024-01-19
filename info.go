@@ -9,33 +9,33 @@ type ObjectInfo interface {
 	InfoBuilder
 }
 
-type permissions struct {
+type Permissions struct {
 	AllPermissions bool `json:"allPermissions,omitempty"`
 	CanBeCreated   bool `json:"canBeCreated,omitempty"`
 	CanBeDeleted   bool `json:"canBeDeleted,omitempty"`
 	CanBeUpdated   bool `json:"canBeUpdated,omitempty"`
 	ReadOnly       bool `json:"readOnly,omitempty"`
+	AllowHotFix    bool `json:"allowHotFix,omitempty"`
+	ForceDelete    bool `json:"forceDelete,omitempty"`
 }
 
-type requirements struct {
+type Requirements struct {
 	SupportsWebRoute        bool `json:"supportsWebRoute,omitempty"`
 	AllowRuntimeAccess      bool `json:"allowRuntimeAccess,omitempty"`
 	MaxOne                  bool `json:"maxOne,omitempty"`
-	IsParent                bool `json:"isParent,omitempty"`
-	HasChildren             bool `json:"hasChildren,omitempty"`
+	IsFolder                bool `json:"isFolder,omitempty"`    // if set to true, then the object will be a folder
+	HasChildren             bool `json:"hasChildren,omitempty"` // math object has none, but say a modbus network will have childs
 	SupportsAddingComponent bool `json:"supportsAddingComponent,omitempty"`
 }
 
 type Info struct {
-	Settings     *Settings       `json:"settings"`
-	ObjectID     string          `json:"objectID"`
-	ObjectType   ObjectType      `json:"objectType"`
+	ObjectID     string          `json:"id"`
+	ObjectType   ObjectType      `json:"type"`
 	Category     string          `json:"category"`
 	PluginName   string          `json:"pluginName"`
-	Permissions  *permissions    `json:"permissions"`
-	Requirements *requirements   `json:"requirements"`
+	Permissions  *Permissions    `json:"permissions"`
+	Requirements *Requirements   `json:"requirements,omitempty"`
 	ObjectTags   []ObjectTypeTag `json:"objectTags,omitempty"`
-	Meta         *Meta           `json:"meta"`
 }
 
 type InfoBuilder interface {
@@ -50,15 +50,6 @@ type InfoBuilder interface {
 	SetObjectType(objectType ObjectType) InfoBuilder
 	GetObjectType() ObjectType
 
-	// uuid, set from Meta
-	GetUUID() string
-
-	// name, set from Meta
-	GetName() string
-
-	// parent uuid, set from Meta
-	GetParentUUID() string
-
 	// category
 	SetCategory(value string) InfoBuilder
 	GetCategory() string
@@ -67,16 +58,8 @@ type InfoBuilder interface {
 	SetPluginName(pluginName string) InfoBuilder
 	GetPluginName() string
 
-	// settings
-	SetSettings(settings *Settings) InfoBuilder
-	GetSettings() *Settings
-
-	// meta, meta will also set the object-name at parentUUID
-	SetMeta(meta *Meta) InfoBuilder
-	GetMeta() *Meta
-
 	// permissions
-	GetPermissions() *permissions
+	GetPermissions() *Permissions
 	SetReadOnly() InfoBuilder
 	SetAllPermissions() InfoBuilder
 	SetCanBeCreated() InfoBuilder
@@ -84,7 +67,7 @@ type InfoBuilder interface {
 	SetCanBeUpdated() InfoBuilder
 
 	// requirements
-	GetRequirements() *requirements
+	GetRequirements() *Requirements
 	SetSupportsWebRoute() InfoBuilder
 	SetAllowRuntimeAccess() InfoBuilder
 	SetMaxOne() InfoBuilder
@@ -128,14 +111,6 @@ func (builder *infoBuilder) GetObjectType() ObjectType {
 	return builder.info.ObjectType
 }
 
-func (builder *infoBuilder) GetUUID() string {
-	return builder.info.Meta.ObjectUUID
-}
-
-func (builder *infoBuilder) GetName() string {
-	return builder.info.Meta.ObjectName
-}
-
 func (builder *infoBuilder) SetCategory(value string) InfoBuilder {
 	builder.info.Category = value
 	return builder
@@ -148,33 +123,6 @@ func (builder *infoBuilder) GetCategory() string {
 func (builder *infoBuilder) SetPluginName(pluginName string) InfoBuilder {
 	builder.info.PluginName = pluginName
 	return builder
-}
-
-func (builder *infoBuilder) SetSettings(settings *Settings) InfoBuilder {
-	builder.info.Settings = settings
-	return builder
-}
-
-func (builder *infoBuilder) GetSettings() *Settings {
-	return builder.info.Settings
-}
-
-func (builder *infoBuilder) SetMeta(meta *Meta) InfoBuilder {
-	builder.info.Meta = meta
-	if meta.ObjectUUID == "" {
-		meta.ObjectUUID = GenerateCustomUUID()
-	}
-	builder.info.Meta.ObjectName = meta.ObjectName
-	builder.info.Meta.ParentUUID = meta.ParentUUID
-	return builder
-}
-
-func (builder *infoBuilder) GetMeta() *Meta {
-	return builder.info.Meta
-}
-
-func (builder *infoBuilder) GetParentUUID() string {
-	return builder.info.Meta.ParentUUID
 }
 
 func (builder *infoBuilder) GetPluginName() string {
@@ -201,7 +149,7 @@ func (builder *infoBuilder) SetMaxOne() InfoBuilder {
 
 func (builder *infoBuilder) SetIsParent() InfoBuilder {
 	ensureRequirements(builder.info)
-	builder.info.Requirements.IsParent = true
+	builder.info.Requirements.IsFolder = true
 	return builder
 }
 
@@ -220,20 +168,12 @@ func (builder *infoBuilder) SetSupportsAddingComponent() InfoBuilder {
 func (builder *infoBuilder) SetReadOnly() InfoBuilder {
 	ensurePermissions(builder.info)
 	builder.info.Permissions.ReadOnly = true
-	builder.info.Permissions.AllPermissions = false
-	builder.info.Permissions.CanBeCreated = false
-	builder.info.Permissions.CanBeDeleted = false
-	builder.info.Permissions.CanBeUpdated = false
 	return builder
 }
 
 func (builder *infoBuilder) SetAllPermissions() InfoBuilder {
 	ensurePermissions(builder.info)
 	builder.info.Permissions.AllPermissions = true
-	builder.info.Permissions.CanBeCreated = true
-	builder.info.Permissions.CanBeDeleted = true
-	builder.info.Permissions.CanBeUpdated = true
-	builder.info.Permissions.ReadOnly = false
 	return builder
 }
 
@@ -264,19 +204,16 @@ func (builder *infoBuilder) GetObjectTags() []ObjectTypeTag {
 	return builder.info.ObjectTags
 }
 
-func (builder *infoBuilder) GetPermissions() *permissions {
+func (builder *infoBuilder) GetPermissions() *Permissions {
 	return builder.info.Permissions
 }
 
-func (builder *infoBuilder) GetRequirements() *requirements {
+func (builder *infoBuilder) GetRequirements() *Requirements {
 	return builder.info.Requirements
 }
 
 func (builder *infoBuilder) checks() {
 	// checks
-	if builder.info.Meta == nil {
-		crashMe("info.info.Meta")
-	}
 	if builder.info.PluginName == "" {
 		crashMe("info.PluginName")
 	}
@@ -289,17 +226,27 @@ func (builder *infoBuilder) checks() {
 	if builder.info.ObjectType == "" {
 		crashMe("info.ObjectType")
 	}
+	var validType bool
+	for _, o := range AllObjectType {
+		if o == builder.info.ObjectType {
+			validType = true
+		}
+	}
+	if !validType {
+		log.Fatalf("rxlib.SetObjectType() invaild object type: %s try: %s", builder.info.ObjectType, AllObjectType[0])
+	}
+
 }
 
 func ensurePermissions(info *Info) {
 	if info.Permissions == nil {
-		info.Permissions = &permissions{}
+		info.Permissions = &Permissions{}
 	}
 }
 
 func ensureRequirements(info *Info) {
 	if info.Requirements == nil {
-		info.Requirements = &requirements{}
+		info.Requirements = &Requirements{}
 	}
 }
 

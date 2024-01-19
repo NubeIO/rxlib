@@ -6,12 +6,7 @@ import (
 )
 
 type Object interface {
-	New(object Object, settings *Settings, meta *Meta, opts ...any) Object
-
-	// info
-	ObjectInfo
-	SetInfo(info *Info)
-	GetInfo() *Info
+	New(object Object, opts ...any) Object
 
 	// start the prociessing
 	Start()
@@ -22,8 +17,6 @@ type Object interface {
 	SetLoaded(set bool)
 	Loaded() bool
 	NotLoaded() bool
-
-	GetObjectName() string
 
 	BusChannel(inputID string) (chan *Message, bool)
 	MessageBus() map[string]chan *Message
@@ -81,18 +74,79 @@ type Object interface {
 	GetPortValuesChildObject(uuid string) []*Port
 	SetLastValueChildObject(uuid string, port *Port)
 
+	// RunValidation -------------------VALIDATION INFO------------------
 	// ValidationBuilder validation for example, you want to add a new network so lets run some checks eg; is network interface available
-	ValidationBuilder
 	RunValidation()
+	AddValidation(key string)
+	DeleteValidation(key string)
+	GetValidations() map[string]*ErrorsAndValidation
+	GetValidation(key string) (*ErrorsAndValidation, bool)
+	SetError(key string, err error)
+	SetValidationError(key string, m *ValidationMessage)
+	SetHalt(key string, m *ValidationMessage)
+	SetValidation(key string, m *ValidationMessage)
 
-	//StatsBuilder if the object is running, stopped or halted due to a error
-	StatsBuilder
+	// SetStatus -------------------STATS INFO------------------
+	// this is for the node status
+	SetStatus(status ObjectStatus)
+	SetLoopCount(count int)
+	GetLoopCount() int
+	IncrementLoopCount()
+	ResetLoopCount()
+	GetStats() *ObjectStats
+	AddCustomStat(name string, stat *CustomStatus)
+	GetCustomStat(name string) (*CustomStatus, bool)
+	DeleteCustomStat(name string)
+	UpdateCustomStat(name string, stat *CustomStatus)
+
+	// SetInfo -------------------OBJECT INFO------------------
+	SetInfo(info *Info)
+	GetInfo() *Info
+
+	// id
+	GetID() string
+
+	// object type is for example a driver, service, logic
+	GetObjectType() ObjectType
+
+	// uuid, set from Meta
+	GetUUID() string
+
+	// name, set from Meta
+	GetName() string
+
+	// parent uuid, set from Meta
+	GetParentUUID() string
+
+	// category
+	GetCategory() string
+
+	// plugin
+	GetPluginName() string
+
+	// settings
+	GetSettings() *Settings
+	SetSettings(settings *Settings)
+
+	// meta, meta will also set the object-name at parentUUID
+	GetMeta() *Meta
+	SetMeta(meta *Meta)
+
+	// permissions
+	GetPermissions() *Permissions
+
+	// requirements
+	GetRequirements() *Requirements
+
+	// tags
+	AddObjectTags(objectTypeTag ...ObjectTypeTag)
+	GetObjectTags() []ObjectTypeTag
 
 	AddRouterGroup(c *gin.RouterGroup)
 }
 
 type ObjectValue struct {
-	ObjectId   string  `json:"objectId"`
+	ObjectId   string  `json:"objectID"`
 	ObjectUUID string  `json:"objectUUID"`
 	Ports      []*Port `json:"ports"`
 }
@@ -103,8 +157,8 @@ type Position struct {
 }
 
 type Meta struct {
-	ObjectUUID string   `json:"objectUUID"`           // comes from UI need to set in objectInfo
-	ObjectName string   `json:"objectName"`           // comes from UI need to set in objectInfo
+	ObjectUUID string   `json:"uuid"`                 // comes from UI need to set in objectInfo
+	ObjectName string   `json:"name"`                 // comes from UI need to set in objectInfo
 	ParentUUID string   `json:"parentUUID,omitempty"` // comes from UI need to set in objectInfo
 	Position   Position `json:"position"`
 }
