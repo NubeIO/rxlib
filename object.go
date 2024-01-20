@@ -10,7 +10,7 @@ type Object interface {
 
 	// Start the processing
 	Start() error
-	Delete() (error, bool)
+	Delete() error
 	SetHotFix()
 	HotFix() bool
 	SetLoaded(set bool)
