@@ -8,10 +8,9 @@ import (
 type Object interface {
 	New(object Object, opts ...any) Object
 
-	// start the prociessing
-	Start()
-
-	Delete()
+	// Start the processing
+	Start() error
+	Delete() (error, bool)
 	SetHotFix()
 	HotFix() bool
 	SetLoaded(set bool)
@@ -126,11 +125,11 @@ type Object interface {
 
 	// settings
 	GetSettings() *Settings
-	SetSettings(settings *Settings)
+	SetSettings(settings *Settings) error
 
-	// meta, meta will also set the object-name at parentUUID
+	// GetMeta  meta will also set the object-name at parentUUID
 	GetMeta() *Meta
-	SetMeta(meta *Meta)
+	SetMeta(meta *Meta) error
 
 	// permissions
 	GetPermissions() *Permissions
