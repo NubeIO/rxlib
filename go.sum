@@ -1,3 +1,7 @@
+github.com/NubeIO/engineering-units v0.0.1 h1:Pc7fpnMLN0FrVps8K+40quQem1CEBr3jfeXy3Y4vxjE=
+github.com/NubeIO/engineering-units v0.0.1/go.mod h1:IlG5huFOVTGRHA2ZAaMjwWYQSxJumRQmHzxbKhYF+Lk=
+github.com/NubeIO/engineering-units v0.0.2 h1:ETNIrWSWXZiVbSz/4l4YQqDbsnmfXGxzno9SgBECgDE=
+github.com/NubeIO/engineering-units v0.0.2/go.mod h1:IlG5huFOVTGRHA2ZAaMjwWYQSxJumRQmHzxbKhYF+Lk=
 github.com/NubeIO/schema v0.0.1 h1:/H3g7Qex1nA6RpwrzxsyP0+qblbljmnRZaAzfXbAYXU=
 github.com/NubeIO/schema v0.0.1/go.mod h1:l22AbV+69tAsjh4iIvQsaI7rzwiTQ8pHpbO16D4W1IE=
 github.com/bytedance/sonic v1.5.0/go.mod h1:ED5hyg4y6t3/9Ku1R6dU/4KyJ48DZ4jPhfY1O2AihPM=
