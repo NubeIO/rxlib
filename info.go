@@ -20,12 +20,12 @@ type Permissions struct {
 }
 
 type Requirements struct {
-	SupportsWebRoute        bool `json:"supportsWebRoute,omitempty"`
-	AllowRuntimeAccess      bool `json:"allowRuntimeAccess,omitempty"`
-	MaxOne                  bool `json:"maxOne,omitempty"`
-	IsFolder                bool `json:"isFolder,omitempty"`    // if set to true, then the object will be a folder
-	HasChildren             bool `json:"hasChildren,omitempty"` // math object has none, but say a modbus network will have childs
-	SupportsAddingComponent bool `json:"supportsAddingComponent,omitempty"`
+	SupportsWebRoute     bool `json:"supportsWebRoute,omitempty"`
+	AllowRuntimeAccess   bool `json:"allowRuntimeAccess,omitempty"`
+	MaxOne               bool `json:"maxOne,omitempty"`
+	HasChildObjects      bool `json:"hasChildObjects,omitempty"` // math object that has none, but say a modbus network will have childs; eg drives/points
+	MustLiveInObjectType bool `json:"mustLiveInObjectType"`      // modbus-network can only be in object-type: drivers
+	MustLiveParent       bool `json:"mustLiveParent"`            // a modbus device can only be added under its parent being a modbus-network
 }
 
 type Info struct {
@@ -71,9 +71,7 @@ type InfoBuilder interface {
 	SetSupportsWebRoute() InfoBuilder
 	SetAllowRuntimeAccess() InfoBuilder
 	SetMaxOne() InfoBuilder
-	SetIsParent() InfoBuilder
-	SetHasChildren() InfoBuilder
-	SetSupportsAddingComponent() InfoBuilder
+	SetHasChildObjects() InfoBuilder
 
 	// tags
 	AddObjectTags(objectTypeTag ...ObjectTypeTag)
@@ -116,6 +114,24 @@ func (builder *infoBuilder) SetCategory(value string) InfoBuilder {
 	return builder
 }
 
+func (builder *infoBuilder) SetMustLiveInObjectType() InfoBuilder {
+	builder.info.Requirements.MustLiveInObjectType = true
+	return builder
+}
+
+func (builder *infoBuilder) GetMustLiveInObjectType() bool {
+	return builder.info.Requirements.MustLiveInObjectType
+}
+
+func (builder *infoBuilder) SetMustLiveParent() InfoBuilder {
+	builder.info.Requirements.MustLiveParent = true
+	return builder
+}
+
+func (builder *infoBuilder) GetMustLiveParent() bool {
+	return builder.info.Requirements.MustLiveParent
+}
+
 func (builder *infoBuilder) GetCategory() string {
 	return builder.info.Category
 }
@@ -147,21 +163,9 @@ func (builder *infoBuilder) SetMaxOne() InfoBuilder {
 	return builder
 }
 
-func (builder *infoBuilder) SetIsParent() InfoBuilder {
+func (builder *infoBuilder) SetHasChildObjects() InfoBuilder {
 	ensureRequirements(builder.info)
-	builder.info.Requirements.IsFolder = true
-	return builder
-}
-
-func (builder *infoBuilder) SetHasChildren() InfoBuilder {
-	ensureRequirements(builder.info)
-	builder.info.Requirements.HasChildren = true
-	return builder
-}
-
-func (builder *infoBuilder) SetSupportsAddingComponent() InfoBuilder {
-	ensureRequirements(builder.info)
-	builder.info.Requirements.SupportsAddingComponent = true
+	builder.info.Requirements.HasChildObjects = true
 	return builder
 }
 

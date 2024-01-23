@@ -18,6 +18,7 @@ type EngineeringUnits struct {
 	mux           sync.Mutex
 }
 
+// InitUnits for usage you then need to use the New()
 func InitUnits(eu *EngineeringUnits) *EngineeringUnits {
 	eu.UnitsLib = units.New()
 	return eu
@@ -26,7 +27,6 @@ func InitUnits(eu *EngineeringUnits) *EngineeringUnits {
 func (eu *EngineeringUnits) New(input float64) error {
 	eu.mux.Lock()
 	defer eu.mux.Unlock()
-
 	eu.value = input
 	if eu.Unit == "" {
 		return errors.New("unit can not be empty")

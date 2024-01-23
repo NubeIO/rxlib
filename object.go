@@ -5,6 +5,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type Chain struct {
+	RootTreeUUIDs       []string
+	RootTreeNames       []string
+	DescendantTreeUUIDs []string
+	DescendantTreeNames []string
+}
+
 type Object interface {
 	New(object Object, opts ...any) Object
 
@@ -23,8 +30,10 @@ type Object interface {
 
 	// ports
 	NewPort(port *Port)
-	NewInputPort(id, name string, dataType PortDataType)
-	NewOutputPort(id, name string, dataType PortDataType)
+	NewInputPort(port *NewPort) error
+	NewInputPorts(port []*NewPort) error
+	NewOutputPort(port *NewPort) error
+	NewOutputPorts(port []*NewPort) error
 
 	// connections
 	AddConnection(connection *Connection)
@@ -72,6 +81,11 @@ type Object interface {
 	GetChildsByType(objectID string) []Object
 	GetPortValuesChildObject(uuid string) []*Port
 	SetLastValueChildObject(uuid string, port *Port)
+
+	// GetRootObject object tree
+	GetRootObject(uuid string) (Object, error)
+	PrintObjectTree(objects map[string]Object)
+	GetCompleteChain(objects map[string]Object, uuid string) Chain
 
 	// RunValidation -------------------VALIDATION INFO------------------
 	// ValidationBuilder validation for example, you want to add a new network so lets run some checks eg; is network interface available
@@ -122,6 +136,12 @@ type Object interface {
 
 	// plugin
 	GetPluginName() string
+
+	//SetMustLiveInObjectType these are needed to know where a know will site in the sidebar in the UI
+	SetMustLiveInObjectType() InfoBuilder
+	GetMustLiveInObjectType() bool
+	SetMustLiveParent() InfoBuilder
+	GetMustLiveParent() bool
 
 	// settings
 	GetSettings() *Settings

@@ -6,13 +6,9 @@ import (
 	"math"
 )
 
-func FormatFloat64(value float64, decimalPlace int) string {
-	format := fmt.Sprintf("%%.%df", decimalPlace)
-	return fmt.Sprintf(format, value)
-}
-
-type FormatNumber struct {
+type Transformations struct {
 	FallBackValue *float64 `json:"fallBackValue"`
+	PermitNull    bool     `json:"permitNull"` // if true will set the default value of golang types;
 	// return the result value to a decimal place if its not nil
 	Round *int `json:"round"`
 
@@ -32,8 +28,8 @@ type FormatNumber struct {
 	ValueOutMax *float64
 }
 
-func FormatNumberBuilder(inputValue *float64, config FormatNumber) (*float64, error) {
-	if config == (FormatNumber{}) {
+func TransformationsBuilder(inputValue *float64, config *Transformations) (*float64, error) {
+	if config == nil {
 		return nil, errors.New("config cannot be empty")
 	}
 	if inputValue == nil {
