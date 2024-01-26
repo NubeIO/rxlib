@@ -2,6 +2,30 @@ package rxlib
 
 import "time"
 
+func OutputPortFloat() *NewPort {
+	return &NewPort{
+		ID:       OutputName,
+		Name:     OutputName,
+		DataType: PortTypeFloat,
+	}
+}
+
+func OutputPortBool() *NewPort {
+	return &NewPort{
+		ID:       OutputName,
+		Name:     OutputName,
+		DataType: PortTypeBool,
+	}
+}
+
+func OutputPortError() *NewPort {
+	return &NewPort{
+		ID:       OutputErrorName,
+		Name:     OutputErrorName,
+		DataType: PortTypeBool,
+	}
+}
+
 type Port struct {
 	ID              string           `json:"id"`
 	Name            string           `json:"name"`
@@ -59,6 +83,17 @@ const (
 	PortTypeFloat  PortDataType = "float"
 	PortTypeString PortDataType = "string"
 	PortTypeBool   PortDataType = "bool"
+)
+
+// some commonlly used output names
+const (
+	OutputName      string = "output"
+	OutputErrorName string = "error"
+)
+
+// some commonlly used input names
+const (
+	In1Name string = "in-1"
 )
 
 type FlowDirection string

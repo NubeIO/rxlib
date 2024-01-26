@@ -18,6 +18,7 @@ type Object interface {
 
 	// Start the processing
 	Start() error
+	Process() error
 	Delete() error
 	SetHotFix()
 	HotFix() bool
@@ -130,6 +131,13 @@ type Object interface {
 
 	// category
 	GetCategory() string
+
+	// working group; a group of objects that work together like a network driver
+	GetWorkingGroup() string
+	GetWorkingGroupObjects() []string
+	GetWorkingGroupChildObjects() []string
+	GetWorkingGroupParent() string
+	GetWorkingGroupLeader() string
 
 	// plugin
 	GetPluginName() string

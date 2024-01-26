@@ -23,20 +23,24 @@ type Requirements struct {
 	SupportsWebRoute     bool `json:"supportsWebRoute,omitempty"`
 	AllowRuntimeAccess   bool `json:"allowRuntimeAccess,omitempty"`
 	MaxOne               bool `json:"maxOne,omitempty"`
-	HasChildObjects      bool `json:"hasChildObjects,omitempty"` // math object that has none, but say a modbus network will have childs; eg drives/points
-	MustLiveInObjectType bool `json:"mustLiveInObjectType"`      // modbus-network can only be in object-type: drivers
-	MustLiveParent       bool `json:"mustLiveParent"`            // a modbus device can only be added under its parent being a modbus-network
+	MustLiveInObjectType bool `json:"mustLiveInObjectType"` // modbus-network can only be in object-type: drivers
+	MustLiveParent       bool `json:"mustLiveParent"`       // a modbus device can only be added under its parent being a modbus-network
 	RequiresLogger       bool `json:"requiresLogger"`
 }
 
 type Info struct {
-	ObjectID     string          `json:"id"`
-	ObjectType   ObjectType      `json:"type"`
-	Category     string          `json:"category"`
-	PluginName   string          `json:"pluginName"`
-	Permissions  *Permissions    `json:"permissions"`
-	Requirements *Requirements   `json:"requirements,omitempty"`
-	ObjectTags   []ObjectTypeTag `json:"objectTags,omitempty"`
+	ObjectID                 string          `json:"id"`
+	ObjectType               ObjectType      `json:"type"`
+	Category                 string          `json:"category"`
+	PluginName               string          `json:"pluginName"`
+	WorkingGroup             string          `json:"workingGroup,omitempty"`             // modbus
+	WorkingGroupLeader       string          `json:"workingGroupLeader,omitempty"`       // modbus-network
+	WorkingGroupObjects      []string        `json:"workingGroupObjects,omitempty"`      // modbus network [network, device, point]
+	WorkingGroupChildObjects []string        `json:"workingGroupChildObjects,omitempty"` // modbus network direct child [device]
+	WorkingGroupParent       string          `json:"workingGroupParent,omitempty"`       // a points parent is the device
+	Permissions              *Permissions    `json:"permissions"`
+	Requirements             *Requirements   `json:"requirements,omitempty"`
+	ObjectTags               []ObjectTypeTag `json:"objectTags,omitempty"`
 }
 
 type InfoBuilder interface {
@@ -55,6 +59,20 @@ type InfoBuilder interface {
 	SetCategory(value string) InfoBuilder
 	GetCategory() string
 
+	// working group is a grough of object that internally work together; for example we have MQTT broker and sub object would be a working group
+	SetWorkingGroup(value string) InfoBuilder
+	GetWorkingGroup() string
+
+	SetWorkingGroupLeader(value string) InfoBuilder
+	GetWorkingGroupLeader() string
+
+	SetWorkingGroupObjects(value ...string) InfoBuilder
+	GetWorkingGroupObjects() []string
+	SetWorkingGroupChildObjects(value ...string) InfoBuilder
+	GetWorkingGroupChildObjects() []string
+	SetWorkingGroupParent(value string) InfoBuilder
+	GetWorkingGroupParent() string
+
 	// plugin
 	SetPluginName(pluginName string) InfoBuilder
 	GetPluginName() string
@@ -72,7 +90,6 @@ type InfoBuilder interface {
 	SetSupportsWebRoute() InfoBuilder
 	SetAllowRuntimeAccess() InfoBuilder
 	SetMaxOne() InfoBuilder
-	SetHasChildObjects() InfoBuilder
 	SetLogger() InfoBuilder
 
 	SetMustLiveInObjectType() InfoBuilder
@@ -121,6 +138,55 @@ func (builder *infoBuilder) SetCategory(value string) InfoBuilder {
 	return builder
 }
 
+func (builder *infoBuilder) GetCategory() string {
+	return builder.info.Category
+}
+
+func (builder *infoBuilder) SetWorkingGroup(value string) InfoBuilder {
+	builder.info.WorkingGroup = value
+	return builder
+}
+
+func (builder *infoBuilder) GetWorkingGroup() string {
+	return builder.info.WorkingGroup
+}
+
+func (builder *infoBuilder) SetWorkingGroupLeader(value string) InfoBuilder {
+	builder.info.WorkingGroupLeader = value
+	return builder
+}
+
+func (builder *infoBuilder) GetWorkingGroupLeader() string {
+	return builder.info.WorkingGroupLeader
+}
+
+func (builder *infoBuilder) SetWorkingGroupParent(value string) InfoBuilder {
+	builder.info.WorkingGroupParent = value
+	return builder
+}
+
+func (builder *infoBuilder) GetWorkingGroupParent() string {
+	return builder.info.WorkingGroupParent
+}
+
+func (builder *infoBuilder) SetWorkingGroupObjects(value ...string) InfoBuilder {
+	builder.info.WorkingGroupObjects = append(builder.info.WorkingGroupObjects, value...)
+	return builder
+}
+
+func (builder *infoBuilder) GetWorkingGroupObjects() []string {
+	return builder.info.WorkingGroupObjects
+}
+
+func (builder *infoBuilder) SetWorkingGroupChildObjects(value ...string) InfoBuilder {
+	builder.info.WorkingGroupChildObjects = append(builder.info.WorkingGroupChildObjects, value...)
+	return builder
+}
+
+func (builder *infoBuilder) GetWorkingGroupChildObjects() []string {
+	return builder.info.WorkingGroupChildObjects
+}
+
 func (builder *infoBuilder) SetLogger() InfoBuilder {
 	ensureRequirements(builder.info)
 	builder.info.Requirements.RequiresLogger = true
@@ -147,10 +213,6 @@ func (builder *infoBuilder) GetMustLiveParent() bool {
 	return builder.info.Requirements.MustLiveParent
 }
 
-func (builder *infoBuilder) GetCategory() string {
-	return builder.info.Category
-}
-
 func (builder *infoBuilder) SetPluginName(pluginName string) InfoBuilder {
 	builder.info.PluginName = pluginName
 	return builder
@@ -175,12 +237,6 @@ func (builder *infoBuilder) SetAllowRuntimeAccess() InfoBuilder {
 func (builder *infoBuilder) SetMaxOne() InfoBuilder {
 	ensureRequirements(builder.info)
 	builder.info.Requirements.MaxOne = true
-	return builder
-}
-
-func (builder *infoBuilder) SetHasChildObjects() InfoBuilder {
-	ensureRequirements(builder.info)
-	builder.info.Requirements.HasChildObjects = true
 	return builder
 }
 
