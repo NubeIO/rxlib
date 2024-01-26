@@ -26,6 +26,7 @@ type Requirements struct {
 	HasChildObjects      bool `json:"hasChildObjects,omitempty"` // math object that has none, but say a modbus network will have childs; eg drives/points
 	MustLiveInObjectType bool `json:"mustLiveInObjectType"`      // modbus-network can only be in object-type: drivers
 	MustLiveParent       bool `json:"mustLiveParent"`            // a modbus device can only be added under its parent being a modbus-network
+	RequiresLogger       bool `json:"requiresLogger"`
 }
 
 type Info struct {
@@ -72,6 +73,12 @@ type InfoBuilder interface {
 	SetAllowRuntimeAccess() InfoBuilder
 	SetMaxOne() InfoBuilder
 	SetHasChildObjects() InfoBuilder
+	SetLogger() InfoBuilder
+
+	SetMustLiveInObjectType() InfoBuilder
+	GetMustLiveInObjectType() bool
+	SetMustLiveParent() InfoBuilder
+	GetMustLiveParent() bool
 
 	// tags
 	AddObjectTags(objectTypeTag ...ObjectTypeTag)
@@ -114,7 +121,14 @@ func (builder *infoBuilder) SetCategory(value string) InfoBuilder {
 	return builder
 }
 
+func (builder *infoBuilder) SetLogger() InfoBuilder {
+	ensureRequirements(builder.info)
+	builder.info.Requirements.RequiresLogger = true
+	return builder
+}
+
 func (builder *infoBuilder) SetMustLiveInObjectType() InfoBuilder {
+	ensureRequirements(builder.info)
 	builder.info.Requirements.MustLiveInObjectType = true
 	return builder
 }
@@ -124,6 +138,7 @@ func (builder *infoBuilder) GetMustLiveInObjectType() bool {
 }
 
 func (builder *infoBuilder) SetMustLiveParent() InfoBuilder {
+	ensureRequirements(builder.info)
 	builder.info.Requirements.MustLiveParent = true
 	return builder
 }

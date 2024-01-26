@@ -2,6 +2,7 @@ package rxlib
 
 import (
 	"github.com/NubeIO/schema"
+	"github.com/NubeIO/tracer"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,9 +25,21 @@ type Object interface {
 	Loaded() bool
 	NotLoaded() bool
 
+	// runtime objects
+	AddRuntimeToObject(runtimeObjects map[string]Object) // gives each object access to every other object
+	GetRuntimeObjects() map[string]Object
+	GetObject(uuid string) (obj Object, exists bool)
+	GetObjectsByType(objectID string) []Object // for example get all math/add Object
+	RemoveObjectFromRuntime()
+	GetChildObjects() []Object                      // get all the object inside a folder
+	GetChildObjectsByType(objectID string) []Object // for example get all modbus/device that are inside its parent modbus/network Object
+	GetParentObject(uuid string) (obj Object, exists bool)
+	GetParentUUID() string
+
+	// event bus
 	BusChannel(inputID string) (chan *Message, bool)
 	MessageBus() map[string]chan *Message
-	PublishMessage(port *Port, setLastValue ...bool)
+	PublishMessage(port *Port)
 
 	// ports
 	NewPort(port *Port)
@@ -34,7 +47,7 @@ type Object interface {
 	NewInputPorts(port []*NewPort) error
 	NewOutputPort(port *NewPort) error
 	NewOutputPorts(port []*NewPort) error
-
+	GetAllPorts() []*Port
 	// connections
 	AddConnection(connection *Connection)
 	GetConnections() []*Connection
@@ -43,7 +56,7 @@ type Object interface {
 	// inputs
 	GetInput(id string) *Port
 	GetInputs() []*Port
-	SetInputValue(id string, value interface{})
+	SetInputValue(id string, value any) error
 
 	// ouputs
 	GetOutputs() []*Port
@@ -51,11 +64,15 @@ type Object interface {
 
 	// values
 	GetAllObjectValues() []*ObjectValue
-	GetAllPortValues() []*Port
-	GetAllInputValues() []*Port
-	GetAllOutputValues() []*Port
-	SetLastValue(port *Port)
-	GetPortValue(portID string) (*Port, error)
+	SetOutputPreviousValue(id string, value *PreviousValue) error
+	GetOutputPreviousValue(id string) *PreviousValue
+	SetInputPreviousValue(id string, value *PreviousValue) error
+	GetInputPreviousValue(id string) *PreviousValue
+
+	SetOutputWrittenValue(id string, value *WrittenValue) error
+	GetOutputWrittenValue(id string) *WrittenValue
+	SetInputWrittenValue(id string, value *WrittenValue) error
+	GetInputWrittenValue(id string) *WrittenValue
 
 	// scheam
 	GetSchema() *schema.Generated
@@ -64,23 +81,6 @@ type Object interface {
 	GetData() map[string]any
 	AddData(key string, data any) // addData is a way for a node to store something in memory
 	GetDataByKey(key string, out interface{}) error
-
-	// runtime objects
-	AddRuntimeToObject(runtimeObjects map[string]Object) // gives each object access to every other object
-	GetRuntimeObjects() map[string]Object
-	RemoveObjectFromRuntime()
-	//AddObjectToRuntime(object Object)
-
-	// child objects
-	AddDefinedChildObjects(objectID ...string) // to show the UI a objects childs that are defined by the plugin developer
-	GetDefinedChildObjects() []string
-	RegisterChildObject(child Object)
-	GetChildObjects() []Object
-	GetChildObject(uuid string) Object
-	DeleteChildObject(uuid string) error
-	GetChildsByType(objectID string) []Object
-	GetPortValuesChildObject(uuid string) []*Port
-	SetLastValueChildObject(uuid string, port *Port)
 
 	// GetRootObject object tree
 	GetRootObject(uuid string) (Object, error)
@@ -128,20 +128,18 @@ type Object interface {
 	// name, set from Meta
 	GetName() string
 
-	// parent uuid, set from Meta
-	GetParentUUID() string
-
 	// category
 	GetCategory() string
 
 	// plugin
 	GetPluginName() string
 
-	//SetMustLiveInObjectType these are needed to know where a know will site in the sidebar in the UI
-	SetMustLiveInObjectType() InfoBuilder
+	//GetMustLiveInObjectType these are needed to know where a know will site in the sidebar in the UI
 	GetMustLiveInObjectType() bool
-	SetMustLiveParent() InfoBuilder
 	GetMustLiveParent() bool
+	GetRequiresLogger() bool
+	AddLogger(trace *tracer.Logger)
+	Logger() (*tracer.Logger, error)
 
 	// settings
 	GetSettings() *Settings
