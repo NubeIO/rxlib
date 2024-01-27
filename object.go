@@ -2,7 +2,6 @@ package rxlib
 
 import (
 	"github.com/NubeIO/schema"
-	"github.com/NubeIO/tracer"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,9 +21,10 @@ type Object interface {
 	Delete() error
 	SetHotFix()
 	HotFix() bool
-	SetLoaded(set bool)
-	Loaded() bool
-	NotLoaded() bool
+	Lock()
+	Unlock()
+	IsLocked() bool
+	IsUnlocked() bool
 
 	// runtime objects
 	AddRuntimeToObject(runtimeObjects map[string]Object) // gives each object access to every other object
@@ -41,6 +41,10 @@ type Object interface {
 	BusChannel(inputID string) (chan *Message, bool)
 	MessageBus() map[string]chan *Message
 	PublishMessage(port *Port)
+	GetEventbus() *EventBus
+	AddSubscriptionExistingToPublisher(topic string) (chan *Message, error)
+	GlobalSubscriber() chan *Message
+	GlobalPublisher(message *Message)
 
 	// ports
 	NewPort(port *Port)
@@ -74,9 +78,6 @@ type Object interface {
 	GetOutputWrittenValue(id string) *WrittenValue
 	SetInputWrittenValue(id string, value *WrittenValue) error
 	GetInputWrittenValue(id string) *WrittenValue
-
-	// scheam
-	GetSchema() *schema.Generated
 
 	// data TODO maybe add a cache timeout, also a GetTheDelete() and a Delete()
 	GetData() map[string]any
@@ -146,9 +147,12 @@ type Object interface {
 	GetMustLiveInObjectType() bool
 	GetMustLiveParent() bool
 	GetRequiresLogger() bool
-	AddLogger(trace *tracer.Logger)
-	Logger() (*tracer.Logger, error)
+	AddLogger(trace *Logger)
+	Logger() (*Logger, error)
+	GetLoggerInfo() (*LoggerOpts, error)
 
+	// scheam
+	GetSchema() *schema.Generated
 	// settings
 	GetSettings() *Settings
 	SetSettings(settings *Settings) error

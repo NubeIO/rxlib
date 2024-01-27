@@ -20,12 +20,25 @@ type Permissions struct {
 }
 
 type Requirements struct {
-	SupportsWebRoute     bool `json:"supportsWebRoute,omitempty"`
-	AllowRuntimeAccess   bool `json:"allowRuntimeAccess,omitempty"`
-	MaxOne               bool `json:"maxOne,omitempty"`
-	MustLiveInObjectType bool `json:"mustLiveInObjectType"` // modbus-network can only be in object-type: drivers
-	MustLiveParent       bool `json:"mustLiveParent"`       // a modbus device can only be added under its parent being a modbus-network
-	RequiresLogger       bool `json:"requiresLogger"`
+	SupportsWebRoute     bool        `json:"supportsWebRoute,omitempty"`
+	AllowRuntimeAccess   bool        `json:"allowRuntimeAccess,omitempty"`
+	MaxOne               bool        `json:"maxOne,omitempty"`
+	MustLiveInObjectType bool        `json:"mustLiveInObjectType"` // modbus-network can only be in object-type: drivers
+	MustLiveParent       bool        `json:"mustLiveParent"`       // a modbus device can only be added under its parent being a modbus-network
+	RequiresLogger       bool        `json:"requiresLogger,omitempty"`
+	LoggerOpts           *LoggerOpts `json:"LoggerOpts,omitempty"`
+}
+
+type LoggerOpts struct {
+	LoggerName   string `json:"loggerName"`
+	LoggerColour string `json:"loggerColour"`
+}
+
+func NewLoggerOpts(loggerName, colour string) *LoggerOpts {
+	return &LoggerOpts{
+		LoggerName:   loggerName,
+		LoggerColour: colour,
+	}
 }
 
 type Info struct {
@@ -35,12 +48,12 @@ type Info struct {
 	PluginName               string          `json:"pluginName"`
 	WorkingGroup             string          `json:"workingGroup,omitempty"`             // modbus
 	WorkingGroupLeader       string          `json:"workingGroupLeader,omitempty"`       // modbus-network
+	WorkingGroupParent       string          `json:"workingGroupParent,omitempty"`       // a points parent is the device
 	WorkingGroupObjects      []string        `json:"workingGroupObjects,omitempty"`      // modbus network [network, device, point]
 	WorkingGroupChildObjects []string        `json:"workingGroupChildObjects,omitempty"` // modbus network direct child [device]
-	WorkingGroupParent       string          `json:"workingGroupParent,omitempty"`       // a points parent is the device
+	ObjectTags               []ObjectTypeTag `json:"objectTags,omitempty"`
 	Permissions              *Permissions    `json:"permissions"`
 	Requirements             *Requirements   `json:"requirements,omitempty"`
-	ObjectTags               []ObjectTypeTag `json:"objectTags,omitempty"`
 }
 
 type InfoBuilder interface {
@@ -90,7 +103,7 @@ type InfoBuilder interface {
 	SetSupportsWebRoute() InfoBuilder
 	SetAllowRuntimeAccess() InfoBuilder
 	SetMaxOne() InfoBuilder
-	SetLogger() InfoBuilder
+	SetLogger(opts *LoggerOpts) InfoBuilder
 
 	SetMustLiveInObjectType() InfoBuilder
 	GetMustLiveInObjectType() bool
@@ -98,7 +111,7 @@ type InfoBuilder interface {
 	GetMustLiveParent() bool
 
 	// tags
-	AddObjectTags(objectTypeTag ...ObjectTypeTag)
+	AddObjectTags(objectTypeTag ...ObjectTypeTag) InfoBuilder
 	GetObjectTags() []ObjectTypeTag
 }
 
@@ -187,9 +200,13 @@ func (builder *infoBuilder) GetWorkingGroupChildObjects() []string {
 	return builder.info.WorkingGroupChildObjects
 }
 
-func (builder *infoBuilder) SetLogger() InfoBuilder {
+func (builder *infoBuilder) SetLogger(opts *LoggerOpts) InfoBuilder {
 	ensureRequirements(builder.info)
 	builder.info.Requirements.RequiresLogger = true
+	if opts == nil {
+		log.Fatalf("rxlib.SetLogger opts can not be empty")
+	}
+	builder.info.Requirements.LoggerOpts = opts
 	return builder
 }
 
@@ -270,8 +287,9 @@ func (builder *infoBuilder) SetCanBeUpdated() InfoBuilder {
 	return builder
 }
 
-func (builder *infoBuilder) AddObjectTags(objectTypeTag ...ObjectTypeTag) {
+func (builder *infoBuilder) AddObjectTags(objectTypeTag ...ObjectTypeTag) InfoBuilder {
 	builder.info.ObjectTags = append(builder.info.ObjectTags, objectTypeTag...)
+	return builder
 }
 
 // GetObjectTags returns the ObjectTypeTags associated with the InfoBuilder.

@@ -27,14 +27,24 @@ var AllObjectType = []ObjectType{Logic, Driver, Service, Extension, RubixNetwork
 type ObjectTypeTag string
 
 const (
-	DriversTag    ObjectTypeTag = "drivers"
-	BACnetTag     ObjectTypeTag = "bacnet"
-	ModbusTag     ObjectTypeTag = "modbus"
-	LogicTag      ObjectTypeTag = "logic"
-	TimeTag       ObjectTypeTag = "time"
-	DateTag       ObjectTypeTag = "date"
-	ServicesTag   ObjectTypeTag = "service"
-	UsersTag      ObjectTypeTag = "users"
-	NetworkingTag ObjectTypeTag = "networking"
-	IpAddressTag  ObjectTypeTag = "ip-address"
+	DriversTag        ObjectTypeTag = "drivers"
+	BACnetTag         ObjectTypeTag = "bacnet"
+	ModbusTag         ObjectTypeTag = "modbus"
+	LogicTag          ObjectTypeTag = "logic"
+	TimeTag           ObjectTypeTag = "time"
+	DateTag           ObjectTypeTag = "date"
+	ServicesTag       ObjectTypeTag = "service"
+	UsersTag          ObjectTypeTag = "users"
+	NetworkingTag     ObjectTypeTag = "networking"
+	IpAddressTag      ObjectTypeTag = "ipAddress"
+	ProtocolTag       ObjectTypeTag = "protocol"
+	IpProtocolTag     ObjectTypeTag = "ipProtocol"
+	SerialProtocolTag ObjectTypeTag = "serialProtocol"
+
+	NetworkTag ObjectTypeTag = "network"
+	DeviceTag  ObjectTypeTag = "devive"
+	PointTag   ObjectTypeTag = "point"
+
+	HistTag  ObjectTypeTag = "hist"
+	AlarmTag ObjectTypeTag = "alarm"
 )
