@@ -13,13 +13,20 @@ type Message struct {
 	ObjectID   string `json:"objectID"`
 }
 
+type ClosedChannel struct {
+	Closed       bool
+	ObjectUUID   string
+	ObjectPortID string
+}
+
 // EventBus manages event subscriptions and publishes events.
 type EventBus struct {
-	mu          sync.Mutex
-	handlers    map[string][]chan *Message
-	subscribers map[chan *Message]string
-	globalChan  chan *Message // Global channel for publishing and subscribing
-	WS          *WSHub
+	mu             sync.Mutex
+	handlers       map[string][]chan *Message
+	subscribers    map[chan *Message]string
+	closedChannels map[chan *Message]*ClosedChannel
+	globalChan     chan *Message // Global channel for publishing and subscribing
+	WS             *WSHub
 }
 
 // NewEventBus creates a new EventBus.
@@ -27,10 +34,11 @@ func NewEventBus() *EventBus {
 	ws := NewWSHub()
 	//go ws.Run()
 	return &EventBus{
-		handlers:    make(map[string][]chan *Message),
-		subscribers: make(map[chan *Message]string), // inputs
-		globalChan:  make(chan *Message),
-		WS:          ws,
+		handlers:       make(map[string][]chan *Message),
+		subscribers:    make(map[chan *Message]string), // inputs
+		closedChannels: make(map[chan *Message]*ClosedChannel),
+		globalChan:     make(chan *Message),
+		WS:             ws,
 	}
 }
 
@@ -46,19 +54,41 @@ func (eb *EventBus) Subscribe(topic string, ch chan *Message) {
 func (eb *EventBus) Unsubscribe(topic string, ch chan *Message) {
 	eb.mu.Lock()
 	defer eb.mu.Unlock()
-
-	// Remove the channel from the list of subscribers for the topic
 	subscribers := eb.handlers[topic]
+	fmt.Printf("Unsubscribed from topic: %s subscribers count: %d \n", topic, len(subscribers))
 	for i, sub := range subscribers {
 		if sub == ch {
 			close(sub)                 // Close the channel to stop the goroutine
 			subscribers[i] = nil       // Set the channel to nil
 			delete(eb.subscribers, ch) // Remove the subscriber entry
+			fmt.Printf("Unsubscribed delete topic: %s\n", topic)
 			break
 		}
 	}
+
 	eb.handlers[topic] = subscribers // Update the subscribers list for the topic
-	fmt.Printf("Unsubscribed from topic: %s\n", topic)
+
+}
+
+// MarkAsClosed was added to close the chan for an input
+func (eb *EventBus) MarkAsClosed(ch chan *Message, details *ClosedChannel) {
+	eb.mu.Lock()
+	defer eb.mu.Unlock()
+	if details == nil {
+		return
+	}
+	details.Closed = true
+	eb.closedChannels[ch] = details
+}
+
+func (eb *EventBus) IsClosed(ch chan *Message) bool {
+	eb.mu.Lock()
+	defer eb.mu.Unlock()
+	closed, exists := eb.closedChannels[ch]
+	if closed != nil {
+		return false
+	}
+	return exists && closed.Closed
 }
 
 // Publish publishes an event to all subscribers of a topic. t
@@ -70,25 +100,42 @@ func (eb *EventBus) Publish(topic string, data *Message) {
 			//fmt.Printf("Publishing message to channel: %v\n", ch)
 			//fmt.Printf("Message details: ObjectUUID=%s, ObjectID=%s, PortID=%s\n", data.ObjectUUID, data.ObjectID, data.Port.ID)
 			// Here you could also add code to log the message details to a file or database
-			ch <- data
+			if closedDetails, isClosed := eb.closedChannels[ch]; !isClosed {
+				ch <- data
+			} else {
+				fmt.Printf("topic- is closed %v \n", closedDetails)
+			}
+
 		}(ch)
 	}
 }
 
-func (eb *EventBus) AddSubscriptionExistingToPublisher(topic string) (chan *Message, error) {
+func (eb *EventBus) DoesPublisherExist(topic string) bool {
 	eb.mu.Lock()
 	defer eb.mu.Unlock()
-	newSubscriber := make(chan *Message)
+
+	_, exists := eb.handlers[topic]
+	return exists
+}
+
+func (eb *EventBus) AddSubscriptionExistingToPublisher(sourceUUID, sourcePortID string, subscriber chan *Message) (chan *Message, error) {
+	topic := fmt.Sprintf("%s-%s", sourceUUID, sourcePortID)
+	eb.mu.Lock()
+	defer eb.mu.Unlock()
+	if subscriber == nil {
+		subscriber = make(chan *Message)
+	}
+
 	if _, ok := eb.handlers[topic]; ok {
 		// If the topic exists, add the new channel to the list of handlers for that topic
-		eb.handlers[topic] = append(eb.handlers[topic], newSubscriber)
-		eb.subscribers[newSubscriber] = topic
+		eb.handlers[topic] = append(eb.handlers[topic], subscriber)
+		eb.subscribers[subscriber] = topic
 		fmt.Printf("Added new subscriber to existing topic: %s\n", topic)
 	} else {
 		return nil, fmt.Errorf("Topic does not exist: %s. Creating new topic.\n", topic)
 	}
 
-	return newSubscriber, nil
+	return subscriber, nil
 }
 
 // GlobalSubscriber subscribes to the global channel.
@@ -134,43 +181,43 @@ func (eb *EventBus) GlobalPublisher(message *Message) {
 	}()
 */
 
-type TopicStats struct {
-	ObjectUUID string `json:"objectUUID"`
-	PortID     string `json:"portID"`
-	Topic      string `json:"topic"`
+type EventbusTopicStats struct {
+	SourceUUID   string `json:"sourceUUID,omitempty"`
+	SourcePortID string `json:"sourcePortID,omitempty"`
+	Topic        string `json:"topic,omitempty"`
 }
 
-// ListPublishers returns a slice of PublisherStats, each representing a topic and its publisher count.
-func (eb *EventBus) ListPublishers() []TopicStats {
+// ListPublishers returns a slice of EventbusTopicStats, each representing a topic and its publisher count.
+func (eb *EventBus) ListPublishers() []EventbusTopicStats {
 	eb.mu.Lock()
 	defer eb.mu.Unlock()
 
-	var stats []TopicStats
+	var stats []EventbusTopicStats
 	for topic, _ := range eb.handlers {
 		objectUUID, portID := topicSplit(topic)
-		stats = append(stats, TopicStats{
-			ObjectUUID: objectUUID,
-			PortID:     portID,
-			Topic:      topic,
+		stats = append(stats, EventbusTopicStats{
+			SourceUUID:   objectUUID,
+			SourcePortID: portID,
+			Topic:        topic,
 		})
 	}
 	return stats
 }
 
 // ListSubscribers returns a slice of SubscriberStats, each representing a subscriber channel and its topic.
-func (eb *EventBus) ListSubscribers() []TopicStats {
+func (eb *EventBus) ListSubscribers() []EventbusTopicStats {
 	eb.mu.Lock()
 	defer eb.mu.Unlock()
-	var stats []TopicStats
+	var stats []EventbusTopicStats
 	for _, topic := range eb.subscribers {
 		objectUUID, portID := topicSplit(topic)
-		stats = append(stats, TopicStats{
-			ObjectUUID: objectUUID,
-			PortID:     portID,
-			Topic:      topic,
+		stats = append(stats, EventbusTopicStats{
+			SourceUUID:   objectUUID,
+			SourcePortID: portID,
+			Topic:        topic,
 		})
 	}
-	return stats
+	return nil
 }
 
 type WSConnection struct {
@@ -197,7 +244,6 @@ func NewWSConnection(conn *websocket.Conn) *WSConnection {
 func topicSplit(input string) (uuid string, outputID string) {
 	parts := strings.Split(input, "-")
 	if len(parts) != 2 {
-		// If there are not exactly 2 parts, return empty strings or handle the error as needed
 		return "", ""
 	}
 	return parts[0], parts[1]

@@ -17,10 +17,12 @@ type Object interface {
 
 	// Start the processing
 	Start() error
+	SetLoaded()
+	IsLoaded() bool // where the object Start() method has been called
 	Process() error
+	Reset() error // for example this can be called on the 2nd deploy of a counter object, and we want to reset the count back to zero
+	AllowsReset() bool
 	Delete() error
-	SetHotFix()
-	HotFix() bool
 	Lock()
 	Unlock()
 	IsLocked() bool
@@ -44,7 +46,7 @@ type Object interface {
 	MessageBus() map[string]chan *Message
 	PublishMessage(port *Port)
 	GetEventbus() *EventBus
-	AddSubscriptionExistingToPublisher(topic string) (chan *Message, error)
+	AddSubscriptionExistingToPublisher(sourceUUID, sourcePortID string, subscriber chan *Message) (chan *Message, error)
 	GlobalSubscriber() chan *Message
 	GlobalPublisher(message *Message)
 
@@ -109,8 +111,8 @@ type Object interface {
 	// SetStatus -------------------STATS INFO------------------
 	// this is for the node status
 	SetStatus(status ObjectStatus)
-	SetLoopCount(count int)
-	GetLoopCount() int
+	SetLoopCount(count uint)
+	GetLoopCount() uint
 	IncrementLoopCount()
 	ResetLoopCount()
 	GetStats() *ObjectStats

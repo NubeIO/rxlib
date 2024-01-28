@@ -20,6 +20,7 @@ type Permissions struct {
 }
 
 type Requirements struct {
+	CallResetOnDeploy    bool        `json:"callResetOnDeploy"`
 	SupportsWebRoute     bool        `json:"supportsWebRoute,omitempty"`
 	AllowRuntimeAccess   bool        `json:"allowRuntimeAccess,omitempty"`
 	MaxOne               bool        `json:"maxOne,omitempty"`
@@ -100,6 +101,7 @@ type InfoBuilder interface {
 
 	// requirements
 	GetRequirements() *Requirements
+	SetCallResetOnDeploy() InfoBuilder
 	SetSupportsWebRoute() InfoBuilder
 	SetAllowRuntimeAccess() InfoBuilder
 	SetMaxOne() InfoBuilder
@@ -207,6 +209,12 @@ func (builder *infoBuilder) SetLogger(opts *LoggerOpts) InfoBuilder {
 		log.Fatalf("rxlib.SetLogger opts can not be empty")
 	}
 	builder.info.Requirements.LoggerOpts = opts
+	return builder
+}
+
+func (builder *infoBuilder) SetCallResetOnDeploy() InfoBuilder {
+	ensureRequirements(builder.info)
+	builder.info.Requirements.CallResetOnDeploy = true
 	return builder
 }
 

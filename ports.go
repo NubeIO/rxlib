@@ -125,13 +125,13 @@ const (
 	PortTypeBool   PortDataType = "bool"
 )
 
-// some commonlly used output names
+// some commonly used output names
 const (
 	OutputName      string = "output"
 	OutputErrorName string = "error"
 )
 
-// some commonlly used input names
+// some commonly used input names
 const (
 	InputName string = "input"
 	In1Name   string = "in-1"

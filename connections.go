@@ -2,18 +2,19 @@ package rxlib
 
 // Connection defines a structure for input subscriptions.
 type Connection struct {
-	ConnectionUUID string        `json:"connectionUUID"` //the uuid of the connection ***not needed for UI***
-	SourceUUID     string        `json:"source"`         // will always be the output object
-	SourcePort     string        `json:"sourceHandle"`   // output portID
-	SourcePortUUID string        `json:"sourcePortUUID"` // output portUUID ***not needed for UI***
-	TargetUUID     string        `json:"target"`         // objectUUID that has the input connection
-	TargetPort     string        `json:"targetHandle"`   // input portID
-	TargetPortUUID string        `json:"targetPortUUID"` // input portUUID ***not needed for UI***
-	FlowDirection  FlowDirection `json:"flowDirection"`  // subscriber is if it's in an input and publisher or an output ***not needed for UI***
+	UUID                 string        `json:"uuid"`           //the uuid of the connection ***not needed for UI***
+	SourceUUID           string        `json:"source"`         // will always be the output object
+	SourcePort           string        `json:"sourceHandle"`   // output portID
+	SourcePortUUID       string        `json:"sourcePortUUID"` // output portUUID ***not needed for UI***
+	TargetUUID           string        `json:"target"`         // objectUUID that has the input connection
+	TargetPort           string        `json:"targetHandle"`   // input portID
+	TargetPortUUID       string        `json:"targetPortUUID"` // input portUUID ***not needed for UI***
+	FlowDirection        FlowDirection `json:"flowDirection"`  // subscriber is if it's in an input and publisher or an output ***not needed for UI***
+	IsExistingConnection bool          `json:"-"`
 }
 
 /*
-Example of a Trigger obejct output connected to a Count object input
+Example of a Trigger object output connected to a Count object input
 This is whats needed for the UI to work
 
  Trigger obejct (output)
