@@ -28,7 +28,7 @@ func NewEventBus() *EventBus {
 	//go ws.Run()
 	return &EventBus{
 		handlers:    make(map[string][]chan *Message),
-		subscribers: make(map[chan *Message]string),
+		subscribers: make(map[chan *Message]string), // inputs
 		globalChan:  make(chan *Message),
 		WS:          ws,
 	}
@@ -67,9 +67,8 @@ func (eb *EventBus) Publish(topic string, data *Message) {
 	defer eb.mu.Unlock()
 	for _, ch := range eb.handlers[topic] {
 		go func(ch chan *Message) {
-			fmt.Printf("Publishing message to channel: %v\n", ch)
-			fmt.Printf("Message details: ObjectUUID=%s, ObjectID=%s, PortID=%s\n",
-				data.ObjectUUID, data.ObjectID, data.Port.ID)
+			//fmt.Printf("Publishing message to channel: %v\n", ch)
+			//fmt.Printf("Message details: ObjectUUID=%s, ObjectID=%s, PortID=%s\n", data.ObjectUUID, data.ObjectID, data.Port.ID)
 			// Here you could also add code to log the message details to a file or database
 			ch <- data
 		}(ch)

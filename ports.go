@@ -59,12 +59,13 @@ func NewPortAny(id string, opts ...*PortOpts) *NewPort {
 type Port struct {
 	ID              string           `json:"id"`
 	Name            string           `json:"name"`
-	Value           any              `json:"value,omitempty"`       // the value after it's had some transformations
-	ValueRaw        any              `json:"valueRaw,omitempty"`    // the value before any transformations
-	ValueDisplay    any              `json:"valueDisplay"`          // for example 22 %
-	LastUpdated     string           `json:"lastUpdated,omitempty"` // last time it got a message
-	Direction       PortDirection    `json:"direction"`
-	DataType        PortDataType     `json:"dataType"`
+	UUID            string           `json:"uuid"`
+	Value           any              `json:"value,omitempty"`           // the value after it's had some transformations
+	ValueRaw        any              `json:"valueRaw,omitempty"`        // the value before any transformations
+	ValueDisplay    any              `json:"valueDisplay"`              // for example 22 %
+	LastUpdated     string           `json:"lastUpdated,omitempty"`     // last time it got a message
+	Direction       PortDirection    `json:"direction"`                 // input or output
+	DataType        PortDataType     `json:"dataType"`                  // float, bool, string, any, json
 	Transformations *Transformations `json:"transformations,omitempty"` // (if a transformations are used we would add a few extra outputs for valueDisplay and valueRaw)
 	// these are optional and used if you want to keep the last value for later use
 	PreviousValueSet bool           `json:"-"`
@@ -132,7 +133,8 @@ const (
 
 // some commonlly used input names
 const (
-	In1Name string = "in-1"
+	InputName string = "input"
+	In1Name   string = "in-1"
 )
 
 type FlowDirection string

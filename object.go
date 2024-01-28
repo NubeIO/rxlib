@@ -29,7 +29,9 @@ type Object interface {
 	// runtime objects
 	AddRuntimeToObject(runtimeObjects map[string]Object) // gives each object access to every other object
 	GetRuntimeObjects() map[string]Object
-	GetObject(uuid string) (obj Object, exists bool)
+	GetForeignObject(objectUUID string) (obj Object, exists bool)
+	CheckForeignObjectOutputExists(objectUUID, portID string) (*Port, error)
+	CheckForeignObjectInputExists(objectUUID, portID string) (*Port, error)
 	GetObjectsByType(objectID string) []Object // for example get all math/add Object
 	RemoveObjectFromRuntime()
 	GetChildObjects() []Object                      // get all the object inside a folder
@@ -54,9 +56,12 @@ type Object interface {
 	NewOutputPorts(port []*NewPort) error
 	GetAllPorts() []*Port
 	// connections
-	AddConnection(connection *Connection)
+	AddConnection(connection *Connection) error
+	GetConnection(uuid string) (*Connection, error)
 	GetConnections() []*Connection
-	UpdateConnections(connections []*Connection)
+	UpdateConnections(connections []*Connection) *UpdateConnectionsReport
+	RemoveConnection(connection *Connection) *RemoveConnectionReport
+	RemoveAllConnections() []*RemoveConnectionReport
 
 	// inputs
 	GetInput(id string) *Port
