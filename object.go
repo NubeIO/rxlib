@@ -3,6 +3,7 @@ package rxlib
 import (
 	"github.com/NubeIO/schema"
 	"github.com/gin-gonic/gin"
+	"github.com/gookit/event"
 )
 
 type Chain struct {
@@ -43,12 +44,15 @@ type Object interface {
 
 	// event bus
 	BusChannel(inputID string) (chan *Message, bool)
-	MessageBus() map[string]chan *Message
-	PublishMessage(port *Port)
+	//MessageBus() map[string]chan *Message
+	//PublishMessage(port *Port)
 	GetEventbus() *EventBus
-	AddSubscriptionExistingToPublisher(sourceUUID, sourcePortID string, subscriber chan *Message) (chan *Message, error)
-	GlobalSubscriber() chan *Message
-	GlobalPublisher(message *Message)
+	CallBack(m *Message)
+	GetWorker() chan *Message
+	MessageCallBack(e event.Event) error
+	//AddSubscriptionExistingToPublisher(sourceUUID, sourcePortID string, subscriber chan *Message) (chan *Message, error)
+	//GlobalSubscriber() chan *Message
+	//GlobalPublisher(message *Message)
 
 	// ports
 	NewPort(port *Port)

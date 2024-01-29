@@ -2,6 +2,34 @@ package rxlib
 
 import "time"
 
+type Port struct {
+	ID              string           `json:"id"`
+	Name            string           `json:"name"`
+	UUID            string           `json:"uuid"`
+	Value           any              `json:"value,omitempty"`           // the value after it's had some transformations
+	ValueRaw        any              `json:"valueRaw,omitempty"`        // the value before any transformations
+	ValueDisplay    any              `json:"valueDisplay"`              // for example 22 %
+	LastUpdated     string           `json:"lastUpdated,omitempty"`     // last time it got a message
+	Direction       PortDirection    `json:"direction"`                 // input or output
+	DataType        PortDataType     `json:"dataType"`                  // float, bool, string, any, json
+	Transformations *Transformations `json:"transformations,omitempty"` // (if a transformations are used we would add a few extra outputs for valueDisplay and valueRaw)
+	// these are optional and used if you want to keep the last value for later use
+	PreviousValueSet bool           `json:"-"`
+	PreviousValue    *PreviousValue `json:"previousValue,omitempty"`
+	// is a value written from another object
+	WrittenValueSet          bool          `json:"-"`
+	WrittenValue             *WrittenValue `json:"writtenValue,omitempty"`
+	AllowMultipleConnections bool          `json:"allowMultipleConnections,omitempty"`
+
+	// port position is where to show the order on the object and where to hide the port or not
+	DefaultPosition   int  `json:"defaultPosition"`
+	Hide              bool `json:"hide,omitempty"`
+	HiddenByDefault   bool `json:"hiddenByDefault,omitempty"`
+	OverPositionValue int  `json:"overPositionValue,omitempty"`
+
+	OnMessage func(msg *Message)
+}
+
 type PortOpts struct {
 	DefaultPosition          int  `json:"defaultPosition"`
 	HiddenByDefault          bool `json:"hiddenByDefault,omitempty"`
@@ -17,6 +45,19 @@ func portOpts(opts ...*PortOpts) *PortOpts {
 			p.AllowMultipleConnections = opts[0].AllowMultipleConnections
 		}
 	}
+	return p
+}
+
+func NewPortFloatCallBack(id string, f func(message *Message)) *NewPort {
+	p := &NewPort{
+		ID:        id,
+		Name:      id,
+		DataType:  PortTypeFloat,
+		OnMessage: f,
+	}
+	//p.DefaultPosition = portOpts(opts...).DefaultPosition
+	//p.HiddenByDefault = portOpts(opts...).HiddenByDefault
+	//p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
 	return p
 }
 
@@ -56,32 +97,6 @@ func NewPortAny(id string, opts ...*PortOpts) *NewPort {
 	return p
 }
 
-type Port struct {
-	ID              string           `json:"id"`
-	Name            string           `json:"name"`
-	UUID            string           `json:"uuid"`
-	Value           any              `json:"value,omitempty"`           // the value after it's had some transformations
-	ValueRaw        any              `json:"valueRaw,omitempty"`        // the value before any transformations
-	ValueDisplay    any              `json:"valueDisplay"`              // for example 22 %
-	LastUpdated     string           `json:"lastUpdated,omitempty"`     // last time it got a message
-	Direction       PortDirection    `json:"direction"`                 // input or output
-	DataType        PortDataType     `json:"dataType"`                  // float, bool, string, any, json
-	Transformations *Transformations `json:"transformations,omitempty"` // (if a transformations are used we would add a few extra outputs for valueDisplay and valueRaw)
-	// these are optional and used if you want to keep the last value for later use
-	PreviousValueSet bool           `json:"-"`
-	PreviousValue    *PreviousValue `json:"previousValue,omitempty"`
-	// is a value written from another object
-	WrittenValueSet          bool          `json:"-"`
-	WrittenValue             *WrittenValue `json:"writtenValue,omitempty"`
-	AllowMultipleConnections bool          `json:"allowMultipleConnections,omitempty"`
-
-	// port position is where to show the order on the object and where to hide the port or not
-	DefaultPosition   int  `json:"defaultPosition"`
-	Hide              bool `json:"hide,omitempty"`
-	HiddenByDefault   bool `json:"hiddenByDefault,omitempty"`
-	OverPositionValue int  `json:"overPositionValue,omitempty"`
-}
-
 type PreviousValue struct {
 	PreviousValue          any       `json:"previousValue,omitempty"`
 	PreviousValueRaw       any       `json:"previousValueRaw,omitempty"`
@@ -101,6 +116,7 @@ type NewPort struct {
 	AllowMultipleConnections bool `json:"allowMultipleConnections,omitempty"`
 	DefaultPosition          int  `json:"defaultPosition"`
 	HiddenByDefault          bool `json:"hiddenByDefault,omitempty"`
+	OnMessage                func(msg *Message)
 }
 
 type Override struct {
