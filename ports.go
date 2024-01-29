@@ -2,14 +2,13 @@ package rxlib
 
 import "time"
 
-// type T any
-type Port[T any] struct {
+type Port struct {
 	ID                 string           `json:"id"`
 	Name               string           `json:"name"`
 	UUID               string           `json:"uuid"`
-	Value              T                `json:"value,omitempty"` // the value after it's had some transformations
+	Value              any              `json:"value,omitempty"` // the value after it's had some transformations
 	LastUpdated        *time.Time       `json:"lastUpdated"`
-	ValueRaw           T                `json:"valueRaw,omitempty"`           // the value before any transformations
+	ValueRaw           any              `json:"valueRaw,omitempty"`           // the value before any transformations
 	ValueDisplay       any              `json:"valueDisplay"`                 // for example 22 %
 	LastUpdatedDisplay string           `json:"lastUpdatedDisplay,omitempty"` // last time it got a message
 	Direction          PortDirection    `json:"direction"`                    // input or output
@@ -49,34 +48,6 @@ func portOpts(opts ...*PortOpts) *PortOpts {
 	}
 	return p
 }
-
-func (p *Port[T]) SetValue(value T) {
-	p.Value = value
-}
-func (p *Port[T]) SetValueRaw(value T) {
-	p.ValueRaw = value
-}
-
-func CreatePort[T any](id, name, uuid string, dataType PortDataType, direction PortDirection, f func(message *Payload)) *Port[T] {
-	p := &Port[T]{
-		ID:        id,
-		Name:      name,
-		UUID:      uuid,
-		DataType:  dataType,
-		Direction: direction,
-		OnMessage: f,
-	}
-	return p
-}
-
-//func CreatePort[T any](port *Port[T]) *Port[T] {
-//	return &Port[T]{
-//		ID:       port.ID,
-//		Name:     port.Name,
-//		UUID:     port.UUID,
-//		DataType: port.DataType,
-//	}
-//}
 
 // ToTime returns a pointer to the passed time.Time value.
 func toTime(t time.Time) *time.Time {

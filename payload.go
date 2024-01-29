@@ -3,9 +3,9 @@ package rxlib
 import "time"
 
 type Payload struct {
-	Port       *Port[any] `json:"port"`
-	ObjectUUID string     `json:"objectUUID"`
-	ObjectID   string     `json:"objectID"`
+	Port       *Port  `json:"port"`
+	ObjectUUID string `json:"objectUUID"`
+	ObjectID   string `json:"objectID"`
 }
 
 func (p *Payload) GetValue() any {
@@ -32,7 +32,7 @@ func (p *Payload) GetPortName() string {
 	return p.Port.Name
 }
 
-func (p *Payload) GetPort() *Port[any] {
+func (p *Payload) GetPort() *Port {
 	return p.Port
 }
 

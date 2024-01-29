@@ -32,8 +32,8 @@ type Object interface {
 	AddRuntimeToObject(runtimeObjects map[string]Object) // gives each object access to every other object
 	GetRuntimeObjects() map[string]Object
 	GetForeignObject(objectUUID string) (obj Object, exists bool)
-	CheckForeignObjectOutputExists(objectUUID, portID string) (*Port[any], error)
-	CheckForeignObjectInputExists(objectUUID, portID string) (*Port[any], error)
+	CheckForeignObjectOutputExists(objectUUID, portID string) (*Port, error)
+	CheckForeignObjectInputExists(objectUUID, portID string) (*Port, error)
 	GetObjectsByType(objectID string) []Object // for example get all math/add Object
 	RemoveObjectFromRuntime()
 	GetChildObjects() []Object                      // get all the object inside a folder
@@ -48,14 +48,12 @@ type Object interface {
 	DeleteExtension(name string)
 
 	// ports
-	NewPort(port *Port[any])
-	NewInputPortAny(port *Port[any]) error
-	NewInputPortFloat(port *Port[float64]) error
+	NewPort(port *Port)
 	NewInputPort(port *NewPort) error
 	NewInputPorts(port []*NewPort) error
 	NewOutputPort(port *NewPort) error
 	NewOutputPorts(port []*NewPort) error
-	GetAllPorts() []*Port[any]
+	GetAllPorts() []*Port
 	// connections
 	AddConnection(connection *Connection) error
 	GetConnection(uuid string) (*Connection, error)
@@ -65,13 +63,13 @@ type Object interface {
 	RemoveAllConnections() []*RemoveConnectionReport
 
 	// inputs
-	GetInput(id string) *Port[any]
-	GetInputs() []*Port[any]
+	GetInput(id string) *Port
+	GetInputs() []*Port
 	SetInputValue(id string, value any) error
 
 	// ouputs
-	GetOutputs() []*Port[any]
-	GetOutput(id string) *Port[any]
+	GetOutputs() []*Port
+	GetOutput(id string) *Port
 	// WriteValue update the port value; pass in option withTimestamp to timestamp to write
 	WriteValue(portID string, value any, withTimestamp ...bool) error
 
@@ -186,9 +184,9 @@ type Object interface {
 }
 
 type ObjectValue struct {
-	ObjectId   string       `json:"objectID"`
-	ObjectUUID string       `json:"objectUUID"`
-	Ports      []*Port[any] `json:"ports"`
+	ObjectId   string  `json:"objectID"`
+	ObjectUUID string  `json:"objectUUID"`
+	Ports      []*Port `json:"ports"`
 }
 
 type Position struct {
