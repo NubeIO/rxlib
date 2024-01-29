@@ -11,7 +11,7 @@ func TestNewObjectBuilder(t *testing.T) {
 	//if validation != nil {
 	//	builder.SetHaltReason(&ValidationMessage{
 	//		//Error:       fmt.Errorf("ERROROR"),
-	//		Message:     "Message Message",
+	//		Payload:     "Payload Payload",
 	//		Explanation: "Explanation Explanation",
 	//	})
 	//

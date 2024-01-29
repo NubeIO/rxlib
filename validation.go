@@ -53,11 +53,11 @@ type ValidationMessage struct {
 //	if m.Error != nil {
 //		message = m.Error.Error()
 //	} else {
-//		message = m.Message
+//		message = m.Payload
 //	}
 //	ev.Custom = &NewValidation{
 //		Error:       m.Error,
-//		Message:     message,
+//		Payload:     message,
 //		Explanation: m.Explanation,
 //		Timestamp:   time.Now().UTC(),
 //	}
@@ -75,7 +75,7 @@ type ValidationMessage struct {
 //	}
 //	return &ErrorsAndValidation{
 //		Type:   v,
-//		Custom: &NewValidation{Message: m.Message, Explanation: m.Explanation, Error: m.Error, Timestamp: time.Now().UTC()},
+//		Custom: &NewValidation{Payload: m.Payload, Explanation: m.Explanation, Error: m.Error, Timestamp: time.Now().UTC()},
 //	}, nil
 //}
 //
@@ -85,11 +85,11 @@ type ValidationMessage struct {
 //	if m.Error != nil {
 //		message = m.Error.Error()
 //	} else {
-//		message = m.Message
+//		message = m.Payload
 //	}
 //	ev.ObjectError = &NewValidation{
 //		Error:       m.Error,
-//		Message:     message,
+//		Payload:     message,
 //		Explanation: m.Explanation,
 //		Timestamp:   time.Now().UTC(),
 //	}
@@ -101,11 +101,11 @@ type ValidationMessage struct {
 //	if m.Error != nil {
 //		message = m.Error.Error()
 //	} else {
-//		message = m.Message
+//		message = m.Payload
 //	}
 //	ev.Halt = &NewValidation{
 //		Error:       m.Error,
-//		Message:     message,
+//		Payload:     message,
 //		Explanation: m.Explanation,
 //		Timestamp:   time.Now().UTC(),
 //	}
@@ -117,11 +117,11 @@ type ValidationMessage struct {
 //	if m.Error != nil {
 //		message = m.Error.Error()
 //	} else {
-//		message = m.Message
+//		message = m.Payload
 //	}
 //	ev.Validation = &NewValidation{
 //		Error:       m.Error,
-//		Message:     message,
+//		Payload:     message,
 //		Explanation: m.Explanation,
 //		Timestamp:   time.Now().UTC(),
 //	}

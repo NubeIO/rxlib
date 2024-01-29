@@ -15,14 +15,14 @@ const (
 type ObjectType string
 
 const (
-	Logic        ObjectType = "logic"         // logic: this would be something like a math node
-	Driver       ObjectType = "driver"        //driver: this would be something like a modbus network
-	RubixNetwork ObjectType = "rubix-network" //rubix-network: is a network a ROS instances
-	Service      ObjectType = "service"       // service: this would be something like user service
-	Extension    ObjectType = "extension"     // extension: this would be something component of a service to an object; eg we have the history service, and we will add the COV component
+	Logic               ObjectType = "logic"         // logic: this would be something like a math node
+	Driver              ObjectType = "driver"        //driver: this would be something like a modbus network
+	RubixNetwork        ObjectType = "rubix-network" //rubix-network: is a network a ROS instances
+	Service             ObjectType = "service"       // service: this would be something like user service
+	ExtensionObjectType ObjectType = "extension"     // extension: this would be something component of a service to an object; eg we have the history service, and we will add the COV component
 )
 
-var AllObjectType = []ObjectType{Logic, Driver, Service, Extension, RubixNetwork}
+var AllObjectType = []ObjectType{Logic, Driver, Service, ExtensionObjectType, RubixNetwork}
 
 type ObjectTypeTag string
 

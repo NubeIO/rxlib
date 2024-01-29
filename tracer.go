@@ -136,7 +136,7 @@ func (t *Trace) newLog(level zerolog.Level, logMessage, messageType string) {
 		t.Messages = t.Messages[1:]
 	}
 
-	//text := fmt.Sprintf("app=%s trace=%s message=%s", l.LoggerName, l.Name, newMessage.Message)
+	//text := fmt.Sprintf("app=%s trace=%s message=%s", l.LoggerName, l.Name, newMessage.Payload)
 	text := fmt.Sprintf("[app=%-6s] | trace=%-15s | %-10s", strings.ToUpper(t.LoggerName), fmt.Sprintf("%s:%s", t.Name, t.LoggerUUID), newMessage.Message)
 
 	switch level {

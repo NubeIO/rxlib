@@ -3,7 +3,6 @@ package rxlib
 import (
 	"github.com/NubeIO/schema"
 	"github.com/gin-gonic/gin"
-	"github.com/gookit/event"
 )
 
 type Chain struct {
@@ -33,8 +32,8 @@ type Object interface {
 	AddRuntimeToObject(runtimeObjects map[string]Object) // gives each object access to every other object
 	GetRuntimeObjects() map[string]Object
 	GetForeignObject(objectUUID string) (obj Object, exists bool)
-	CheckForeignObjectOutputExists(objectUUID, portID string) (*Port, error)
-	CheckForeignObjectInputExists(objectUUID, portID string) (*Port, error)
+	CheckForeignObjectOutputExists(objectUUID, portID string) (*Port[any], error)
+	CheckForeignObjectInputExists(objectUUID, portID string) (*Port[any], error)
 	GetObjectsByType(objectID string) []Object // for example get all math/add Object
 	RemoveObjectFromRuntime()
 	GetChildObjects() []Object                      // get all the object inside a folder
@@ -42,25 +41,21 @@ type Object interface {
 	GetParentObject(uuid string) (obj Object, exists bool)
 	GetParentUUID() string
 
-	// event bus
-	BusChannel(inputID string) (chan *Message, bool)
-	//MessageBus() map[string]chan *Message
-	//PublishMessage(port *Port)
-	GetEventbus() *EventBus
-	CallBack(m *Message)
-	GetWorker() chan *Message
-	MessageCallBack(e event.Event) error
-	//AddSubscriptionExistingToPublisher(sourceUUID, sourcePortID string, subscriber chan *Message) (chan *Message, error)
-	//GlobalSubscriber() chan *Message
-	//GlobalPublisher(message *Message)
+	// AddExtension extension are a way to extend the functionalists of an object; for example add a history extension
+	AddExtension(extension Object)
+	GetExtensions() map[string]Object
+	GetExtension(id string) Object
+	DeleteExtension(name string)
 
 	// ports
-	NewPort(port *Port)
+	NewPort(port *Port[any])
+	NewInputPortAny(port *Port[any]) error
+	NewInputPortFloat(port *Port[float64]) error
 	NewInputPort(port *NewPort) error
 	NewInputPorts(port []*NewPort) error
 	NewOutputPort(port *NewPort) error
 	NewOutputPorts(port []*NewPort) error
-	GetAllPorts() []*Port
+	GetAllPorts() []*Port[any]
 	// connections
 	AddConnection(connection *Connection) error
 	GetConnection(uuid string) (*Connection, error)
@@ -70,15 +65,19 @@ type Object interface {
 	RemoveAllConnections() []*RemoveConnectionReport
 
 	// inputs
-	GetInput(id string) *Port
-	GetInputs() []*Port
+	GetInput(id string) *Port[any]
+	GetInputs() []*Port[any]
 	SetInputValue(id string, value any) error
 
 	// ouputs
-	GetOutputs() []*Port
-	GetOutput(id string) *Port
+	GetOutputs() []*Port[any]
+	GetOutput(id string) *Port[any]
+	// WriteValue update the port value; pass in option withTimestamp to timestamp to write
+	WriteValue(portID string, value any, withTimestamp ...bool) error
 
-	// values
+	//GetAllObjectValues ObjectValue are a way for one node to direly get and send data to another node
+	// PreviousValue is the last value saved
+	// WrittenValue is a value written from another object; this is useful for example on network object where the network is doing the polling and can quickly update the devices/points
 	GetAllObjectValues() []*ObjectValue
 	SetOutputPreviousValue(id string, value *PreviousValue) error
 	GetOutputPreviousValue(id string) *PreviousValue
@@ -92,8 +91,9 @@ type Object interface {
 
 	// data TODO maybe add a cache timeout, also a GetTheDelete() and a Delete()
 	GetData() map[string]any
-	AddData(key string, data any) // addData is a way for a node to store something in memory
-	GetDataByKey(key string, out interface{}) error
+	SetData(key string, data any) // addData is a way for a node to store something in memory
+	DeleteData(key string) error
+	GetDataByKey(key string, out any) error
 
 	// GetRootObject object tree
 	GetRootObject(uuid string) (Object, error)
@@ -186,9 +186,9 @@ type Object interface {
 }
 
 type ObjectValue struct {
-	ObjectId   string  `json:"objectID"`
-	ObjectUUID string  `json:"objectUUID"`
-	Ports      []*Port `json:"ports"`
+	ObjectId   string       `json:"objectID"`
+	ObjectUUID string       `json:"objectUUID"`
+	Ports      []*Port[any] `json:"ports"`
 }
 
 type Position struct {

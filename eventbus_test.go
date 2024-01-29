@@ -20,11 +20,11 @@ func TestNewEventBus(t *testing.T) {
 	topic := "testTopic"
 
 	// Define a channel to receive message
-	received := make(chan *Message, 1)
+	received := make(chan *Payload, 1)
 
 	// Subscribe to the topic
 	eb.Subscribe(topic, "testHandler", func(e event.Event) error {
-		msg, ok := e.Get("message").(*Message)
+		msg, ok := e.Get("message").(*Payload)
 		if ok {
 			received <- msg
 		}
@@ -32,7 +32,7 @@ func TestNewEventBus(t *testing.T) {
 	})
 
 	// Publish a message to the topic
-	testMessage := &Message{ObjectUUID: "Hello, EventBus!"}
+	testMessage := &Payload{ObjectUUID: "Hello, EventBus!"}
 	eb.Publish(topic, testMessage)
 
 	// Wait and check if we received the message
