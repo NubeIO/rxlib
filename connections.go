@@ -10,7 +10,7 @@ type Connection struct {
 	TargetPort           string        `json:"targetHandle"`   // input portID
 	TargetPortUUID       string        `json:"targetPortUUID"` // input portUUID ***not needed for UI***
 	FlowDirection        FlowDirection `json:"flowDirection"`  // subscriber is if it's in an input and publisher or an output ***not needed for UI***
-	IsExistingConnection bool          `json:"-"`
+	IsExistingConnection bool          `json:"IsExistingConnection"`
 }
 
 /*

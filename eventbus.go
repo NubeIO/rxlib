@@ -26,19 +26,19 @@ type EventBus struct {
 	subscribers    map[chan *Message]string
 	closedChannels map[chan *Message]*ClosedChannel
 	globalChan     chan *Message // Global channel for publishing and subscribing
-	WS             *WSHub
+	//WS             *WSHub
 }
 
 // NewEventBus creates a new EventBus.
 func NewEventBus() *EventBus {
-	ws := NewWSHub()
+	//ws := NewWSHub()
 	//go ws.Run()
 	return &EventBus{
 		handlers:       make(map[string][]chan *Message),
 		subscribers:    make(map[chan *Message]string), // inputs
 		closedChannels: make(map[chan *Message]*ClosedChannel),
 		globalChan:     make(chan *Message),
-		WS:             ws,
+		//WS:             ws,
 	}
 }
 
