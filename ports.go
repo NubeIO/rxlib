@@ -1,6 +1,8 @@
 package rxlib
 
-import "time"
+import (
+	"time"
+)
 
 type Port struct {
 	ID                 string           `json:"id"`
@@ -49,21 +51,16 @@ func portOpts(opts ...*PortOpts) *PortOpts {
 	return p
 }
 
-// ToTime returns a pointer to the passed time.Time value.
-func toTime(t time.Time) *time.Time {
-	return &t
-}
-
-func NewPortFloatCallBack(id string, f func(message *Payload)) *NewPort {
+func NewPortFloatCallBack(id string, f func(message *Payload), opts ...*PortOpts) *NewPort {
 	p := &NewPort{
 		ID:        id,
 		Name:      id,
 		DataType:  PortTypeFloat,
 		OnMessage: f,
 	}
-	//p.DefaultPosition = portOpts(opts...).DefaultPosition
-	//p.HiddenByDefault = portOpts(opts...).HiddenByDefault
-	//p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
+	p.DefaultPosition = portOpts(opts...).DefaultPosition
+	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
+	p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
 	return p
 }
 

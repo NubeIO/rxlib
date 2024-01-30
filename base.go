@@ -42,9 +42,9 @@ type Object interface {
 	GetParentUUID() string
 
 	// AddExtension extension are a way to extend the functionalists of an object; for example add a history extension
-	AddExtension(extension Object)
-	GetExtensions() map[string]Object
-	GetExtension(id string) Object
+	AddExtension(extension Object) error
+	GetExtensions() []Object
+	GetExtension(id string) (Object, error)
 	DeleteExtension(name string)
 
 	// ports
