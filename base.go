@@ -45,7 +45,7 @@ type Object interface {
 	AddExtension(extension Object) error
 	GetExtensions() []Object
 	GetExtension(id string) (Object, error)
-	DeleteExtension(name string)
+	DeleteExtension(name string) error
 
 	// ports
 	NewPort(port *Port)
