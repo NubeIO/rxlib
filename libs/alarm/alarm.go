@@ -138,7 +138,7 @@ func (m *manager) DeleteTransactions(uuids map[string]string) {
 }
 
 type Alarm interface {
-	AddTransaction(status AlarmStatus, t Transaction)
+	AddTransaction(body *AddTransaction, t Transaction)
 	SetStatus(status AlarmStatus)
 	GetUUID() string
 	GetTransactions() []Transaction
@@ -175,10 +175,33 @@ type AlarmEntry struct {
 	LimitTransactionCount int                 `json:"limitTransactionCount"`
 }
 
-func (a *AlarmEntry) AddTransaction(status AlarmStatus, t Transaction) {
+type AddTransaction struct {
+	Status   AlarmStatus   `json:"status"`   // Active
+	Severity AlarmSeverity `json:"severity"` // Crucial
+	Target   string        `json:"target,omitempty"`
+	Title    string        `json:"title,omitempty"`
+	Body     string        `json:"body,omitempty"`
+}
+
+func NewTransactionBody(status AlarmStatus, severity AlarmSeverity, title, body string) *AddTransaction {
+	return &AddTransaction{
+		Status:   status,
+		Severity: severity,
+		Target:   "",
+		Title:    title,
+		Body:     body,
+	}
+}
+
+func (a *AlarmEntry) AddTransaction(body *AddTransaction, t Transaction) {
 	if te, ok := t.(*TransactionEntry); ok {
 		te.AlarmUUID = a.GetUUID() // Set the AlarmUUID to the UUID of the AlarmEntry
-		te.SetStatus(status)
+		te.SetStatus(body.Status)
+		te.SetBody(body.Body)
+		te.SetTitle(body.Title)
+		te.SetSeverity(body.Severity)
+		te.lastUpdated()
+		te.createdAt()
 		a.Transactions = append(a.Transactions, te)
 		// Update the alarm status and last updated timestamp here
 		a.Status = a.calculateAlarmStatus()
@@ -199,14 +222,15 @@ func (a *AlarmEntry) calculateAlarmStatus() AlarmStatus {
 
 func transactionToTransactionEntry(alarmUUID string, t Transaction) *TransactionEntry {
 	return &TransactionEntry{
-		UUID:      t.GetUUID(),
-		AlarmUUID: alarmUUID,
-		Status:    t.GetStatus(),
-		Severity:  t.GetSeverity(),
-		Target:    t.GetTarget(),
-		Title:     t.GetTitle(),
-		Body:      t.GetBody(),
-		CreatedAt: t.GetCreatedAt(),
+		UUID:        t.GetUUID(),
+		AlarmUUID:   alarmUUID,
+		Status:      t.GetStatus(),
+		Severity:    t.GetSeverity(),
+		Target:      t.GetTarget(),
+		Title:       t.GetTitle(),
+		Body:        t.GetBody(),
+		CreatedAt:   t.GetCreatedAt(),
+		LastUpdated: t.GetLastUpdated(),
 	}
 }
 
@@ -220,9 +244,13 @@ func (a *AlarmEntry) GetAllTransactionsEntries() map[string][]*TransactionEntry 
 	return transactions
 }
 
-func (a *AlarmEntry) SetStatus(status AlarmStatus) {
-	a.Status = status
+func (a *AlarmEntry) lastUpdated() {
 	a.LastUpdated = time.Now()
+}
+
+func (a *AlarmEntry) SetStatus(status AlarmStatus) {
+	a.lastUpdated()
+	a.Status = status
 }
 
 func (a *AlarmEntry) GetUUID() string {
@@ -378,38 +406,60 @@ type Transaction interface {
 	GetAlarmUUID() string
 	GetUUID() string
 	GetStatus() AlarmStatus
-	GetSeverity() string
+	GetSeverity() AlarmSeverity
 	GetTarget() string
 	GetTitle() string
 	GetBody() string
 	GetCreatedAt() time.Time
+	GetLastUpdated() time.Time
+
+	SetTitle(title string)
+	SetStatus(state AlarmStatus)
+	SetSeverity(s AlarmSeverity)
+	SetBody(body string)
 }
 
 type TransactionEntry struct {
-	UUID      string      `json:"uuid"`
-	AlarmUUID string      `json:"alarmUUID"`
-	Status    AlarmStatus `json:"status"`   // Active
-	Severity  string      `json:"severity"` // Crucial
-	Target    string      `json:"target,omitempty"`
-	Title     string      `json:"title,omitempty"`
-	Body      string      `json:"body,omitempty"`
-	CreatedAt time.Time   `json:"createdAt,omitempty"`
+	Title       string        `json:"title,omitempty"`
+	Status      AlarmStatus   `json:"status"`   // Active
+	Severity    AlarmSeverity `json:"severity"` // Crucial
+	Target      string        `json:"target,omitempty"`
+	Body        string        `json:"body,omitempty"`
+	UUID        string        `json:"uuid"`
+	AlarmUUID   string        `json:"alarmUUID"`
+	CreatedAt   time.Time     `json:"createdAt,omitempty"`
+	LastUpdated time.Time     `json:"lastUpdated,omitempty"`
+}
+
+func (t *TransactionEntry) SetTitle(title string) {
+	t.Title = title
+}
+
+func (t *TransactionEntry) SetSeverity(s AlarmSeverity) {
+	t.Severity = s
+}
+
+func (t *TransactionEntry) SetBody(body string) {
+	t.Body = body
 }
 
 func NewTransaction() Transaction {
 	s := &TransactionEntry{
 		UUID: helpers.UUID(),
 	}
+	s.createdAt()
 	return s
 }
 
-func NewTransactionEntry() *TransactionEntry {
-	return &TransactionEntry{
-		UUID: helpers.UUID(),
-	}
+func (t *TransactionEntry) lastUpdated() {
+	t.LastUpdated = time.Now()
+}
+func (t *TransactionEntry) createdAt() {
+	t.CreatedAt = time.Now()
 }
 
 func (t *TransactionEntry) SetStatus(status AlarmStatus) {
+	t.lastUpdated()
 	t.Status = status
 }
 
@@ -417,7 +467,7 @@ func (t *TransactionEntry) GetStatus() AlarmStatus {
 	return t.Status
 }
 
-func (t *TransactionEntry) GetSeverity() string {
+func (t *TransactionEntry) GetSeverity() AlarmSeverity {
 	return t.Severity
 }
 
@@ -442,10 +492,9 @@ func (t *TransactionEntry) GetUUID() string {
 
 }
 
-func (t *TransactionEntry) GetValue() interface{} {
-	return t.Body
-}
-
 func (t *TransactionEntry) GetCreatedAt() time.Time {
 	return t.CreatedAt
+}
+func (t *TransactionEntry) GetLastUpdated() time.Time {
+	return t.LastUpdated
 }

@@ -14,10 +14,8 @@ func TestNewAlarmManager(t *testing.T) {
 
 	// Create and add transactions to the Alarm
 	transaction1 := NewTransaction()
-	transaction2 := NewTransaction()
 
-	alarm1.AddTransaction(transaction1)
-	alarm1.AddTransaction(transaction2)
+	alarm1.AddTransaction(NewTransactionBody(AlarmStatusClosed, AlarmSeverityCrucial, "text", "hello alarms"), transaction1)
 
 	// Retrieve and display all Alarms
 	alarms := alarmManager.All()
