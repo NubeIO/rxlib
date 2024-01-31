@@ -2,11 +2,13 @@ package helpers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/google/uuid"
 	"math/rand"
 	"os"
 	"strings"
 	"time"
+	"unicode"
 )
 
 func PrintJSON(x interface{}) {
@@ -25,7 +27,7 @@ func UUID(prefix ...string) string {
 	uuidString := strings.ReplaceAll(u.String(), "-", "")
 	uuidString = shuffleCharacters(uuidString)
 	shortUUID := uuidString[:16]
-	return shortUUID
+	return fmt.Sprintf("i%s", shortUUID)
 }
 
 func shuffleCharacters(word string) string {
@@ -35,9 +37,18 @@ func shuffleCharacters(word string) string {
 	// Convert the word to a slice of characters
 	characters := []rune(word)
 
-	// Randomly shuffle the characters using Fisher-Yates algorithm
-	for i := len(characters) - 1; i > 0; i-- {
-		j := rand.Intn(i + 1)
+	// Find the index of the first letter in the original word
+	firstLetterIndex := 0
+	for i, char := range characters {
+		if unicode.IsLetter(char) {
+			firstLetterIndex = i
+			break
+		}
+	}
+
+	// Randomly shuffle the characters starting from the first letter using Fisher-Yates algorithm
+	for i := len(characters) - 1; i > firstLetterIndex; i-- {
+		j := rand.Intn(i-firstLetterIndex+1) + firstLetterIndex
 		characters[i], characters[j] = characters[j], characters[i]
 	}
 

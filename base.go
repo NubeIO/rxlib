@@ -18,6 +18,7 @@ type Object interface {
 	New(object Object, opts ...any) Object
 
 	// Start the processing
+	Init() error
 	Start() error
 	SetLoaded()
 	IsLoaded() bool // where the object Start() method has been called
@@ -54,8 +55,8 @@ type Object interface {
 	RequiredExtensionListCount() (extensionsCount int) // get a count if there are any required extensions or not
 	IsExtensionsAdded(objectID string) (addedCount int)
 	//HistoryManager history's
-	HistoryManager() history.Manager
-	AddHistoryManager(h history.Manager)
+	GetHistoryManager() (history.Manager, error)
+	SetHistoryManager(h history.Manager)
 
 	// ports
 	NewPort(port *Port)

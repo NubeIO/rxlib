@@ -2,6 +2,7 @@ package history
 
 import (
 	"fmt"
+	pprint "github.com/NubeIO/rubix-rx/helpers/print"
 	"testing"
 )
 
@@ -37,6 +38,7 @@ func TestNewHistoryManager(t *testing.T) {
 
 	// Get a list of all histories
 	allHistories := historyManager.All()
+	pprint.PrintJOSN(allHistories)
 
 	// Get all samples across all histories
 	allSamples := historyManager.AllSamples()
