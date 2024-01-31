@@ -15,9 +15,9 @@ type Connection struct {
 
 /*
 Example of a Trigger object output connected to a Count object input
-This is whats needed for the UI to work
+This is what's needed for the UI to work
 
- Trigger obejct (output)
+ Trigger object (output)
  "source": "triggerABC",
  "sourceHandle": "output",
  "target": "counterABC",
@@ -32,6 +32,24 @@ This is whats needed for the UI to work
 "flowDirection": "subscriber"
 
 */
+
+func NewConnection(sourceUUID, sourcePort, targetUUID, targetPort string) (publisher *Connection, subscriber *Connection, err error) {
+	publisher = &Connection{
+		SourceUUID:    sourceUUID,
+		SourcePort:    sourcePort,
+		TargetUUID:    targetUUID,
+		TargetPort:    targetPort,
+		FlowDirection: DirectionPublisher,
+	}
+	subscriber = &Connection{
+		SourceUUID:    publisher.SourceUUID,
+		SourcePort:    publisher.SourcePort,
+		TargetUUID:    publisher.TargetUUID,
+		TargetPort:    publisher.TargetPort,
+		FlowDirection: DirectionSubscriber,
+	}
+	return publisher, subscriber, nil
+}
 
 type UpdateConnectionsReport struct {
 	ExistingCount int      `json:"existingCount"` // before we started updating/deleting get the existing count

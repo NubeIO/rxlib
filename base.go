@@ -1,8 +1,10 @@
 package rxlib
 
 import (
+	"github.com/NubeIO/rxlib/libs/history"
 	"github.com/NubeIO/schema"
 	"github.com/gin-gonic/gin"
+	"github.com/gookit/event"
 )
 
 type Chain struct {
@@ -47,6 +49,14 @@ type Object interface {
 	GetExtension(id string) (Object, error)
 	DeleteExtension(name string) error
 
+	SetRequiredExtensions(extension []*Extension)
+	GetRequiredExtensions() []*Extension
+	RequiredExtensionListCount() (extensionsCount int) // get a count if there are any required extensions or not
+	IsExtensionsAdded(objectID string) (addedCount int)
+	//HistoryManager history's
+	HistoryManager() history.Manager
+	AddHistoryManager(h history.Manager)
+
 	// ports
 	NewPort(port *Port)
 	NewInputPort(port *NewPort) error
@@ -54,7 +64,9 @@ type Object interface {
 	NewOutputPort(port *NewPort) error
 	NewOutputPorts(port []*NewPort) error
 	GetAllPorts() []*Port
-	// connections
+
+	// CreateConnection is for just adding a connection without adding it to the eventbus
+	CreateConnection(connection *Connection)
 	AddConnection(connection *Connection) error
 	GetConnection(uuid string) (*Connection, error)
 	GetConnections() []*Connection
@@ -70,8 +82,10 @@ type Object interface {
 	// ouputs
 	GetOutputs() []*Port
 	GetOutput(id string) *Port
-	// WriteValue update the port value; pass in option withTimestamp to timestamp to write
-	WriteValue(portID string, value any, withTimestamp ...bool) error
+	// PublishValue update the port value; pass in option withTimestamp to timestamp to write
+	PublishValue(portID string, value any, withTimestamp ...bool) error
+	PublishLastValue(portID string) (value any, err error) // will republish its last know value on the eventbus
+	SubscribePassive(handler func(e event.Event) error)    // a global heartbeat sent from the server evey X min; main use case for this is to reduce the amount of jobs needed to be created
 
 	//GetAllObjectValues ObjectValue are a way for one node to direly get and send data to another node
 	// PreviousValue is the last value saved
@@ -199,4 +213,8 @@ type Meta struct {
 	ObjectName string   `json:"name"`                 // comes from UI need to set in objectInfo
 	ParentUUID string   `json:"parentUUID,omitempty"` // comes from UI need to set in objectInfo
 	Position   Position `json:"position"`
+}
+
+func NewMeta(meta *Meta) *Meta {
+	return meta
 }

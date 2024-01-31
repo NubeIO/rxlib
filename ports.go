@@ -33,6 +33,38 @@ type Port struct {
 	OnMessage func(msg *Payload) // used for the evntbus
 }
 
+func (p *Port) GetID() string {
+	return p.ID
+}
+
+func (p *Port) GetUUID() string {
+	return p.UUID
+}
+
+func (p *Port) SetValue(value any) {
+	p.Value = value
+}
+
+func (p *Port) GetValue() any {
+	return p.Value
+}
+
+func (p *Port) SetWrittenValue(v *WrittenValue) {
+	p.WrittenValueSet = true
+	p.WrittenValue = v
+}
+
+func (p *Port) GetWrittenValue() *WrittenValue {
+	return p.WrittenValue
+}
+
+func (p *Port) GetWrittenValueCurrent() (value any, ok bool) {
+	if p.WrittenValue != nil {
+		return p.WrittenValue.Value, true
+	}
+	return nil, false
+}
+
 type PortOpts struct {
 	DefaultPosition          int  `json:"defaultPosition"`
 	HiddenByDefault          bool `json:"hiddenByDefault,omitempty"`
