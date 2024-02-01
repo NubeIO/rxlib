@@ -7,16 +7,19 @@ import (
 
 type Manager interface {
 	// NewHistory creates a new history with the specified limitSampleSize.
-	NewHistory(limitSampleSize int) History
+	NewHistory(limitSampleSize int, objectUUID string) History
 
 	// Get retrieves a history by its UUID.
 	Get(uuid string) History
 
+	// AllHistories returns a slice of all available histories. with some stats
+	AllHistories() []*AllHistories
+
 	// All returns a slice of all available histories.
 	All() []History
 
-	// AllSamples returns a map of all samples across all histories.
-	AllSamples() map[string][]Record
+	// AllRecords returns a map of all samples across all histories.
+	AllRecords() map[string][]Record
 
 	// Drop deletes a history by its UUID.
 	Drop(uuid string)
@@ -27,15 +30,15 @@ type Manager interface {
 	// GetPagination retrieves paginated samples for all histories managed by the Manager.
 	GetPagination(pageNumber, pageSize int) map[string][]Record
 
-	// GetSamplesByDateRange retrieves samples within a specified date range for all histories managed by the Manager.
-	GetSamplesByDateRange(startDate, endDate time.Time) map[string][]Record
+	// GetRecordsByDateRange retrieves samples within a specified date range for all histories managed by the Manager.
+	GetRecordsByDateRange(startDate, endDate time.Time) map[string][]Record
 
-	// GetSamplesByTime retrieves samples within a specified time duration for all histories managed by the Manager.
+	// GetRecordsByTime retrieves samples within a specified time duration for all histories managed by the Manager.
 	// It takes a startDate and duration string (e.g., "10s", "1h") as input and returns a map where keys are UUIDs
-	GetSamplesByTime(startDate time.Time, duration string) (map[string][]Record, error)
+	GetRecordsByTime(startDate time.Time, duration string) (map[string][]Record, error)
 
-	// DeleteSamples deletes samples from specified histories based on UUIDs for all histories managed by the Manager.
-	DeleteSamples(uuids map[string]string)
+	// DeleteRecords deletes samples from specified histories based on UUIDs for all histories managed by the Manager.
+	DeleteRecords(uuids map[string]string)
 }
 
 type historyManager struct {
@@ -49,8 +52,8 @@ func NewHistoryManager() Manager {
 	}
 }
 
-func (hm *historyManager) NewHistory(limitSampleSize int) History {
-	history := NewGenericHistory(limitSampleSize)
+func (hm *historyManager) NewHistory(limitSampleSize int, objectUUID string) History {
+	history := NewGenericHistory(limitSampleSize, objectUUID)
 	hm.mu.Lock()
 	defer hm.mu.Unlock()
 	hm.histories[history.GetUUID()] = history
@@ -63,6 +66,29 @@ func (hm *historyManager) Get(uuid string) History {
 	return hm.histories[uuid]
 }
 
+type AllHistories struct {
+	ObjectUUID  string   `json:"objectUUID"`
+	HistoryUUID string   `json:"historyUUID"`
+	Count       int      `json:"count"`
+	Histories   []Record `json:"histories"`
+}
+
+func (hm *historyManager) AllHistories() []*AllHistories {
+	hm.mu.RLock()
+	defer hm.mu.RUnlock()
+	histories := make([]*AllHistories, 0, len(hm.histories))
+	for _, history := range hm.histories {
+		h := &AllHistories{
+			HistoryUUID: history.GetUUID(),
+			ObjectUUID:  history.GetObjectUUID(),
+			Count:       len(history.GetRecords()),
+			Histories:   history.GetRecords(),
+		}
+		histories = append(histories, h)
+	}
+	return histories
+}
+
 func (hm *historyManager) All() []History {
 	hm.mu.RLock()
 	defer hm.mu.RUnlock()
@@ -73,12 +99,12 @@ func (hm *historyManager) All() []History {
 	return histories
 }
 
-func (hm *historyManager) AllSamples() map[string][]Record {
+func (hm *historyManager) AllRecords() map[string][]Record {
 	hm.mu.RLock()
 	defer hm.mu.RUnlock()
 	samples := make(map[string][]Record)
 	for uuid, history := range hm.histories {
-		samples[uuid] = history.GetSamples()
+		samples[uuid] = history.GetRecords()
 	}
 	return samples
 }
@@ -109,21 +135,21 @@ func (hm *historyManager) GetPagination(pageNumber, pageSize int) map[string][]R
 	return pagination
 }
 
-func (hm *historyManager) GetSamplesByDateRange(startDate, endDate time.Time) map[string][]Record {
+func (hm *historyManager) GetRecordsByDateRange(startDate, endDate time.Time) map[string][]Record {
 	hm.mu.RLock()
 	defer hm.mu.RUnlock()
 
 	result := make(map[string][]Record)
 
 	for uuid, history := range hm.histories {
-		samples := history.GetSamplesByDateRange(startDate, endDate)
+		samples := history.GetRecordsByDateRange(startDate, endDate)
 		result[uuid] = samples
 	}
 
 	return result
 }
 
-func (hm *historyManager) GetSamplesByTime(startDate time.Time, duration string) (map[string][]Record, error) {
+func (hm *historyManager) GetRecordsByTime(startDate time.Time, duration string) (map[string][]Record, error) {
 	hm.mu.RLock()
 	defer hm.mu.RUnlock()
 
@@ -134,7 +160,7 @@ func (hm *historyManager) GetSamplesByTime(startDate time.Time, duration string)
 	}
 
 	for uuid, history := range hm.histories {
-		samples, err := history.GetSamplesByTime(startDate, duration)
+		samples, err := history.GetRecordsByTime(startDate, duration)
 		if err != nil {
 			return nil, err
 		}
@@ -144,14 +170,14 @@ func (hm *historyManager) GetSamplesByTime(startDate time.Time, duration string)
 	return result, nil
 }
 
-func (hm *historyManager) DeleteSamples(uuids map[string]string) {
+func (hm *historyManager) DeleteRecords(uuids map[string]string) {
 	hm.mu.Lock()
 	defer hm.mu.Unlock()
 
 	for uuid := range uuids {
 		if history, exists := hm.histories[uuid]; exists {
 			uuidSlice := []string{uuid}
-			history.DeleteSamples(uuidSlice)
+			history.DeleteRecords(uuidSlice)
 		}
 	}
 }

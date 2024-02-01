@@ -7,10 +7,10 @@ import (
 )
 
 func TestNewGenericSample(t *testing.T) {
-	history := NewGenericHistory(5)
-	history2 := NewGenericHistory(5)
+	history := NewGenericHistory(5, "abc")
+	history2 := NewGenericHistory(5, "abc")
 
-	// Capture the start date before adding samples
+	// Capture the start date before adding Records
 	startDate := time.Now()
 
 	for i := 0; i < 10; i++ {
@@ -21,18 +21,18 @@ func TestNewGenericSample(t *testing.T) {
 		history2.AddSample(sample2)
 	}
 
-	// Wait for a duration longer than the total time it took to add all samples
+	// Wait for a duration longer than the total time it took to add all Records
 	time.Sleep(time.Millisecond * 1000)
 
 	duration := "2s" // Use a larger duration to cover the time span of sample addition
 
-	fmt.Printf("Samples within the last %s:\n", duration)
-	samplesByTime, err := history.GetSamplesByTime(startDate, duration)
-	fmt.Printf("Samples within the error %v:\n", err)
-	for i, sample := range samplesByTime {
+	fmt.Printf("Records within the last %s:\n", duration)
+	RecordsByTime, err := history.GetRecordsByTime(startDate, duration)
+	fmt.Printf("Records within the error %v:\n", err)
+	for i, sample := range RecordsByTime {
 		fmt.Printf("Record %d - UUID: %s, Value: %v, Timestamp: %v\n", i+1, sample.GetUUID(), sample.GetValue(), sample.GetTimestamp().Format(time.StampMilli))
 	}
 
-	history.GetSamples()
+	history.GetRecords()
 
 }

@@ -11,7 +11,7 @@ func (h *GenericHistory) DeleteSample(sample Record) {
 	}
 }
 
-func (h *GenericHistory) DeleteSamples(uuids []string) {
+func (h *GenericHistory) DeleteRecords(uuids []string) {
 	uuidSet := make(map[string]bool)
 	for _, uuid := range uuids {
 		uuidSet[uuid] = true

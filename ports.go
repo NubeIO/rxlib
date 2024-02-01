@@ -30,7 +30,7 @@ type Port struct {
 	HiddenByDefault   bool `json:"hiddenByDefault,omitempty"`
 	OverPositionValue int  `json:"overPositionValue,omitempty"`
 
-	OnMessage func(msg *Payload) // used for the evntbus
+	OnMessage func(msg *Payload) `json:"-"` // used for the evntbus
 }
 
 func (p *Port) GetID() string {
@@ -150,10 +150,10 @@ type NewPort struct {
 	ID                       string
 	Name                     string
 	DataType                 PortDataType
-	AllowMultipleConnections bool `json:"allowMultipleConnections,omitempty"`
-	DefaultPosition          int  `json:"defaultPosition"`
-	HiddenByDefault          bool `json:"hiddenByDefault,omitempty"`
-	OnMessage                func(msg *Payload)
+	AllowMultipleConnections bool               `json:"allowMultipleConnections,omitempty"`
+	DefaultPosition          int                `json:"defaultPosition"`
+	HiddenByDefault          bool               `json:"hiddenByDefault,omitempty"`
+	OnMessage                func(msg *Payload) `json:"-"`
 }
 
 type Override struct {
@@ -161,7 +161,7 @@ type Override struct {
 }
 
 type PortFormatString struct {
-	ErrorOnMixMax    bool
+	ErrorOnMixMax    bool     `json:"errorOnMixMax"`
 	MinLengthString  *int     `json:"minLengthString"`
 	MaxLengthString  *int     `json:"maxLengthString"`
 	AllowEmptyString bool     `json:"allowEmptyString,omitempty"`

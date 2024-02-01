@@ -6,7 +6,11 @@ func (h *GenericHistory) GetUUID() string {
 	return h.UUID
 }
 
-func (h *GenericHistory) GetSamples() []Record {
+func (h *GenericHistory) GetObjectUUID() string {
+	return h.ObjectUUID
+}
+
+func (h *GenericHistory) GetRecords() []Record {
 	return h.Values
 }
 
@@ -42,7 +46,7 @@ func (h *GenericHistory) GetPagination(pageNumber, pageSize int) []Record {
 	return h.Values[startIndex:endIndex]
 }
 
-func (h *GenericHistory) GetSamplesByDateRange(startDate, endDate time.Time) []Record {
+func (h *GenericHistory) GetRecordsByDateRange(startDate, endDate time.Time) []Record {
 	result := make([]Record, 0)
 	for _, sample := range h.Values {
 		if sample.GetTimestamp().After(startDate) && sample.GetTimestamp().Before(endDate) {
@@ -52,11 +56,11 @@ func (h *GenericHistory) GetSamplesByDateRange(startDate, endDate time.Time) []R
 	return result
 }
 
-// GetSamplesByTime
+// GetRecordsByTime
 // such as "300s", "-1.5h" or "2h45m".
 // Valid time units are  "ms", "s", "m", "h".
-// eg; GetSamplesByTime(time.Now(), "10m")
-func (h *GenericHistory) GetSamplesByTime(startDate time.Time, duration string) ([]Record, error) {
+// eg; GetRecordsByTime(time.Now(), "10m")
+func (h *GenericHistory) GetRecordsByTime(startDate time.Time, duration string) ([]Record, error) {
 	durationValue, err := time.ParseDuration(duration)
 	if err != nil {
 		return nil, err

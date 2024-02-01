@@ -8,14 +8,15 @@ import (
 type History interface {
 	AddSample(sample Record)
 	GetUUID() string
-	GetSamples() []Record
+	GetObjectUUID() string
+	GetRecords() []Record
 	GetLast() Record
 	GetFirst() Record
 	GetPagination(pageNumber, pageSize int) []Record
-	GetSamplesByDateRange(startDate, endDate time.Time) []Record
-	GetSamplesByTime(startDate time.Time, duration string) ([]Record, error)
+	GetRecordsByDateRange(startDate, endDate time.Time) []Record
+	GetRecordsByTime(startDate time.Time, duration string) ([]Record, error)
 	DeleteSample(sample Record)
-	DeleteSamples(uuids []string)
+	DeleteRecords(uuids []string)
 	DeleteFirst(count int) int
 	DeleteLast(count int) int
 	DeleteByDateRange(startDate, endDate time.Time) int
@@ -46,19 +47,20 @@ func NewGenericSample[T any](value T) Record {
 
 type GenericHistory struct {
 	UUID            string   `json:"uuid"`
+	ObjectUUID      string   `json:"objectUUID"`
 	Values          []Record `json:"values"`
-	LimitSampleSize int      `json:"limitSampleSize"`
+	LimitRecordsize int      `json:"limitRecordsize"`
 }
 
-func NewGenericHistory(limitSampleSize int) History {
-	return &GenericHistory{UUID: helpers.UUID(), LimitSampleSize: limitSampleSize}
+func NewGenericHistory(limitRecordsize int, objectUUID string) History {
+	return &GenericHistory{UUID: helpers.UUID(), ObjectUUID: objectUUID, LimitRecordsize: limitRecordsize}
 }
 
 func (h *GenericHistory) AddSample(sample Record) {
 	h.Values = append(h.Values, sample)
-	if len(h.Values) > h.LimitSampleSize {
-		// Remove the oldest samples to keep the size within the limit
-		removedCount := len(h.Values) - h.LimitSampleSize
+	if len(h.Values) > h.LimitRecordsize {
+		// Remove the oldest Records to keep the size within the limit
+		removedCount := len(h.Values) - h.LimitRecordsize
 		h.Values = h.Values[removedCount:]
 	}
 }
