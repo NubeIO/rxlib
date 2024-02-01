@@ -6,6 +6,7 @@ import (
 )
 
 type AlarmManager interface {
+	GetTitle() string
 	NewAlarm(limitSize int, alarmBody *AddAlarm) Alarm
 	Get(uuid string) Alarm
 	All() map[string]Alarm
@@ -18,15 +19,21 @@ type AlarmManager interface {
 	DeleteTransactions(uuids map[string]string)
 }
 
-func NewAlarmManager() AlarmManager {
+func NewAlarmManager(title string) AlarmManager {
 	return &manager{
+		title:    title,
 		alarmMap: make(map[string]Alarm),
 	}
 }
 
 type manager struct {
+	title    string
 	alarmMap map[string]Alarm
 	mu       sync.RWMutex
+}
+
+func (m *manager) GetTitle() string {
+	return m.title
 }
 
 func (m *manager) NewAlarm(limitSize int, alarmBody *AddAlarm) Alarm {

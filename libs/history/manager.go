@@ -9,6 +9,8 @@ type Manager interface {
 	// NewHistory creates a new history with the specified limitSampleSize.
 	NewHistory(limitSampleSize int, objectUUID string) History
 
+	GetName() string
+
 	// Get retrieves a history by its UUID.
 	Get(uuid string) History
 
@@ -42,12 +44,21 @@ type Manager interface {
 }
 
 type historyManager struct {
+	name      string
 	histories map[string]History
 	mu        sync.RWMutex
 }
 
-func NewHistoryManager() Manager {
+func (hm *historyManager) GetName() string {
+	return hm.name
+}
+
+func NewHistoryManager(name string) Manager {
+	if name == "" {
+		panic("history manager name can not be empty")
+	}
 	return &historyManager{
+		name:      name,
 		histories: make(map[string]History),
 	}
 }

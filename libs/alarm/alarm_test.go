@@ -8,7 +8,7 @@ import (
 
 func TestNewAlarmManager(t *testing.T) {
 	// Create a new AlarmManager
-	alarmManager := NewAlarmManager()
+	alarmManager := NewAlarmManager("abc 123")
 	alarmBody := &AddAlarm{
 		Title:      "t",
 		ObjectType: "device",

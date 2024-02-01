@@ -8,6 +8,7 @@ import (
 type Alarm interface {
 	AddTransaction(body *AddTransaction, t Transaction)
 	SetStatus(status AlarmStatus)
+	GetTitle() string
 	GetUUID() string
 	GetObjectUUID() string
 	GetTransactions() []Transaction
@@ -65,6 +66,10 @@ type AlarmEntry struct {
 	LastUpdated           time.Time           `json:"last_updated,omitempty"`
 	Transactions          []*TransactionEntry `json:"transactions,omitempty"`
 	LimitTransactionCount int                 `json:"limitTransactionCount"`
+}
+
+func (a *AlarmEntry) GetTitle() string {
+	return a.Title
 }
 
 func (a *AlarmEntry) GetObjectUUID() string {

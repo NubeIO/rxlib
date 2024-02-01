@@ -14,11 +14,11 @@ func TestNewGenericSample(t *testing.T) {
 	startDate := time.Now()
 
 	for i := 0; i < 10; i++ {
-		sample := NewGenericSample(float64(i))
+		sample := NewGenericRecord(float64(i))
 		time.Sleep(time.Millisecond * 500)
-		history.AddSample(sample)
-		sample2 := NewGenericSample(float64(i + 100))
-		history2.AddSample(sample2)
+		history.AddRecord(sample)
+		sample2 := NewGenericRecord(float64(i + 100))
+		history2.AddRecord(sample2)
 	}
 
 	// Wait for a duration longer than the total time it took to add all Records

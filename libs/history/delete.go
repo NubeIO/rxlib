@@ -2,7 +2,7 @@ package history
 
 import "time"
 
-func (h *GenericHistory) DeleteSample(sample Record) {
+func (h *GenericHistory) DeleteRecord(sample Record) {
 	for i, s := range h.Values {
 		if s.GetUUID() == sample.GetUUID() {
 			h.Values = append(h.Values[:i], h.Values[i+1:]...)
