@@ -50,6 +50,13 @@ type Object interface {
 	GetExtension(id string) (Object, error)
 	DeleteExtension(name string) error
 
+	//Actions
+	GetSupportsActions() bool
+	SetActionList(list *ActionLists)
+	GetActionsList() *ActionLists
+	GetAction(action *ActionBody) *ActionResponse // for example over an API we can do a custom GetAction to a object; eg give me you
+	SetAction(action *ActionBody) *ActionResponse //
+
 	SetRequiredExtensions(extension []*Extension)
 	GetRequiredExtensions() []*Extension
 	RequiredExtensionListCount() (extensionsCount int) // get a count if there are any required extensions or not

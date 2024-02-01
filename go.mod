@@ -4,7 +4,6 @@ go 1.21.5
 
 require (
 	github.com/NubeIO/engineering-units v0.0.2
-	github.com/NubeIO/rubix-rx v0.0.3
 	github.com/NubeIO/schema v0.0.1
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-co-op/gocron v1.37.0

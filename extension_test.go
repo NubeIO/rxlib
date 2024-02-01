@@ -1,7 +1,7 @@
 package rxlib
 
 import (
-	"github.com/NubeIO/rxlib/helpers"
+	"github.com/NubeIO/rxlib/helpers/pprint"
 	"testing"
 )
 
@@ -19,5 +19,5 @@ func TestNewExtensionBuilder(t *testing.T) {
 		AddExtensionAutoConnect("output2", "input2").
 		Build()
 
-	helpers.PrintJSON(extensions)
+	pprint.PrintJSON(extensions)
 }

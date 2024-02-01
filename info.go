@@ -27,6 +27,7 @@ type Requirements struct {
 	MustLiveInObjectType bool        `json:"mustLiveInObjectType"` // modbus-network can only be in object-type: drivers
 	MustLiveParent       bool        `json:"mustLiveParent"`       // a modbus device can only be added under its parent being a modbus-network
 	RequiresLogger       bool        `json:"requiresLogger,omitempty"`
+	SupportsActions      bool        `json:"supportsActions"`
 	LoggerOpts           *LoggerOpts `json:"LoggerOpts,omitempty"`
 }
 
@@ -106,6 +107,9 @@ type InfoBuilder interface {
 	SetAllowRuntimeAccess() InfoBuilder
 	SetMaxOne() InfoBuilder
 	SetLogger(opts *LoggerOpts) InfoBuilder
+
+	SetSupportsActions() InfoBuilder
+	GetSupportsActions() bool
 
 	SetMustLiveInObjectType() InfoBuilder
 	GetMustLiveInObjectType() bool
@@ -236,6 +240,16 @@ func (builder *infoBuilder) SetMustLiveParent() InfoBuilder {
 
 func (builder *infoBuilder) GetMustLiveParent() bool {
 	return builder.info.Requirements.MustLiveParent
+}
+
+func (builder *infoBuilder) SetSupportsActions() InfoBuilder {
+	ensureRequirements(builder.info)
+	builder.info.Requirements.SupportsActions = true
+	return builder
+}
+
+func (builder *infoBuilder) GetSupportsActions() bool {
+	return builder.info.Requirements.SupportsActions
 }
 
 func (builder *infoBuilder) SetPluginName(pluginName string) InfoBuilder {

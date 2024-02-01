@@ -1,22 +1,13 @@
 package helpers
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
 	"math/rand"
-	"os"
 	"strings"
 	"time"
 	"unicode"
 )
-
-func PrintJSON(x interface{}) {
-	ioWriter := os.Stdout
-	w := json.NewEncoder(ioWriter)
-	w.SetIndent("", "    ")
-	w.Encode(x)
-}
 
 func UUID(prefix ...string) string {
 	u, err := uuid.NewUUID()

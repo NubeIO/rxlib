@@ -2,13 +2,14 @@ package history
 
 import (
 	"fmt"
-	pprint "github.com/NubeIO/rubix-rx/helpers/print"
+	"github.com/NubeIO/rxlib/helpers/pprint"
+
 	"testing"
 )
 
 func TestNewHistoryManager(t *testing.T) {
 
-	historyManager := NewHistoryManager()
+	historyManager := NewHistoryManager("EEEE")
 
 	// Create a new history with a limit of 10 samples
 	history1 := historyManager.NewHistory(10, "abc")
@@ -16,8 +17,8 @@ func TestNewHistoryManager(t *testing.T) {
 
 	// Add some samples to history1
 	for i := 1; i <= 5; i++ {
-		sample := NewGenericSample(float64(i))
-		history1.AddSample(sample)
+		sample := NewGenericRecord(float64(i))
+		history1.AddRecord(sample)
 	}
 
 	// Create another history with a limit of 5 samples
@@ -27,8 +28,8 @@ func TestNewHistoryManager(t *testing.T) {
 
 	// Add some samples to history2
 	for i := 6; i <= 10; i++ {
-		sample := NewGenericSample(float64(i))
-		history2.AddSample(sample)
+		sample := NewGenericRecord(float64(i))
+		history2.AddRecord(sample)
 
 	}
 
@@ -39,7 +40,7 @@ func TestNewHistoryManager(t *testing.T) {
 	// Get a list of all histories
 	allHistories := historyManager.All()
 
-	pprint.PrintJOSN(historyManager.AllHistories())
+	pprint.PrintJSON(historyManager.AllHistories())
 
 	// Get all Records across all histories
 	allRecords := historyManager.AllRecords()
@@ -51,7 +52,7 @@ func TestNewHistoryManager(t *testing.T) {
 	fmt.Println("\nAll Histories:")
 	for _, history := range allHistories {
 		history.GetFirst()
-		fmt.Printf("UUID: %s, Record Count: %d\n", history.GetUUID(), history.SampleCount())
+		fmt.Printf("UUID: %s, Record Count: %d\n", history.GetUUID(), history.RecordCount())
 	}
 
 	fmt.Println("\nAll Records:")

@@ -2,7 +2,8 @@ package alarm
 
 import (
 	"fmt"
-	pprint "github.com/NubeIO/rubix-rx/helpers/print"
+	"github.com/NubeIO/rxlib/helpers/pprint"
+
 	"testing"
 )
 
@@ -74,5 +75,5 @@ func TestNewAlarmManager(t *testing.T) {
 	allTransactionsAfterDeletion := alarmManager.AllTransactions()
 	fmt.Printf("All Transactions After Deletion:\n%v\n", allTransactionsAfterDeletion)
 
-	pprint.PrintJOSN(alarmManager.GetAllTransactionsEntries())
+	pprint.PrintJSON(alarmManager.GetAllTransactionsEntries())
 }

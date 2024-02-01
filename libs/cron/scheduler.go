@@ -2,7 +2,7 @@ package cron
 
 import (
 	"fmt"
-	"github.com/NubeIO/rubix-rx/helpers"
+	"github.com/NubeIO/rxlib/helpers"
 	"github.com/go-co-op/gocron"
 	"sync"
 	"time"
