@@ -1,4 +1,4 @@
-package weekly
+package schedules
 
 import (
 	"time"
@@ -93,7 +93,7 @@ type ScheduleStatus struct {
 	NextStop  time.Time // show the next stop compared to the EndDate and in UTC or not UTC
 }
 
-// checkWeekly returns the status of each time range in the weekly schedule.
+// checkWeekly returns the status of each time range in the schedules schedule.
 func (ws *Schedule) checkWeekly() []*ScheduleStatus {
 
 	currentTime := time.Now()

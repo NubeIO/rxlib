@@ -1,8 +1,8 @@
-package weekly
+package schedules
 
 import "sync"
 
-// ScheduleManager is an interface for managing weekly schedules.
+// ScheduleManager is an interface for managing schedules schedules.
 type ScheduleManager interface {
 	Add(name string, sch *Schedule)
 	Get(name string) *Schedule

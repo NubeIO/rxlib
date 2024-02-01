@@ -1,8 +1,8 @@
 package alarm
 
 type Coordinator interface {
-	AddRemoteAlarmManager(serverName string, manager AlarmManager)
-	GetRemoteAlarmManager(serverName string) AlarmManager
+	AddRemoteManager(serverName string, manager AlarmManager)
+	GetRemoteManager(serverName string) AlarmManager
 	All() map[string]AlarmManager
 	GetAllManagersTransactionsEntries() map[string]*CoordinatorTransactions
 }
@@ -17,11 +17,11 @@ func NewCoordinator() Coordinator {
 	}
 }
 
-func (a *alarmCoordinator) AddRemoteAlarmManager(serverName string, manager AlarmManager) {
+func (a *alarmCoordinator) AddRemoteManager(serverName string, manager AlarmManager) {
 	a.alarmMap[serverName] = manager
 }
 
-func (a *alarmCoordinator) GetRemoteAlarmManager(serverName string) AlarmManager {
+func (a *alarmCoordinator) GetRemoteManager(serverName string) AlarmManager {
 	return a.alarmMap[serverName]
 }
 

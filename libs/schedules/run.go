@@ -1,9 +1,9 @@
-package weekly
+package schedules
 
 type CombinedStats struct {
 	WeeklyActive    bool              `json:"weeklyActive"`
 	ExceptionActive bool              `json:"exceptionActive"`
-	Weekly          []*ScheduleStatus `json:"weekly"`
+	Weekly          []*ScheduleStatus `json:"schedules"`
 	Exception       []*ScheduleStatus `json:"exception"`
 }
 
