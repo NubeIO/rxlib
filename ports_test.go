@@ -30,3 +30,16 @@ func TestFormatNumberFunc(t *testing.T) {
 	}
 
 }
+
+func TestFormatNumber(t *testing.T) {
+	p := &Port{
+		Value: true,
+	}
+
+	intValue, err := GetValue[bool](p)
+	if err != nil {
+		// Handle the error
+	}
+	fmt.Println(intValue)
+
+}
