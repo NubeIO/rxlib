@@ -41,6 +41,14 @@ func (p *Port) GetUUID() string {
 	return p.UUID
 }
 
+func (p *Port) GetName() string {
+	return p.Name
+}
+
+func (p *Port) SetName(v string) {
+	p.Name = v
+}
+
 func (p *Port) SetValue(value any) {
 	p.Value = value
 }

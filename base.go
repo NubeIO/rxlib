@@ -61,8 +61,9 @@ type Object interface {
 	GetRequiredExtensions() []*Extension
 	RequiredExtensionListCount() (extensionsCount int) // get a count if there are any required extensions or not
 	IsExtensionsAdded(objectID string) (addedCount int)
+	GetRequiredExtensionByName(extensionName string) *Extension
 	//HistoryManager history's
-	GetHistoryManager() (history.Manager, error)
+	GetHistoryManager() history.Manager
 	SetHistoryManager(h history.Manager)
 
 	// ports
@@ -160,6 +161,7 @@ type Object interface {
 
 	// name, set from Meta
 	GetName() string
+	SetName(v string)
 
 	// category
 	GetCategory() string

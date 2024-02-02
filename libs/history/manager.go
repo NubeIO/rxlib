@@ -17,6 +17,8 @@ type Manager interface {
 	// AllHistories returns a slice of all available histories. with some stats
 	AllHistories() []*AllHistories
 
+	AllHistoriesByObjectUUID(objectUUID string) *AllHistories
+
 	// All returns a slice of all available histories.
 	All() []History
 
@@ -98,6 +100,25 @@ func (hm *historyManager) AllHistories() []*AllHistories {
 		histories = append(histories, h)
 	}
 	return histories
+}
+
+func (hm *historyManager) AllHistoriesByObjectUUID(objectUUID string) *AllHistories {
+	hm.mu.RLock()
+	defer hm.mu.RUnlock()
+	for _, history := range hm.histories {
+		if history.GetObjectUUID() == objectUUID {
+			h := &AllHistories{
+				HistoryUUID: history.GetUUID(),
+				ObjectUUID:  history.GetObjectUUID(),
+				Count:       len(history.GetRecords()),
+				Histories:   history.GetRecords(),
+			}
+			return h
+
+		}
+
+	}
+	return nil
 }
 
 func (hm *historyManager) All() []History {
