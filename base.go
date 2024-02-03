@@ -2,6 +2,7 @@ package rxlib
 
 import (
 	"github.com/NubeIO/rxlib/libs/history"
+	"github.com/NubeIO/rxlib/libs/rubix"
 	"github.com/NubeIO/schema"
 	"github.com/gin-gonic/gin"
 	"github.com/gookit/event"
@@ -50,6 +51,10 @@ type Object interface {
 	GetExtension(id string) (Object, error)
 	DeleteExtension(name string) error
 
+	//Rubix Network
+	SetRubixNetworkManager(manager rubix.Manager)
+	GetRubixNetworkManager() rubix.Manager
+
 	//Actions
 	GetSupportsActions() bool
 	SetActionList(list *ActionLists)
@@ -74,7 +79,7 @@ type Object interface {
 	NewOutputPorts(port []*NewPort) error
 	GetAllPorts() []*Port
 
-	// CreateConnection is for just adding a connection without adding it to the eventbus
+	// CreateConnection is for just adding a rubix without adding it to the eventbus
 	CreateConnection(connection *Connection)
 	AddConnection(connection *Connection) error
 	GetConnection(uuid string) (*Connection, error)
@@ -94,7 +99,9 @@ type Object interface {
 	// PublishValue update the port value; pass in option withTimestamp to timestamp to write
 	PublishValue(portID string, value any, withTimestamp ...bool) error
 	PublishLastValue(portID string) (value any, err error) // will republish its last know value on the eventbus
-	SubscribePassive(handler func(e event.Event) error)    // a global heartbeat sent from the server evey X min; main use case for this is to reduce the amount of jobs needed to be created
+	Subscribe(topic string, handler func(e event.Event) error)
+	PublishAny(topic string, data *EventBusMessage) error
+	SetEventBusCallBack(topic string, callback *EventBusCallback)
 
 	//GetAllObjectValues ObjectValue are a way for one node to direly get and send data to another node
 	// PreviousValue is the last value saved
@@ -172,7 +179,8 @@ type Object interface {
 	GetWorkingGroupChildObjects() []string
 	GetWorkingGroupParent() string
 	GetWorkingGroupLeader() string
-
+	GetWorkingGroupLeaderObjectUUID() string
+	GetWorkingGroupLeaderObject() (Object, bool)
 	// plugin
 	GetPluginName() string
 
@@ -199,6 +207,7 @@ type Object interface {
 
 	// requirements
 	GetRequirements() *Requirements
+	GetRubixServicesRequirement() []*RubixServicesRequirement
 
 	// tags
 	AddObjectTags(objectTypeTag ...ObjectTypeTag)

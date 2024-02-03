@@ -38,7 +38,7 @@ func NewExtensionBuilder() *ExtensionBuilder {
 	}
 }
 
-// ExtensionPorts represents an auto port connection.
+// ExtensionPorts represents an auto port rubix.
 type ExtensionPorts struct {
 	FromPortID string
 	ToPortID   string

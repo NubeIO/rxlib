@@ -20,15 +20,35 @@ type Permissions struct {
 }
 
 type Requirements struct {
-	CallResetOnDeploy    bool        `json:"callResetOnDeploy"`
-	SupportsWebRoute     bool        `json:"supportsWebRoute,omitempty"`
-	AllowRuntimeAccess   bool        `json:"allowRuntimeAccess,omitempty"`
-	MaxOne               bool        `json:"maxOne,omitempty"`
-	MustLiveInObjectType bool        `json:"mustLiveInObjectType"` // modbus-network can only be in object-type: drivers
-	MustLiveParent       bool        `json:"mustLiveParent"`       // a modbus device can only be added under its parent being a modbus-network
-	RequiresLogger       bool        `json:"requiresLogger,omitempty"`
-	SupportsActions      bool        `json:"supportsActions"`
-	LoggerOpts           *LoggerOpts `json:"LoggerOpts,omitempty"`
+	CallResetOnDeploy         bool                        `json:"callResetOnDeploy"`
+	AllowRuntimeAccess        bool                        `json:"allowRuntimeAccess,omitempty"`
+	MaxOne                    bool                        `json:"maxOne,omitempty"`
+	MustLiveInObjectType      bool                        `json:"mustLiveInObjectType"` // modbus-network can only be in object-type: drivers
+	MustLiveParent            bool                        `json:"mustLiveParent"`       // a modbus device can only be added under its parent being a modbus-network
+	RequiresLogger            bool                        `json:"requiresLogger,omitempty"`
+	SupportsActions           bool                        `json:"supportsActions"`
+	RubixServicesRequirements []*RubixServicesRequirement `json:"rubixServicesRequirements,omitempty"`
+	LoggerOpts                *LoggerOpts                 `json:"LoggerOpts,omitempty"`
+}
+
+type RubixRequirement string
+
+const (
+	RubixGinRouter        RubixRequirement = "web-router"
+	RubixHistoriesManager RubixRequirement = "histories-manager"
+	RubixNetworkManager   RubixRequirement = "rubix-network-manager"
+	RubixAlarmsManager    RubixRequirement = "alarms-manager"
+	RubixSchedulesManager RubixRequirement = "schedules-manager"
+)
+
+func NewServicesRequirement(name RubixRequirement) *RubixServicesRequirement {
+	return &RubixServicesRequirement{
+		Name: name,
+	}
+}
+
+type RubixServicesRequirement struct {
+	Name RubixRequirement `json:"name"` // gin-router RubixGinRouter, history RubixHistoriesManager
 }
 
 type LoggerOpts struct {
@@ -102,10 +122,11 @@ type InfoBuilder interface {
 
 	// requirements
 	GetRequirements() *Requirements
+	GetRubixServicesRequirement() []*RubixServicesRequirement
+	SetRubixServicesRequirement([]*RubixServicesRequirement) InfoBuilder
 	SetCallResetOnDeploy() InfoBuilder
-	SetSupportsWebRoute() InfoBuilder
 	SetAllowRuntimeAccess() InfoBuilder
-	SetMaxOne() InfoBuilder
+	SetMaxOne() InfoBuilder // only max one object can be added
 	SetLogger(opts *LoggerOpts) InfoBuilder
 
 	SetSupportsActions() InfoBuilder
@@ -261,9 +282,14 @@ func (builder *infoBuilder) GetPluginName() string {
 	return builder.info.PluginName
 }
 
-func (builder *infoBuilder) SetSupportsWebRoute() InfoBuilder {
+func (builder *infoBuilder) GetRubixServicesRequirement() []*RubixServicesRequirement {
 	ensureRequirements(builder.info)
-	builder.info.Requirements.SupportsWebRoute = true
+	return builder.info.Requirements.RubixServicesRequirements
+}
+
+func (builder *infoBuilder) SetRubixServicesRequirement(requirements []*RubixServicesRequirement) InfoBuilder {
+	ensureRequirements(builder.info)
+	builder.info.Requirements.RubixServicesRequirements = requirements
 	return builder
 }
 
