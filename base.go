@@ -21,8 +21,11 @@ type Object interface {
 	// Start the processing
 	Init() error
 	Start() error
-	SetLoaded()
-	IsLoaded() bool // where the object Start() method has been called
+	SetLoaded() // used normally for the Start() to set it that it has booted
+	IsNotLoaded() bool
+	IsLoaded() bool                                                  // where the object Start() method has been called
+	ObjectInvoked(body any) (response any, err error)                // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
+	ObjectInvokedPayload(message *Payload) (response any, err error) // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 	Process() error
 	Reset() error // for example this can be called on the 2nd deploy of a counter object, and we want to reset the count back to zero
 	AllowsReset() bool
@@ -42,7 +45,7 @@ type Object interface {
 	RemoveObjectFromRuntime()
 	GetChildObjects() []Object                      // get all the object inside a folder
 	GetChildObjectsByType(objectID string) []Object // for example get all modbus/device that are inside its parent modbus/network Object
-	GetParentObject(uuid string) (obj Object, exists bool)
+	GetParentObject() (obj Object, exists bool)
 	GetParentUUID() string
 
 	// AddExtension extension are a way to extend the functionalists of an object; for example add a history extension
@@ -82,7 +85,9 @@ type Object interface {
 	// CreateConnection is for just adding a rubix without adding it to the eventbus
 	CreateConnection(connection *Connection)
 	AddConnection(connection *Connection) error
-	GetConnection(uuid string) (*Connection, error)
+	GetConnection(uuid string) *Connection
+	GetOutputConnectionByPortUUID(uuid string) *Connection
+	GetInputConnectionByPortUUID(uuid string) *Connection
 	GetConnections() []*Connection
 	UpdateConnections(connections []*Connection) *UpdateConnectionsReport
 	RemoveConnection(connection *Connection) *RemoveConnectionReport
@@ -90,12 +95,14 @@ type Object interface {
 
 	// inputs
 	GetInput(id string) *Port
+	GetInputByUUID(uuid string) *Port
 	GetInputs() []*Port
 	SetInputValue(id string, value any) error
 
 	// ouputs
 	GetOutputs() []*Port
 	GetOutput(id string) *Port
+	GetOutputByUUID(uuid string) *Port
 	// PublishValue update the port value; pass in option withTimestamp to timestamp to write
 	PublishValue(portID string, value any, withTimestamp ...bool) error
 	PublishLastValue(portID string) (value any, err error) // will republish its last know value on the eventbus
@@ -181,6 +188,7 @@ type Object interface {
 	GetWorkingGroupLeader() string
 	GetWorkingGroupLeaderObjectUUID() string
 	GetWorkingGroupLeaderObject() (Object, bool)
+
 	// plugin
 	GetPluginName() string
 

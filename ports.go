@@ -201,8 +201,9 @@ const (
 type FlowDirection string
 
 const (
-	DirectionSubscriber FlowDirection = "subscriber"
-	DirectionPublisher  FlowDirection = "publisher"
+	DirectionSubscriber      FlowDirection = "subscriber"
+	DirectionPublisher       FlowDirection = "publisher"
+	DirectionRequestResponse FlowDirection = "request-response"
 )
 
 type PortDirection string

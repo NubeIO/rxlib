@@ -1,21 +1,28 @@
 package rxlib
 
+import (
+	"github.com/NubeIO/rxlib/helpers"
+	"time"
+)
+
 // Connection defines a structure for input subscriptions.
 type Connection struct {
-	UUID                 string              `json:"uuid"`         //the uuid of the rubix ***not needed for UI***
-	SourceUUID           string              `json:"source"`       // will always be the output object
-	SourcePort           string              `json:"sourceHandle"` // output portID
-	TargetUUID           string              `json:"target"`       // objectUUID that has the input rubix
-	TargetPort           string              `json:"targetHandle"` // input portID
-	IsExistingConnection bool                `json:"IsExistingConnection"`
-	FlowDirection        FlowDirection       `json:"flowDirection"` // subscriber is if it's in an input and publisher or an output ***not needed for UI***
-	RemoteConnection     []*RemoteConnection `json:"remoteConnection,omitempty"`
-}
-
-// RemoteConnection is for the remote rubix service
-type RemoteConnection struct {
-	UUID        string
-	NetworkUUID string
+	UUID                 string        `json:"uuid"`   //the uuid of the rubix ***not needed for UI***
+	SourceUUID           string        `json:"source"` // will always be the output object
+	SourcePort           string        `json:"sourceHandle"`
+	SourcePortUUID       string        `json:"sourcePortUUID"` // output portID
+	TargetUUID           string        `json:"target"`         // objectUUID that has the input rubix
+	TargetPort           string        `json:"targetHandle"`   // input portID
+	TargetPortUUID       string        `json:"targetPortUUID"`
+	IsExistingConnection bool          `json:"IsExistingConnection"`
+	FlowDirection        FlowDirection `json:"flowDirection"` // subscriber is if it's in an input and publisher or an output ***not needed for UI***
+	Enable               bool          `json:"enable"`
+	IsError              bool          `json:"isError"`
+	Created              time.Time     `json:"created"`
+	LastOk               *time.Time    `json:"LastOk,omitempty"`
+	LastFail             *time.Time    `json:"LastFail,omitempty"`
+	FailCount            int           `json:"failCount"`
+	Error                []string      `json:"error"`
 }
 
 /*
@@ -40,6 +47,7 @@ This is what's needed for the UI to work
 
 func NewConnection(sourceUUID, sourcePort, targetUUID, targetPort string) (publisher *Connection, subscriber *Connection, err error) {
 	publisher = &Connection{
+		UUID:          helpers.UUID(),
 		SourceUUID:    sourceUUID,
 		SourcePort:    sourcePort,
 		TargetUUID:    targetUUID,
@@ -47,10 +55,11 @@ func NewConnection(sourceUUID, sourcePort, targetUUID, targetPort string) (publi
 		FlowDirection: DirectionPublisher,
 	}
 	subscriber = &Connection{
-		SourceUUID:    publisher.SourceUUID,
-		SourcePort:    publisher.SourcePort,
-		TargetUUID:    publisher.TargetUUID,
-		TargetPort:    publisher.TargetPort,
+		UUID:          helpers.UUID(),
+		SourceUUID:    sourceUUID,
+		SourcePort:    sourcePort,
+		TargetUUID:    targetUUID,
+		TargetPort:    targetPort,
 		FlowDirection: DirectionSubscriber,
 	}
 	return publisher, subscriber, nil
