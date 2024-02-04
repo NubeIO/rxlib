@@ -6,19 +6,20 @@ import (
 )
 
 type Port struct {
-	Priority priority.Priority
+	priority.Priority
 
-	ID                 string           `json:"id"`
-	Name               string           `json:"name"`
-	UUID               string           `json:"uuid"`
-	Value              any              `json:"value,omitempty"` // the value after it's had some transformations
-	LastUpdated        *time.Time       `json:"lastUpdated"`
-	ValueRaw           any              `json:"valueRaw,omitempty"`           // the value before any transformations
-	ValueDisplay       any              `json:"valueDisplay"`                 // for example 22 %
-	LastUpdatedDisplay string           `json:"lastUpdatedDisplay,omitempty"` // last time it got a message
-	Direction          PortDirection    `json:"direction"`                    // input or output
-	DataType           PortDataType     `json:"dataType"`                     // float, bool, string, any, json
-	Transformations    *Transformations `json:"transformations,omitempty"`    // (if a transformations are used we would add a few extra outputs for valueDisplay and valueRaw)
+	ID                 string            `json:"id"`
+	Name               string            `json:"name"`
+	UUID               string            `json:"uuid"`
+	Value              any               `json:"value,omitempty"` // the value after it's had some transformations
+	LastUpdated        *time.Time        `json:"lastUpdated"`
+	ValueRaw           any               `json:"valueRaw,omitempty"`           // the value before any transformations
+	ValueDisplay       any               `json:"valueDisplay"`                 // for example 22 %
+	LastUpdatedDisplay string            `json:"lastUpdatedDisplay,omitempty"` // last time it got a message
+	Direction          PortDirection     `json:"direction"`                    // input or output
+	DataType           PortDataType      `json:"dataType"`                     // float, bool, string, any, json
+	Transformations    *Transformations  `json:"transformations,omitempty"`    // (if a transformations are used we would add a few extra outputs for valueDisplay and valueRaw)
+	Units              *EngineeringUnits `json:"units,omitempty"`
 	// these are optional and used if you want to keep the last value for later use
 	PreviousValueSet bool           `json:"-"`
 	PreviousValue    *PreviousValue `json:"previousValue,omitempty"`

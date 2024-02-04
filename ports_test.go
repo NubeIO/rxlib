@@ -8,9 +8,9 @@ import (
 func TestFormatNumberFunc(t *testing.T) {
 
 	// Example usage:
-	inputValue := 6.0
+	inputValue := 69.18111111111111
 	config := &Transformations{
-		//Round:   intPtr(1), // Round to 2 decimal places
+		Round: IntPtr(2), // Round to 2 decimal places
 		//MaxValue:      float64Ptr(10.0),
 		//MinValue:      float64Ptr(1.0),
 		ErrorOnMinMax: false,
@@ -19,7 +19,7 @@ func TestFormatNumberFunc(t *testing.T) {
 		ValueInMin:  Float64Ptr(0), // Scaling input range
 		ValueInMax:  Float64Ptr(10.0),
 		ValueOutMin: Float64Ptr(0.0), // Scaling output range
-		ValueOutMax: Float64Ptr(100.0),
+		ValueOutMax: Float64Ptr(1000.0),
 	}
 
 	result, err := TransformationsBuilder(&inputValue, config)

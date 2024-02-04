@@ -13,8 +13,11 @@ type Transformations struct {
 	Round *int `json:"round"`
 
 	// limit the result based of the min/max settings
-	MaxValue      *float64 `json:"maxValue"`
+	ApplyMinMax   bool
 	MinValue      *float64 `json:"minValue"`
+	MaxValue      *float64 `json:"maxValue"`
+	MinOutValue   *float64 `json:"minOutValue"`
+	MaxOutValue   *float64 `json:"maxOutValue"`
 	ErrorOnMinMax bool
 
 	// throw error if we have a match
@@ -32,6 +35,7 @@ func TransformationsBuilder(inputValue *float64, config *Transformations) (*floa
 	if config == nil {
 		return nil, errors.New("config cannot be empty")
 	}
+
 	if inputValue == nil {
 		if config.FallBackValue != nil {
 			return config.FallBackValue, nil
@@ -39,36 +43,57 @@ func TransformationsBuilder(inputValue *float64, config *Transformations) (*floa
 		return nil, nil
 	}
 	input := NewFloat64Ptr(inputValue)
-	if config.MinValue != nil {
-		var err error
-		input, err = ApplyMinConstraint(input, NewFloat64Ptr(config.MinValue), config.ErrorOnMinMax)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if config.MaxValue != nil {
-		var err error
-		input, err = ApplyMaxConstraint(input, NewFloat64Ptr(config.MaxValue), config.ErrorOnMinMax)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if config.ApplyScale {
-		if config.ValueInMin == nil || config.ValueInMax == nil || config.ValueOutMin == nil || config.ValueOutMax == nil {
-			return nil, fmt.Errorf("to apply a scale we need all the format values to vaild")
-		}
-		input = Scale(input, NewFloat64Ptr(config.ValueInMin), NewFloat64Ptr(config.ValueInMax), NewFloat64Ptr(config.ValueOutMin), NewFloat64Ptr(config.ValueOutMax))
-	}
-
-	if config.Round != nil {
-		input = ApplyDecimalPlace(input, NewIntPtr(config.Round))
-	}
 
 	if config.RestrictNumber != nil {
 		if input == NewFloat64Ptr(config.RestrictNumber) {
 			return nil, fmt.Errorf(" %f is a restrict number", input)
 		}
 	}
+
+	if config.ApplyScale && !config.ApplyMinMax {
+		if config.ValueInMin == nil || config.ValueInMax == nil || config.ValueOutMin == nil || config.ValueOutMax == nil {
+			return nil, fmt.Errorf("to apply a scale we need all the format values to vaild")
+		}
+		input = Scale(input, NewFloat64Ptr(config.ValueInMin), NewFloat64Ptr(config.ValueInMax), NewFloat64Ptr(config.ValueOutMin), NewFloat64Ptr(config.ValueOutMax))
+	}
+	if config.ApplyMinMax && !config.ApplyScale {
+		// apply to input
+		if config.MinValue != nil {
+			var err error
+			input, err = ApplyMinConstraint(input, NewFloat64Ptr(config.MinValue), config.ErrorOnMinMax)
+			if err != nil {
+				return nil, err
+			}
+		}
+		if config.MaxValue != nil {
+			var err error
+			input, err = ApplyMaxConstraint(input, NewFloat64Ptr(config.MaxValue), config.ErrorOnMinMax)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		// apply to out result
+		if config.MinOutValue != nil {
+			var err error
+			input, err = ApplyMinConstraint(input, NewFloat64Ptr(config.MinOutValue), false)
+			if err != nil {
+				return nil, err
+			}
+		}
+		if config.MaxOutValue != nil {
+			var err error
+			input, err = ApplyMaxConstraint(input, NewFloat64Ptr(config.MaxOutValue), false)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	if config.Round != nil {
+		input = ApplyDecimalPlace(input, NewIntPtr(config.Round))
+	}
+
 	return Float64Ptr(input), nil
 }
 

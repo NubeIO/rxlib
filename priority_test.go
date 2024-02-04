@@ -10,10 +10,10 @@ import (
 // Example test function
 func TestPriority_GetHighestPriorityValue(t *testing.T) {
 	port := Port{
-		Priority: priority.Priority{},
+		PriorityValue: priority.Priority{},
 	}
 
-	p := port.Priority
+	p := port.PriorityValue
 	p.SetValue(priority.IntValue{2}, 1)
 	p.SetValue(priority.FloatValue{20.5}, 2)
 	p.SetValue(priority.BoolValue{true}, 3)

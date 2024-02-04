@@ -1,5 +1,80 @@
 package priority
 
+import (
+	"fmt"
+	"strconv"
+)
+
+func NewPriority(count int, valueType Type) *Priority {
+	return &Priority{
+		PriorityType: valueType,
+		Values:       make([]PriorityValue, count),
+	}
+}
+
+type Type string
+
+const TypeBool = "bool"
+const TypeInt = "int"
+const TypeFloat = "float"
+const TypeString = "string"
+
+type Priority struct {
+	PriorityType Type
+	Values       []PriorityValue
+}
+
+func (p *Priority) SetValue(value PriorityValue, priorityNumber int) {
+	if priorityNumber >= 1 && priorityNumber <= len(p.Values) {
+		p.Values[priorityNumber-1] = value
+	}
+}
+
+func (p *Priority) SetNull(priorityNumber int) {
+	if priorityNumber >= 1 && priorityNumber <= len(p.Values) {
+		p.Values[priorityNumber-1] = nil
+	}
+}
+
+func (p *Priority) GetHighestPriorityValue() (PriorityValue, int) {
+	for i, v := range p.Values {
+		if v != nil {
+			return v, i + 1
+		}
+	}
+	return nil, 0
+}
+
+func (p *Priority) GetLowestPriorityValue() (PriorityValue, int) {
+	for i := len(p.Values) - 1; i >= 0; i-- {
+		if p.Values[i] != nil {
+			return p.Values[i], i + 1
+		}
+	}
+	return nil, 0
+}
+
+func (p *Priority) GetByPriorityNumber(priorityNumber int) PriorityValue {
+	if priorityNumber >= 1 && priorityNumber <= len(p.Values) {
+		return p.Values[priorityNumber-1]
+	}
+	return nil
+}
+
+func (p *Priority) ToMap() map[string]interface{} {
+	jsonMap := make(map[string]interface{})
+	for i, val := range p.Values {
+		key := fmt.Sprintf("p%d", i+1) // Keys like _1, _2, ..., _16
+		if val != nil {
+			jsonMap[key] = val.GetValue()
+		} else {
+			jsonMap[key] = nil
+		}
+	}
+
+	return jsonMap
+}
+
 // PriorityValue is an interface that all priority values must satisfy.
 type PriorityValue interface {
 	GetValue() interface{}
@@ -22,15 +97,18 @@ func (iv IntValue) AsInt() *int {
 }
 
 func (iv IntValue) AsFloat() *float64 {
-	return nil
+	floatValue := float64(iv.Value)
+	return &floatValue
 }
 
 func (iv IntValue) AsBool() *bool {
-	return nil
+	boolValue := iv.Value != 0
+	return &boolValue
 }
 
 func (iv IntValue) AsString() *string {
-	return nil
+	strValue := strconv.Itoa(iv.Value)
+	return &strValue
 }
 
 type FloatValue struct {
@@ -42,7 +120,8 @@ func (fv FloatValue) GetValue() interface{} {
 }
 
 func (fv FloatValue) AsInt() *int {
-	return nil
+	intValue := int(fv.Value)
+	return &intValue
 }
 
 func (fv FloatValue) AsFloat() *float64 {
@@ -50,23 +129,37 @@ func (fv FloatValue) AsFloat() *float64 {
 }
 
 func (fv FloatValue) AsBool() *bool {
-	return nil
+	boolValue := fv.Value != 0.0
+	return &boolValue
 }
 
 func (fv FloatValue) AsString() *string {
-	return nil
+	strValue := strconv.FormatFloat(fv.Value, 'f', -1, 64)
+	return &strValue
 }
 
 type BoolValue struct {
 	Value bool
 }
 
+func (bv BoolValue) GetValue() interface{} {
+	return bv.Value
+}
+
 func (bv BoolValue) AsInt() *int {
-	return nil
+	intValue := 0
+	if bv.Value {
+		intValue = 1
+	}
+	return &intValue
 }
 
 func (bv BoolValue) AsFloat() *float64 {
-	return nil
+	floatValue := 0.0
+	if bv.Value {
+		floatValue = 1.0
+	}
+	return &floatValue
 }
 
 func (bv BoolValue) AsBool() *bool {
@@ -74,11 +167,8 @@ func (bv BoolValue) AsBool() *bool {
 }
 
 func (bv BoolValue) AsString() *string {
-	return nil
-}
-
-func (bv BoolValue) GetValue() interface{} {
-	return bv.Value
+	strValue := strconv.FormatBool(bv.Value)
+	return &strValue
 }
 
 type StringValue struct {
@@ -90,15 +180,27 @@ func (sv StringValue) GetValue() interface{} {
 }
 
 func (sv StringValue) AsInt() *int {
-	return nil
+	intValue, err := strconv.Atoi(sv.Value)
+	if err != nil {
+		return nil
+	}
+	return &intValue
 }
 
 func (sv StringValue) AsFloat() *float64 {
-	return nil
+	floatValue, err := strconv.ParseFloat(sv.Value, 64)
+	if err != nil {
+		return nil
+	}
+	return &floatValue
 }
 
 func (sv StringValue) AsBool() *bool {
-	return nil
+	boolValue, err := strconv.ParseBool(sv.Value)
+	if err != nil {
+		return nil
+	}
+	return &boolValue
 }
 
 func (sv StringValue) AsString() *string {
