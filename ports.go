@@ -1,10 +1,13 @@
 package rxlib
 
 import (
+	"github.com/NubeIO/rxlib/priority"
 	"time"
 )
 
 type Port struct {
+	Priority priority.Priority
+
 	ID                 string           `json:"id"`
 	Name               string           `json:"name"`
 	UUID               string           `json:"uuid"`
@@ -31,6 +34,7 @@ type Port struct {
 	OverPositionValue int  `json:"overPositionValue,omitempty"`
 
 	OnMessage func(msg *Payload) `json:"-"` // used for the evntbus
+
 }
 
 func (p *Port) GetID() string {
