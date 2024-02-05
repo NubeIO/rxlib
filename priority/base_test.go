@@ -54,6 +54,7 @@ func TestNewAsOutput(t *testing.T) {
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	pprint.PrintJSON(resp)
 
 }
