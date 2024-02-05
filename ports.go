@@ -1,7 +1,7 @@
 package rxlib
 
 import (
-	"time"
+	"github.com/NubeIO/rxlib/priority"
 )
 
 type Port struct {
@@ -9,18 +9,20 @@ type Port struct {
 	Name string `json:"name"`
 	UUID string `json:"uuid"`
 
-	Value any `json:"value,omitempty"` // the value after it's had some transformations
+	// Input/Output port values
+	Data         *priority.DataValue    `json:"value,omitempty"`        // value should be used for any thing not a string
+	DataPriority *priority.DataPriority `json:"dataPriority,omitempty"` // values for string, bool, float
 
 	Direction PortDirection `json:"direction"` // input or output
-	DataType  PortDataType  `json:"dataType"`  // float, bool, string, any, json
+	DataType  priority.Type `json:"dataType"`  // float, bool, string, any, json
 
 	// these are optional and used if you want to keep the last value for later use
-	PreviousValueSet bool           `json:"-"`
-	PreviousValue    *PreviousValue `json:"previousValue,omitempty"`
+	PreviousValueSet bool                    `json:"-"`
+	PreviousValue    *priority.PreviousValue `json:"previousValue,omitempty"`
 	// is a value written from another object
-	WrittenValueSet          bool          `json:"-"`
-	WrittenValue             *WrittenValue `json:"writtenValue,omitempty"`
-	AllowMultipleConnections bool          `json:"allowMultipleConnections,omitempty"`
+	WrittenValueSet          bool                   `json:"-"`
+	WrittenValue             *priority.WrittenValue `json:"writtenValue,omitempty"`
+	AllowMultipleConnections bool                   `json:"allowMultipleConnections,omitempty"`
 
 	// port position is where to show the order on the object and where to hide the port or not
 	DefaultPosition   int  `json:"defaultPosition"`
@@ -48,20 +50,41 @@ func (p *Port) SetName(v string) {
 	p.Name = v
 }
 
-func (p *Port) SetValue(value any) {
-	p.Value = value
+func (p *Port) SetData(value any) {
+	if p.Data == nil {
+		p.Data = &priority.DataValue{}
+	}
+	p.Data.Value = value
 }
 
-func (p *Port) GetValue() any {
-	return p.Value
+func (p *Port) InitDataPriority(body *priority.NewPrimitiveValue) error {
+	if p.DataPriority == nil {
+		pri, err := priority.NewPrimitive(body)
+		if err != nil {
+			return err
+		}
+		p.DataPriority = pri
+	}
+	return nil
 }
 
-func (p *Port) SetWrittenValue(v *WrittenValue) {
+func (p *Port) SetDataPriority(value any) {
+	if p.DataPriority == nil {
+		panic("rxlib.SetDataPriority DataPriority can not be empty, please InitDataPriority() first")
+	}
+	p.DataPriority = value
+}
+
+func (p *Port) GetData() any {
+	return p.Data
+}
+
+func (p *Port) SetWrittenValue(v *priority.WrittenValue) {
 	p.WrittenValueSet = true
 	p.WrittenValue = v
 }
 
-func (p *Port) GetWrittenValue() *WrittenValue {
+func (p *Port) GetWrittenValue() *priority.WrittenValue {
 	return p.WrittenValue
 }
 
@@ -94,7 +117,7 @@ func NewPortFloatCallBack(id string, f func(message *Payload), opts ...*PortOpts
 	p := &NewPort{
 		ID:        id,
 		Name:      id,
-		DataType:  PortTypeFloat,
+		DataType:  priority.TypeFloat,
 		OnMessage: f,
 	}
 	p.DefaultPosition = portOpts(opts...).DefaultPosition
@@ -107,7 +130,7 @@ func NewPortFloat(id string, opts ...*PortOpts) *NewPort {
 	p := &NewPort{
 		ID:       id,
 		Name:     id,
-		DataType: PortTypeFloat,
+		DataType: priority.TypeFloat,
 	}
 	p.DefaultPosition = portOpts(opts...).DefaultPosition
 	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
@@ -119,44 +142,18 @@ func NewPortBool(id string, opts ...*PortOpts) *NewPort {
 	p := &NewPort{
 		ID:       id,
 		Name:     id,
-		DataType: PortTypeBool,
+		DataType: priority.TypeBool,
 	}
 	p.DefaultPosition = portOpts(opts...).DefaultPosition
 	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
 	p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
 	return p
-}
-
-func NewPortAny(id string, opts ...*PortOpts) *NewPort {
-	p := &NewPort{
-		ID:       id,
-		Name:     id,
-		DataType: PortTypeAny,
-	}
-	p.DefaultPosition = portOpts(opts...).DefaultPosition
-	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
-	p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
-	return p
-}
-
-type PreviousValue struct {
-	PreviousValue          any       `json:"previousValue,omitempty"`
-	PreviousValueRaw       any       `json:"previousValueRaw,omitempty"`
-	PreviousValueTimestamp time.Time `json:"previousValueTimestamp,omitempty"`
-}
-
-type WrittenValue struct {
-	FromUUID   string    `json:"fromUUID"`
-	FromPortID string    `json:"fromPortID"`
-	Value      any       `json:"previousValue,omitempty"`
-	ValueRaw   any       `json:"previousValueRaw,omitempty"`
-	Timestamp  time.Time `json:"previousValueTimestamp,omitempty"`
 }
 
 type NewPort struct {
 	ID                       string
 	Name                     string
-	DataType                 PortDataType
+	DataType                 priority.Type
 	AllowMultipleConnections bool               `json:"allowMultipleConnections,omitempty"`
 	DefaultPosition          int                `json:"defaultPosition"`
 	HiddenByDefault          bool               `json:"hiddenByDefault,omitempty"`
@@ -174,16 +171,6 @@ type PortFormatString struct {
 	AllowEmptyString bool     `json:"allowEmptyString,omitempty"`
 	RestrictString   *float64 `json:"restrictString"` // for example don't allow # on an mqtt topic
 }
-
-type PortDataType string
-
-const (
-	PortTypeJSON   PortDataType = "json"
-	PortTypeAny    PortDataType = "any"
-	PortTypeFloat  PortDataType = "float"
-	PortTypeString PortDataType = "string"
-	PortTypeBool   PortDataType = "bool"
-)
 
 // some commonly used output names
 const (

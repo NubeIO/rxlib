@@ -30,7 +30,7 @@ func TestNewGenericSample(t *testing.T) {
 	RecordsByTime, err := history.GetRecordsByTime(startDate, duration)
 	fmt.Printf("Records within the error %v:\n", err)
 	for i, sample := range RecordsByTime {
-		fmt.Printf("Record %d - UUID: %s, Value: %v, Timestamp: %v\n", i+1, sample.GetUUID(), sample.GetValue(), sample.GetTimestamp().Format(time.StampMilli))
+		fmt.Printf("Record %d - UUID: %s, Data: %v, Timestamp: %v\n", i+1, sample.GetUUID(), sample.GetValue(), sample.GetTimestamp().Format(time.StampMilli))
 	}
 
 	history.GetRecords()

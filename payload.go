@@ -1,36 +1,47 @@
 package rxlib
 
-import "time"
+import (
+	"github.com/NubeIO/rxlib/priority"
+	"time"
+)
+
+func NewPayload(body *Payload) *Payload {
+	return body
+}
 
 type Payload struct {
 	Port       *Port       `json:"port"`
 	Connection *Connection `json:"connection,omitempty"`
 	ObjectUUID string      `json:"objectUUID"`
 	ObjectID   string      `json:"objectID"`
-
 	// used for mapping
-	MappingUUID       string `json:"mappingUUID,omitempty"`
-	RemoteMappingUUID string `json:"remoteMappingUUID,omitempty"`
+	Mapping *Mapping `json:"mapping,omitempty"`
+
+	ExpectedData string `json:"expectedData"` // make it easy for an object to decode in incoming data; eg string, map[], user
+	Data         any    `json:"data"`
+}
+
+type Mapping struct {
+	ManagerUUID       string            `json:"managerUUID,omitempty"`
+	NetworkUUID       string            `json:"networkUUID,omitempty"`
+	MapperUUID        string            `json:"mapperUUID,omitempty"`
+	Data              any               `json:"data,omitempty"`
+	PrimitivesPayload PrimitivesPayload `json:"primitivesPayload,omitempty"`
+}
+
+type PrimitivesPayload struct {
+	DataType priority.Type      `json:"dataType,omitempty"`
+	Priority *priority.Priority `json:"priority,omitempty"`
+	Symbol   *string            `json:"symbol,omitempty"`
 }
 
 func (p *Payload) GetValue() any {
-	return p.Port.Value
+	return p.Port.Data
 }
 
 type PayloadValue struct {
 	Value     any `json:"value"`
 	Timestamp *time.Time
-}
-
-func (p *Payload) GetValueLastUpdated() *PayloadValue {
-	return &PayloadValue{
-		Value:     p.GetValue(),
-		Timestamp: p.GetLastUpdated(),
-	}
-}
-
-func (p *Payload) GetLastUpdated() *time.Time {
-	return p.Port.LastUpdated
 }
 
 func (p *Payload) GetPortName() string {
@@ -53,18 +64,6 @@ func (p *Payload) GetConnection() *Connection {
 	return p.Connection
 }
 
-func (p *Payload) SetMappingUUID(value string) {
-	p.MappingUUID = value
-}
-
-func (p *Payload) GetMappingUUID() string {
-	return p.MappingUUID
-}
-
-func (p *Payload) GetRemoteMappingUUID() string {
-	return p.RemoteMappingUUID
-}
-
-func (p *Payload) SetRemoteMappingUUID(value string) {
-	p.RemoteMappingUUID = value
+func (p *Payload) SetObjectUUID(value string) {
+	p.ObjectUUID = value
 }

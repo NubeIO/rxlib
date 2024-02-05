@@ -11,16 +11,16 @@ func TestPriority_GetHighestPriorityValue(t *testing.T) {
 	//}
 	//
 	//p := port.PriorityValue
-	//p.SetValue(priority.IntValue{2}, 1)
-	//p.SetValue(priority.FloatValue{20.5}, 2)
-	//p.SetValue(priority.BoolValue{true}, 3)
-	//p.SetValue(priority.StringValue{"test"}, 4)
+	//p.SetData(priority.IntValue{2}, 1)
+	//p.SetData(priority.FloatValue{20.5}, 2)
+	//p.SetData(priority.BoolValue{true}, 3)
+	//p.SetData(priority.StringValue{"test"}, 4)
 	//
 	//value, _ := p.GetHighestPriorityValue()
 	//if value == nil {
 	//	t.Errorf("Expected a value, got nil")
 	//} else {
-	//	fmt.Println("Highest priority value:", value.GetValue())
+	//	fmt.Println("Highest priority value:", value.GetData())
 	//}
 	//fmt.Println(*value.AsInt() + 10)
 	//

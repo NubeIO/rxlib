@@ -10,7 +10,7 @@ import (
 
 func TestNewAsOutput(t *testing.T) {
 
-	rawValue := nils.ToFloat64(100)
+	rawValue := nils.ToFloat64(24)
 	fallback := nils.ToFloat64(0)
 	enums := []*Enums{
 		&Enums{
@@ -29,14 +29,14 @@ func TestNewAsOutput(t *testing.T) {
 	fmt.Println(enums[0].Key)
 	transformationConfig := &Transformations{
 		//Enums:       enums,
-		ApplyMinMax: true,
+		ApplyMinMax: false,
 		MinMaxValue: &MinMaxValue{MaxOutValue: nils.ToFloat64(2)},
 	}
 	u := &unitswrapper.EngineeringUnits{
 		DecimalPlaces: 0,
 		UnitCategory:  "temperature",
-		Unit:          "",
-		UnitTo:        "",
+		Unit:          "C",
+		UnitTo:        "F",
 	}
 	body := &NewPrimitiveValue{
 		PriorityCount:   0,
@@ -50,11 +50,17 @@ func TestNewAsOutput(t *testing.T) {
 		Transformations:       transformationConfig,
 		Units:                 u,
 	}
-	resp, err := NewPrimitive(body)
+	resp, prim, err := NewPrimitive(body)
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	pprint.PrintJSON(resp)
+
+	rawValue = nils.ToFloat64(34)
+	result, err := prim.UpdateValueAndGenerateResult(rawValue, nil, 0)
+	if err != nil {
+		return
+	}
+	pprint.PrintJSON(result)
 
 }

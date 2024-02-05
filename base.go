@@ -3,6 +3,7 @@ package rxlib
 import (
 	"github.com/NubeIO/rxlib/libs/history"
 	"github.com/NubeIO/rxlib/libs/rubix"
+	"github.com/NubeIO/rxlib/priority"
 	"github.com/NubeIO/schema"
 	"github.com/gin-gonic/gin"
 	"github.com/gookit/event"
@@ -23,9 +24,9 @@ type Object interface {
 	Start() error
 	SetLoaded() // used normally for the Start() to set it that it has booted
 	IsNotLoaded() bool
-	IsLoaded() bool                                                  // where the object Start() method has been called
-	ObjectInvoked(body any) (response any, err error)                // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
-	ObjectInvokedPayload(message *Payload) (response any, err error) // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
+	IsLoaded() bool                                                           // where the object Start() method has been called
+	ObjectInvoked(body any) (response any, ok bool, err error)                // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
+	ObjectInvokedPayload(message *Payload) (response any, ok bool, err error) // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 	Process() error
 	Reset() error // for example this can be called on the 2nd deploy of a counter object, and we want to reset the count back to zero
 	AllowsReset() bool
@@ -45,6 +46,7 @@ type Object interface {
 	RemoveObjectFromRuntime()
 	GetChildObjects() []Object                      // get all the object inside a folder
 	GetChildObjectsByType(objectID string) []Object // for example get all modbus/device that are inside its parent modbus/network Object
+	GetChildObject(objectUUID string) (obj Object, exists bool)
 	GetParentObject() (obj Object, exists bool)
 	GetParentUUID() string
 
@@ -104,8 +106,8 @@ type Object interface {
 	GetOutput(id string) *Port
 	GetOutputByUUID(uuid string) *Port
 	// PublishValue update the port value; pass in option withTimestamp to timestamp to write
-	PublishValue(portID string, value any, withTimestamp ...bool) error
-	PublishLastValue(portID string) (value any, err error) // will republish its last know value on the eventbus
+	PublishValue(portID string) error
+	SubscribePayload(topic string, handler func(e *Payload) error)
 	Subscribe(topic string, handler func(e event.Event) error)
 	PublishAny(topic string, data *EventBusMessage) error
 	SetEventBusCallBack(topic string, callback *EventBusCallback)
@@ -114,21 +116,15 @@ type Object interface {
 	// PreviousValue is the last value saved
 	// WrittenValue is a value written from another object; this is useful for example on network object where the network is doing the polling and can quickly update the devices/points
 	GetAllObjectValues() []*ObjectValue
-	SetOutputPreviousValue(id string, value *PreviousValue) error
-	GetOutputPreviousValue(id string) *PreviousValue
-	SetInputPreviousValue(id string, value *PreviousValue) error
-	GetInputPreviousValue(id string) *PreviousValue
+	SetOutputPreviousValue(id string, value *priority.PreviousValue) error
+	GetOutputPreviousValue(id string) *priority.PreviousValue
+	SetInputPreviousValue(id string, value *priority.PreviousValue) error
+	GetInputPreviousValue(id string) *priority.PreviousValue
 
-	SetOutputWrittenValue(id string, value *WrittenValue) error
-	GetOutputWrittenValue(id string) *WrittenValue
-	SetInputWrittenValue(id string, value *WrittenValue) error
-	GetInputWrittenValue(id string) *WrittenValue
-
-	// data TODO maybe add a cache timeout, also a GetTheDelete() and a Delete()
-	GetData() map[string]any
-	SetData(key string, data any) // addData is a way for a node to store something in memory
-	DeleteData(key string) error
-	GetDataByKey(key string, out any) error
+	SetOutputWrittenValue(id string, value *priority.WrittenValue) error
+	GetOutputWrittenValue(id string) *priority.WrittenValue
+	SetInputWrittenValue(id string, value *priority.WrittenValue) error
+	GetInputWrittenValue(id string) *priority.WrittenValue
 
 	// GetRootObject object tree
 	GetRootObject(uuid string) (Object, error)

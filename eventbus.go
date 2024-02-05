@@ -1,10 +1,11 @@
 package rxlib
 
 type EventBusMessage struct {
-	Data       any    `json:"data"`
-	ObjectUUID string `json:"objectUUID,omitempty"`
-	ObjectID   string `json:"objectID,omitempty"`
-	Topic      string `json:"topic,omitempty"`
+	Data       any      `json:"data"`
+	ObjectUUID string   `json:"objectUUID,omitempty"`
+	ObjectID   string   `json:"objectID,omitempty"`
+	Topic      string   `json:"topic,omitempty"`
+	Payload    *Payload `json:"payload,omitempty"`
 }
 
 type EventBusCallback struct {
