@@ -58,7 +58,7 @@ func (h *GenericHistory) GetRecordsByDateRange(startDate, endDate time.Time) []R
 
 // GetRecordsByTime
 // such as "300s", "-1.5h" or "2h45m".
-// Valid time units are  "ms", "s", "m", "h".
+// Valid time unitswrapper are  "ms", "s", "m", "h".
 // eg; GetRecordsByTime(time.Now(), "10m")
 func (h *GenericHistory) GetRecordsByTime(startDate time.Time, duration string) ([]Record, error) {
 	durationValue, err := time.ParseDuration(duration)

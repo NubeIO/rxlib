@@ -1,4 +1,4 @@
-package rxlib
+package priority
 
 import (
 	"errors"
@@ -6,7 +6,13 @@ import (
 	"math"
 )
 
+type Enums struct {
+	Key   int    `json:"key"`
+	Value string `json:"value"`
+}
+
 type Transformations struct {
+	Enums         []*Enums
 	FallBackValue *float64 `json:"fallBackValue"`
 	PermitNull    bool     `json:"permitNull"` // if true will set the default value of golang types;
 	// return the result value to a decimal place if its not nil
@@ -14,21 +20,41 @@ type Transformations struct {
 
 	// limit the result based of the min/max settings
 	ApplyMinMax   bool
-	MinValue      *float64 `json:"minValue"`
-	MaxValue      *float64 `json:"maxValue"`
-	MinOutValue   *float64 `json:"minOutValue"`
-	MaxOutValue   *float64 `json:"maxOutValue"`
+	MinMaxValue   *MinMaxValue `json:"minMaxValue"`
 	ErrorOnMinMax bool
 
 	// throw error if we have a match
 	RestrictNumber *float64 `json:"restrictNumber"` // for example don't allow number 10
 
 	// scale the result value based on the in min/max and the out min/max
-	ApplyScale  bool
-	ValueInMin  *float64
-	ValueInMax  *float64
-	ValueOutMin *float64
-	ValueOutMax *float64
+	ApplyScale       bool
+	ScaleMinMaxValue *ScaleMinMaxValue `json:"scaleMinMaxValue"`
+}
+
+type MinMaxValue struct {
+	MinValue    *float64 `json:"minValue"`
+	MaxValue    *float64 `json:"maxValue"`
+	MinOutValue *float64 `json:"minOutValue"`
+	MaxOutValue *float64 `json:"maxOutValue"`
+}
+
+type ScaleMinMaxValue struct {
+	MinValue    *float64 `json:"minValue"`
+	MaxValue    *float64 `json:"maxValue"`
+	MinOutValue *float64 `json:"minOutValue"`
+	MaxOutValue *float64 `json:"maxOutValue"`
+}
+
+func EnumValue(v float64, enums []*Enums) (value string, ok bool) {
+	for _, enum := range enums {
+		if int(v) == enum.Key {
+			if enum.Value != "" {
+				return enum.Value, true
+			}
+
+		}
+	}
+	return "", false
 }
 
 func TransformationsBuilder(inputValue *float64, config *Transformations) (*float64, error) {
@@ -51,39 +77,39 @@ func TransformationsBuilder(inputValue *float64, config *Transformations) (*floa
 	}
 
 	if config.ApplyScale && !config.ApplyMinMax {
-		if config.ValueInMin == nil || config.ValueInMax == nil || config.ValueOutMin == nil || config.ValueOutMax == nil {
+		if config.ScaleMinMaxValue.MinValue == nil || config.ScaleMinMaxValue.MaxValue == nil || config.ScaleMinMaxValue.MinOutValue == nil || config.ScaleMinMaxValue.MaxOutValue == nil {
 			return nil, fmt.Errorf("to apply a scale we need all the format values to vaild")
 		}
-		input = Scale(input, NewFloat64Ptr(config.ValueInMin), NewFloat64Ptr(config.ValueInMax), NewFloat64Ptr(config.ValueOutMin), NewFloat64Ptr(config.ValueOutMax))
+		input = Scale(input, NewFloat64Ptr(config.ScaleMinMaxValue.MinValue), NewFloat64Ptr(config.ScaleMinMaxValue.MaxValue), NewFloat64Ptr(config.ScaleMinMaxValue.MinOutValue), NewFloat64Ptr(config.ScaleMinMaxValue.MaxOutValue))
 	}
 	if config.ApplyMinMax && !config.ApplyScale {
 		// apply to input
-		if config.MinValue != nil {
+		if config.MinMaxValue.MinValue != nil {
 			var err error
-			input, err = ApplyMinConstraint(input, NewFloat64Ptr(config.MinValue), config.ErrorOnMinMax)
+			input, err = ApplyMinConstraint(input, NewFloat64Ptr(config.MinMaxValue.MinValue), config.ErrorOnMinMax)
 			if err != nil {
 				return nil, err
 			}
 		}
-		if config.MaxValue != nil {
+		if config.MinMaxValue.MaxValue != nil {
 			var err error
-			input, err = ApplyMaxConstraint(input, NewFloat64Ptr(config.MaxValue), config.ErrorOnMinMax)
+			input, err = ApplyMaxConstraint(input, NewFloat64Ptr(config.MinMaxValue.MaxValue), config.ErrorOnMinMax)
 			if err != nil {
 				return nil, err
 			}
 		}
 
 		// apply to out result
-		if config.MinOutValue != nil {
+		if config.MinMaxValue.MinOutValue != nil {
 			var err error
-			input, err = ApplyMinConstraint(input, NewFloat64Ptr(config.MinOutValue), false)
+			input, err = ApplyMinConstraint(input, NewFloat64Ptr(config.MinMaxValue.MinOutValue), false)
 			if err != nil {
 				return nil, err
 			}
 		}
-		if config.MaxOutValue != nil {
+		if config.MinMaxValue.MaxOutValue != nil {
 			var err error
-			input, err = ApplyMaxConstraint(input, NewFloat64Ptr(config.MaxOutValue), false)
+			input, err = ApplyMaxConstraint(input, NewFloat64Ptr(config.MinMaxValue.MaxOutValue), false)
 			if err != nil {
 				return nil, err
 			}

@@ -1,4 +1,4 @@
-package rxlib
+package unitswrapper
 
 import (
 	"fmt"
@@ -9,22 +9,22 @@ func TestInitUnits(t *testing.T) {
 	u := InitUnits(&EngineeringUnits{
 		DecimalPlaces: 1,
 		UnitCategory:  "temperature",
-		Unit:          "F",
-		UnitTo:        "C",
+		Unit:          "C",
+		UnitTo:        "F",
 	})
-	v := 75.1
+	v := 22.5
 	err := u.New(v)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
 		return
 	}
 
-	fmt.Printf("AsSymbol %s \n", u.AsSymbolWithDecimal())
+	fmt.Printf("Converted %s \n", u.ChangeUnitAsSymbol())
 	c, err := u.Conversion()
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
 		return
 	}
-	fmt.Printf("AsSymbol %f \n", c)
-	//fmt.Printf("AsSymbol %s\n", unit.AsSymbolWithDecimal(1))
+	fmt.Printf("Converted %f \n", c)
+	//fmt.Printf("Converted %s\n", unit.AsSymbolWithDecimal(1))
 }

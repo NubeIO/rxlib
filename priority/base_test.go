@@ -3,41 +3,57 @@ package priority
 import (
 	"fmt"
 	"github.com/NubeIO/rxlib/helpers/pprint"
+	"github.com/NubeIO/rxlib/libs/nils"
+	"github.com/NubeIO/rxlib/unitswrapper"
 	"testing"
 )
 
-func TestNewPriority(t *testing.T) {
-	p := NewPriority(16, TypeFloat)
+func TestNewAsOutput(t *testing.T) {
 
-	p.SetValue(FloatValue{Value: 120}, 1)
-	//p.SetValue(StringValue{Value: "2222"}, 2)
-	p.SetValue(StringValue{Value: "sorry cant convert me"}, 3)
-	highestValue, highestPriority := p.GetHighestPriorityValue()
-
-	//intValue := ApplyMin(*highestValue.AsInt(), 20)
-	//fmt.Printf("Min Int Value: %d\n", intValue)
-
-	fmt.Println(*highestValue.AsInt(), "VVVVVVVVVVVV")
-
-	//fmt.Println(n)
-
-	// Get highest priority value
-	if highestValue != nil {
-		fmt.Printf("Highest priority value: %v at priority %d\n", highestValue.GetValue(), highestPriority)
-	} else {
-		fmt.Println("No value set.")
+	rawValue := nils.ToFloat64(100)
+	fallback := nils.ToFloat64(0)
+	enums := []*Enums{
+		&Enums{
+			Key:   0,
+			Value: "off",
+		},
+		&Enums{
+			Key:   1,
+			Value: "on",
+		},
+		&Enums{
+			Key:   2,
+			Value: "manual",
+		},
 	}
-
-	//p.SetNull(1)
-
-	// Get highest priority value
-	highestValue, highestPriority = p.GetHighestPriorityValue()
-	if highestValue != nil {
-		fmt.Printf("Highest priority value: %v at priority %d\n", highestValue.GetValue(), highestPriority)
-	} else {
-		fmt.Println("No value set.")
+	fmt.Println(enums[0].Key)
+	transformationConfig := &Transformations{
+		//Enums:       enums,
+		ApplyMinMax: true,
+		MinMaxValue: &MinMaxValue{MaxOutValue: nils.ToFloat64(2)},
 	}
-
-	pprint.PrintJSON(p.ToMap())
+	u := &unitswrapper.EngineeringUnits{
+		DecimalPlaces: 0,
+		UnitCategory:  "temperature",
+		Unit:          "",
+		UnitTo:        "",
+	}
+	body := &NewPrimitiveValue{
+		PriorityCount:   0,
+		ValueType:       "",
+		InitialValue:    rawValue,
+		FallBackValue:   fallback,
+		PriorityToWrite: 0,
+		Decimal:         1,
+		//OverrideValue:         Float64Ptr(300),
+		OverrideValuePriority: 1,
+		Transformations:       transformationConfig,
+		Units:                 u,
+	}
+	resp, err := NewPrimitive(body)
+	if err != nil {
+		fmt.Println(err)
+	}
+	pprint.PrintJSON(resp)
 
 }
