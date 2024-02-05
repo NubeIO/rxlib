@@ -39,6 +39,16 @@ func (p *Payload) GetValue() any {
 	return p.Port.Data
 }
 
+func (p *Payload) GetDataPriority() *priority.Priority {
+	if p.Port.DataPriority == nil {
+		return nil
+	}
+	if p.Port.DataPriority.Priority == nil {
+		return nil
+	}
+	return p.Port.DataPriority.Priority
+}
+
 type PayloadValue struct {
 	Value     any `json:"value"`
 	Timestamp *time.Time

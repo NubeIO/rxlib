@@ -1,6 +1,7 @@
 package rxlib
 
 import (
+	"github.com/NubeIO/rxlib/libs/nils"
 	"github.com/NubeIO/rxlib/priority"
 )
 
@@ -12,6 +13,7 @@ type Port struct {
 	// Input/Output port values
 	Data         *priority.DataValue    `json:"value,omitempty"`        // value should be used for any thing not a string
 	DataPriority *priority.DataPriority `json:"dataPriority,omitempty"` // values for string, bool, float
+	primitives   *priority.Primitives
 
 	Direction PortDirection `json:"direction"` // input or output
 	DataType  priority.Type `json:"dataType"`  // float, bool, string, any, json
@@ -57,22 +59,46 @@ func (p *Port) SetData(value any) {
 	p.Data.Value = value
 }
 
-func (p *Port) InitDataPriority(body *priority.NewPrimitiveValue) error {
-	if p.DataPriority == nil {
-		pri, err := priority.NewPrimitive(body)
-		if err != nil {
-			return err
-		}
-		p.DataPriority = pri
+func (p *Port) initDataPriority(body *priority.NewPrimitiveValue) error {
+	pri, prim, err := priority.NewPrimitive(body)
+	p.primitives = prim
+	if err != nil {
+		return err
 	}
+	p.DataPriority = pri
 	return nil
 }
 
-func (p *Port) SetDataPriority(value any) {
+func (p *Port) InitDataPriorityFloat(body *priority.NewPrimitiveValue) error {
+	return p.initDataPriority(body)
+}
+
+func (p *Port) SetPriorityNull(priorityNumber int) {
+	p.DataPriority.Priority.SetNull(priorityNumber)
+}
+
+func (p *Port) WriteFloat(value float64) error {
 	if p.DataPriority == nil {
 		panic("rxlib.SetDataPriority DataPriority can not be empty, please InitDataPriority() first")
 	}
-	p.DataPriority = value
+	result, err := p.primitives.UpdateValueFloat(value)
+	if err != nil {
+		return err
+	}
+	p.DataPriority = result
+	return nil
+}
+
+func (p *Port) OverrideWriteFloat(value float64) error {
+	if p.DataPriority == nil {
+		panic("rxlib.SetDataPriority DataPriority can not be empty, please InitDataPriority() first")
+	}
+	result, err := p.primitives.UpdateValueAndGenerateResult(nil, 0, nils.ToFloat64(value), 1)
+	if err != nil {
+		return err
+	}
+	p.DataPriority = result
+	return nil
 }
 
 func (p *Port) GetData() any {

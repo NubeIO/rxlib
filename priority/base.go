@@ -75,7 +75,7 @@ func NewPrimitive(body *NewPrimitiveValue) (*DataPriority, *Primitives, error) {
 			}
 		}
 	}
-	res, err := p.UpdateValueAndGenerateResult(body.InitialValue, body.OverrideValue, body.OverrideValuePriority)
+	res, err := p.UpdateValueAndGenerateResult(body.InitialValue, body.PriorityToWrite, body.OverrideValue, body.OverrideValuePriority)
 	return res, p, err
 }
 
@@ -167,8 +167,13 @@ type DataPriority struct {
 	RawValueBool *bool     `json:"rawValueBool,omitempty"`
 }
 
-func (p *Primitives) UpdateValueAndGenerateResult(newValue, overrideValue *float64, priorityNumber int) (*DataPriority, error) {
-	p.inValue = newValue // Update the initial value
+func (p *Primitives) UpdateValueFloat(newValue float64) (*DataPriority, error) {
+	return p.UpdateValueAndGenerateResult(nils.ToFloat64(newValue), 2, nil, 0)
+}
+
+func (p *Primitives) UpdateValueAndGenerateResult(newValue *float64, priorityNumber int, overrideValue *float64, overridePriorityNumber int) (*DataPriority, error) {
+	p.inValue = newValue              // Update the initial value
+	p.priorityNumber = priorityNumber // Update the initial value
 
 	var err error
 	var applyEnums bool
@@ -182,7 +187,7 @@ func (p *Primitives) UpdateValueAndGenerateResult(newValue, overrideValue *float
 			return nil, err
 		}
 		nv := FloatValue{Value: nils.GetFloat64(overrideValue)}
-		p.priority.SetValue(nv, priorityNumber)
+		p.priority.SetValue(nv, overridePriorityNumber)
 	} else if p.inValue == nil && p.fallBackValue != nil { // Fallback logic
 		nv := FloatValue{Value: nils.GetFloat64(p.fallBackValue)}
 		p.priority.SetValue(nv, p.priorityNumber)
@@ -194,28 +199,31 @@ func (p *Primitives) UpdateValueAndGenerateResult(newValue, overrideValue *float
 		}
 
 		// Handle units and transformation value application
-		var valueToSet *float64
+		var valueToSet = p.inValue
 		if p.transformedValue != nil || p.units != nil {
 			if p.units != nil {
 				err = p.applyUnits(true, overrideValue)
 				if err != nil && err.Error() != ErrUnitsNotSupported {
 					return nil, err
 				}
-				valueToSet = p.unitsValue
+				if p.unitsValue != nil {
+					valueToSet = p.unitsValue // units
+				}
 			} else {
-				valueToSet = p.transformedValue
+				if p.transformedValue != nil {
+					valueToSet = p.transformedValue // units
+				}
 			}
 		} else {
 			valueToSet = p.inValue
 		}
-
 		nv := FloatValue{Value: nils.GetFloat64(valueToSet)}
 		p.priority.SetValue(nv, p.priorityNumber)
 	}
 
 	// Enums application
 	if applyEnums {
-		v, _ := p.priority.GetHighestPriorityValue()
+		v := p.priority.GetHighestPriorityValue()
 		if v != nil {
 			s, ok := EnumValue(nils.GetFloat64(v.AsFloat()), p.transformations.Enums)
 			if ok {
@@ -261,6 +269,11 @@ func (p *Priority) SetValue(value PriorityValue, priorityNumber int) {
 	}
 }
 
+func (p *Priority) SetValueFloat(value float64, priorityNumber int) {
+	nv := FloatValue{Value: value}
+	p.SetValue(nv, priorityNumber)
+}
+
 func (p *Priority) SetNull(priorityNumber int) {
 	if priorityNumber >= 1 && priorityNumber <= len(p.Values) {
 		p.Values[priorityNumber-1] = nil
@@ -276,7 +289,7 @@ func (p *Priority) GetHighestPriorityValueFallback(fallback PriorityValue) Prior
 	return fallback
 }
 
-func (p *Priority) GetHighestPriorityValue() (PriorityValue, int) {
+func (p *Priority) GetHighestPriority() (PriorityValue, int) {
 	for i, v := range p.Values {
 		if v != nil {
 			return v, i + 1
@@ -285,13 +298,31 @@ func (p *Priority) GetHighestPriorityValue() (PriorityValue, int) {
 	return nil, 0
 }
 
-func (p *Priority) GetLowestPriorityValue() (PriorityValue, int) {
+func (p *Priority) GetHighestPriorityValue() PriorityValue {
+	for _, v := range p.Values {
+		if v != nil {
+			return v
+		}
+	}
+	return nil
+}
+
+func (p *Priority) GetLowestPriority() (PriorityValue, int) {
 	for i := len(p.Values) - 1; i >= 0; i-- {
 		if p.Values[i] != nil {
 			return p.Values[i], i + 1
 		}
 	}
 	return nil, 0
+}
+
+func (p *Priority) GetLowestPriorityValue() PriorityValue {
+	for i := len(p.Values) - 1; i >= 0; i-- {
+		if p.Values[i] != nil {
+			return p.Values[i]
+		}
+	}
+	return nil
 }
 
 func (p *Priority) GetByPriorityNumber(priorityNumber int) PriorityValue {
