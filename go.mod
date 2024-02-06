@@ -8,7 +8,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-co-op/gocron v1.37.0
 	github.com/google/uuid v1.6.0
-	github.com/gookit/event v1.1.1
+	github.com/mustafaturan/bus/v3 v3.0.3
 	github.com/rs/zerolog v1.31.0
 )
 

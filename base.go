@@ -6,7 +6,7 @@ import (
 	"github.com/NubeIO/rxlib/priority"
 	"github.com/NubeIO/schema"
 	"github.com/gin-gonic/gin"
-	"github.com/gookit/event"
+	"github.com/mustafaturan/bus/v3"
 )
 
 type Chain struct {
@@ -107,11 +107,9 @@ type Object interface {
 	GetOutputByUUID(uuid string) *Port
 	// PublishValue update the port value; pass in option withTimestamp to timestamp to write
 	PublishValue(portID string) error
-	SubscribePayload(topic string, handler func(e *Payload) error)
-	Subscribe(topic string, handler func(e event.Event) error)
-	PublishAny(topic string, data *EventBusMessage) error
-	SetEventBusCallBack(topic string, callback *EventBusCallback)
-
+	Subscribe(topic string, callBack func(topic string, e bus.Event))
+	SubscribePayload(topic string, callBack func(topic string, p *Payload, err error))
+	SubscribeEventBusMessage(topic string, callBack func(topic string, p *Payload, err error))
 	//GetAllObjectValues ObjectValue are a way for one node to direly get and send data to another node
 	// PreviousValue is the last value saved
 	// WrittenValue is a value written from another object; this is useful for example on network object where the network is doing the polling and can quickly update the devices/points
