@@ -10,6 +10,16 @@ func NewPayload() *Payload {
 	return &Payload{}
 }
 
+type ObjectInvoke struct {
+	FromObjectUUID string `json:"fromObjectUUID"`
+	Action         string `json:"action"`
+	Data           any    `json:"data"`
+}
+
+type ObjectInvokeResponse struct {
+	Data any `json:"data"`
+}
+
 type Payload struct {
 	PortPayload *PortPayload `json:"portPayload,omitempty"`
 	// used for mapping

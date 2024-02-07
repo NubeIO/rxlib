@@ -1,7 +1,6 @@
 package dirs
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -102,7 +101,7 @@ func (f *fileImpl) Write(path string, data []byte) (int, error) {
 }
 
 func (f *fileImpl) Read(path string, buf []byte) (int, error) {
-	data, err := ioutil.ReadFile(path)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		return 0, err
 	}
@@ -128,7 +127,7 @@ func (f *fileImpl) Delete(path string) error {
 }
 
 func (f *fileImpl) ListAllFiles(path string) ([]string, error) {
-	files, err := ioutil.ReadDir(path)
+	files, err := os.ReadDir(path)
 	if err != nil {
 		return nil, err
 	}

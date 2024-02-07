@@ -24,9 +24,9 @@ type Object interface {
 	Start() error
 	SetLoaded() // used normally for the Start() to set it that it has booted
 	IsNotLoaded() bool
-	IsLoaded() bool                                                           // where the object Start() method has been called
-	ObjectInvoked(body any) (response any, ok bool, err error)                // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
-	ObjectInvokedPayload(message *Payload) (response any, ok bool, err error) // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
+	IsLoaded() bool                                                       // where the object Start() method has been called
+	ObjectInvoked(body *ObjectInvoke) (*ObjectInvokeResponse, error)      // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
+	ObjectInvokedPayload(message *Payload) (*ObjectInvokeResponse, error) // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 	Process() error
 	Reset() error // for example this can be called on the 2nd deploy of a counter object, and we want to reset the count back to zero
 	AllowsReset() bool
