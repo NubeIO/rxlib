@@ -48,8 +48,9 @@ func (p *Port) GetName() string {
 	return p.Name
 }
 
-func (p *Port) SetName(v string) {
+func (p *Port) SetName(v string) string {
 	p.Name = v
+	return p.Name
 }
 
 func (p *Port) SetData(value any) {
@@ -108,6 +109,7 @@ func (p *Port) GetData() any {
 func (p *Port) SetWrittenValue(v *priority.WrittenValue) {
 	p.WrittenValueSet = true
 	p.WrittenValue = v
+
 }
 
 func (p *Port) GetWrittenValue() *priority.WrittenValue {

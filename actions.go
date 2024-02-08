@@ -59,6 +59,7 @@ type ActionBody struct {
 	ObjectUUID    string `json:"objectUUID,omitempty"`
 	Name          string `json:"name,omitempty"`        // user
 	Description   string `json:"description,omitempty"` // get user
+	Example       string `json:"example,omitempty"`     // "RQL.ObjectInvoke"
 	Path          string `json:"path,omitempty"`        // user
 	Method        string `json:"method,omitempty"`      // GET output
 	Body          any    `json:"body,omitempty"`

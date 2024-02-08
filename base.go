@@ -24,9 +24,10 @@ type Object interface {
 	Start() error
 	SetLoaded() // used normally for the Start() to set it that it has booted
 	IsNotLoaded() bool
-	IsLoaded() bool                                                       // where the object Start() method has been called
-	ObjectInvoked(body *ObjectInvoke) (*ObjectInvokeResponse, error)      // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
-	ObjectInvokedPayload(message *Payload) (*ObjectInvokeResponse, error) // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
+	IsLoaded() bool                                                // where the object Start() method has been called
+	Invoke(key string, body any) (any, error)                      // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
+	InvokePayload(message *Payload) (*ObjectInvokeResponse, error) // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
+	GetInvokeActionsList() *ActionLists
 	Process() error
 	Reset() error // for example this can be called on the 2nd deploy of a counter object, and we want to reset the count back to zero
 	AllowsReset() bool
@@ -59,13 +60,6 @@ type Object interface {
 	//Rubix Network
 	SetRubixNetworkManager(manager rubix.Manager)
 	GetRubixNetworkManager() rubix.Manager
-
-	//Actions
-	GetSupportsActions() bool
-	SetActionList(list *ActionLists)
-	GetActionsList() *ActionLists
-	GetAction(action *ActionBody) *ActionResponse // for example over an API we can do a custom GetAction to a object; eg give me you
-	SetAction(action *ActionBody) *ActionResponse //
 
 	SetRequiredExtensions(extension []*Extension)
 	GetRequiredExtensions() []*Extension
@@ -169,7 +163,7 @@ type Object interface {
 
 	// name, set from Meta
 	GetName() string
-	SetName(v string)
+	SetName(v string) string
 
 	// category
 	GetCategory() string
