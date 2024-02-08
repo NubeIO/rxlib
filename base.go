@@ -24,10 +24,10 @@ type Object interface {
 	Start() error
 	SetLoaded() // used normally for the Start() to set it that it has booted
 	IsNotLoaded() bool
-	IsLoaded() bool                                                // where the object Start() method has been called
-	Invoke(key string, body any) (any, error)                      // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
-	InvokePayload(message *Payload) (*ObjectInvokeResponse, error) // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
-	GetInvokeActionsList() *ActionLists
+	IsLoaded() bool                                       // where the object Start() method has been called
+	Invoke(key string, body any) any                      // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
+	InvokePayload(message *Payload) *ObjectInvokeResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
+	InvokeList() []*Invoke
 	Process() error
 	Reset() error // for example this can be called on the 2nd deploy of a counter object, and we want to reset the count back to zero
 	AllowsReset() bool
@@ -37,9 +37,12 @@ type Object interface {
 	IsLocked() bool
 	IsUnlocked() bool
 
-	// runtime objects
-	AddRuntimeToObject(runtimeObjects map[string]Object) // gives each object access to every other object
-	GetRuntimeObjects() map[string]Object
+	NewRuntime(r Runtime)
+	GetRuntime() Runtime
+
+	// objectengine objects
+	//AddRuntimeToObject(runtimeObjects map[string]Object) // gives each object access to every other object
+	//GetRuntimeObjects() map[string]Object
 	GetForeignObject(objectUUID string) (obj Object, exists bool)
 	CheckForeignObjectOutputExists(objectUUID, portID string) (*Port, error)
 	CheckForeignObjectInputExists(objectUUID, portID string) (*Port, error)

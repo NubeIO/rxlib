@@ -12,8 +12,8 @@ func TestActions(t *testing.T) {
 	}
 	m, _ := ReflectStructFields(responseModel{})
 
-	actionList := NewActionList()
-	actionList.AddGetAction(&ActionBody{
+	actionList := NewInvokeList()
+	actionList.AddAction(&Invoke{
 		Name:          "get user",
 		Description:   "get a user",
 		Path:          "user",
@@ -22,7 +22,7 @@ func TestActions(t *testing.T) {
 		ResponseModel: m,
 	})
 
-	// Get all ActionLists from the ActionList interface
+	// Get all InvokeList from the InvokeBuilder interface
 	actionListsMap := actionList.All()
 
 	pprint.PrintJSON(actionListsMap)

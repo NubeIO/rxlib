@@ -6,7 +6,7 @@
 data
 *.idea
 *.code
-runtime/logs/*
+objectengine/logs/*
 
 *.orm
 *.db

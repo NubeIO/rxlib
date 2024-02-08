@@ -5,57 +5,28 @@ import (
 	"reflect"
 )
 
-type ActionList interface {
-	All() *ActionLists // Change the return type to map[string]*ActionLists
-	AddGetAction(action *ActionBody)
-	AddSetAction(action *ActionBody)
-	GetGetActions() []*ActionBody
-	GetSetActions() []*ActionBody
+type InvokeBuilder interface {
+	All() []*Invoke
+	AddAction(action *Invoke)
 }
 
-func NewActionList() ActionList {
-	return &ActionLists{}
+func NewInvokeList() InvokeBuilder {
+	return &InvokeList{}
 }
 
-func (al *ActionLists) All() *ActionLists {
-	return &ActionLists{
-		GetActions: al.GetGetActions(),
-		SetActions: al.GetSetActions(),
-	}
+func (al *InvokeList) All() []*Invoke {
+	return al.List
 }
 
-// AddGetAction adds a GetAction to the list of GetActions.
-func (al *ActionLists) AddGetAction(action *ActionBody) {
-	al.GetActions = append(al.GetActions, action)
+func (al *InvokeList) AddAction(action *Invoke) {
+	al.List = append(al.List, action)
 }
 
-// AddSetAction adds a SetAction to the list of SetActions.
-func (al *ActionLists) AddSetAction(action *ActionBody) {
-	al.SetActions = append(al.SetActions, action)
+type InvokeList struct {
+	List []*Invoke `json:"actions,omitempty"`
 }
 
-// GetGetActions returns the list of GetActions.
-func (al *ActionLists) GetGetActions() []*ActionBody {
-	return al.GetActions
-}
-
-// GetSetActions returns the list of SetActions.
-func (al *ActionLists) GetSetActions() []*ActionBody {
-	return al.SetActions
-}
-
-type ActionLists struct {
-	GetActions []*ActionBody `json:"getActions,omitempty"`
-	SetActions []*ActionBody `json:"setActions,omitempty"`
-}
-
-type ActionResponse struct {
-	Body    any    `json:"body,omitempty"`
-	Message string `json:"message,omitempty"`
-	Error   string `json:"error,omitempty"`
-}
-
-type ActionBody struct {
+type Invoke struct {
 	ObjectUUID    string `json:"objectUUID,omitempty"`
 	Name          string `json:"name,omitempty"`        // user
 	Description   string `json:"description,omitempty"` // get user
