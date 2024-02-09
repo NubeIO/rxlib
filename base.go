@@ -37,21 +37,27 @@ type Object interface {
 	IsLocked() bool
 	IsUnlocked() bool
 
-	NewRuntime(r Runtime)
-	GetRuntime() Runtime
+	AddRuntime(r Runtime)
+	Runtime() Runtime
+	RemoveObjectFromRuntime()
 
 	// objectengine objects
 	//AddRuntimeToObject(runtimeObjects map[string]Object) // gives each object access to every other object
 	//GetRuntimeObjects() map[string]Object
-	GetForeignObject(objectUUID string) (obj Object, exists bool)
-	CheckForeignObjectOutputExists(objectUUID, portID string) (*Port, error)
-	CheckForeignObjectInputExists(objectUUID, portID string) (*Port, error)
-	GetObjectsByType(objectID string) []Object // for example get all math/add Object
-	RemoveObjectFromRuntime()
-	GetChildObjects() []Object                      // get all the object inside a folder
+	//GetForeignObject(objectUUID string) (obj Object, exists bool)
+	//CheckForeignObjectOutputExists(objectUUID, portID string) (*Port, error)
+	//CheckForeignObjectInputExists(objectUUID, portID string) (*Port, error)
+	//GetObjectsByType(objectID string) []Object // for example get all math/add Object
+	//RemoveObjectFromRuntime()
+	//GetChildObjects() []Object                      // get all the object inside a folder
+	//GetChildObjectsByType(objectID string) []Object // for example get all modbus/device that are inside its parent modbus/network Object
+	//GetChildObject(objectUUID string) (obj Object, exists bool)
+	//GetParentObject() (obj Object, exists bool)
+
 	GetChildObjectsByType(objectID string) []Object // for example get all modbus/device that are inside its parent modbus/network Object
-	GetChildObject(objectUUID string) (obj Object, exists bool)
-	GetParentObject() (obj Object, exists bool)
+	GetChildObjects() []Object
+	GetParentObject() Object
+	GetChildObject(objectUUID string) Object
 	GetParentUUID() string
 
 	// AddExtension extension are a way to extend the functionalists of an object; for example add a history extension
@@ -110,7 +116,7 @@ type Object interface {
 	//GetAllObjectValues ObjectValue are a way for one node to direly get and send data to another node
 	// PreviousValue is the last value saved
 	// WrittenValue is a value written from another object; this is useful for example on network object where the network is doing the polling and can quickly update the devices/points
-	GetAllObjectValues() []*ObjectValue
+
 	SetOutputPreviousValue(id string, value *priority.PreviousValue) error
 	GetOutputPreviousValue(id string) *priority.PreviousValue
 	SetInputPreviousValue(id string, value *priority.PreviousValue) error
@@ -178,7 +184,6 @@ type Object interface {
 	GetWorkingGroupParent() string
 	GetWorkingGroupLeader() string
 	GetWorkingGroupLeaderObjectUUID() string
-	GetWorkingGroupLeaderObject() (Object, bool)
 
 	// plugin
 	GetPluginName() string
