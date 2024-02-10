@@ -24,12 +24,12 @@ type Object interface {
 	Start() error
 	SetLoaded() // used normally for the Start() to set it that it has booted
 	IsNotLoaded() bool
-	IsLoaded() bool                                       // where the object Start() method has been called
+	IsLoaded() bool                                       // where the Obj Start() method has been called
 	Invoke(key string, body any) any                      // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 	InvokePayload(message *Payload) *ObjectInvokeResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 	InvokeList() []*Invoke
 	Process() error
-	Reset() error // for example this can be called on the 2nd deploy of a counter object, and we want to reset the count back to zero
+	Reset() error // for example this can be called on the 2nd deploy of a counter Obj, and we want to reset the count back to zero
 	AllowsReset() bool
 	Delete() error
 	Lock()
@@ -42,14 +42,14 @@ type Object interface {
 	RemoveObjectFromRuntime()
 
 	// objectengine objects
-	//AddRuntimeToObject(runtimeObjects map[string]Object) // gives each object access to every other object
+	//AddRuntimeToObject(runtimeObjects map[string]Object) // gives each Obj access to every other Obj
 	//GetRuntimeObjects() map[string]Object
 	//GetForeignObject(objectUUID string) (obj Object, exists bool)
-	//CheckForeignObjectOutputExists(objectUUID, portID string) (*Port, error)
-	//CheckForeignObjectInputExists(objectUUID, portID string) (*Port, error)
+	//CheckForeignObjectOutputExists(objectUUID, portID string) (*Port, Err)
+	//CheckForeignObjectInputExists(objectUUID, portID string) (*Port, Err)
 	//GetObjectsByType(objectID string) []Object // for example get all math/add Object
 	//RemoveObjectFromRuntime()
-	//GetChildObjects() []Object                      // get all the object inside a folder
+	//GetChildObjects() []Object                      // get all the Obj inside a folder
 	//GetChildObjectsByType(objectID string) []Object // for example get all modbus/device that are inside its parent modbus/network Object
 	//GetChildObject(objectUUID string) (obj Object, exists bool)
 	//GetParentObject() (obj Object, exists bool)
@@ -60,7 +60,7 @@ type Object interface {
 	GetChildObject(objectUUID string) Object
 	GetParentUUID() string
 
-	// AddExtension extension are a way to extend the functionalists of an object; for example add a history extension
+	// AddExtension extension are a way to extend the functionalists of an Obj; for example add a history extension
 	AddExtension(extension Object) error
 	GetExtensions() []Object
 	GetExtension(id string) (Object, error)
@@ -115,7 +115,7 @@ type Object interface {
 	SubscribeEventBusMessage(topic string, callBack func(topic string, p *Payload, err error))
 	//GetAllObjectValues ObjectValue are a way for one node to direly get and send data to another node
 	// PreviousValue is the last value saved
-	// WrittenValue is a value written from another object; this is useful for example on network object where the network is doing the polling and can quickly update the devices/points
+	// WrittenValue is a value written from another Obj; this is useful for example on network Obj where the network is doing the polling and can quickly update the devices/points
 
 	SetOutputPreviousValue(id string, value *priority.PreviousValue) error
 	GetOutputPreviousValue(id string) *priority.PreviousValue
@@ -127,7 +127,7 @@ type Object interface {
 	SetInputWrittenValue(id string, value *priority.WrittenValue) error
 	GetInputWrittenValue(id string) *priority.WrittenValue
 
-	// GetRootObject object tree
+	// GetRootObject Obj tree
 	GetRootObject(uuid string) (Object, error)
 	PrintObjectTree(objects map[string]Object)
 	GetCompleteChain(objects map[string]Object, uuid string) Chain
@@ -164,7 +164,7 @@ type Object interface {
 	// id
 	GetID() string
 
-	// object type is for example a driver, service, logic
+	// Obj type is for example a driver, service, logic
 	GetObjectType() ObjectType
 
 	// uuid, set from Meta
@@ -202,7 +202,7 @@ type Object interface {
 	GetSettings() *Settings
 	SetSettings(settings *Settings) error
 
-	// GetMeta  meta will also set the object-name at parentUUID
+	// GetMeta  meta will also set the Obj-name at parentUUID
 	GetMeta() *Meta
 	SetMeta(meta *Meta) error
 

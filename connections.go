@@ -8,7 +8,7 @@ import (
 // Connection defines a structure for input subscriptions.
 type Connection struct {
 	UUID                 string        `json:"uuid"`   //the uuid of the rubix ***not needed for UI***
-	SourceUUID           string        `json:"source"` // will always be the output object
+	SourceUUID           string        `json:"source"` // will always be the output Obj
 	SourcePort           string        `json:"sourceHandle"`
 	SourcePortUUID       string        `json:"sourcePortUUID"` // output portID
 	TargetUUID           string        `json:"target"`         // objectUUID that has the input rubix
@@ -22,21 +22,21 @@ type Connection struct {
 	LastOk               *time.Time    `json:"LastOk,omitempty"`
 	LastFail             *time.Time    `json:"LastFail,omitempty"`
 	FailCount            int           `json:"failCount"`
-	Error                []string      `json:"error"`
+	Error                []string      `json:"Err"`
 }
 
 /*
-Example of a Trigger object output connected to a Count object input
+Example of a Trigger Obj output connected to a Count Obj input
 This is what's needed for the UI to work
 
- Trigger object (output)
+ Trigger Obj (output)
  "source": "triggerABC",
  "sourceHandle": "output",
  "target": "counterABC",
  "targetHandle": "input",
  "flowDirection": "publisher"
 
- Count object (input)
+ Count Obj (input)
 "source": "triggerABC",
 "sourceHandle": "output",
 "target": "counterABC",
@@ -81,5 +81,5 @@ type RemoveConnectionReport struct {
 	SourceUUID     string        `json:"sourceUUID,omitempty"`
 	SourcePort     string        `json:"sourcePort,omitempty"`
 	FlowDirection  FlowDirection `json:"flowDirection,omitempty"`
-	Error          string        `json:"error,omitempty"`
+	Error          string        `json:"Err,omitempty"`
 }

@@ -21,12 +21,12 @@ type Port struct {
 	// these are optional and used if you want to keep the last value for later use
 	PreviousValueSet bool                    `json:"-"`
 	PreviousValue    *priority.PreviousValue `json:"previousValue,omitempty"`
-	// is a value written from another object
+	// is a value written from another Obj
 	WrittenValueSet          bool                   `json:"-"`
 	WrittenValue             *priority.WrittenValue `json:"writtenValue,omitempty"`
 	AllowMultipleConnections bool                   `json:"allowMultipleConnections,omitempty"`
 
-	// port position is where to show the order on the object and where to hide the port or not
+	// port position is where to show the order on the Obj and where to hide the port or not
 	DefaultPosition   int  `json:"defaultPosition"`
 	Hide              bool `json:"hide,omitempty"`
 	HiddenByDefault   bool `json:"hiddenByDefault,omitempty"`
@@ -203,7 +203,7 @@ type PortFormatString struct {
 // some commonly used output names
 const (
 	OutputName      string = "output"
-	OutputErrorName string = "error"
+	OutputErrorName string = "Err"
 )
 
 // some commonly used input names

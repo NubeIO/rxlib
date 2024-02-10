@@ -23,7 +23,7 @@ type Requirements struct {
 	CallResetOnDeploy         bool                        `json:"callResetOnDeploy"`
 	AllowRuntimeAccess        bool                        `json:"allowRuntimeAccess,omitempty"`
 	MaxOne                    bool                        `json:"maxOne,omitempty"`
-	MustLiveInObjectType      bool                        `json:"mustLiveInObjectType"` // modbus-network can only be in object-type: drivers
+	MustLiveInObjectType      bool                        `json:"mustLiveInObjectType"` // modbus-network can only be in Obj-type: drivers
 	MustLiveParent            bool                        `json:"mustLiveParent"`       // a modbus device can only be added under its parent being a modbus-network
 	RequiresLogger            bool                        `json:"requiresLogger,omitempty"`
 	SupportsActions           bool                        `json:"supportsActions"`
@@ -86,7 +86,7 @@ type InfoBuilder interface {
 	SetID(objectID string) InfoBuilder
 	GetID() string
 
-	// object type is for example a driver, service, logic
+	// Obj type is for example a driver, service, logic
 	SetObjectType(objectType ObjectType) InfoBuilder
 	GetObjectType() ObjectType
 
@@ -94,7 +94,7 @@ type InfoBuilder interface {
 	SetCategory(value string) InfoBuilder
 	GetCategory() string
 
-	// working group is a grough of object that internally work together; for example we have MQTT broker and sub object would be a working group
+	// working group is a grough of Obj that internally work together; for example we have MQTT broker and sub Obj would be a working group
 	SetWorkingGroup(value string) InfoBuilder
 	GetWorkingGroup() string
 
@@ -126,7 +126,7 @@ type InfoBuilder interface {
 	SetRubixServicesRequirement([]*RubixServicesRequirement) InfoBuilder
 	SetCallResetOnDeploy() InfoBuilder
 	SetAllowRuntimeAccess() InfoBuilder
-	SetMaxOne() InfoBuilder // only max one object can be added
+	SetMaxOne() InfoBuilder // only max one Obj can be added
 	SetLogger(opts *LoggerOpts) InfoBuilder
 
 	SetSupportsActions() InfoBuilder
@@ -374,7 +374,7 @@ func (builder *infoBuilder) checks() {
 		}
 	}
 	if !validType {
-		log.Fatalf("rxlib.SetObjectType() invaild object type: %s try: %s", builder.info.ObjectType, AllObjectType[0])
+		log.Fatalf("rxlib.SetObjectType() invaild Obj type: %s try: %s", builder.info.ObjectType, AllObjectType[0])
 	}
 
 }

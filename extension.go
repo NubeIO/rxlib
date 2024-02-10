@@ -2,7 +2,7 @@ package rxlib
 
 // Extension represents an extension.
 type Extension struct {
-	AutoAddExtension bool              `json:"autoAddExtension"` // if auto add is true it will add the Extension automatically if the parent object is added
+	AutoAddExtension bool              `json:"autoAddExtension"` // if auto add is true it will add the Extension automatically if the parent Obj is added
 	ExtensionName    string            `json:"extensionName"`
 	FromPlugin       string            `json:"fromPlugin"`
 	ParentObjectUUID string            `json:"parentObjectUUID"`
@@ -82,7 +82,7 @@ func (builder *ExtensionBuilder) WithFromPlugin(fromPlugin string) *ExtensionBui
 	return builder
 }
 
-// WithParentObjectUUID sets the parent object UUID for the current extension in the array.
+// WithParentObjectUUID sets the parent Obj UUID for the current extension in the array.
 func (builder *ExtensionBuilder) WithParentObjectUUID(parentObjectUUID string) *ExtensionBuilder {
 	if len(builder.extensions) == 0 {
 		builder.NewExtension()

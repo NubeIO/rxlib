@@ -5,6 +5,26 @@ import (
 	"sync"
 )
 
+type ObjectResponse struct {
+	Obj Object
+	Err error
+}
+
+func (inst *ObjectResponse) Object() Object {
+	return inst.Obj
+}
+
+func (inst *ObjectResponse) Error() string {
+	if inst.Err != nil {
+		return inst.Err.Error()
+	}
+	return ""
+}
+
+func (inst *ObjectResponse) GetError() error {
+	return inst.Err
+}
+
 type Runtime interface {
 	Get() map[string]Object
 	GetByUUID(uuid string) Object
@@ -18,6 +38,9 @@ type Runtime interface {
 
 	GetAllObjectValues() []*ObjectValue
 
+	NewObject(objectID string) *ObjectResponse
+	AddObject(object Object) *ObjectResponse
+
 	//RemoveObjectFromRuntime()
 }
 
@@ -25,7 +48,7 @@ func NewRuntime(objs map[string]Object) Runtime {
 	r := &RuntimeImpl{}
 	r.objects = objs
 	if r.objects == nil {
-		panic("NewRuntime object map can not be empty")
+		panic("NewRuntime Obj map can not be empty")
 	}
 	return r
 }
@@ -37,6 +60,21 @@ type RuntimeImpl struct {
 	where           string
 	field           string
 	mutex           sync.RWMutex
+}
+
+func (inst *RuntimeImpl) NewObject(objectID string) *ObjectResponse {
+	inst.mutex.Lock()
+	defer inst.mutex.Unlock()
+
+	//resp := &ObjectResponse{}
+
+	return nil
+}
+
+func (inst *RuntimeImpl) AddObject(object Object) *ObjectResponse {
+	inst.mutex.Lock()
+	defer inst.mutex.Unlock()
+	return nil
 }
 
 func (inst *RuntimeImpl) GetObjectsByType(objectID string) []Object {
@@ -52,8 +90,8 @@ func (inst *RuntimeImpl) GetObjectsByType(objectID string) []Object {
 }
 
 func (inst *RuntimeImpl) Get() map[string]Object {
-	inst.mutex.Lock()
-	defer inst.mutex.Unlock()
+	//inst.mutex.Lock()
+	//defer inst.mutex.Unlock()
 	return inst.objects
 }
 
@@ -144,7 +182,7 @@ func (inst *RuntimeImpl) Where(attribute string) *RuntimeImpl {
 	inst.mutex.Lock()
 	defer inst.mutex.Unlock()
 	if inst.err != nil {
-		return inst // Skip processing if there's an error
+		return inst // Skip processing if there's an Err
 	}
 	inst.where = attribute
 
@@ -181,19 +219,19 @@ func (inst *RuntimeImpl) Condition(operator, value string) *RuntimeImpl {
 	inst.mutex.Lock()
 	defer inst.mutex.Unlock()
 	if inst.err != nil {
-		return inst // Skip processing if there's an error
+		return inst // Skip processing if there's an Err
 	}
 	var filtered = make(map[string]Object)
 	for _, obj := range inst.objectsFiltered {
 		switch inst.where {
 		case "histories":
-			// Comparing object fields
+			// Comparing Obj fields
 			if compareHist(obj, inst.field, operator, value) {
 
 				filtered[obj.GetUUID()] = obj
 			}
 		case "objects":
-			// Comparing object fields
+			// Comparing Obj fields
 			fmt.Println(compareObject(obj, inst.field, operator, value), inst.field, value, obj.GetID())
 			if compareObject(obj, inst.field, operator, value) {
 				filtered[obj.GetUUID()] = obj
@@ -293,7 +331,7 @@ func compareObject(object Object, field, operator, value string) bool {
 }
 
 func compareHist(object Object, field, operator, value string) bool {
-	//object.GetHistoryManager().AllHistoriesByObjectUUID()
+	//Obj.GetHistoryManager().AllHistoriesByObjectUUID()
 	//switch operator {
 	//case "==":
 	//	return fieldValue == value
@@ -323,4 +361,14 @@ func comparePorts(port *Port, field, operator, value string) bool {
 	}
 
 	return false
+}
+
+//-------------CONNECTIONS------------------
+
+func (inst *RuntimeImpl) AddConnection(sourceUUID, sourcePort, targetUUID, targetPort string) Object {
+	//connection, c, err := NewConnection(sourceUUID, sourcePort, targetUUID, targetPort)
+	//if err != nil {
+	//	return nil
+	//}
+	return nil
 }

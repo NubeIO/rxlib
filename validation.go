@@ -8,13 +8,13 @@ type TypeValidation string
 
 const (
 	TypeHalt        TypeValidation = "halt"
-	TypeError       TypeValidation = "error"
+	TypeError       TypeValidation = "Err"
 	TypeValidations TypeValidation = "validation"
 )
 
 type ErrorsAndValidation struct {
 	Type        TypeValidation `json:"type"`
-	ObjectError *NewValidation `json:"error"`
+	ObjectError *NewValidation `json:"Err"`
 	Halt        *NewValidation `json:"haltReason,omitempty"`
 	Validation  *NewValidation `json:"validationMessage,omitempty"`
 	Custom      *NewValidation `json:"custom,omitempty"`
@@ -29,14 +29,14 @@ type NewValidation struct {
 }
 
 type ValidationMessage struct {
-	Error       error  `json:"error,omitempty"`
+	Error       error  `json:"Err,omitempty"`
 	Message     string `json:"message,omitempty"`
 	Explanation string `json:"explanation,omitempty"`
 }
 
 //
 //type ValidationBuilder interface {
-//	CustomValidation(v TypeValidation, m *ValidationMessage) (*ErrorsAndValidation, error)
+//	CustomValidation(v TypeValidation, m *ValidationMessage) (*ErrorsAndValidation, Err)
 //	CreateValidation(m *ValidationMessage) ValidationBuilder
 //}
 //
@@ -66,7 +66,7 @@ type ValidationMessage struct {
 //
 
 //
-//func (inst *ObjectBuilder) CustomValidation(v TypeValidation, m *ValidationMessage) (*ErrorsAndValidation, error) {
+//func (inst *ObjectBuilder) CustomValidation(v TypeValidation, m *ValidationMessage) (*ErrorsAndValidation, Err) {
 //	if v == "" {
 //		return nil, errors.New("TypeValidation can not be empty")
 //	}

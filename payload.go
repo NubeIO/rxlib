@@ -42,7 +42,7 @@ type EventBusPayload struct {
 	ResponseTopic              string        `json:"responseTopic,omitempty"`
 	UnsubscribeOnResponseTopic bool          `json:"unsubscribe,omitempty"` // used for when we want to use the EventBus PublishWait and we unsubscribe to the ResponseTopic
 	Timeout                    time.Duration `json:"timeout,omitempty"`
-	ExpectedData               string        `json:"expectedData,omitempty"` // make it easy for an object to decode in incoming data; eg string, map[], user
+	ExpectedData               string        `json:"expectedData,omitempty"` // make it easy for an Obj to decode in incoming data; eg string, map[], user
 	Payload                    any           `json:"payload,omitempty"`
 }
 
@@ -51,7 +51,7 @@ type Mapping struct {
 	NetworkUUID       string            `json:"networkUUID,omitempty"`
 	MapperUUID        string            `json:"mapperUUID,omitempty"`
 	Data              any               `json:"data,omitempty"`
-	ExpectedData      string            `json:"expectedData,omitempty"` // make it easy for an object to decode in incoming data; eg string, map[], user
+	ExpectedData      string            `json:"expectedData,omitempty"` // make it easy for an Obj to decode in incoming data; eg string, map[], user
 	PrimitivesPayload PrimitivesPayload `json:"primitivesPayload,omitempty"`
 }
 
@@ -128,11 +128,25 @@ func (p *Payload) IsPriorityNil() bool {
 	return false
 }
 
-func (p *Payload) GetDataPriority() (*priority.Priority, error) {
+func (p *Payload) GetDataPriority() *priority.Priority {
 	if p.IsPriorityNil() {
-		return nil, fmt.Errorf("port has no priority set")
+		return nil
 	}
-	return p.GetPort().DataPriority.Priority, nil
+	return p.GetPort().DataPriority.Priority
+}
+
+func (p *Payload) GetDataHighestPriority() priority.PriorityValue {
+	if p.IsPriorityNil() {
+		return nil
+	}
+	return p.GetDataPriority().GetHighestPriorityValue()
+}
+
+func (p *Payload) GetDataHighestPriorityAsFloat() *float64 {
+	if p.IsPriorityNil() {
+		return nil
+	}
+	return p.GetDataPriority().GetHighestPriorityValue().AsFloat()
 }
 
 func (p *Payload) GetPortName() string {
