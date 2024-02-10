@@ -17,13 +17,59 @@ type Connection struct {
 	TargetPortUUID       string        `json:"targetPortUUID"`
 	IsExistingConnection bool          `json:"IsExistingConnection"`
 	FlowDirection        FlowDirection `json:"flowDirection"` // subscriber is if it's in an input and publisher or an output ***not needed for UI***
-	Enable               bool          `json:"enable"`
-	IsError              bool          `json:"isError"`
-	Created              time.Time     `json:"created"`
+	Enable               bool          `json:"enable,omitempty"`
+	IsError              bool          `json:"isError,omitempty"`
+	Created              time.Time     `json:"created,omitempty"`
 	LastOk               *time.Time    `json:"LastOk,omitempty"`
 	LastFail             *time.Time    `json:"LastFail,omitempty"`
-	FailCount            int           `json:"failCount"`
-	Error                []string      `json:"Err"`
+	FailCount            int           `json:"failCount,omitempty"`
+	Error                []string      `json:"Err,omitempty"`
+}
+
+func (c *Connection) GetUUID() string {
+	return c.UUID
+}
+
+func (c *Connection) GetSourceUUID() string {
+	return c.SourceUUID
+}
+
+func (c *Connection) GetSourcePort() string {
+	return c.SourcePort
+}
+
+func (c *Connection) GetSourcePortUUID() string {
+	return c.SourcePortUUID
+}
+
+func (c *Connection) GetTargetUUID() string {
+	return c.TargetUUID
+}
+
+func (c *Connection) GetTargetPort() string {
+	return c.TargetPort
+}
+
+func (c *Connection) GetTargetPortUUID() string {
+	return c.TargetPortUUID
+}
+
+func (c *Connection) GetFlowDirection() FlowDirection {
+	return c.FlowDirection
+}
+
+func (c *Connection) DirectionPublisher() bool {
+	if c.FlowDirection == DirectionPublisher {
+		return true
+	}
+	return false
+}
+
+func (c *Connection) DirectionSubscriber() bool {
+	if c.FlowDirection == DirectionSubscriber {
+		return true
+	}
+	return false
 }
 
 /*

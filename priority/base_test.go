@@ -50,12 +50,12 @@ func TestNewAsOutput(t *testing.T) {
 		Transformations:       transformationConfig,
 		Units:                 u,
 	}
-	resp, prim, err := NewPrimitive(body)
+	dataPri, prim, err := NewPrimitive(body)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	pprint.PrintJSON(resp)
+	pprint.PrintJSON(dataPri)
 
 	rawValue = nils.ToFloat64(20)
 	result, err := prim.UpdateValueAndGenerateResult(rawValue, 2, nil, 0)
@@ -74,15 +74,17 @@ func TestNewAsOutput(t *testing.T) {
 
 }
 
-func TestNewAsOutputBool(t *testing.T) {
+func TestNewAsOutputNull(t *testing.T) {
 
-	//body := &NewPrimitiveValue{}
-	//
-	//resp, prim, err := NewPrimitive(body)
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
-	//
-	//pprint.PrintJSON(resp)
+	body := &NewPrimitiveValue{}
 
+	dataPri, _, err := NewPrimitive(body)
+	if err != nil {
+		fmt.Println(err)
+	}
+	a := dataPri.Priority.GetHighestPriorityValue().AsFloat()
+	if a == nil {
+		panic(111)
+	}
+	fmt.Println(nils.GetFloat64(a))
 }

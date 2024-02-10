@@ -29,10 +29,11 @@ type Payload struct {
 }
 
 type PortPayload struct {
-	Port       *Port       `json:"port,omitempty"`
-	Connection *Connection `json:"connection,omitempty"`
-	ObjectUUID string      `json:"objectUUID,omitempty"`
-	ObjectID   string      `json:"objectID,omitempty"`
+	Port        *Port         `json:"port,omitempty"`
+	Connection  *Connection   `json:"connection,omitempty"`
+	Connections []*Connection `json:"connections,omitempty"`
+	ObjectUUID  string        `json:"objectUUID,omitempty"`
+	ObjectID    string        `json:"objectID,omitempty"`
 }
 
 type EventBusPayload struct {
@@ -111,6 +112,14 @@ func (p *Payload) SetPortObjectDetails(objectID, objectUUID string) *Payload {
 	return p
 }
 
+func (p *Payload) SetConnections(connections []*Connection) *Payload {
+	if p.IsPortNil() {
+		p.PortPayload = &PortPayload{}
+	}
+	p.PortPayload.Connections = connections
+	return p
+}
+
 func (p *Payload) GetValue() (any, error) {
 	if p.IsPortNil() {
 		return nil, fmt.Errorf("port is empty")
@@ -165,11 +174,63 @@ func (p *Payload) IsConnectionNil() bool {
 	return false
 }
 
+func (p *Payload) IsConnectionsNil() bool {
+	if p.PortPayload == nil {
+		return true
+	}
+	if p.PortPayload.Connections == nil {
+		return true
+	}
+	return false
+}
+
 func (p *Payload) GetConnection() *Connection {
 	if p.IsConnectionNil() {
 		return nil
 	}
 	return p.PortPayload.Connection
+}
+
+func (p *Payload) GetConnections() []*Connection {
+	if p.IsConnectionsNil() {
+		return nil
+	}
+	return p.PortPayload.Connections
+}
+
+func (p *Payload) GetConnectionUUID() string {
+	if p.IsConnectionNil() {
+		return ""
+	}
+	return p.GetConnection().GetUUID()
+}
+
+func (p *Payload) GetSourceUUID() string {
+	if p.IsConnectionNil() {
+		return ""
+	}
+	return p.GetConnection().GetSourceUUID()
+}
+
+func (p *Payload) GetSourcePort() string {
+	if p.IsConnectionNil() {
+		return ""
+	}
+	return p.GetConnection().GetSourcePort()
+}
+
+func (p *Payload) GetTargetPort() string {
+	if p.IsConnectionNil() {
+		return ""
+	}
+	return p.GetConnection().GetTargetPort()
+}
+
+func (p *Payload) GetTargetUUID() string {
+	if p.IsConnectionNil() {
+		return ""
+	}
+	return p.GetConnection().GetTargetUUID()
 }
 
 // ----------------EVENTBUS------------------

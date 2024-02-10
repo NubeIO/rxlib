@@ -4,6 +4,7 @@ import (
 	"github.com/NubeIO/rxlib/libs/history"
 	"github.com/NubeIO/rxlib/libs/rubix"
 	"github.com/NubeIO/rxlib/priority"
+	"github.com/NubeIO/rxlib/unitswrapper"
 	"github.com/NubeIO/schema"
 	"github.com/gin-gonic/gin"
 	"github.com/mustafaturan/bus/v3"
@@ -73,16 +74,24 @@ type Object interface {
 	NewOutputPort(port *NewPort) error
 	NewOutputPorts(port []*NewPort) error
 	GetAllPorts() []*Port
-	OverridePortData(data any) error
-	OverridePortDataPriority()
+	EnablePort(id string) error
+	DisablePort(id string) error
+	WriteData(id string, value any)                             // write any data to a port but float
+	WritePriority(id string, value float64, priorityNumber int) // write a value to a port; input or output that is a type float at priority number
+	ReleasePriority(id string, priorityNumber int)              // release a priority number
+	CurrentPriority() (value *float64, priorityNumber int)
+	CurrentSymbolValue() (value *string) // for example (22 °C) or (100% overridden)
+	AddPortTransformations(transformation *priority.Transformations)
+	AddPortUnits(units *unitswrapper.EngineeringUnits)
+	AddPortEnums(enums *priority.Enums) // for example 0=off, 1=on, 2=auto
 
 	CreateConnection(connection *Connection) // CreateConnection is for just adding a rubix without adding it to the eventbus
 	NewOutputConnection(portID, targetUUID, targetPort string) error
-	//AddConnection(connection *Connection) error
+
 	GetConnection(uuid string) *Connection
 	GetExistingConnection(sourceObjectUUID, targetObjectUUID string) *Connection
 	GetConnections() []*Connection
-	//UpdateConnections(connections []*Connection) *UpdateConnectionsReport
+
 	RemoveConnection(connection *Connection) error
 	DropConnections() []error
 	RemoveOldConnections(newConnections []*Connection) []error
@@ -93,7 +102,8 @@ type Object interface {
 	InputExists(id string) error
 	GetInputByUUID(uuid string) *Port
 	GetInputs() []*Port
-	SetInputValue(id string, value any) error
+	GetInputByConnection(outputPortID string) *Port
+	//SetInputValue(id string, value any) error
 
 	// ouputs
 	GetOutputs() []*Port

@@ -11,8 +11,8 @@ type Port struct {
 	UUID string `json:"uuid"`
 
 	// Input/Output port values
-	Data         *priority.DataValue    `json:"value,omitempty"`        // value should be used for any thing not a string
-	DataPriority *priority.DataPriority `json:"dataPriority,omitempty"` // values for string, bool, float
+	Data         *priority.DataValue    `json:"value,omitempty"`     // value should be used for anything
+	DataPriority *priority.DataPriority `json:"dataFloat,omitempty"` // values for float
 	primitives   *priority.Primitives
 
 	Direction PortDirection `json:"direction"` // input or output
@@ -61,6 +61,12 @@ func (p *Port) SetData(value any) {
 	p.Data.Value = value
 }
 
+func (p *Port) GetData() any {
+	return p.Data
+}
+
+//-----------------------Priority-----------------------
+
 func (p *Port) initDataPriority(body *priority.NewPrimitiveValue) error {
 	pri, prim, err := priority.NewPrimitive(body)
 	p.primitives = prim
@@ -91,20 +97,16 @@ func (p *Port) WriteFloat(value float64) error {
 	return nil
 }
 
-func (p *Port) OverrideWriteFloat(value float64) error {
+func (p *Port) OverrideWriteFloatPriority(value float64, priority int) error {
 	if p.DataPriority == nil {
 		panic("rxlib.SetDataPriority DataPriority can not be empty, please InitDataPriority() first")
 	}
-	result, err := p.primitives.UpdateValueAndGenerateResult(nil, 0, nils.ToFloat64(value), 1)
+	result, err := p.primitives.UpdateValueAndGenerateResult(nil, 0, nils.ToFloat64(value), priority)
 	if err != nil {
 		return err
 	}
 	p.DataPriority = result
 	return nil
-}
-
-func (p *Port) GetData() any {
-	return p.Data
 }
 
 func (p *Port) SetWrittenValue(v *priority.WrittenValue) {
@@ -211,6 +213,7 @@ const (
 const (
 	InputName string = "input"
 	In1Name   string = "in-1"
+	In2Name   string = "in-2"
 )
 
 type FlowDirection string

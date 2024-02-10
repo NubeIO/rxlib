@@ -27,9 +27,11 @@ type NewPrimitiveValue struct {
 	ValueType             Type     `json:"valueType"`
 	InitialValue          *float64 `json:"initialValue"`
 	FallBackValue         *float64 `json:"fallBackValue"`
+	FallBackValueBool     *bool    `json:"fallBackValueBool"`
 	PriorityToWrite       int      `json:"priorityToWrite"`
 	Decimal               int      `json:"decimal"`
 	OverrideValue         *float64 `json:"overrideValue"`
+	OverrideValueBool     *bool    `json:"overrideValueBool"`
 	OverrideValuePriority int      `json:"overrideValuePriority"`
 
 	Transformations *Transformations

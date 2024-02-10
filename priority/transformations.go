@@ -15,7 +15,7 @@ type Transformations struct {
 	Enums         []*Enums
 	FallBackValue *float64 `json:"fallBackValue"`
 	PermitNull    bool     `json:"permitNull"` // if true will set the default value of golang types;
-	// return the result value to a decimal place if its not nil
+	// return the result value to a decimal place if it's not nil
 	Round *int `json:"round"`
 
 	// limit the result based of the min/max settings
