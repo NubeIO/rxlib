@@ -80,9 +80,10 @@ type Object interface {
 	GetExistingConnection(sourceObjectUUID, targetObjectUUID string) *Connection
 	GetConnections() []*Connection
 	UpdateConnections(connections []*Connection) *UpdateConnectionsReport
-	RemoveConnection(sourcePortUUID, targetPortUUID string) error
+	RemoveConnection(connection *Connection) error
 	RemoveAllConnections() []*RemoveConnectionReport
 	RemoveOldConnections(newConnections []*Connection) []error
+	AddSubscriptionConnection(sourceObjectUUID, sourcePortID, targetObjectUUID string)
 
 	// inputs
 	GetInput(id string) *Port
