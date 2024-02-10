@@ -7,7 +7,8 @@ import (
 
 // Connection defines a structure for input subscriptions.
 type Connection struct {
-	UUID                 string        `json:"uuid"`   //the uuid of the rubix ***not needed for UI***
+	UUID                 string        `json:"uuid"` //the uuid of the rubix ***not needed for UI***
+	TargetConnectionUUID string        `json:"targetConnectionUUID,omitempty"`
 	SourceUUID           string        `json:"source"` // will always be the output Obj
 	SourcePort           string        `json:"sourceHandle"`
 	SourcePortUUID       string        `json:"sourcePortUUID"` // output portID
@@ -46,16 +47,19 @@ This is what's needed for the UI to work
 */
 
 func NewConnection(sourceUUID, sourcePort, targetUUID, targetPort string) (publisher *Connection, subscriber *Connection) {
+	sourceConnectionUUID := helpers.UUID()
+	targetConnectionUUID := helpers.UUID()
 	publisher = &Connection{
-		UUID:          helpers.UUID(),
-		SourceUUID:    sourceUUID,
-		SourcePort:    sourcePort,
-		TargetUUID:    targetUUID,
-		TargetPort:    targetPort,
-		FlowDirection: DirectionPublisher,
+		UUID:                 sourceConnectionUUID,
+		TargetConnectionUUID: targetConnectionUUID,
+		SourceUUID:           sourceUUID,
+		SourcePort:           sourcePort,
+		TargetUUID:           targetUUID,
+		TargetPort:           targetPort,
+		FlowDirection:        DirectionPublisher,
 	}
 	subscriber = &Connection{
-		UUID:          helpers.UUID(),
+		UUID:          targetConnectionUUID,
 		SourceUUID:    sourceUUID,
 		SourcePort:    sourcePort,
 		TargetUUID:    targetUUID,
@@ -65,21 +69,21 @@ func NewConnection(sourceUUID, sourcePort, targetUUID, targetPort string) (publi
 	return publisher, subscriber
 }
 
-type UpdateConnectionsReport struct {
-	ExistingCount int      `json:"existingCount"` // before we started updating/deleting get the existing count
-	DeletedCount  int      `json:"deletedCount"`
-	DeployedCount int      `json:"newCount"`
-	Errors        []string `json:"errors"`
-}
+//type UpdateConnectionsReport struct {
+//	ExistingCount int      `json:"existingCount"` // before we started updating/deleting get the existing count
+//	DeletedCount  int      `json:"deletedCount"`
+//	DeployedCount int      `json:"newCount"`
+//	Errors        []string `json:"errors"`
+//}
 
-type RemoveConnectionReport struct {
-	ConnectionUUID string        `json:"connectionUUID,omitempty"`
-	ObjectUUID     string        `json:"objectUUID,omitempty"`
-	ObjectID       string        `json:"objectID,omitempty"`
-	TargetUUID     string        `json:"targetUUID,omitempty"`
-	TargetPort     string        `json:"targetPort,omitempty"`
-	SourceUUID     string        `json:"sourceUUID,omitempty"`
-	SourcePort     string        `json:"sourcePort,omitempty"`
-	FlowDirection  FlowDirection `json:"flowDirection,omitempty"`
-	Error          string        `json:"Err,omitempty"`
-}
+//type RemoveConnectionReport struct {
+//	ConnectionUUID string        `json:"connectionUUID,omitempty"`
+//	ObjectUUID     string        `json:"objectUUID,omitempty"`
+//	ObjectID       string        `json:"objectID,omitempty"`
+//	TargetUUID     string        `json:"targetUUID,omitempty"`
+//	TargetPort     string        `json:"targetPort,omitempty"`
+//	SourceUUID     string        `json:"sourceUUID,omitempty"`
+//	SourcePort     string        `json:"sourcePort,omitempty"`
+//	FlowDirection  FlowDirection `json:"flowDirection,omitempty"`
+//	Error          string        `json:"Err,omitempty"`
+//}

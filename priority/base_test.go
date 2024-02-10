@@ -58,7 +58,6 @@ func TestNewAsOutput(t *testing.T) {
 	pprint.PrintJSON(resp)
 
 	rawValue = nils.ToFloat64(20)
-	fmt.Println("!!!!!!!!!")
 	result, err := prim.UpdateValueAndGenerateResult(rawValue, 2, nil, 0)
 	if err != nil {
 		return
@@ -72,5 +71,18 @@ func TestNewAsOutput(t *testing.T) {
 	}
 
 	pprint.PrintJSON(result)
+
+}
+
+func TestNewAsOutputBool(t *testing.T) {
+
+	//body := &NewPrimitiveValue{}
+	//
+	//resp, prim, err := NewPrimitive(body)
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	//
+	//pprint.PrintJSON(resp)
 
 }

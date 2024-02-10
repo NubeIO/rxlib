@@ -53,6 +53,7 @@ func (p *Port) SetName(v string) string {
 	return p.Name
 }
 
+// SetData to be used for anything but an int, float, bool
 func (p *Port) SetData(value any) {
 	if p.Data == nil {
 		p.Data = &priority.DataValue{}

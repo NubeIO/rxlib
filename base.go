@@ -73,15 +73,18 @@ type Object interface {
 	NewOutputPort(port *NewPort) error
 	NewOutputPorts(port []*NewPort) error
 	GetAllPorts() []*Port
+	OverridePortData(data any) error
+	OverridePortDataPriority()
 
 	CreateConnection(connection *Connection) // CreateConnection is for just adding a rubix without adding it to the eventbus
-	AddConnection(connection *Connection) error
+	NewOutputConnection(portID, targetUUID, targetPort string) error
+	//AddConnection(connection *Connection) error
 	GetConnection(uuid string) *Connection
 	GetExistingConnection(sourceObjectUUID, targetObjectUUID string) *Connection
 	GetConnections() []*Connection
-	UpdateConnections(connections []*Connection) *UpdateConnectionsReport
+	//UpdateConnections(connections []*Connection) *UpdateConnectionsReport
 	RemoveConnection(connection *Connection) error
-	RemoveAllConnections() []*RemoveConnectionReport
+	DropConnections() []error
 	RemoveOldConnections(newConnections []*Connection) []error
 	AddSubscriptionConnection(sourceObjectUUID, sourcePortID, targetObjectUUID string)
 
@@ -102,7 +105,6 @@ type Object interface {
 	Subscribe(topic string, callBack func(topic string, e bus.Event))
 	SubscribePayload(topic string, callBack func(topic string, p *Payload, err error))
 	SubscribeEventBusMessage(topic string, callBack func(topic string, p *Payload, err error))
-	NewOutputConnection(portID, targetUUID, targetPort string) error
 
 	SetOutputPreviousValue(id string, value *priority.PreviousValue) error
 	GetOutputPreviousValue(id string) *priority.PreviousValue
