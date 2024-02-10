@@ -41,19 +41,6 @@ type Object interface {
 	Runtime() Runtime
 	RemoveObjectFromRuntime()
 
-	// objectengine objects
-	//AddRuntimeToObject(runtimeObjects map[string]Object) // gives each Obj access to every other Obj
-	//GetRuntimeObjects() map[string]Object
-	//GetForeignObject(objectUUID string) (obj Object, exists bool)
-	//CheckForeignObjectOutputExists(objectUUID, portID string) (*Port, Err)
-	//CheckForeignObjectInputExists(objectUUID, portID string) (*Port, Err)
-	//GetObjectsByType(objectID string) []Object // for example get all math/add Object
-	//RemoveObjectFromRuntime()
-	//GetChildObjects() []Object                      // get all the Obj inside a folder
-	//GetChildObjectsByType(objectID string) []Object // for example get all modbus/device that are inside its parent modbus/network Object
-	//GetChildObject(objectUUID string) (obj Object, exists bool)
-	//GetParentObject() (obj Object, exists bool)
-
 	GetChildObjectsByType(objectID string) []Object // for example get all modbus/device that are inside its parent modbus/network Object
 	GetChildObjects() []Object
 	GetParentObject() Object
@@ -87,19 +74,19 @@ type Object interface {
 	NewOutputPorts(port []*NewPort) error
 	GetAllPorts() []*Port
 
-	// CreateConnection is for just adding a rubix without adding it to the eventbus
-	CreateConnection(connection *Connection)
+	CreateConnection(connection *Connection) // CreateConnection is for just adding a rubix without adding it to the eventbus
 	AddConnection(connection *Connection) error
 	GetConnection(uuid string) *Connection
-	GetOutputConnectionByPortUUID(uuid string) *Connection
-	GetInputConnectionByPortUUID(uuid string) *Connection
+	GetExistingConnection(sourceObjectUUID, targetObjectUUID string) *Connection
 	GetConnections() []*Connection
 	UpdateConnections(connections []*Connection) *UpdateConnectionsReport
-	RemoveConnection(connection *Connection) *RemoveConnectionReport
+	RemoveConnection(sourcePortUUID, targetPortUUID string) error
 	RemoveAllConnections() []*RemoveConnectionReport
+	RemoveOldConnections(newConnections []*Connection) []error
 
 	// inputs
 	GetInput(id string) *Port
+	InputExists(id string) error
 	GetInputByUUID(uuid string) *Port
 	GetInputs() []*Port
 	SetInputValue(id string, value any) error
@@ -107,15 +94,14 @@ type Object interface {
 	// ouputs
 	GetOutputs() []*Port
 	GetOutput(id string) *Port
+	OutputExists(id string) error
 	GetOutputByUUID(uuid string) *Port
 	// PublishValue update the port value; pass in option withTimestamp to timestamp to write
 	PublishValue(portID string) error
 	Subscribe(topic string, callBack func(topic string, e bus.Event))
 	SubscribePayload(topic string, callBack func(topic string, p *Payload, err error))
 	SubscribeEventBusMessage(topic string, callBack func(topic string, p *Payload, err error))
-	//GetAllObjectValues ObjectValue are a way for one node to direly get and send data to another node
-	// PreviousValue is the last value saved
-	// WrittenValue is a value written from another Obj; this is useful for example on network Obj where the network is doing the polling and can quickly update the devices/points
+	NewOutputConnection(portID, targetUUID, targetPort string) error
 
 	SetOutputPreviousValue(id string, value *priority.PreviousValue) error
 	GetOutputPreviousValue(id string) *priority.PreviousValue

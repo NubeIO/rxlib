@@ -45,7 +45,7 @@ This is what's needed for the UI to work
 
 */
 
-func NewConnection(sourceUUID, sourcePort, targetUUID, targetPort string) (publisher *Connection, subscriber *Connection, err error) {
+func NewConnection(sourceUUID, sourcePort, targetUUID, targetPort string) (publisher *Connection, subscriber *Connection) {
 	publisher = &Connection{
 		UUID:          helpers.UUID(),
 		SourceUUID:    sourceUUID,
@@ -62,7 +62,7 @@ func NewConnection(sourceUUID, sourcePort, targetUUID, targetPort string) (publi
 		TargetPort:    targetPort,
 		FlowDirection: DirectionSubscriber,
 	}
-	return publisher, subscriber, nil
+	return publisher, subscriber
 }
 
 type UpdateConnectionsReport struct {
