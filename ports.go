@@ -65,7 +65,7 @@ func (p *Port) GetData() any {
 	return p.Data
 }
 
-//-----------------------Priority-----------------------
+//-----------------------priority-----------------------
 
 func (p *Port) initDataPriority(body *priority.NewPrimitiveValue) error {
 	pri, prim, err := priority.NewPrimitive(body)
