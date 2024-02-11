@@ -7,16 +7,16 @@ import (
 
 // Connection defines a structure for input subscriptions.
 type Connection struct {
-	UUID                 string        `json:"uuid"` //the uuid of the rubix ***not needed for UI***
+	UUID                 string        `json:"uuid,omitempty"` //the uuid of the rubix ***not needed for UI***
 	TargetConnectionUUID string        `json:"targetConnectionUUID,omitempty"`
-	SourceUUID           string        `json:"source"` // will always be the output Obj
-	SourcePort           string        `json:"sourceHandle"`
-	SourcePortUUID       string        `json:"sourcePortUUID"` // output portID
-	TargetUUID           string        `json:"target"`         // objectUUID that has the input rubix
-	TargetPort           string        `json:"targetHandle"`   // input portID
-	TargetPortUUID       string        `json:"targetPortUUID"`
-	IsExistingConnection bool          `json:"IsExistingConnection"`
-	FlowDirection        FlowDirection `json:"flowDirection"` // subscriber is if it's in an input and publisher or an output ***not needed for UI***
+	SourceUUID           string        `json:"source,omitempty"` // will always be the output Obj
+	SourcePort           string        `json:"sourceHandle,omitempty"`
+	SourcePortUUID       string        `json:"sourcePortUUID,omitempty"` // output portID
+	TargetUUID           string        `json:"target,omitempty"`         // objectUUID that has the input rubix
+	TargetPort           string        `json:"targetHandle,omitempty"`   // input portID
+	TargetPortUUID       string        `json:"targetPortUUID,omitempty"`
+	IsExistingConnection bool          `json:"IsExistingConnection,omitempty"`
+	FlowDirection        FlowDirection `json:"flowDirection,omitempty"` // subscriber is if it's in an input and publisher or an output ***not needed for UI***
 	Enable               bool          `json:"enable,omitempty"`
 	IsError              bool          `json:"isError,omitempty"`
 	Created              time.Time     `json:"created,omitempty"`

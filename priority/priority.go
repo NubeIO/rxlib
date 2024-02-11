@@ -7,13 +7,21 @@ import (
 	"github.com/NubeIO/rxlib/unitswrapper"
 )
 
-type Data struct {
+type Display struct {
+	Priority map[string]interface{} `json:"priority,omitempty"`
+	Symbol   *string                `json:"symbol,omitempty"`
+	DataType Type                   `json:"dataType,omitempty"`
+	RawValue any                    `json:"rawValue,omitempty"`
+}
+
+type Value struct {
 	pri      *Priority
 	rawValue any
 	symbol   *string
+	dataType Type
 }
 
-func (d *Data) IsNil() (PriorityValue, error) {
+func (d *Value) IsNil() (PriorityValue, error) {
 	if d == nil {
 		return nil, fmt.Errorf("no vaild data to return")
 	}
@@ -27,11 +35,23 @@ func (d *Data) IsNil() (PriorityValue, error) {
 	return h, nil
 }
 
-func (d *Data) GetPriority() *Priority {
+func (d *Value) PriorityDisplay() *Display {
+	if d.pri == nil {
+		return nil
+	}
+	return &Display{
+		Priority: d.pri.ToMap(),
+		Symbol:   d.GetSymbolPointer(),
+		DataType: d.GetType(),
+		RawValue: d.GetRawValue(),
+	}
+}
+
+func (d *Value) GetPriority() *Priority {
 	return d.pri
 }
 
-func (d *Data) GetPriorityValue() (PriorityValue, error) {
+func (d *Value) GetPriorityValue() (PriorityValue, error) {
 	highest, err := d.IsNil()
 	if err != nil {
 		return nil, err
@@ -39,7 +59,7 @@ func (d *Data) GetPriorityValue() (PriorityValue, error) {
 	return highest, nil
 }
 
-func (d *Data) GetFloatErr() (float64, error) {
+func (d *Value) GetFloatErr() (float64, error) {
 	highest, err := d.IsNil()
 	if err != nil {
 		return 0, err
@@ -47,7 +67,7 @@ func (d *Data) GetFloatErr() (float64, error) {
 	return nils.GetFloat64(highest.AsFloat()), nil
 }
 
-func (d *Data) GetFloat() float64 {
+func (d *Value) GetFloat() float64 {
 	highest, err := d.IsNil()
 	if err != nil {
 		return 0
@@ -55,7 +75,18 @@ func (d *Data) GetFloat() float64 {
 	return nils.GetFloat64(highest.AsFloat())
 }
 
-func (d *Data) GetFloatPointer() *float64 {
+func (d *Value) GetType() Type {
+	return d.dataType
+}
+
+func (d *Value) IsTypeFloat() bool {
+	if d.dataType == TypeFloat {
+		return true
+	}
+	return false
+}
+
+func (d *Value) GetFloatPointer() *float64 {
 	highest, err := d.IsNil()
 	if err != nil {
 		return nil
@@ -66,7 +97,7 @@ func (d *Data) GetFloatPointer() *float64 {
 	return highest.AsFloat()
 }
 
-func (d *Data) GetSymbolErr() (string, error) {
+func (d *Value) GetSymbolErr() (string, error) {
 	_, err := d.IsNil()
 	if err != nil {
 		return "", err
@@ -78,7 +109,7 @@ func (d *Data) GetSymbolErr() (string, error) {
 	return nils.GetString(s), nil
 }
 
-func (d *Data) GetSymbol() string {
+func (d *Value) GetSymbol() string {
 	_, err := d.IsNil()
 	if err != nil {
 		return ""
@@ -90,7 +121,7 @@ func (d *Data) GetSymbol() string {
 	return nils.GetString(s)
 }
 
-func (d *Data) GetSymbolPointer() *string {
+func (d *Value) GetSymbolPointer() *string {
 	_, err := d.IsNil()
 	if err != nil {
 		return nil
@@ -102,11 +133,11 @@ func (d *Data) GetSymbolPointer() *string {
 	return s
 }
 
-func (d *Data) GetRawValue() any {
+func (d *Value) GetRawValue() any {
 	return d.rawValue
 }
 
-type DataImpl struct {
+type DataPriority struct {
 	transformation   *Transformations
 	transformedValue *float64
 	units            *unitswrapper.EngineeringUnits
@@ -115,26 +146,27 @@ type DataImpl struct {
 	decimal          int
 	priority         *Priority
 	dataType         Type
-	out              *Data
+	out              *Value
 }
 
-func NewDataPriority(dataType Type, transformation *Transformations, units *unitswrapper.EngineeringUnits, decimal int) *DataImpl {
+func NewValuePriority(dataType Type, transformation *Transformations, units *unitswrapper.EngineeringUnits, decimal int) *DataPriority {
 	if dataType == "" {
 		dataType = TypeFloat
 	}
-	d := &DataImpl{
+	d := &DataPriority{
 		priority: NewPriority(2, dataType),
 		dataType: dataType,
 		decimal:  decimal,
-		out:      &Data{},
+		out:      &Value{},
 	}
-	d.addTransformation(transformation)
-	d.addUnits(units)
+	d.AddTransformation(transformation)
+	d.AddUnits(units)
 	return d
 }
 
-func (d *DataImpl) Apply(value, overrideValue any, fromDataType Type) (*Data, error) {
+func (d *DataPriority) Apply(value, overrideValue any, fromDataType Type) (*Value, error) {
 	d.out.rawValue = value
+	d.out.dataType = d.dataType
 	if tryFloat(fromDataType, d.dataType) {
 		cv := convert.AnyToFloatPointer(value)
 		ov := convert.AnyToFloatPointer(overrideValue)
@@ -169,13 +201,13 @@ func (d *DataImpl) Apply(value, overrideValue any, fromDataType Type) (*Data, er
 	return d.out, nil
 }
 
-func (d *DataImpl) addTransformation(t *Transformations) {
+func (d *DataPriority) AddTransformation(t *Transformations) {
 	if d.transformation == nil {
 		d.transformation = t
 	}
 }
 
-func (d *DataImpl) applyTransformation(v *float64) error {
+func (d *DataPriority) applyTransformation(v *float64) error {
 	if v == nil {
 		return nil
 	}
@@ -190,13 +222,13 @@ func (d *DataImpl) applyTransformation(v *float64) error {
 	return nil
 }
 
-func (d *DataImpl) addUnits(u *unitswrapper.EngineeringUnits) {
+func (d *DataPriority) AddUnits(u *unitswrapper.EngineeringUnits) {
 	if d.units == nil {
 		d.units = u
 	}
 }
 
-func (d *DataImpl) applyUnits(v *float64, applyConversion bool, overrideValue *float64) error {
+func (d *DataPriority) applyUnits(v *float64, applyConversion bool, overrideValue *float64) error {
 	if d.units == nil {
 		return nil
 	}

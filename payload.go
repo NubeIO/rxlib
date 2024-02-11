@@ -1,7 +1,6 @@
 package rxlib
 
 import (
-	"fmt"
 	"github.com/NubeIO/rxlib/priority"
 	"time"
 )
@@ -21,19 +20,20 @@ type ObjectInvokeResponse struct {
 }
 
 type Payload struct {
-	PortPayload *PortPayload `json:"portPayload,omitempty"`
+	DataPayload *DataPayload `json:"data,omitempty"`
 	// used for mapping
 	Mapping *Mapping `json:"mapping,omitempty"`
 	// generic eventbus message
 	EventBusPayload *EventBusPayload `json:"eventBusPayload,omitempty"`
 }
 
-type PortPayload struct {
-	Port        *Port         `json:"port,omitempty"`
-	Connection  *Connection   `json:"connection,omitempty"`
-	Connections []*Connection `json:"connections,omitempty"`
-	ObjectUUID  string        `json:"objectUUID,omitempty"`
-	ObjectID    string        `json:"objectID,omitempty"`
+type DataPayload struct {
+	Data *priority.Value `json:"data"`
+	//Connections []*Connection  `json:"connections,omitempty"`
+	Topic      string `json:"topic"`
+	PortID     string `json:"portID"`
+	ObjectUUID string `json:"objectUUID,omitempty"`
+	ObjectID   string `json:"objectID,omitempty"`
 }
 
 type EventBusPayload struct {
@@ -71,167 +71,114 @@ func (p *Payload) GetPayload() *Payload {
 	return p
 }
 
-// ----------------PORT------------------
+//func (p *Payload) NewPortPayload() *Payload {
+//	p.DataPayload = &DataPayload{}
+//	return p
+//}
 
-func (p *Payload) NewPortPayload() *Payload {
-	p.PortPayload = &PortPayload{}
+func (p *Payload) dataNil() {
+	if p.DataPayload == nil {
+		p.DataPayload = &DataPayload{}
+	}
+
+}
+
+func (p *Payload) GetData() *priority.Value {
+	return p.GetDataPayload().Data
+}
+
+func (p *Payload) SetPriorityData(d *priority.Value) *Payload {
+	p.dataNil()
+	p.DataPayload.Data = d
 	return p
 }
 
-func (p *Payload) IsPortNil() bool {
-	if p.PortPayload == nil {
-		return true
-	}
-	if p.PortPayload.Port == nil {
-		return true
-	}
-	return false
-}
+func (p *Payload) SetDataPayloadDetails(objectID, objectUUID, portID, topic string) *Payload {
+	p.dataNil()
+	p.DataPayload.PortID = portID
+	p.DataPayload.ObjectID = objectID
+	p.DataPayload.ObjectUUID = objectUUID
+	p.DataPayload.Topic = topic
 
-func (p *Payload) GetPort() *Port {
-	if p.IsPortNil() {
-		return nil
-	}
-	return p.PortPayload.Port
-}
-
-func (p *Payload) SetPort(port *Port) *Payload {
-	if p.IsPortNil() {
-		p.PortPayload = &PortPayload{}
-	}
-	p.PortPayload.Port = port
 	return p
 }
 
-func (p *Payload) SetPortObjectDetails(objectID, objectUUID string) *Payload {
-	if p.IsPortNil() {
-		p.PortPayload = &PortPayload{}
-	}
-	p.PortPayload.ObjectID = objectID
-	p.PortPayload.ObjectUUID = objectUUID
-	return p
+func (p *Payload) GetDataPayload() *DataPayload {
+	p.dataNil()
+	return p.DataPayload
 }
 
-func (p *Payload) SetConnections(connections []*Connection) *Payload {
-	if p.IsPortNil() {
-		p.PortPayload = &PortPayload{}
-	}
-	p.PortPayload.Connections = connections
-	return p
+func (p *Payload) GetTopic() string {
+	p.dataNil()
+	return p.DataPayload.Topic
 }
 
-func (p *Payload) GetValue() (any, error) {
-	if p.IsPortNil() {
-		return nil, fmt.Errorf("port is empty")
-	}
-	return p.GetPort().Data, nil
-}
+//func (p *Payload) SetConnections(connections []*Connection) *Payload {
+//	p.dataNil()
+//	p.DataPayload.Connections = connections
+//	return p
+//}
 
-func (p *Payload) IsPriorityNil() bool {
-	if p.IsPortNil() {
-		return true
-	}
-	if p.PortPayload.Port.DataPriority == nil {
-		return true
-	}
-	return false
-}
+//func (p *Payload) GetValue() (any, error) {
+//	if p.IsPortNil() {
+//		return nil, fmt.Errorf("port is empty")
+//	}
+//	return p.GetPort().DataPayload, nil
+//}
 
-func (p *Payload) GetDataPriority() *priority.Priority {
-	if p.IsPriorityNil() {
-		return nil
-	}
-	return p.GetPort().DataPriority.Priority
-}
-
-func (p *Payload) GetDataHighestPriority() priority.PriorityValue {
-	if p.IsPriorityNil() {
-		return nil
-	}
-	return p.GetDataPriority().GetHighestPriorityValue()
-}
-
-func (p *Payload) GetDataHighestPriorityAsFloat() *float64 {
-	if p.IsPriorityNil() {
-		return nil
-	}
-	return p.GetDataPriority().GetHighestPriorityValue().AsFloat()
-}
-
-func (p *Payload) GetPortName() string {
-	return p.GetPort().Name
-}
+//func (p *Payload) IsPriorityNil() bool {
+//	if p.IsPortNil() {
+//		return true
+//	}
+//	if p.DataPayload.Port.DataPriorityOld == nil {
+//		return true
+//	}
+//	return false
+//}
+//
+//func (p *Payload) GetDataPriority() *priority.Priority {
+//	if p.IsPriorityNil() {
+//		return nil
+//	}
+//	return p.GetPort().DataPriorityOld.Priority
+//}
+//
+//func (p *Payload) GetDataHighestPriority() priority.PriorityValue {
+//	if p.IsPriorityNil() {
+//		return nil
+//	}
+//	return p.GetDataPriority().GetHighestPriorityValue()
+//}
+//
+//func (p *Payload) GetDataHighestPriorityAsFloat() *float64 {
+//	if p.IsPriorityNil() {
+//		return nil
+//	}
+//	return p.GetDataPriority().GetHighestPriorityValue().AsFloat()
+//}
+//
+//func (p *Payload) GetPortName() string {
+//	return p.GetPort().Name
+//}
 
 // ----------------CONNECTION------------------
 
-func (p *Payload) IsConnectionNil() bool {
-	if p.PortPayload == nil {
-		return true
-	}
-	if p.PortPayload.Connection == nil {
-		return true
-	}
-	return false
-}
-
-func (p *Payload) IsConnectionsNil() bool {
-	if p.PortPayload == nil {
-		return true
-	}
-	if p.PortPayload.Connections == nil {
-		return true
-	}
-	return false
-}
-
-func (p *Payload) GetConnection() *Connection {
-	if p.IsConnectionNil() {
-		return nil
-	}
-	return p.PortPayload.Connection
-}
-
-func (p *Payload) GetConnections() []*Connection {
-	if p.IsConnectionsNil() {
-		return nil
-	}
-	return p.PortPayload.Connections
-}
-
-func (p *Payload) GetConnectionUUID() string {
-	if p.IsConnectionNil() {
-		return ""
-	}
-	return p.GetConnection().GetUUID()
-}
-
-func (p *Payload) GetSourceUUID() string {
-	if p.IsConnectionNil() {
-		return ""
-	}
-	return p.GetConnection().GetSourceUUID()
-}
-
-func (p *Payload) GetSourcePort() string {
-	if p.IsConnectionNil() {
-		return ""
-	}
-	return p.GetConnection().GetSourcePort()
-}
-
-func (p *Payload) GetTargetPort() string {
-	if p.IsConnectionNil() {
-		return ""
-	}
-	return p.GetConnection().GetTargetPort()
-}
-
-func (p *Payload) GetTargetUUID() string {
-	if p.IsConnectionNil() {
-		return ""
-	}
-	return p.GetConnection().GetTargetUUID()
-}
+//func (p *Payload) IsConnectionsNil() bool {
+//	if p.DataPayload == nil {
+//		return true
+//	}
+//	if p.DataPayload.Connections == nil {
+//		return true
+//	}
+//	return false
+//}
+//
+//func (p *Payload) GetConnections() []*Connection {
+//	if p.IsConnectionsNil() {
+//		return nil
+//	}
+//	return p.DataPayload.Connections
+//}
 
 // ----------------EVENTBUS------------------
 

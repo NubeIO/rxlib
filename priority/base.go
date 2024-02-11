@@ -38,7 +38,7 @@ type NewPrimitiveValue struct {
 	Units           *unitswrapper.EngineeringUnits
 }
 
-func NewPrimitive(body *NewPrimitiveValue) (*DataPriority, *Primitives, error) {
+func NewPrimitive(body *NewPrimitiveValue) (*DataPriorityOld, *Primitives, error) {
 	if body == nil {
 		return nil, nil, fmt.Errorf("body can not be empty")
 	}
@@ -162,18 +162,18 @@ func overriden(value float64, decimalPlace int, unit string) string {
 	return fmt.Sprintf(format+" %s", value, unit)
 }
 
-type DataPriority struct {
+type DataPriorityOld struct {
 	Priority     *Priority `json:"pri,omitempty'"`
 	RawValue     *float64  `json:"rawValue,omitempty"`
 	Symbol       *string   `json:"symbol,omitempty"`
 	RawValueBool *bool     `json:"rawValueBool,omitempty"`
 }
 
-func (p *Primitives) UpdateValueFloat(newValue float64) (*DataPriority, error) {
+func (p *Primitives) UpdateValueFloat(newValue float64) (*DataPriorityOld, error) {
 	return p.UpdateValueAndGenerateResult(nils.ToFloat64(newValue), 2, nil, 0)
 }
 
-func (p *Primitives) UpdateValueAndGenerateResult(newValue *float64, priorityNumber int, overrideValue *float64, overridePriorityNumber int) (*DataPriority, error) {
+func (p *Primitives) UpdateValueAndGenerateResult(newValue *float64, priorityNumber int, overrideValue *float64, overridePriorityNumber int) (*DataPriorityOld, error) {
 	p.inValue = newValue              // Update the initial value
 	p.priorityNumber = priorityNumber // Update the initial value
 
@@ -234,7 +234,7 @@ func (p *Primitives) UpdateValueAndGenerateResult(newValue *float64, priorityNum
 		}
 	}
 
-	return &DataPriority{
+	return &DataPriorityOld{
 		Priority: p.priority,
 		RawValue: p.inValue,
 		Symbol:   p.symbol,

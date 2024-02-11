@@ -1,8 +1,9 @@
 package rxlib
 
 import (
-	"github.com/NubeIO/rxlib/libs/nils"
+	"fmt"
 	"github.com/NubeIO/rxlib/priority"
+	"github.com/NubeIO/rxlib/unitswrapper"
 )
 
 type Port struct {
@@ -11,12 +12,13 @@ type Port struct {
 	UUID string `json:"uuid"`
 
 	// Input/Output port values
-	Data         *priority.DataValue    `json:"value,omitempty"`     // value should be used for anything
-	DataPriority *priority.DataPriority `json:"dataFloat,omitempty"` // values for float
-	primitives   *priority.Primitives
-
-	Direction PortDirection `json:"direction"` // input or output
-	DataType  priority.Type `json:"dataType"`  // float, bool, string, any, json
+	Values         *priority.Value   `json:"-"`    // value should be used for anything
+	DataDisplay    *priority.Display `json:"data"` // only used for when its called over rest
+	dataPriority   *priority.DataPriority
+	Transformation *priority.Transformations      `json:"transformation"`
+	Units          *unitswrapper.EngineeringUnits `json:"units"`
+	Direction      PortDirection                  `json:"direction"` // input or output
+	DataType       priority.Type                  `json:"dataType"`  // float, bool, string, any, json
 
 	// these are optional and used if you want to keep the last value for later use
 	PreviousValueSet bool                    `json:"-"`
@@ -53,61 +55,114 @@ func (p *Port) SetName(v string) string {
 	return p.Name
 }
 
-// SetData to be used for anything but an int, float, bool
-func (p *Port) SetData(value any) {
-	if p.Data == nil {
-		p.Data = &priority.DataValue{}
+func (p *Port) initPriority(dataType priority.Type, decimal int) {
+	if p.dataPriority == nil {
+		p.dataPriority = priority.NewValuePriority(dataType, nil, nil, decimal)
 	}
-	p.Data.Value = value
 }
 
-func (p *Port) GetData() any {
-	return p.Data
+func (p *Port) InitPriority(dataType priority.Type, decimal int) {
+	p.initPriority(dataType, decimal)
 }
 
-//-----------------------priority-----------------------
-
-func (p *Port) initDataPriority(body *priority.NewPrimitiveValue) error {
-	pri, prim, err := priority.NewPrimitive(body)
-	p.primitives = prim
-	if err != nil {
-		return err
+func (p *Port) AddTransformation(v *priority.Transformations) error {
+	if p.dataPriority == nil {
+		return fmt.Errorf("data priority is empty")
 	}
-	p.DataPriority = pri
+	p.dataPriority.AddTransformation(v)
+	return nil
+
+}
+
+func (p *Port) AddUnits(v *unitswrapper.EngineeringUnits) error {
+	if p.dataPriority == nil {
+		return fmt.Errorf("data priority is empty")
+	}
+	p.dataPriority.AddUnits(v)
 	return nil
 }
 
-func (p *Port) InitDataPriorityFloat(body *priority.NewPrimitiveValue) error {
-	return p.initDataPriority(body)
-}
-
-func (p *Port) SetPriorityNull(priorityNumber int) {
-	p.DataPriority.Priority.SetNull(priorityNumber)
-}
-
-func (p *Port) WriteFloat(value float64) error {
-	if p.DataPriority == nil {
-		panic("rxlib.SetDataPriority DataPriority can not be empty, please InitDataPriority() first")
+func (p *Port) AddEnums(v []*priority.Enums) error {
+	if p.dataPriority == nil {
+		return fmt.Errorf("data priority is empty")
 	}
-	result, err := p.primitives.UpdateValueFloat(value)
-	if err != nil {
-		return err
+	if p.Transformation == nil {
+		return fmt.Errorf("transformation is empty")
 	}
-	p.DataPriority = result
+	p.Transformation.Enums = v
 	return nil
 }
 
-func (p *Port) OverrideWriteFloatPriority(value float64, priority int) error {
-	if p.DataPriority == nil {
-		panic("rxlib.SetDataPriority DataPriority can not be empty, please InitDataPriority() first")
-	}
-	result, err := p.primitives.UpdateValueAndGenerateResult(nil, 0, nils.ToFloat64(value), priority)
-	if err != nil {
-		return err
-	}
-	p.DataPriority = result
-	return nil
+func (p *Port) GetValue() *priority.Value {
+	return p.Values
 }
+
+func (p *Port) GetValueDisplay() *priority.Display {
+	return p.Values.PriorityDisplay()
+}
+
+func (p *Port) WritePriority(value any, fromDataType priority.Type) (*priority.Value, error) {
+	d, err := p.dataPriority.Apply(value, nil, fromDataType)
+	p.Values = d
+	return p.Values, err
+}
+
+//
+//// SetData to be used for anything but an int, float, bool
+//func (p *Port) SetData(value any) {
+//	if p.DataPayload == nil {
+//		p.DataPayload = &priority.DataValue{}
+//	}
+//	p.DataPayload.Value = value
+//}
+//
+//func (p *Port) GetData() any {
+//	return p.DataPayload
+//}
+//
+////-----------------------priority-----------------------
+//
+//func (p *Port) initDataPriority(body *priority.NewPrimitiveValue) error {
+//	pri, prim, err := priority.NewPrimitive(body)
+//	p.primitives = prim
+//	if err != nil {
+//		return err
+//	}
+//	p.DataPriorityOld = pri
+//	return nil
+//}
+//
+//func (p *Port) InitDataPriorityFloat(body *priority.NewPrimitiveValue) error {
+//	return p.initDataPriority(body)
+//}
+//
+//func (p *Port) SetPriorityNull(priorityNumber int) {
+//	p.DataPriorityOld.Priority.SetNull(priorityNumber)
+//}
+//
+//func (p *Port) WriteFloat(value float64) error {
+//	if p.DataPriorityOld == nil {
+//		panic("rxlib.SetDataPriority DataPriorityOld can not be empty, please InitDataPriority() first")
+//	}
+//	result, err := p.primitives.UpdateValueFloat(value)
+//	if err != nil {
+//		return err
+//	}
+//	p.DataPriorityOld = result
+//	return nil
+//}
+//
+//func (p *Port) OverrideWriteFloatPriority(value float64, priority int) error {
+//	if p.DataPriorityOld == nil {
+//		panic("rxlib.SetDataPriority DataPriorityOld can not be empty, please InitDataPriority() first")
+//	}
+//	result, err := p.primitives.UpdateValueAndGenerateResult(nil, 0, nils.ToFloat64(value), priority)
+//	if err != nil {
+//		return err
+//	}
+//	p.DataPriorityOld = result
+//	return nil
+//}
 
 func (p *Port) SetWrittenValue(v *priority.WrittenValue) {
 	p.WrittenValueSet = true

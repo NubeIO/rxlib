@@ -4,7 +4,6 @@ import (
 	"github.com/NubeIO/rxlib/libs/history"
 	"github.com/NubeIO/rxlib/libs/rubix"
 	"github.com/NubeIO/rxlib/priority"
-	"github.com/NubeIO/rxlib/unitswrapper"
 	"github.com/NubeIO/schema"
 	"github.com/gin-gonic/gin"
 	"github.com/mustafaturan/bus/v3"
@@ -27,7 +26,7 @@ type Object interface {
 	IsNotLoaded() bool
 	IsLoaded() bool                                       // where the Obj Start() method has been called
 	Invoke(key string, body any) any                      // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
-	InvokePayload(message *Payload) *ObjectInvokeResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
+	InvokePayload(payload *Payload) *ObjectInvokeResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 	InvokeList() []*Invoke
 	Process() error
 	Reset() error // for example this can be called on the 2nd deploy of a counter Obj, and we want to reset the count back to zero
@@ -74,36 +73,32 @@ type Object interface {
 	NewOutputPort(port *NewPort) error
 	NewOutputPorts(port []*NewPort) error
 	GetAllPorts() []*Port
-	EnablePort(id string) error
-	DisablePort(id string) error
-	WriteData(id string, value any)                             // write any data to a port but float
-	WritePriority(id string, value float64, priorityNumber int) // write a value to a port; input or output that is a type float at priority number
-	ReleasePriority(id string, priorityNumber int)              // release a priority number
-	CurrentPriority() (value *float64, priorityNumber int)
-	CurrentSymbolValue() (value *string) // for example (22 °C) or (100% overridden)
-	AddPortTransformations(transformation *priority.Transformations)
-	AddPortUnits(units *unitswrapper.EngineeringUnits)
-	AddPortEnums(enums *priority.Enums) // for example 0=off, 1=on, 2=auto
+	EnablePort(portID string) error
+	DisablePort(portID string) error
+	AddAllTransformations(inputs, outputs []*Port) []error
 
 	CreateConnection(connection *Connection) // CreateConnection is for just adding a rubix without adding it to the eventbus
 	NewOutputConnection(portID, targetUUID, targetPort string) error
 
 	GetConnection(uuid string) *Connection
-	GetExistingConnection(sourceObjectUUID, targetObjectUUID string) *Connection
+	GetExistingConnection(sourceObjectUUID, targetObjectUUID, targetPortID string) *Connection
 	GetConnections() []*Connection
 
 	RemoveConnection(connection *Connection) error
 	DropConnections() []error
 	RemoveOldConnections(newConnections []*Connection) []error
-	AddSubscriptionConnection(sourceObjectUUID, sourcePortID, targetObjectUUID string)
+	AddSubscriptionConnection(sourceObjectUUID, sourcePortID, targetObjectUUID, targetPortID string)
 
 	// inputs
 	GetInput(id string) *Port
 	InputExists(id string) error
 	GetInputByUUID(uuid string) *Port
 	GetInputs() []*Port
-	GetInputByConnection(outputPortID string) *Port
-	//SetInputValue(id string, value any) error
+	GetInputByConnection(sourceObjectUUID, outputPortID string) *Port
+	GetInputByConnections(sourceObjectUUID, outputPortID string) []*Port
+	UpdateInputsValues(payload *Payload) []error
+	GetInputsValue(portID string) *priority.Value
+	GetInputsValues() map[string]*priority.Value
 
 	// ouputs
 	GetOutputs() []*Port

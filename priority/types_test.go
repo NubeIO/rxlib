@@ -49,7 +49,7 @@ func TestNewPriority(t *testing.T) {
 	ov = nil
 	u = nil
 
-	data := NewDataPriority(TypeFloat, transformationConfig, u, 0)
+	data := NewValuePriority(TypeFloat, transformationConfig, u, 0)
 	apply, err := data.Apply(value, ov, TypeInt)
 	if err != nil {
 		fmt.Println(err)
