@@ -165,6 +165,14 @@ func NewValuePriority(dataType Type, transformation *Transformations, units *uni
 }
 
 func (d *DataPriority) Apply(value, overrideValue any, fromDataType Type) (*Value, error) {
+	if value == nil && overrideValue == nil { // release an override
+		_, pri := d.priority.GetHighestPriority()
+		if pri == 1 {
+			d.priority.SetNull(1)
+		}
+		return d.out, nil
+	}
+
 	d.out.rawValue = value
 	d.out.dataType = d.dataType
 	if tryFloat(fromDataType, d.dataType) {
@@ -188,11 +196,13 @@ func (d *DataPriority) Apply(value, overrideValue any, fromDataType Type) (*Valu
 		if d.transformedValue == nil && d.unitsValue == nil {
 			currentValue = cv
 		}
-		f := FloatValue{Value: nils.GetFloat64(currentValue)}
-		if ov != nil {
 
+		if ov != nil {
+			f := FloatValue{Value: nils.GetFloat64(ov)}
 			d.priority.SetValue(f, 1)
-		} else {
+		}
+		if currentValue != nil {
+			f := FloatValue{Value: nils.GetFloat64(currentValue)}
 			d.priority.SetValue(f, 2)
 		}
 		d.out.pri = d.priority

@@ -19,15 +19,14 @@ type Chain struct {
 type Object interface {
 	New(object Object, opts ...any) Object
 
-	// Start the processing
 	Init() error
 	Start() error
 	SetLoaded() // used normally for the Start() to set it that it has booted
 	IsNotLoaded() bool
-	IsLoaded() bool                                       // where the Obj Start() method has been called
-	Invoke(key string, body any) any                      // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
-	InvokePayload(payload *Payload) *ObjectInvokeResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
-	InvokeList() []*Invoke
+	IsLoaded() bool // where the Obj Start() method has been called
+	Invoke(key string, dataType priority.Type, data any) *ObjectCommandResponse
+	Command(command *Command) *ObjectCommandResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
+	CommandList() []*Invoke
 	Process() error
 	Reset() error // for example this can be called on the 2nd deploy of a counter Obj, and we want to reset the count back to zero
 	AllowsReset() bool
@@ -75,7 +74,10 @@ type Object interface {
 	GetAllPorts() []*Port
 	EnablePort(portID string) error
 	DisablePort(portID string) error
+	IsPortDisable(portID string) (bool, error)
 	AddAllTransformations(inputs, outputs []*Port) []error
+	OverrideValue(value any, portID string) error
+	ReleaseOverride(portID string) error
 
 	CreateConnection(connection *Connection) // CreateConnection is for just adding a rubix without adding it to the eventbus
 	NewOutputConnection(portID, targetUUID, targetPort string) error

@@ -7,9 +7,10 @@ import (
 )
 
 type Port struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	UUID string `json:"uuid"`
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	UUID     string `json:"uuid"`
+	Disabled bool   `json:"enable"`
 
 	// Input/Output port values
 	Values         *priority.Value   `json:"-"`    // value should be used for anything
@@ -105,6 +106,43 @@ func (p *Port) WritePriority(value any, fromDataType priority.Type) (*priority.V
 	d, err := p.dataPriority.Apply(value, nil, fromDataType)
 	p.Values = d
 	return p.Values, err
+}
+
+func (p *Port) OverrideValue(value any) (*priority.Value, error) {
+	d, err := p.dataPriority.Apply(nil, value, p.DataType)
+	p.Values = d
+	return p.Values, err
+}
+
+func (p *Port) ReleaseOverride() error {
+	d, err := p.dataPriority.Apply(nil, nil, p.DataType)
+	if err != nil {
+		return err
+	}
+	p.Values = d
+	return nil
+}
+
+func (p *Port) IsEnabled() bool {
+	if p.Disabled {
+		return false
+	}
+	return true
+}
+
+func (p *Port) IsDisabled() bool {
+	if p.Disabled {
+		return true
+	}
+	return false
+}
+
+func (p *Port) Enable() {
+	p.Disabled = false
+}
+
+func (p *Port) Disable() {
+	p.Disabled = true
 }
 
 //

@@ -2,6 +2,7 @@ package priority
 
 import (
 	"fmt"
+	"github.com/NubeIO/rxlib/helpers/pprint"
 	"github.com/NubeIO/rxlib/libs/nils"
 	"github.com/NubeIO/rxlib/unitswrapper"
 	"testing"
@@ -28,7 +29,7 @@ func TestNewPriority(t *testing.T) {
 	//fmt.Println(nils.GetFloat64(v) + 11)
 
 	value := nils.ToInt(24)
-	ov := nils.ToInt(24)
+	ov := nils.ToInt(99)
 
 	//cv := convert.IntPointerToFloatPointer(value)
 
@@ -43,18 +44,33 @@ func TestNewPriority(t *testing.T) {
 		DecimalPlaces: 0,
 		UnitCategory:  "temperature",
 		Unit:          "C",
-		UnitTo:        "F",
+		UnitTo:        "",
 	}
 	transformationConfig = nil
-	ov = nil
-	u = nil
+	//ov = nil
+	//u = nil
+	fmt.Println(u, ov)
 
 	data := NewValuePriority(TypeFloat, transformationConfig, u, 0)
-	apply, err := data.Apply(value, ov, TypeInt)
+	apply, err := data.Apply(value, nil, TypeInt)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(apply.GetFloat())
+	pprint.PrintJSON(apply.PriorityDisplay())
+
+	apply, err = data.Apply(nil, ov, TypeInt)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	pprint.PrintJSON(apply.PriorityDisplay())
+
+	apply, err = data.Apply(nil, nil, TypeInt)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	pprint.PrintJSON(apply.PriorityDisplay())
 
 }
