@@ -2,6 +2,7 @@ package rxlib
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 )
 
@@ -26,7 +27,7 @@ func (inst *ObjectResponse) GetError() error {
 }
 
 type Runtime interface {
-	Get() map[string]Object
+	Get() []Object
 	GetByUUID(uuid string) Object
 	GetFirstByID(objectID string) Object
 	GetFirstByName(name string) Object
@@ -38,13 +39,19 @@ type Runtime interface {
 
 	GetAllObjectValues() []*ObjectValue
 
-	NewObject(objectID string) *ObjectResponse
-	AddObject(object Object) *ObjectResponse
+	AddObject(object Object)
+	AddObjectResp(object Object) *ObjectResponse
 
-	//RemoveObjectFromRuntime()
+	Where(attribute string) *RuntimeImpl
+	Field(field string) *RuntimeImpl
+	Condition(operator, value string) *RuntimeImpl
+	First() Object
+	Filtered() []Object
+
+	Query(query string, r Runtime) []Object
 }
 
-func NewRuntime(objs map[string]Object) Runtime {
+func NewRuntime(objs []Object) Runtime {
 	r := &RuntimeImpl{}
 	r.objects = objs
 	if r.objects == nil {
@@ -54,27 +61,120 @@ func NewRuntime(objs map[string]Object) Runtime {
 }
 
 type RuntimeImpl struct {
-	objects         map[string]Object
-	objectsFiltered map[string]Object
+	objects         []Object
+	objectsFiltered []Object
 	err             error // To handle errors in query chain
 	where           string
 	field           string
 	mutex           sync.RWMutex
 }
 
-func (inst *RuntimeImpl) NewObject(objectID string) *ObjectResponse {
+func (inst *RuntimeImpl) Query(query string, r Runtime) []Object {
+	var allResults []Object
+	orSegments := strings.Split(query, "OR") // Split the query into OR segments
+
+	for _, orSegment := range orSegments {
+		orSegment = strings.TrimSpace(strings.Trim(orSegment, "()"))
+		andConditions := strings.Split(orSegment, "AND") // Split the OR segment into AND conditions
+
+		var segmentResults []Object // Temporarily store results for this OR segment
+		if len(andConditions) == 0 {
+			continue
+		}
+
+		segmentResults = r.Get() // Start with all objects for the first condition
+		for _, andCondition := range andConditions {
+			andCondition = strings.TrimSpace(andCondition)
+			// Identify the operator and split the condition
+			var operator string
+			if strings.Contains(andCondition, "==") {
+				operator = "=="
+			} else if strings.Contains(andCondition, "!=") {
+				operator = "!="
+			}
+			parts := strings.SplitN(andCondition, operator, 2)
+			if len(parts) != 2 {
+				fmt.Println("Invalid condition:", andCondition)
+				continue
+			}
+
+			field := strings.TrimSpace(parts[0])
+			// Remove the 'objects:' prefix and any extraneous characters like parentheses
+			field = strings.ReplaceAll(field, "objects:", "")
+			field = strings.Trim(field, "() ")
+
+			value := strings.TrimSpace(parts[1])
+			// Here's the key adjustment: ensure we also trim the closing parenthesis from the value
+			value = strings.Trim(value, "() ")
+
+			// Filter objects that match the current condition
+			var matchesForThisCondition []Object
+			for _, obj := range segmentResults {
+				if matchesCondition(obj, field, operator, value) {
+					matchesForThisCondition = append(matchesForThisCondition, obj)
+				}
+			}
+
+			// Update segmentResults to narrow down the matches for the next AND condition
+			segmentResults = matchesForThisCondition
+		}
+
+		// Add unique matches from this segment to allResults
+		for _, match := range segmentResults {
+			if !containsObject(allResults, match) {
+				allResults = append(allResults, match)
+			}
+		}
+	}
+
+	return allResults
+}
+
+// matchesCondition checks if an object matches the given field and value.
+func matchesCondition(obj Object, field, operator, value string) bool {
+	var fieldValue string
+	value = strings.Trim(value, " )")
+	switch field {
+	case "uuid":
+		fieldValue = obj.GetUUID()
+	case "category":
+		fieldValue = obj.GetCategory()
+	case "id":
+		fieldValue = obj.GetID()
+	case "name":
+		fieldValue = obj.GetName()
+	}
+	switch operator {
+	case "==":
+		return fieldValue == value
+	case "!=":
+		return fieldValue != value
+	}
+
+	return false
+}
+
+// containsObject checks if the object is already in the slice.
+func containsObject(slice []Object, obj Object) bool {
+	for _, item := range slice {
+		if item.GetUUID() == obj.GetUUID() {
+			return true
+		}
+	}
+	return false
+}
+
+func (inst *RuntimeImpl) AddObjectResp(object Object) *ObjectResponse {
 	inst.mutex.Lock()
 	defer inst.mutex.Unlock()
-
-	//resp := &ObjectResponse{}
-
+	inst.objects = append(inst.objects, object)
 	return nil
 }
 
-func (inst *RuntimeImpl) AddObject(object Object) *ObjectResponse {
+func (inst *RuntimeImpl) AddObject(object Object) {
 	inst.mutex.Lock()
 	defer inst.mutex.Unlock()
-	return nil
+	inst.objects = append(inst.objects, object)
 }
 
 func (inst *RuntimeImpl) GetObjectsByType(objectID string) []Object {
@@ -89,17 +189,22 @@ func (inst *RuntimeImpl) GetObjectsByType(objectID string) []Object {
 	return nil
 }
 
-func (inst *RuntimeImpl) Get() map[string]Object {
-	//inst.mutex.Lock()
-	//defer inst.mutex.Unlock()
+func (inst *RuntimeImpl) Get() []Object {
+	inst.mutex.Lock()
+	defer inst.mutex.Unlock()
 	return inst.objects
 }
 
 func (inst *RuntimeImpl) GetByUUID(uuid string) Object {
 	inst.mutex.Lock()
 	defer inst.mutex.Unlock()
-	obj := inst.objects[uuid]
-	return obj
+	for _, object := range inst.objects {
+		if object.GetUUID() == uuid {
+			return object
+		}
+	}
+
+	return nil
 }
 
 func (inst *RuntimeImpl) GetFirstByID(objectID string) Object {
@@ -186,7 +291,7 @@ func (inst *RuntimeImpl) Where(attribute string) *RuntimeImpl {
 	}
 	inst.where = attribute
 
-	var filtered = make(map[string]Object)
+	var filtered []Object
 	for _, obj := range inst.objects {
 		switch attribute {
 		case "histories":
@@ -196,11 +301,11 @@ func (inst *RuntimeImpl) Where(attribute string) *RuntimeImpl {
 			filtered = inst.objects
 		case "inputs":
 			if len(obj.GetInputs()) > 0 {
-				filtered[obj.GetUUID()] = obj
+				filtered = append(filtered, obj)
 			}
 		case "outputs":
 			if len(obj.GetOutputs()) > 0 {
-				filtered[obj.GetUUID()] = obj
+				filtered = append(filtered, obj)
 			}
 		}
 	}
@@ -221,27 +326,27 @@ func (inst *RuntimeImpl) Condition(operator, value string) *RuntimeImpl {
 	if inst.err != nil {
 		return inst // Skip processing if there's an Err
 	}
-	var filtered = make(map[string]Object)
+	var filtered []Object
 	for _, obj := range inst.objectsFiltered {
 		switch inst.where {
 		case "histories":
 			// Comparing Obj fields
 			if compareHist(obj, inst.field, operator, value) {
 
-				filtered[obj.GetUUID()] = obj
+				filtered = append(filtered, obj)
 			}
 		case "objects":
 			// Comparing Obj fields
-			fmt.Println(compareObject(obj, inst.field, operator, value), inst.field, value, obj.GetID())
+			//fmt.Println(compareObject(obj, inst.field, operator, value), inst.field, value, obj.GetID())
 			if compareObject(obj, inst.field, operator, value) {
-				filtered[obj.GetUUID()] = obj
+				filtered = append(filtered, obj)
 			}
 
 		case "inputs":
 			// Comparing fields of input ports
 			for _, port := range obj.GetInputs() {
 				if comparePorts(port, inst.field, operator, value) {
-					filtered[obj.GetUUID()] = obj
+					filtered = append(filtered, obj)
 					break // Found a matching input, no need to check further
 				}
 			}
@@ -250,7 +355,7 @@ func (inst *RuntimeImpl) Condition(operator, value string) *RuntimeImpl {
 			// Comparing fields of output ports
 			for _, port := range obj.GetOutputs() {
 				if comparePorts(port, inst.field, operator, value) {
-					filtered[obj.GetUUID()] = obj
+					filtered = append(filtered, obj)
 					break // Found a matching output, no need to check further
 				}
 			}
@@ -273,6 +378,12 @@ func (inst *RuntimeImpl) First() Object {
 	return nil
 }
 
+func (inst *RuntimeImpl) Filtered() []Object {
+	inst.mutex.Lock()
+	defer inst.mutex.Unlock()
+	return inst.objectsFiltered
+}
+
 func (inst *RuntimeImpl) objectsFilteredIsNil() bool {
 	if inst.objectsFiltered == nil {
 		return true
@@ -283,14 +394,14 @@ func (inst *RuntimeImpl) objectsFilteredIsNil() bool {
 // let obj = RQL.AllObjects().Where("histories").Field("uuid").Condition("==", "hist_history").First()
 // let obj = RQL.AllObjects().Where("objects").Field("name").Condition("==", "abc").SerialObjects()
 func (inst *RuntimeImpl) histories() *RuntimeImpl {
-	var filtered = make(map[string]Object)
-	for _, obj := range inst.objectsFiltered {
-		extension := obj.GetRequiredExtensionByName("history")
-		if extension != nil {
-			filtered[obj.GetUUID()] = obj
-		}
-	}
-	inst.objectsFiltered = filtered
+	//var filtered = make(map[string]Object)
+	//for _, obj := range inst.objectsFiltered {
+	//	extension := obj.GetRequiredExtensionByName("history")
+	//	if extension != nil {
+	//		filtered[obj.GetUUID()] = obj
+	//	}
+	//}
+	//inst.objectsFiltered = filtered
 	return inst
 }
 
