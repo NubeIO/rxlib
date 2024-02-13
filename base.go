@@ -9,13 +9,6 @@ import (
 	"github.com/mustafaturan/bus/v3"
 )
 
-type Chain struct {
-	RootTreeUUIDs       []string
-	RootTreeNames       []string
-	DescendantTreeUUIDs []string
-	DescendantTreeNames []string
-}
-
 type Object interface {
 	New(object Object, opts ...any) Object
 
@@ -236,4 +229,11 @@ type Meta struct {
 
 func NewMeta(meta *Meta) *Meta {
 	return meta
+}
+
+type Chain struct {
+	RootTreeUUIDs       []string
+	RootTreeNames       []string
+	DescendantTreeUUIDs []string
+	DescendantTreeNames []string
 }
