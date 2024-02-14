@@ -35,6 +35,20 @@ func (d *Value) IsNil() (PriorityValue, error) {
 	return h, nil
 }
 
+func (d *Value) IsNull() bool {
+	if d == nil {
+		return true
+	}
+	if d.pri == nil {
+		return true
+	}
+	h := d.pri.GetHighestPriorityValue()
+	if h == nil {
+		return true
+	}
+	return false
+}
+
 func (d *Value) PriorityDisplay() *Display {
 	if d.pri == nil {
 		return nil

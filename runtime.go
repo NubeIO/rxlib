@@ -2,6 +2,7 @@ package rxlib
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -49,6 +50,9 @@ type Runtime interface {
 	Filtered() []Object
 
 	Query(query string, r Runtime) []Object
+	Operation(objects []Object, operation string)
+	FilterPortValues(objects []Object, method string) *DataOp
+	FilterPorts(objects []Object, method string) []*Port
 }
 
 func NewRuntime(objs []Object) Runtime {
@@ -71,7 +75,8 @@ type RuntimeImpl struct {
 
 func (inst *RuntimeImpl) Query(query string, r Runtime) []Object {
 	var allResults []Object
-	orSegments := strings.Split(query, "OR") // Split the query into OR segments
+	query, limit := extractAndRemoveLimit(query) // get the query limit
+	orSegments := strings.Split(query, "OR")
 
 	for _, orSegment := range orSegments {
 		orSegment = strings.TrimSpace(strings.Trim(orSegment, "()"))
@@ -81,59 +86,260 @@ func (inst *RuntimeImpl) Query(query string, r Runtime) []Object {
 		if len(andConditions) == 0 {
 			continue
 		}
-
 		segmentResults = r.Get() // Start with all objects for the first condition
-		for _, andCondition := range andConditions {
-			andCondition = strings.TrimSpace(andCondition)
-			// Identify the operator and split the condition
-			var operator string
-			if strings.Contains(andCondition, "==") {
-				operator = "=="
-			} else if strings.Contains(andCondition, "!=") {
-				operator = "!="
-			}
-			parts := strings.SplitN(andCondition, operator, 2)
-			if len(parts) != 2 {
-				fmt.Println("Invalid condition:", andCondition)
-				continue
-			}
 
-			field := strings.TrimSpace(parts[0])
-			// Remove the 'objects:' prefix and any extraneous characters like parentheses
-			field = strings.ReplaceAll(field, "objects:", "")
-			field = strings.Trim(field, "() ")
+		segmentResults = filterObjectsByCondition(segmentResults, andConditions, limit)
+		allResults = addUniqueMatches(allResults, segmentResults)
 
-			value := strings.TrimSpace(parts[1])
-			// Here's the key adjustment: ensure we also trim the closing parenthesis from the value
-			value = strings.Trim(value, "() ")
-
-			// Filter objects that match the current condition
-			var matchesForThisCondition []Object
-			for _, obj := range segmentResults {
-				if matchesCondition(obj, field, operator, value) {
-					matchesForThisCondition = append(matchesForThisCondition, obj)
-				}
-			}
-
-			// Update segmentResults to narrow down the matches for the next AND condition
-			segmentResults = matchesForThisCondition
-		}
-
-		// Add unique matches from this segment to allResults
-		for _, match := range segmentResults {
-			if !containsObject(allResults, match) {
-				allResults = append(allResults, match)
-			}
-		}
 	}
 
 	return allResults
 }
 
-// matchesCondition checks if an object matches the given field and value.
+func (inst *RuntimeImpl) Operation(objects []Object, operation string) {
+	for _, obj := range objects {
+		if strings.HasPrefix(operation, "SetName(") {
+			newName := strings.TrimPrefix(operation, ".SetName(")
+			newName = strings.TrimSuffix(newName, ")")
+			newName = strings.Trim(newName, "`")
+			obj.SetName(newName)
+		}
+		if strings.HasPrefix(operation, "GetInputs(") {
+			obj.GetInputs()
+		}
+		if strings.Contains(operation, "Disable()") {
+			obj.GetInputs()
+		}
+	}
+}
+
+func addUniqueMatches(allResults []Object, segmentResults []Object) []Object {
+	for _, match := range segmentResults {
+		if !containsObject(allResults, match) {
+			allResults = append(allResults, match)
+		}
+	}
+	return allResults
+}
+
+// FilterPorts filters the result objects based on the provided method call.
+// It returns the ports for which the method call returns true for at least one of the ports.
+func (inst *RuntimeImpl) FilterPorts(objects []Object, method string) []*Port {
+	var filtered []*Port
+	for _, obj := range objects {
+		ports := filterPorts(obj, method)
+		filtered = append(filtered, ports...)
+	}
+	return filtered
+}
+
+func filterPorts(obj Object, method string) []*Port {
+	switch method {
+	case "GetInputs()":
+		return obj.GetInputs()
+	case "GetOutputs()":
+		return obj.GetOutputs()
+	default:
+		return nil
+	}
+}
+
+func (inst *RuntimeImpl) FilterPortValues(objects []Object, method string) *DataOp {
+	var values []float64
+	for _, obj := range objects {
+		ports := filterPorts(obj, method)
+		for _, port := range ports {
+			v := port.GetValue().GetFloatPointer()
+			if v != nil {
+				values = append(values, *v)
+			}
+		}
+	}
+	return &DataOp{
+		valuesFloat: values,
+	}
+}
+
+type DataOp struct {
+	valuesFloat []float64
+}
+
+func (op *DataOp) Sum() float64 {
+	sum := 0.0
+	for _, v := range op.valuesFloat {
+		sum += v
+	}
+	return sum
+}
+
+func (op *DataOp) Count() int {
+	return len(op.valuesFloat)
+}
+
+func (op *DataOp) Avg() float64 {
+	if len(op.valuesFloat) == 0 {
+		return 0
+	}
+	sum := op.Sum()
+	return sum / float64(len(op.valuesFloat))
+}
+
+func (op *DataOp) Max() float64 {
+	if len(op.valuesFloat) == 0 {
+		return 0
+	}
+	m := op.valuesFloat[0]
+	for _, v := range op.valuesFloat {
+		if v > m {
+			m = v
+		}
+	}
+	return m
+}
+
+func (op *DataOp) Min() float64 {
+	if len(op.valuesFloat) == 0 {
+		return 0
+	}
+	m := op.valuesFloat[0]
+	for _, v := range op.valuesFloat {
+		if v < m {
+			m = v
+		}
+	}
+	return m
+}
+func filterObjectsByCondition(segmentResults []Object, andConditions []string, limit int) []Object {
+	var filteredResults []Object
+
+	for _, andCondition := range andConditions {
+		field, operator, value := extractFieldAndValue(andCondition)
+		if field == "" {
+			fmt.Println("Invalid condition:", andCondition)
+			continue
+		}
+
+		// Filter objects that match the current condition
+		var matchesForThisCondition []Object
+		for _, obj := range segmentResults {
+			if matchesCondition(obj, field, operator, value) {
+				matchesForThisCondition = append(matchesForThisCondition, obj)
+			}
+		}
+
+		// Update segmentResults to narrow down the matches for the next AND condition
+		segmentResults = matchesForThisCondition
+	}
+
+	// Apply the limit to the segment results
+	if limit >= 0 && len(segmentResults) > limit {
+		filteredResults = segmentResults[:limit]
+	} else {
+		filteredResults = segmentResults
+	}
+
+	return filteredResults
+}
+
 func matchesCondition(obj Object, field, operator, value string) bool {
+	switch {
+	case strings.HasPrefix(field, "inputs:"):
+		return matchesPortCondition(obj.GetInputs(), field, operator, value)
+	case strings.HasPrefix(field, "outputs:"):
+		return matchesPortCondition(obj.GetOutputs(), field, operator, value)
+	default:
+		return matchesObjectCondition(obj, field, operator, value)
+	}
+}
+
+func extractFieldAndValue(condition string) (string, string, string) {
+	condition = strings.TrimSpace(condition)
+	var operator string
+	if strings.Contains(condition, "==") {
+		operator = "=="
+	} else if strings.Contains(condition, "!=") {
+		operator = "!="
+	} else if strings.Contains(condition, ">=") {
+		operator = ">="
+	} else if strings.Contains(condition, ">") {
+		operator = ">"
+	}
+
+	parts := strings.SplitN(condition, operator, 2)
+	if len(parts) != 2 {
+		return "", "", ""
+	}
+
+	field := strings.TrimSpace(parts[0])
+	// remove the 'objects:' prefix and any extraneous characters like parentheses
+	field = strings.ReplaceAll(field, "objects:", "")
+	field = strings.Trim(field, "() ")
+
+	value := strings.TrimSpace(parts[1])
+	// ensure we trim the closing parenthesis from the value
+	value = strings.Trim(value, "() ")
+
+	return field, operator, value
+}
+
+func matchesPortCondition(ports []*Port, field, operator, value string) bool {
+	// extract the attribute we're interested in (e.g., "name", "id", "uuid", "value")
+	parts := strings.SplitN(field, ":", 2)
+	if len(parts) != 2 {
+		return false
+	}
+	fieldAttribute := parts[1]
+	for _, port := range ports {
+		if matchesPortAttributeCondition(port, fieldAttribute, operator, value) {
+			return true
+		}
+	}
+	return false
+}
+
+func matchesPortAttributeCondition(port *Port, attribute, operator, value string) bool {
+	switch attribute {
+	case "value":
+		if value == "null" { // get all ports that are null/nil
+			isNull := port.GetValue().IsNull()
+			if isNull {
+				return true
+			}
+			return false
+		}
+		compareValue, err := strconv.ParseFloat(value, 64)
+		if err != nil {
+			return false // Invalid comparison value, return false
+		}
+		portValue := port.GetValue().GetFloat()
+		return compareFloat64(portValue, operator, compareValue)
+	default:
+		return false // Invalid attribute, return false
+	}
+}
+
+func compareFloat64(portValue float64, operator string, compareValue float64) bool {
+	switch operator {
+	case "==":
+		return portValue == compareValue
+	case "!=":
+		return portValue != compareValue
+	case ">":
+		return portValue > compareValue
+	case ">=":
+		return portValue >= compareValue
+	case "<":
+		return portValue < compareValue
+	case "<=":
+		return portValue <= compareValue
+	default:
+		return false // Invalid operator, return false
+	}
+}
+
+func matchesObjectCondition(obj Object, field, operator, value string) bool {
+	// handle other fields (uuid, category, id, name)
 	var fieldValue string
-	value = strings.Trim(value, " )")
 	switch field {
 	case "uuid":
 		fieldValue = obj.GetUUID()
@@ -143,15 +349,32 @@ func matchesCondition(obj Object, field, operator, value string) bool {
 		fieldValue = obj.GetID()
 	case "name":
 		fieldValue = obj.GetName()
+	default:
+		return false
 	}
+
+	// Evaluate the condition for non-port fields
 	switch operator {
 	case "==":
 		return fieldValue == value
 	case "!=":
 		return fieldValue != value
+	default:
+		return false
 	}
+}
 
-	return false
+func extractAndRemoveLimit(query string) (string, int) {
+	limit := -1
+	if strings.Contains(query, "limit:") {
+		parts := strings.Split(query, "limit:")
+		if len(parts) == 2 {
+			limitString := strings.TrimSpace(parts[1])
+			query = strings.Replace(query, "limit:"+limitString, "", 1) // remove the limit substring from the query
+			limit, _ = strconv.Atoi(limitString)
+		}
+	}
+	return query, limit
 }
 
 // containsObject checks if the object is already in the slice.
