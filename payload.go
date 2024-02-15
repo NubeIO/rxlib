@@ -1,6 +1,7 @@
 package rxlib
 
 import (
+	"encoding/json"
 	"github.com/NubeIO/rxlib/priority"
 	"strings"
 	"time"
@@ -77,12 +78,12 @@ type EventBusPayload struct {
 }
 
 type Mapping struct {
-	ManagerUUID       string            `json:"managerUUID,omitempty"`
-	NetworkUUID       string            `json:"networkUUID,omitempty"`
-	MapperUUID        string            `json:"mapperUUID,omitempty"`
-	Data              any               `json:"data,omitempty"`
-	ExpectedData      string            `json:"expectedData,omitempty"` // make it easy for an Obj to decode in incoming data; eg string, map[], user
-	PrimitivesPayload PrimitivesPayload `json:"primitivesPayload,omitempty"`
+	ManagerUUID  string       `json:"managerUUID,omitempty"`
+	NetworkUUID  string       `json:"networkUUID,omitempty"`
+	MapperUUID   string       `json:"mapperUUID,omitempty"`
+	Data         any          `json:"data,omitempty"`
+	DataPayload  *DataPayload `json:"dataPayload"`
+	ExpectedData string       `json:"expectedData,omitempty"` // make it easy for an Obj to decode in incoming data; eg string, map[], user
 }
 
 type PrimitivesPayload struct {
@@ -91,19 +92,25 @@ type PrimitivesPayload struct {
 	Symbol   *string            `json:"symbol,omitempty"`
 }
 
-type PayloadValue struct {
-	Value     any `json:"value"`
-	Timestamp *time.Time
+func UnmarshalPayload(resp any) (*Payload, error) {
+	payload := &Payload{}
+	marshal, err := json.Marshal(resp)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(marshal, payload)
+	return payload, err
+}
+
+func UnmarshalPayloadByte(resp []byte) (*Payload, error) {
+	payload := &Payload{}
+	err := json.Unmarshal(resp, payload)
+	return payload, err
 }
 
 func (p *Payload) GetPayload() *Payload {
 	return p
 }
-
-//func (p *Payload) NewPortPayload() *Payload {
-//	p.DataPayload = &DataPayload{}
-//	return p
-//}
 
 func (p *Payload) dataNil() {
 	if p.DataPayload == nil {
@@ -141,73 +148,6 @@ func (p *Payload) GetTopic() string {
 	p.dataNil()
 	return p.DataPayload.Topic
 }
-
-//func (p *Payload) SetConnections(connections []*Connection) *Payload {
-//	p.dataNil()
-//	p.DataPayload.Connections = connections
-//	return p
-//}
-
-//func (p *Payload) GetValue() (any, error) {
-//	if p.IsPortNil() {
-//		return nil, fmt.Errorf("port is empty")
-//	}
-//	return p.GetPort().DataPayload, nil
-//}
-
-//func (p *Payload) IsPriorityNil() bool {
-//	if p.IsPortNil() {
-//		return true
-//	}
-//	if p.DataPayload.Port.DataPriorityOld == nil {
-//		return true
-//	}
-//	return false
-//}
-//
-//func (p *Payload) GetDataPriority() *priority.Priority {
-//	if p.IsPriorityNil() {
-//		return nil
-//	}
-//	return p.GetPort().DataPriorityOld.Priority
-//}
-//
-//func (p *Payload) GetDataHighestPriority() priority.PriorityValue {
-//	if p.IsPriorityNil() {
-//		return nil
-//	}
-//	return p.GetDataPriority().GetHighestPriorityValue()
-//}
-//
-//func (p *Payload) GetDataHighestPriorityAsFloat() *float64 {
-//	if p.IsPriorityNil() {
-//		return nil
-//	}
-//	return p.GetDataPriority().GetHighestPriorityValue().AsFloat()
-//}
-//
-//func (p *Payload) GetPortName() string {
-//	return p.GetPort().Name
-//}
-
-// ----------------CONNECTION------------------
-
-//func (p *Payload) IsConnectionsNil() bool {
-//	if p.DataPayload == nil {
-//		return true
-//	}
-//	if p.DataPayload.Connections == nil {
-//		return true
-//	}
-//	return false
-//}
-//
-//func (p *Payload) GetConnections() []*Connection {
-//	if p.IsConnectionsNil() {
-//		return nil
-//	}
-//	return p.DataPayload.Connections
-//}
 
 // ----------------EVENTBUS------------------
 
@@ -273,18 +213,17 @@ func (p *Payload) UnsubscribeOnResponseTopic() bool {
 	return p.GetEventBusPayload().UnsubscribeOnResponseTopic
 }
 
-// ----------------EVENTBUS------------------
-
-func (p *Payload) NewMapping() *Payload {
-	p.Mapping = &Mapping{}
-	return p
-}
-
 func (p *Payload) GetMapping() *Mapping {
 	if p.IsMappingNil() {
 		return nil
 	}
 	return p.Mapping
+}
+
+// ----------------EVENTBUS------------------
+
+func NewMapping(m *Mapping) *Mapping {
+	return m
 }
 
 func (p *Payload) SetMappingDetails(managerUUID, networkUUID, mapperUUID string) *Payload {

@@ -2,7 +2,6 @@ package rxlib
 
 import (
 	"github.com/NubeIO/rxlib/libs/history"
-	"github.com/NubeIO/rxlib/libs/rubix"
 	"github.com/NubeIO/rxlib/priority"
 	"github.com/NubeIO/schema"
 	"github.com/gin-gonic/gin"
@@ -18,6 +17,7 @@ type Object interface {
 	IsNotLoaded() bool
 	IsLoaded() bool // where the Obj Start() method has been called
 	Invoke(key string, dataType priority.Type, data any) *ObjectCommandResponse
+	InvokePayload(key string, dataType priority.Type, payload *Payload) *ObjectCommandResponse
 	Command(command *Command) *ObjectCommandResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 	CommandList() []*Invoke
 	Process() error
@@ -44,10 +44,6 @@ type Object interface {
 	GetExtensions() []Object
 	GetExtension(id string) (Object, error)
 	DeleteExtension(name string) error
-
-	//Rubix Network
-	SetRubixNetworkManager(manager rubix.Manager)
-	GetRubixNetworkManager() rubix.Manager
 
 	SetRequiredExtensions(extension []*Extension)
 	GetRequiredExtensions() []*Extension
@@ -95,16 +91,14 @@ type Object interface {
 	GetInputsValue(portID string) *priority.Value
 	GetInputsValues() map[string]*priority.Value
 
-	// ouputs
 	GetOutputs() []*Port
 	GetOutput(id string) *Port
 	OutputExists(id string) error
 	GetOutputByUUID(uuid string) *Port
 	// PublishValue update the port value; pass in option withTimestamp to timestamp to write
 	PublishValue(portID string) error
-	Subscribe(topic string, callBack func(topic string, e bus.Event))
-	SubscribePayload(topic string, callBack func(topic string, p *Payload, err error))
-	SubscribeEventBusMessage(topic string, callBack func(topic string, p *Payload, err error))
+	Subscribe(topic, handlerID string, callBack func(topic string, e bus.Event))
+	SubscribePayload(topic, handlerID string, opts *EventbusOpts, callBack func(topic string, p *Payload, err error))
 
 	SetOutputPreviousValue(id string, value *priority.PreviousValue) error
 	GetOutputPreviousValue(id string) *priority.PreviousValue

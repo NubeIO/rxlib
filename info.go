@@ -35,8 +35,6 @@ type RubixRequirement string
 
 const (
 	RubixGinRouter        RubixRequirement = "web-router"
-	RubixHistoriesManager RubixRequirement = "histories-manager"
-	RubixNetworkManager   RubixRequirement = "rubix-network-manager"
 	RubixAlarmsManager    RubixRequirement = "alarms-manager"
 	RubixSchedulesManager RubixRequirement = "schedules-manager"
 )
