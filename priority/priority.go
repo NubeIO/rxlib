@@ -259,8 +259,15 @@ func (d *DataPriority) Apply(value, overrideValue any, fromDataType Type) (*Valu
 			d.priority.SetValue(f, 2)
 		}
 		d.out.pri = d.priority
+	} else if d.dataType == TypeString {
+		f := StringValue{Value: fmt.Sprint(value)}
+		d.priority.SetValue(f, 2)
+		d.out.pri = d.priority
+	} else if d.dataType == TypeDate {
+		f := StringValue{Value: fmt.Sprint(value)}
+		d.priority.SetValue(f, 2)
+		d.out.pri = d.priority
 	} else {
-
 		f := AnyValue{Value: value}
 		d.priority.SetValue(f, 2)
 		d.out.pri = d.priority

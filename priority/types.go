@@ -30,6 +30,7 @@ const TypeBool = "bool"
 const TypeInt = "int"
 const TypeFloat = "float"
 const TypeAny = "any"
+const TypeDate = "date"
 const TypeString = "string"
 
 type Priority struct {

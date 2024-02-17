@@ -102,10 +102,10 @@ func (p *Port) GetValueDisplay() *priority.PriorityData {
 	return p.Values.PriorityData()
 }
 
-func (p *Port) WritePriority(value any, fromDataType priority.Type) (*priority.Value, error) {
+func (p *Port) WritePriority(value any, fromDataType priority.Type) error {
 	d, err := p.dataPriority.Apply(value, nil, fromDataType)
 	p.Values = d
-	return p.Values, err
+	return err
 }
 
 func (p *Port) OverrideValue(value any) (*priority.Value, error) {
@@ -303,6 +303,30 @@ func NewPortAny(id string, opts ...*PortOpts) *NewPort {
 	return p
 }
 
+func NewPortDate(id string, opts ...*PortOpts) *NewPort {
+	p := &NewPort{
+		ID:       id,
+		Name:     id,
+		DataType: priority.TypeDate,
+	}
+	p.DefaultPosition = portOpts(opts...).DefaultPosition
+	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
+	p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
+	return p
+}
+
+func NewPortString(id string, opts ...*PortOpts) *NewPort {
+	p := &NewPort{
+		ID:       id,
+		Name:     id,
+		DataType: priority.TypeString,
+	}
+	p.DefaultPosition = portOpts(opts...).DefaultPosition
+	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
+	p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
+	return p
+}
+
 type NewPort struct {
 	ID                       string
 	Name                     string
@@ -327,8 +351,11 @@ type PortFormatString struct {
 
 // some commonly used output names
 const (
-	OutputName      string = "output"
-	OutputErrorName string = "Err"
+	OutputName        string = "output"
+	OutputStatusName  string = "status"
+	OutputLastOk      string = "last ok"
+	OutputLastUpdated string = "last updated"
+	OutputErrorName   string = "err"
 )
 
 // some commonly used input names

@@ -33,7 +33,21 @@ type MappingPayload struct {
 	TargetMappingUUID string                 `json:"targetMappingUUID"`
 	TargetNetworkUUID string                 `json:"targetNetworkUUID"`
 	PriorityData      *priority.PriorityData `json:"priorityData,omitempty"`
+	Response          MappingPayloadState    `json:"response,omitempty"`
 }
+
+type MappingPayloadState string
+
+const (
+	MappingPayloadStatusSent           MappingPayloadState = "sent"
+	MappingPayloadStatusOffline        MappingPayloadState = "broker is offline"
+	MappingPayloadStatusFailedToSend   MappingPayloadState = "failed to send"
+	MappingPayloadStatusSending        MappingPayloadState = "sending"
+	MappingResponseOk                  MappingPayloadState = "ok"
+	MappingResponseInvalidPayload      MappingPayloadState = "invalid payload"
+	MappingResponseMappingNotFound     MappingPayloadState = "mapping not found"
+	MappingResponseObjectNoConnections MappingPayloadState = "mapping has no connections"
+)
 
 func NewMappingPayload(leaderMappingUUID, leaderNetworkUUID, targetMappingUUID, targetNetworkUUID string) *MappingPayload {
 	return &MappingPayload{
@@ -42,6 +56,34 @@ func NewMappingPayload(leaderMappingUUID, leaderNetworkUUID, targetMappingUUID, 
 		TargetMappingUUID: targetMappingUUID,
 		TargetNetworkUUID: targetNetworkUUID,
 	}
+}
+
+func (m *MappingPayload) GetMappingPayloadState() MappingPayloadState {
+	return m.Response
+}
+
+func (m *MappingPayload) MappingPayloadStatusSending() {
+	m.Response = MappingPayloadStatusSending
+}
+
+func (m *MappingPayload) MappingPayloadStatusSent() {
+	m.Response = MappingPayloadStatusSent
+}
+
+func (m *MappingPayload) MappingResponseMappingNotFound() {
+	m.Response = MappingResponseMappingNotFound
+}
+
+func (m *MappingPayload) MappingResponseInvalidPayload() {
+	m.Response = MappingResponseInvalidPayload
+}
+
+func (m *MappingPayload) MappingResponseOk() {
+	m.Response = MappingResponseOk
+}
+
+func (m *MappingPayload) MappingResponseObjectNoConnections() {
+	m.Response = MappingResponseObjectNoConnections
 }
 
 func (m *MappingPayload) GetLeaderMappingUUID() string {
