@@ -13,8 +13,8 @@ type Port struct {
 	Disabled bool   `json:"enable"`
 
 	// Input/Output port values
-	Values         *priority.Value   `json:"-"`    // value should be used for anything
-	DataDisplay    *priority.Display `json:"data"` // only used for when its called over rest
+	Values         *priority.Value        `json:"-"`    // value should be used for anything
+	DataDisplay    *priority.PriorityData `json:"data"` // only used for when its called over rest
 	dataPriority   *priority.DataPriority
 	Transformation *priority.Transformations      `json:"transformation"`
 	Units          *unitswrapper.EngineeringUnits `json:"units"`
@@ -98,8 +98,8 @@ func (p *Port) GetValue() *priority.Value {
 	return p.Values
 }
 
-func (p *Port) GetValueDisplay() *priority.Display {
-	return p.Values.PriorityDisplay()
+func (p *Port) GetValueDisplay() *priority.PriorityData {
+	return p.Values.PriorityData()
 }
 
 func (p *Port) WritePriority(value any, fromDataType priority.Type) (*priority.Value, error) {
@@ -143,6 +143,10 @@ func (p *Port) Enable() {
 
 func (p *Port) Disable() {
 	p.Disabled = true
+}
+
+func (p *Port) GetDataType() priority.Type {
+	return p.DataType
 }
 
 //
@@ -250,6 +254,19 @@ func NewPortFloatCallBack(id string, f func(message *Payload), opts ...*PortOpts
 	return p
 }
 
+func NewPortAnyCallBack(id string, f func(message *Payload), opts ...*PortOpts) *NewPort {
+	p := &NewPort{
+		ID:        id,
+		Name:      id,
+		DataType:  priority.TypeAny,
+		OnMessage: f,
+	}
+	p.DefaultPosition = portOpts(opts...).DefaultPosition
+	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
+	p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
+	return p
+}
+
 func NewPortFloat(id string, opts ...*PortOpts) *NewPort {
 	p := &NewPort{
 		ID:       id,
@@ -267,6 +284,18 @@ func NewPortBool(id string, opts ...*PortOpts) *NewPort {
 		ID:       id,
 		Name:     id,
 		DataType: priority.TypeBool,
+	}
+	p.DefaultPosition = portOpts(opts...).DefaultPosition
+	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
+	p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
+	return p
+}
+
+func NewPortAny(id string, opts ...*PortOpts) *NewPort {
+	p := &NewPort{
+		ID:       id,
+		Name:     id,
+		DataType: priority.TypeAny,
 	}
 	p.DefaultPosition = portOpts(opts...).DefaultPosition
 	p.HiddenByDefault = portOpts(opts...).HiddenByDefault

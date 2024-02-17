@@ -7,11 +7,17 @@ import (
 	"github.com/NubeIO/rxlib/unitswrapper"
 )
 
-type Display struct {
-	Priority map[string]interface{} `json:"priority,omitempty"`
-	Symbol   *string                `json:"symbol,omitempty"`
-	DataType Type                   `json:"dataType,omitempty"`
-	RawValue any                    `json:"rawValue,omitempty"`
+type PriorityTable struct {
+	P1 any `json:"1"`
+	P2 any `json:"2"`
+}
+
+type PriorityData struct {
+	Priority        *PriorityTable `json:"priority,omitempty"`
+	HighestPriority any            `json:"highestPriority,omitempty"`
+	Symbol          *string        `json:"symbol,omitempty"`
+	DataType        Type           `json:"dataType,omitempty"`
+	RawValue        any            `json:"rawValue,omitempty"`
 }
 
 type Value struct {
@@ -49,15 +55,30 @@ func (d *Value) IsNull() bool {
 	return false
 }
 
-func (d *Value) PriorityDisplay() *Display {
+func (d *Value) PriorityData() *PriorityData {
 	if d.pri == nil {
 		return nil
 	}
-	return &Display{
-		Priority: d.pri.ToMap(),
-		Symbol:   d.GetSymbolPointer(),
-		DataType: d.GetType(),
-		RawValue: d.GetRawValue(),
+	var p1Value any
+	var p2Value any
+	p1 := d.pri.GetByPriorityNumber(1)
+	if p1 != nil {
+		p1Value = p1.GetValue()
+	}
+	p2 := d.pri.GetByPriorityNumber(2)
+	if p2 != nil {
+		p2Value = p2.GetValue()
+	}
+
+	return &PriorityData{
+		Priority: &PriorityTable{
+			P1: p1Value,
+			P2: p2Value,
+		},
+		HighestPriority: d.GetHighestPriority(),
+		Symbol:          d.GetSymbolPointer(),
+		DataType:        d.GetType(),
+		RawValue:        d.GetRawValue(),
 	}
 }
 
@@ -71,6 +92,17 @@ func (d *Value) GetPriorityValue() (PriorityValue, error) {
 		return nil, err
 	}
 	return highest, nil
+}
+
+func (d *Value) GetHighestPriority() any {
+	if d.pri == nil {
+		return nil
+	}
+	v, _ := d.pri.GetHighestPriority()
+	if v == nil {
+		return nil
+	}
+	return v.GetValue()
 }
 
 func (d *Value) GetFloatErr() (float64, error) {
@@ -95,6 +127,13 @@ func (d *Value) GetType() Type {
 
 func (d *Value) IsTypeFloat() bool {
 	if d.dataType == TypeFloat {
+		return true
+	}
+	return false
+}
+
+func (d *Value) IsTypeNumber() bool {
+	if d.dataType == TypeFloat || d.dataType == TypeInt {
 		return true
 	}
 	return false
@@ -220,7 +259,11 @@ func (d *DataPriority) Apply(value, overrideValue any, fromDataType Type) (*Valu
 			d.priority.SetValue(f, 2)
 		}
 		d.out.pri = d.priority
+	} else {
 
+		f := AnyValue{Value: value}
+		d.priority.SetValue(f, 2)
+		d.out.pri = d.priority
 	}
 	return d.out, nil
 }
@@ -309,9 +352,6 @@ func tryFloat(fromType, toType Type) bool {
 		return true
 	}
 	if fromType == TypeInt && isFloat {
-		return true
-	}
-	if fromType == TypeString && isFloat {
 		return true
 	}
 	if fromType == TypeBool && isFloat {

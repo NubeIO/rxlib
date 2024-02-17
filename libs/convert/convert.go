@@ -4,6 +4,50 @@ import (
 	"strconv"
 )
 
+func ConvertToFloatPtr(i interface{}) *float64 {
+	if i == nil {
+		return nil
+	}
+
+	if fptr, ok := i.(float64); ok {
+		return &fptr
+	}
+
+	if fptr, ok := i.(*float64); ok {
+		return fptr
+	}
+
+	if iptr, ok := i.(int); ok {
+		v := float64(iptr)
+		return &v
+	}
+
+	if iptr, ok := i.(*int); ok {
+		v := float64(*iptr)
+		return &v
+	}
+
+	if b, ok := i.(bool); ok {
+		if b {
+			f := 1.0
+			return &f
+		} else {
+			f := 0.0
+			return &f
+		}
+	}
+	if bp, ok := i.(*bool); ok && bp != nil {
+		if *bp {
+			f := 1.0
+			return &f
+		} else {
+			f := 0.0
+			return &f
+		}
+	}
+	return nil
+}
+
 // AnyToBool converts any type to bool.
 // It returns false if the conversion is not possible.
 func AnyToBool(value interface{}) bool {

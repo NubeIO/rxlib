@@ -2,9 +2,9 @@ package priority
 
 import (
 	"fmt"
-	"github.com/NubeIO/rxlib/helpers/pprint"
 	"github.com/NubeIO/rxlib/libs/nils"
 	"github.com/NubeIO/rxlib/unitswrapper"
+	"reflect"
 	"testing"
 )
 
@@ -57,20 +57,8 @@ func TestNewPriority(t *testing.T) {
 		fmt.Println(err)
 		return
 	}
-	pprint.PrintJSON(apply.PriorityDisplay())
 
-	apply, err = data.Apply(nil, ov, TypeInt)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	pprint.PrintJSON(apply.PriorityDisplay())
-
-	apply, err = data.Apply(nil, nil, TypeInt)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	pprint.PrintJSON(apply.PriorityDisplay())
-
+	vv := apply.GetPriority().GetByPriorityNumber(2).GetValue()
+	ttt := reflect.TypeOf(vv)
+	fmt.Println(ttt) // Output: int
 }

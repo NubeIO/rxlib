@@ -18,6 +18,7 @@ type Object interface {
 	IsLoaded() bool // where the Obj Start() method has been called
 	Invoke(key string, dataType priority.Type, data any) *ObjectCommandResponse
 	InvokePayload(key string, dataType priority.Type, payload *Payload) *ObjectCommandResponse
+	InvokePayloads(key string, dataType priority.Type, payload []*Payload) *ObjectCommandResponse
 	Command(command *Command) *ObjectCommandResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 	CommandList() []*Invoke
 	Process() error
@@ -95,8 +96,8 @@ type Object interface {
 	GetOutput(id string) *Port
 	OutputExists(id string) error
 	GetOutputByUUID(uuid string) *Port
-	// PublishValue update the port value; pass in option withTimestamp to timestamp to write
-	PublishValue(portID string) error
+	SetOutput(portID string, value any) error // Set current output value & send over the eventbus
+	PublishValue(portID string) error         // send current port value over the eventbus
 	Subscribe(topic, handlerID string, callBack func(topic string, e bus.Event))
 	SubscribePayload(topic, handlerID string, opts *EventbusOpts, callBack func(topic string, p *Payload, err error))
 

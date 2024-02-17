@@ -29,6 +29,7 @@ func (inst *ObjectResponse) GetError() error {
 
 type Runtime interface {
 	Get() []Object
+	Delete() string
 	GetByUUID(uuid string) Object
 	GetFirstByID(objectID string) Object
 	GetFirstByName(name string) Object
@@ -71,6 +72,15 @@ type RuntimeImpl struct {
 	where           string
 	field           string
 	mutex           sync.RWMutex
+}
+
+func (inst *RuntimeImpl) Delete() string {
+	inst.mutex.Lock()
+	defer inst.mutex.Unlock()
+	c := len(inst.objects)
+	inst.objects = nil
+	d := len(inst.objects)
+	return fmt.Sprintf("count deleted: %d current: %d", c, d)
 }
 
 func (inst *RuntimeImpl) Query(query string, r Runtime) []Object {
@@ -403,13 +413,13 @@ func (inst *RuntimeImpl) AddObject(object Object) {
 func (inst *RuntimeImpl) GetObjectsByType(objectID string) []Object {
 	inst.mutex.Lock()
 	defer inst.mutex.Unlock()
-	var out = make(map[string]Object)
+	var out []Object
 	for _, obj := range inst.objects {
 		if obj.GetID() == objectID {
-			out[obj.GetUUID()] = obj
+			out = append(out, obj)
 		}
 	}
-	return nil
+	return out
 }
 
 func (inst *RuntimeImpl) Get() []Object {

@@ -24,7 +24,7 @@ type ObjectCommandResponse struct {
 type Payload struct {
 	DataPayload *DataPayload `json:"data,omitempty"`
 	// used for mapping
-	Mapping *Mapping `json:"mapping,omitempty"`
+	MappingPayload *MappingPayload `json:"mappingPayload,omitempty"`
 	// generic eventbus message
 	EventBusPayload *EventBusPayload `json:"eventBusPayload,omitempty"`
 }
@@ -67,23 +67,15 @@ type DataPayload struct {
 }
 
 type EventBusPayload struct {
-	ObjectUUID                 string        `json:"objectUUID,omitempty"`
-	ObjectID                   string        `json:"objectID,omitempty"`
+	FromObjectUUID             string        `json:"fromObjectUUID,omitempty"`
+	FromObjectID               string        `json:"FromObjectID,omitempty"`
 	Topic                      string        `json:"topic,omitempty"`
 	ResponseTopic              string        `json:"responseTopic,omitempty"`
 	UnsubscribeOnResponseTopic bool          `json:"unsubscribe,omitempty"` // used for when we want to use the EventBus PublishWait and we unsubscribe to the ResponseTopic
 	Timeout                    time.Duration `json:"timeout,omitempty"`
 	ExpectedData               string        `json:"expectedData,omitempty"` // make it easy for an Obj to decode in incoming data; eg string, map[], user
 	Payload                    any           `json:"payload,omitempty"`
-}
-
-type Mapping struct {
-	ManagerUUID  string       `json:"managerUUID,omitempty"`
-	NetworkUUID  string       `json:"networkUUID,omitempty"`
-	MapperUUID   string       `json:"mapperUUID,omitempty"`
-	Data         any          `json:"data,omitempty"`
-	DataPayload  *DataPayload `json:"dataPayload"`
-	ExpectedData string       `json:"expectedData,omitempty"` // make it easy for an Obj to decode in incoming data; eg string, map[], user
+	Mapping                    *Mapping      `json:"mapping,omitempty"`
 }
 
 type PrimitivesPayload struct {
@@ -143,6 +135,14 @@ func (p *Payload) GetDataPayload() *DataPayload {
 	p.dataNil()
 	return p.DataPayload
 }
+func (p *Payload) GetDataPayloadType() priority.Type {
+	p.dataNil()
+	if p.DataPayload.Data != nil {
+		return p.DataPayload.Data.GetType()
+	}
+	return ""
+
+}
 
 func (p *Payload) GetTopic() string {
 	p.dataNil()
@@ -156,7 +156,23 @@ func (p *Payload) SetEventbusPayload(body *EventBusPayload) *Payload {
 	return p
 }
 
+func (p *Payload) NewEventbusMapping(topic string, mapping *Mapping) *Payload {
+	p.EventBusPayload = &EventBusPayload{
+		Topic:   topic,
+		Mapping: mapping,
+	}
+	return p
+}
+
 func (p *Payload) NewEventbusPayload(topic string, payload any) *Payload {
+	p.EventBusPayload = &EventBusPayload{
+		Topic:   topic,
+		Payload: payload,
+	}
+	return p
+}
+
+func (p *Payload) AddEventbusPayload(topic string, payload *Payload) *Payload {
 	p.EventBusPayload = &EventBusPayload{
 		Topic:   topic,
 		Payload: payload,
@@ -175,21 +191,21 @@ func (p *Payload) GetEventbusObjectID() string {
 	if p.IsEventBusPayloadNil() {
 		return ""
 	}
-	return p.EventBusPayload.ObjectID
+	return p.EventBusPayload.FromObjectID
 }
 
 func (p *Payload) GetEventbusObjectUUID() string {
 	if p.IsEventBusPayloadNil() {
 		return ""
 	}
-	return p.EventBusPayload.ObjectUUID
+	return p.EventBusPayload.FromObjectUUID
 }
 
 func (p *Payload) SetEventbusObjectUUID(value string) {
 	if p.IsEventBusPayloadNil() {
 		return
 	}
-	p.EventBusPayload.ObjectUUID = value
+	p.EventBusPayload.FromObjectID = value
 }
 
 func (p *Payload) GetExpectedData() string {
@@ -213,73 +229,67 @@ func (p *Payload) UnsubscribeOnResponseTopic() bool {
 	return p.GetEventBusPayload().UnsubscribeOnResponseTopic
 }
 
-func (p *Payload) GetMapping() *Mapping {
-	if p.IsMappingNil() {
-		return nil
-	}
-	return p.Mapping
+func (p *Payload) AddMappingPayload(m *MappingPayload) {
+	p.MappingPayload = m
 }
+
+func (p *Payload) GetMappingPayload() *MappingPayload {
+	return p.MappingPayload
+}
+
+//func (m *Mapping) SetDataPayload(d *DataPayload) {
+//	m.DataPayload = d
+//}
+//
+//func (m *Mapping) GetDataPayload() *DataPayload {
+//	return m.DataPayload
+//}
+//func (m *Mapping) GetTopic() string {
+//	if m.DataPayload == nil {
+//		return ""
+//	}
+//	return m.DataPayload.Topic
+//}
+//
+//func (m *Mapping) GetObjectUUID() string {
+//	if m.DataPayload == nil {
+//		return ""
+//	}
+//	return m.DataPayload.ObjectUUID
+//}
 
 // ----------------EVENTBUS------------------
 
-func NewMapping(m *Mapping) *Mapping {
-	return m
-}
+//func NewMapping(m *Mapping) *Mapping {
+//	return m
+//}
 
-func (p *Payload) SetMappingDetails(managerUUID, networkUUID, mapperUUID string) *Payload {
-	if p.Mapping == nil {
-		p.Mapping = &Mapping{
-			ManagerUUID: managerUUID,
-			NetworkUUID: networkUUID,
-			MapperUUID:  mapperUUID,
-		}
-	} else {
-		p.Mapping.ManagerUUID = managerUUID
-		p.Mapping.NetworkUUID = networkUUID
-		p.Mapping.MapperUUID = mapperUUID
-	}
-	return p
-}
+//func (p *Payload) SetMappingDetails(managerUUID, networkUUID, mapperUUID string) *Payload {
+//	//if p.Mapping == nil {
+//	//	p.Mapping = &Mapping{}
+//	//} else {
+//	//
+//	//}
+//	return p
+//}
 
-func (p *Payload) SetMappingData(expectedData string, data any) *Payload {
-	p.Mapping = &Mapping{
-		ExpectedData: expectedData,
-		Data:         data,
-	}
-	return p
-}
+//func (p *Payload) AddMapping(mapping *Mapping) *Payload {
+//	//p.Mapping = mapping
+//	return p
+//}
 
-func (p *Payload) IsMappingNil() bool {
-	if p.Mapping == nil {
-		return true
-	}
-	return false
-}
-
-func (p *Payload) GetMappingManagerUUID() string {
-	if p.IsMappingNil() {
-		return ""
-	}
-	return p.GetMapping().ManagerUUID
-}
-
-func (p *Payload) GetMappingMapperUUID() string {
-	if p.IsMappingNil() {
-		return ""
-	}
-	return p.GetMapping().MapperUUID
-}
-
-func (p *Payload) GetMappingNetworkUUID() string {
-	if p.IsMappingNil() {
-		return ""
-	}
-	return p.GetMapping().NetworkUUID
-}
-
-func (p *Payload) GetMappingData() any {
-	if p.IsMappingNil() {
-		return ""
-	}
-	return p.GetMapping().Data
-}
+//func (p *Payload) SetMappingDataPayload(expectedData string, data *DataPayload) *Payload {
+//	p.Mapping = &Mapping{
+//		FromDataType: expectedData,
+//		DataPayload:  data,
+//	}
+//	return p
+//}
+//
+//func (p *Payload) SetMappingData(expectedData string, data any) *Payload {
+//	p.Mapping = &Mapping{
+//		ExpectedData: expectedData,
+//		Data:         data,
+//	}
+//	return p
+//}
