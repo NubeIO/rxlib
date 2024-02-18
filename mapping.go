@@ -4,18 +4,61 @@ import (
 	"encoding/json"
 	"github.com/NubeIO/rxlib/libs/convert"
 	"github.com/NubeIO/rxlib/priority"
+	"time"
 )
 
-type MappingDirection string
+/*
+	+----------------------+
+	|                      |
+	|     	  ROS-1        | (either can be publisher/receiver)
+	|                      |
+	+----------------------+
+			   |
+			   |
+			   |
+			   |
+			   |
+	+------------------------+
+	|     	  ROS-2          |
+	+------------------------+
+
+
+publisher;
+If set as the publisher, this means that we are watching object and will post each value when an COV event occurs
+eg; ROS-1 will publish each COV value to ROS-2
+
+receiver;
+Is on the receiving end of the COV event
+
+dual;
+Is when we want 2-way read/write; as in keeping each object in sync both ways
+
+pull/push-interval;
+COV will be disabled, and we will simply request the data on a CRON
+eg; cloud to pull on 5 min interval from edge (cloud: pull-requester, edge: pull-responder)
+eg; edge to push to cloud every 1min (cloud: push-receiver, edge: push-initiator)
+
+Push; would be the mapping that is connected to the object we are monitoring to send the value on each CRON
+eg; ROS-1 will push the value to ROS-2 every 15min
+
+Pull;
+eg; ROS-1 will request/pull the value to ROS-2 every 15min
+*/
+
+type MappingType string
 
 const (
-	MappingDirectionPublisher MappingDirection = "publisher"
-	MappingDirectionReceiver  MappingDirection = "receiver"
+	MappingTypePublisher         MappingType = "publisher"
+	MappingTypeReceiver          MappingType = "receiver"
+	MappingTypeDual              MappingType = "dual"
+	MappingIntervalPullRequester MappingType = "pull-requester" // needs a cron added
+	MappingIntervalPullResponder MappingType = "pull-responder" // disable the subscription on the eventbus
+	MappingIntervalPushInitiator MappingType = "push-initiator" // disable the subscription on the eventbus, needs a cron added
+	MappingIntervalPushReceiver  MappingType = "push-receiver"
 )
 
 type Mapping struct {
 	GlobalID          string           `json:"globalID"`
-	IsLeader          bool             `json:"isLeader"`
 	LeaderNetworkUUID string           `json:"leaderNetworkUUID,omitempty"`
 	LeaderMappingUUID string           `json:"leaderMappingUUID,omitempty"`
 	LeaderDataType    priority.Type    `json:"leaderDataType,omitempty"` // make it easy for an Obj to decode in incoming data; eg string, map[], user
@@ -23,7 +66,12 @@ type Mapping struct {
 	TargetNetworkUUID string           `json:"targetNetworkUUID"`
 	TargetDataType    priority.Type    `json:"targetDataType,omitempty"`
 	ResponseUUID      string           `json:"responseUUID"`
-	Direction         MappingDirection `json:"direction"`
+	Type              MappingType      `json:"type"`
+	MappingInterval   *MappingInterval `json:"mappingInterval,omitempty"`
+}
+type MappingInterval struct {
+	Disable         bool          `json:"disable"`
+	DurationSeconds time.Duration `json:"durationSeconds"`
 }
 
 // MappingPayload is what is sent over the network (rest/mqtt)
@@ -84,6 +132,22 @@ func (m *MappingPayload) MappingResponseOk() {
 
 func (m *MappingPayload) MappingResponseObjectNoConnections() {
 	m.Response = MappingResponseObjectNoConnections
+}
+
+func IsMappingStateIsOk(state MappingPayloadState) bool {
+	if state == MappingResponseOk {
+		return true
+	}
+	return false
+
+}
+
+func (m *MappingPayload) MappingStateIsOk() bool {
+	if IsMappingStateIsOk(m.Response) {
+		return true
+	}
+	return false
+
 }
 
 func (m *MappingPayload) GetLeaderMappingUUID() string {

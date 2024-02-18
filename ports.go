@@ -2,38 +2,42 @@ package rxlib
 
 import (
 	"fmt"
+	"github.com/NubeIO/rxlib/libs/nils"
 	"github.com/NubeIO/rxlib/priority"
 	"github.com/NubeIO/rxlib/unitswrapper"
+	"time"
 )
 
 type Port struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
 	UUID     string `json:"uuid"`
-	Disabled bool   `json:"enable"`
+	Disabled bool   `json:"disabled"`
 
 	// Input/Output port values
-	Values         *priority.Value        `json:"-"`    // value should be used for anything
-	DataDisplay    *priority.PriorityData `json:"data"` // only used for when its called over rest
-	dataPriority   *priority.DataPriority
-	Transformation *priority.Transformations      `json:"transformation"`
-	Units          *unitswrapper.EngineeringUnits `json:"units"`
-	Direction      PortDirection                  `json:"direction"` // input or output
-	DataType       priority.Type                  `json:"dataType"`  // float, bool, string, any, json
+	Values              *priority.Value        `json:"-"`    // value should be used for anything
+	DataDisplay         *priority.PriorityData `json:"data"` // only used for when its called over rest
+	dataPriority        *priority.DataPriority
+	Transformation      *priority.Transformations      `json:"transformation"`
+	Units               *unitswrapper.EngineeringUnits `json:"units"`
+	Direction           PortDirection                  `json:"direction"`           // input or output
+	DataType            priority.Type                  `json:"dataType"`            // float, bool, string, any, json
+	DisableSubscription bool                           `json:"disableSubscription"` // if set to true we will not set up connection as a subscriber; this would be used when a connection is used to maybe pull the data on an interval
+	OnlyPublishOnCOV    bool                           `json:"onlyPublishOnCOV"`
+	PreviousValue       *priority.PreviousValue        `json:"previousValue,omitempty"`
 
-	// these are optional and used if you want to keep the last value for later use
-	PreviousValueSet bool                    `json:"-"`
-	PreviousValue    *priority.PreviousValue `json:"previousValue,omitempty"`
-	// is a value written from another Obj
-	WrittenValueSet          bool                   `json:"-"`
-	WrittenValue             *priority.WrittenValue `json:"writtenValue,omitempty"`
-	AllowMultipleConnections bool                   `json:"allowMultipleConnections,omitempty"`
+	AllowMultipleConnections bool `json:"allowMultipleConnections,omitempty"`
 
 	// port position is where to show the order on the Obj and where to hide the port or not
 	DefaultPosition   int  `json:"defaultPosition"`
 	Hide              bool `json:"hide,omitempty"`
 	HiddenByDefault   bool `json:"hiddenByDefault,omitempty"`
 	OverPositionValue int  `json:"overPositionValue,omitempty"`
+
+	LastOk      *time.Time `json:"LastOk,omitempty"`
+	OkMessage   string     `json:"okMessage,omitempty"`
+	LastFail    *time.Time `json:"LastFail,omitempty"`
+	FailMessage string     `json:"failMessage,omitempty"`
 
 	OnMessage func(msg *Payload) `json:"-"` // used for the evntbus
 
@@ -53,6 +57,18 @@ func (p *Port) GetName() string {
 
 func (p *Port) SetName(v string) string {
 	p.Name = v
+	return p.Name
+}
+
+func (p *Port) SetLastOk(message string) string {
+	p.LastOk = nils.ToTime(time.Now())
+	p.OkMessage = message
+	return p.Name
+}
+
+func (p *Port) SetLastFail(message string) string {
+	p.LastFail = nils.ToTime(time.Now())
+	p.FailMessage = message
 	return p.Name
 }
 
@@ -98,6 +114,10 @@ func (p *Port) GetValue() *priority.Value {
 	return p.Values
 }
 
+func (p *Port) GetHighestPriority() any {
+	return p.Values.GetHighestPriority()
+}
+
 func (p *Port) GetValueDisplay() *priority.PriorityData {
 	return p.Values.PriorityData()
 }
@@ -137,6 +157,10 @@ func (p *Port) IsDisabled() bool {
 	return false
 }
 
+func (p *Port) OnlyPublishCOV() bool {
+	return p.OnlyPublishOnCOV
+}
+
 func (p *Port) Enable() {
 	p.Disabled = false
 }
@@ -145,82 +169,30 @@ func (p *Port) Disable() {
 	p.Disabled = true
 }
 
+func (p *Port) SetDisableSubscription() {
+	p.DisableSubscription = true
+}
+
+func (p *Port) SubscriptionDisabled() bool {
+	if p.DisableSubscription {
+		return true
+	}
+	return false
+}
+
 func (p *Port) GetDataType() priority.Type {
 	return p.DataType
 }
 
-//
-//// SetData to be used for anything but an int, float, bool
-//func (p *Port) SetData(value any) {
-//	if p.DataPayload == nil {
-//		p.DataPayload = &priority.DataValue{}
-//	}
-//	p.DataPayload.Value = value
-//}
-//
-//func (p *Port) GetData() any {
-//	return p.DataPayload
-//}
-//
-////-----------------------priority-----------------------
-//
-//func (p *Port) initDataPriority(body *priority.NewPrimitiveValue) error {
-//	pri, prim, err := priority.NewPrimitive(body)
-//	p.primitives = prim
-//	if err != nil {
-//		return err
-//	}
-//	p.DataPriorityOld = pri
-//	return nil
-//}
-//
-//func (p *Port) InitDataPriorityFloat(body *priority.NewPrimitiveValue) error {
-//	return p.initDataPriority(body)
-//}
-//
-//func (p *Port) SetPriorityNull(priorityNumber int) {
-//	p.DataPriorityOld.Priority.SetNull(priorityNumber)
-//}
-//
-//func (p *Port) WriteFloat(value float64) error {
-//	if p.DataPriorityOld == nil {
-//		panic("rxlib.SetDataPriority DataPriorityOld can not be empty, please InitDataPriority() first")
-//	}
-//	result, err := p.primitives.UpdateValueFloat(value)
-//	if err != nil {
-//		return err
-//	}
-//	p.DataPriorityOld = result
-//	return nil
-//}
-//
-//func (p *Port) OverrideWriteFloatPriority(value float64, priority int) error {
-//	if p.DataPriorityOld == nil {
-//		panic("rxlib.SetDataPriority DataPriorityOld can not be empty, please InitDataPriority() first")
-//	}
-//	result, err := p.primitives.UpdateValueAndGenerateResult(nil, 0, nils.ToFloat64(value), priority)
-//	if err != nil {
-//		return err
-//	}
-//	p.DataPriorityOld = result
-//	return nil
-//}
-
-func (p *Port) SetWrittenValue(v *priority.WrittenValue) {
-	p.WrittenValueSet = true
-	p.WrittenValue = v
-
-}
-
-func (p *Port) GetWrittenValue() *priority.WrittenValue {
-	return p.WrittenValue
-}
-
-func (p *Port) GetWrittenValueCurrent() (value any, ok bool) {
-	if p.WrittenValue != nil {
-		return p.WrittenValue.Value, true
+func (p *Port) SetPreviousValue(value any) {
+	p.PreviousValue = &priority.PreviousValue{
+		Value:     value,
+		Timestamp: time.Now(),
 	}
-	return nil, false
+}
+
+func (p *Port) GetPreviousValue() *priority.PreviousValue {
+	return p.PreviousValue
 }
 
 type PortOpts struct {

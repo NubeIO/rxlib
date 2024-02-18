@@ -101,16 +101,6 @@ type Object interface {
 	Subscribe(topic, handlerID string, callBack func(topic string, e bus.Event))
 	SubscribePayload(topic, handlerID string, opts *EventbusOpts, callBack func(topic string, p *Payload, err error))
 
-	SetOutputPreviousValue(id string, value *priority.PreviousValue) error
-	GetOutputPreviousValue(id string) *priority.PreviousValue
-	SetInputPreviousValue(id string, value *priority.PreviousValue) error
-	GetInputPreviousValue(id string) *priority.PreviousValue
-
-	SetOutputWrittenValue(id string, value *priority.WrittenValue) error
-	GetOutputWrittenValue(id string) *priority.WrittenValue
-	SetInputWrittenValue(id string, value *priority.WrittenValue) error
-	GetInputWrittenValue(id string) *priority.WrittenValue
-
 	// GetRootObject Obj tree
 	GetRootObject(uuid string) (Object, error)
 	PrintObjectTree(objects map[string]Object)

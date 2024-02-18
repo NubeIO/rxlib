@@ -2,16 +2,9 @@ package priority
 
 import "time"
 
-type DataValue struct {
-	Value         any  `json:"value"`
-	Disable       bool `json:"disable"`
-	OverrideValue any  `json:"overrideValue"`
-}
-
 type PreviousValue struct {
-	PreviousValue          any       `json:"previousValue,omitempty"`
-	PreviousValueRaw       any       `json:"previousValueRaw,omitempty"`
-	PreviousValueTimestamp time.Time `json:"previousValueTimestamp,omitempty"`
+	Value     any       `json:"value,omitempty"`
+	Timestamp time.Time `json:"timestamp,omitempty"`
 }
 
 type WrittenValue struct {

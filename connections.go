@@ -17,9 +17,9 @@ type Connection struct {
 	TargetPortUUID       string        `json:"targetPortUUID,omitempty"`
 	IsExistingConnection bool          `json:"IsExistingConnection,omitempty"`
 	FlowDirection        FlowDirection `json:"flowDirection,omitempty"` // subscriber is if it's in an input and publisher or an output ***not needed for UI***
-	Enable               bool          `json:"enable,omitempty"`
+	Disable              bool          `json:"disable,omitempty"`
 	IsError              bool          `json:"isError,omitempty"`
-	Created              time.Time     `json:"created,omitempty"`
+	Created              *time.Time    `json:"created,omitempty"`
 	LastOk               *time.Time    `json:"LastOk,omitempty"`
 	LastFail             *time.Time    `json:"LastFail,omitempty"`
 	FailCount            int           `json:"failCount,omitempty"`
