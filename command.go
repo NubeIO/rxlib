@@ -82,9 +82,9 @@ func (b *PredefinedCommandBuilder) SetCommandName(commandName string) *Predefine
 
 func (b *PredefinedCommandBuilder) AddArgs(args string) *PredefinedCommandBuilder {
 	var parts []string
-	if strings.Contains(args, "-query:") {
+	if strings.Contains(args, "--query:") {
 		// Split the string at the query
-		querySplit := strings.SplitN(args, "-query:", 2)
+		querySplit := strings.SplitN(args, "--query:", 2)
 		// Add the parts before the query
 		parts = append(parts, strings.Fields(querySplit[0])...)
 		// Handle the query separately
@@ -115,6 +115,7 @@ func (b *PredefinedCommandBuilder) AddArgs(args string) *PredefinedCommandBuilde
 		}
 
 		key, value := kv[0], strings.Trim(kv[1], "\"")
+		fmt.Println(key, value)
 		switch key {
 		case "-query":
 			b.command.Query = value
@@ -131,6 +132,10 @@ func (b *PredefinedCommandBuilder) AddArgs(args string) *PredefinedCommandBuilde
 			b.command.Args["id"] = value
 		case "-write":
 			b.command.Args["write"] = value
+		case "-value":
+			b.command.Args["value"] = value
+		case "-field":
+			b.command.Args["field"] = value
 		}
 	}
 	return b

@@ -2,6 +2,7 @@ package rxlib
 
 import (
 	"fmt"
+	"github.com/NubeIO/rxlib/helpers/pprint"
 	"github.com/NubeIO/rxlib/libs/convert"
 	"github.com/NubeIO/rxlib/priority"
 	"strconv"
@@ -91,9 +92,9 @@ func (inst *RuntimeImpl) CommandObject(cmd *Command) any {
 		fmt.Printf("found objects: %d from query -type: %s -cmd: %s \n", len(objects), commandType, cmd.Thing)
 		switch strings.ToLower(string(commandType)) {
 		case "get":
-			result = handleGetCommandForMultipleObjects(cmd, objects)
+			result = inst.handleGetCommandForMultipleObjects(cmd, objects)
 		case "set":
-			result = handleSetCommandForMultipleObjects(cmd, objects)
+			result = inst.handleSetCommandForMultipleObjects(cmd, objects)
 		default:
 			result = fmt.Errorf("unknown command type: %s", commandType)
 		}
@@ -125,9 +126,9 @@ func (inst *RuntimeImpl) CommandObject(cmd *Command) any {
 
 		switch strings.ToLower(string(commandType)) {
 		case "get":
-			result = handleGetCommand(cmd, object)
+			result = inst.handleGetCommand(cmd, object)
 		case "set":
-			result = handleSetCommand(cmd, object)
+			result = inst.handleSetCommand(cmd, object)
 		default:
 			result = fmt.Errorf("unknown command type: %s", commandType)
 		}
@@ -136,25 +137,25 @@ func (inst *RuntimeImpl) CommandObject(cmd *Command) any {
 	return result
 }
 
-func handleGetCommandForMultipleObjects(cmd *Command, objects []Object) any {
+func (inst *RuntimeImpl) handleGetCommandForMultipleObjects(cmd *Command, objects []Object) any {
 	var results []any
 	for _, object := range objects {
-		result := handleGetCommand(cmd, object)
+		result := inst.handleGetCommand(cmd, object)
 		results = append(results, result)
 	}
 	return results
 }
 
-func handleSetCommandForMultipleObjects(cmd *Command, objects []Object) any {
+func (inst *RuntimeImpl) handleSetCommandForMultipleObjects(cmd *Command, objects []Object) any {
 	var results []any
 	for _, object := range objects {
-		result := handleSetCommand(cmd, object)
+		result := inst.handleSetCommand(cmd, object)
 		results = append(results, result)
 	}
 	return results
 }
 
-func handleGetCommand(cmd *Command, object Object) any {
+func (inst *RuntimeImpl) handleGetCommand(cmd *Command, object Object) any {
 	switch strings.ToLower(cmd.Thing) {
 	case "object":
 		return object
@@ -163,20 +164,20 @@ func handleGetCommand(cmd *Command, object Object) any {
 	case "name":
 		return object.GetName()
 	case "inputs":
-		return object.GetInputs()
+		return getPortValues(object.GetInputs())
 	case "input":
-		return handlePort(cmd, object, true)
+		return inst.handlePort(cmd, object, true)
 	case "outputs":
-		return object.GetOutputs()
+		return getPortValues(object.GetOutputs())
 	case "output":
-		return handlePort(cmd, object, false)
+		return inst.handlePort(cmd, object, false)
 	default:
 		return fmt.Errorf("unknown get command: %s", cmd.Thing)
 	}
 
 }
 
-func handlePort(cmd *Command, object Object, isInput bool) any {
+func (inst *RuntimeImpl) handlePort(cmd *Command, object Object, isInput bool) any {
 	getID := cmd.GetArgsByKey("id")
 	if getID == "" {
 		return fmt.Errorf("failed to get value required from args :%s", "id")
@@ -202,17 +203,26 @@ func handlePort(cmd *Command, object Object, isInput bool) any {
 	if get != "" {
 		return port.GetValueDisplay()
 	}
-	return fmt.Errorf("funknown get command for port by id: %s, try name, value, data", getID)
+	port.DataDisplay = port.GetValueDisplay()
+	return port
 }
 
-func handleSetCommand(cmd *Command, object Object) any {
+func (inst *RuntimeImpl) handleSetCommand(cmd *Command, object Object) any {
+	pprint.PrintJSON(cmd)
 	switch strings.ToLower(cmd.Thing) {
-	case "name":
-		byName := cmd.GetArgsByKey("name")
-		if byName == "" {
+	case "object":
+		field := cmd.GetArgsByKey("field")
+		value := cmd.GetArgsByKey("value")
+		if field == "" {
 			return fmt.Errorf("failed to get value required from args :%s", "name")
 		}
-		return object.SetName(byName)
+		if value == "" {
+			return fmt.Errorf("failed to get value required from args :%s", "value")
+		}
+		if field == "name" {
+			return object.SetName(value)
+		}
+
 	case "input":
 		getID := cmd.GetArgsByKey("id")
 		if getID == "" {
