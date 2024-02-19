@@ -119,23 +119,19 @@ func (inst *RuntimeImpl) CommandObject(command *Command) *CommandResponse {
 		}
 		return inst.cmd
 	}
-
-	field := command.Field
-	fieldEntry := command.FieldEntry
-	if field == "" || fieldEntry == "" {
-		inst.cmd.Error = fmt.Errorf("field or fieldEntry cannot be empty")
-		return inst.cmd
-	}
-
+	uuid := parsedArgs.UUID
+	name := parsedArgs.Name
+	byType := parsedArgs.Type
 	var object Object
-	if field == "uuid" {
-		object = inst.GetByUUID(fieldEntry)
-	} else if field == "name" {
-		object = inst.GetFirstByName(fieldEntry)
+	if uuid != "" {
+		object = inst.GetByUUID(uuid)
+	} else if name != "" {
+		object = inst.GetFirstByName(name)
+	} else if byType != "" {
+		object = inst.GetFirstByID(name)
 	}
-
 	if object == nil {
-		inst.cmd.Error = fmt.Errorf("object not found with field: %s, fieldEntry: %s", field, fieldEntry)
+		inst.cmd.Error = fmt.Errorf("object not found by uuid: %s, name: %s", uuid, name)
 		return inst.cmd
 	}
 
@@ -160,6 +156,9 @@ func (inst *RuntimeImpl) CommandObject(command *Command) *CommandResponse {
 type parsedCommand struct {
 	ID       string `json:"id,omitempty"`
 	Field    string `json:"field,omitempty"`
+	UUID     string `json:"uuid,omitempty"`
+	Name     string `json:"name,omitempty"`
+	Type     string `json:"type,omitempty"`
 	Write    string `json:"write,omitempty"`
 	Value    string `json:"value,omitempty"`
 	ReturnAs string `json:"returnAs"`
@@ -192,6 +191,12 @@ func commandReturnType(cmd *Command) (string, *parsedCommand) {
 
 	args := &parsedCommand{
 		IsQuery: isQuery,
+	}
+	if v, ok := cmd.Args["name"]; ok {
+		args.Name = v
+	}
+	if v, ok := cmd.Args["uuid"]; ok {
+		args.UUID = v
 	}
 	if v, ok := cmd.Args["id"]; ok {
 		args.ID = v

@@ -52,12 +52,10 @@ func splitCamelCase(s string) []string {
 }
 
 type PredefinedCommand struct {
-	Name       string            `json:"name,omitempty"`
-	Thing      string            `json:"thing,omitempty"`
-	Query      string            `json:"query,omitempty"`
-	Field      string            `json:"field,omitempty"`
-	FieldEntry string            `json:"fieldEntry,omitempty"`
-	Args       map[string]string `json:"args,omitempty"`
+	Name  string            `json:"name,omitempty"`
+	Thing string            `json:"thing,omitempty"`
+	Query string            `json:"query,omitempty"`
+	Args  map[string]string `json:"args,omitempty"`
 }
 
 type PredefinedCommandBuilder struct {
@@ -120,11 +118,9 @@ func (b *PredefinedCommandBuilder) AddArgs(args string) *PredefinedCommandBuilde
 		case "-query":
 			b.command.Query = value
 		case "-name":
-			b.command.Field = "name"
-			b.command.FieldEntry = value
+			b.command.Args["name"] = value
 		case "-uuid":
-			b.command.Field = "uuid"
-			b.command.FieldEntry = value
+			b.command.Args["uuid"] = value
 		case "-id":
 			b.command.Args["id"] = value
 		case "-write":
@@ -185,8 +181,6 @@ func (pc *PredefinedCommand) ToCommand() *Command {
 		CommandType: CommandType(pc.Name),
 		Thing:       pc.Thing,
 		Query:       pc.Query,
-		Field:       pc.Field,
-		FieldEntry:  pc.FieldEntry,
 	}
 	cmd.Args = make(map[string]string)
 	cmd.Args = pc.Args
@@ -194,6 +188,12 @@ func (pc *PredefinedCommand) ToCommand() *Command {
 }
 
 type Command struct {
+	CommandType CommandType       `json:"type"`            // get
+	Thing       string            `json:"thing"`           // -cmd:inputValues
+	Query       string            `json:"query,omitempty"` //  -query:(objects:name == math-add-2) OR (objects:name == math-add-1)
+	Args        map[string]string `json:"args,omitempty"`
+}
+type CommandOld2 struct {
 	CommandType CommandType       `json:"type"`            // get
 	Thing       string            `json:"thing"`           // -cmd:inputValues
 	Query       string            `json:"query,omitempty"` //  -query:(objects:name == math-add-2) OR (objects:name == math-add-1)
@@ -224,10 +224,6 @@ func (c *Command) GetArgsKeys() (keys, values []string) {
 
 func (c *Command) ToString() string {
 	var fieldPart, queryPart string
-
-	if c.Field != "" && c.FieldEntry != "" {
-		fieldPart = fmt.Sprintf("-%s:%s", c.Field, c.FieldEntry)
-	}
 
 	if c.Query != "" {
 		queryPart = fmt.Sprintf("-query:%s", c.Query)
