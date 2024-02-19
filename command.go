@@ -119,9 +119,6 @@ func (b *PredefinedCommandBuilder) AddArgs(args string) *PredefinedCommandBuilde
 		switch key {
 		case "-query":
 			b.command.Query = value
-		case "-returnType":
-			b.command.Field = "returnType"
-			b.command.FieldEntry = value
 		case "-name":
 			b.command.Field = "name"
 			b.command.FieldEntry = value
@@ -136,6 +133,8 @@ func (b *PredefinedCommandBuilder) AddArgs(args string) *PredefinedCommandBuilde
 			b.command.Args["value"] = value
 		case "-field":
 			b.command.Args["field"] = value
+		case "-as":
+			b.command.Args["as"] = value
 		}
 	}
 	return b

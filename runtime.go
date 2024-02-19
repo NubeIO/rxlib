@@ -45,7 +45,6 @@ type Runtime interface {
 	GetAllObjectValues() []*ObjectValue
 
 	AddObject(object Object)
-	AddObjectResp(object Object) *ObjectResponse
 
 	Where(attribute string) *RuntimeImpl
 	Field(field string) *RuntimeImpl
@@ -55,14 +54,14 @@ type Runtime interface {
 
 	Query(query string) []Object
 
-	CommandObject(cmd *Command) any
+	CommandObject(cmd *Command) *CommandResponse
 }
 
 func NewRuntime(objs []Object) Runtime {
 	r := &RuntimeImpl{}
 	r.objects = objs
 	if r.objects == nil {
-		panic("NewRuntime Obj map can not be empty")
+		panic("NewRuntime []Object can not be empty")
 	}
 	return r
 }
@@ -74,67 +73,210 @@ type RuntimeImpl struct {
 	where           string
 	field           string
 	mutex           sync.RWMutex
+	cmd             *CommandResponse
+	parsedCommand   *parsedCommand
+}
+
+type CommandResponse struct {
+	Object           Object             `json:"object,omitempty"`
+	SerializeObject  *ObjectConfig      `json:"serializeObject"`
+	Objects          []Object           `json:"objects,omitempty"`
+	SerializeObjects []*ObjectConfig    `json:"serializeObjects"`
+	Ports            []*Port            `json:"ports,omitempty"`
+	MapPorts         map[string][]*Port `json:"mapPorts,omitempty"`
+	String           string             `json:"string,omitempty"`
+	Float            *float64           `json:"number,omitempty"`
+	Bool             *bool              `json:"boolean,omitempty"`
+	Error            error              `json:"error,omitempty"`
+	ReturnType       string             `json:"returnType,omitempty"`
+}
+
+func (inst *RuntimeImpl) CommandObject(command *Command) *CommandResponse {
+	inst.cmd = &CommandResponse{}
+	if command == nil {
+		inst.cmd.Error = fmt.Errorf("command cannot be nil")
+		return inst.cmd
+	}
+	returnType, parsedArgs := commandReturnType(command)
+	inst.cmd.ReturnType = returnType
+	var returnAsJSON bool
+	if parsedArgs.ReturnAs == commandJSON {
+		returnAsJSON = true
+	}
+	if parsedArgs.ReturnAs != "" {
+		fmt.Printf("type: %s thing: %s type-return: %s --as: %s \n", command.CommandType, command.Thing, returnType, parsedArgs.ReturnAs)
+	} else {
+		fmt.Printf("type: %s thing: %s type-return: %s \n", command.CommandType, command.Thing, returnType)
+	}
+
+	inst.parsedCommand = parsedArgs
+	if command.Query != "" {
+		objects := inst.Query(command.Query)
+		if returnAsJSON {
+			inst.cmd.SerializeObjects = SerializeCurrentFlowArray(objects)
+		} else {
+			inst.cmd.Objects = objects
+		}
+		return inst.cmd
+	}
+
+	field := command.Field
+	fieldEntry := command.FieldEntry
+	if field == "" || fieldEntry == "" {
+		inst.cmd.Error = fmt.Errorf("field or fieldEntry cannot be empty")
+		return inst.cmd
+	}
+
+	var object Object
+	if field == "uuid" {
+		object = inst.GetByUUID(fieldEntry)
+	} else if field == "name" {
+		object = inst.GetFirstByName(fieldEntry)
+	}
+
+	if object == nil {
+		inst.cmd.Error = fmt.Errorf("object not found with field: %s, fieldEntry: %s", field, fieldEntry)
+		return inst.cmd
+	}
+
+	switch returnType {
+	case commandObject:
+		if returnAsJSON {
+			inst.cmd.SerializeObject = serializeCurrentFlowArray(object)
+		} else {
+			inst.cmd.Object = object
+		}
+		return inst.cmd
+	case commandString:
+		inst.cmd.String = inst.handleGetCommandString(command, object, parsedArgs)
+		return inst.cmd
+	default:
+
+	}
+	inst.cmd.Error = fmt.Errorf("unsupported return type: %s", returnType)
+	return inst.cmd
+}
+
+type parsedCommand struct {
+	ID       string `json:"id,omitempty"`
+	Field    string `json:"field,omitempty"`
+	Write    string `json:"write,omitempty"`
+	Value    string `json:"value,omitempty"`
+	ReturnAs string `json:"returnAs"`
+	IsQuery  bool   `json:"isQuery"`
+}
+
+const (
+	commandJSON    = "json"
+	commandPort    = "port"
+	commandPorts   = "ports"
+	commandNumber  = "number"
+	commandString  = "string"
+	commandObject  = "object"
+	commandObjects = "objects"
+	commandOutput  = "output"
+	commandOutputs = "outputs"
+	commandInput   = "input"
+	commandInputs  = "inputs"
+)
+
+func commandReturnType(cmd *Command) (string, *parsedCommand) {
+	var isQuery bool
+	if cmd.Query != "" {
+		isQuery = true
+	}
+	var isSet bool
+	if cmd.CommandType == "set" {
+		isSet = true
+	}
+
+	args := &parsedCommand{
+		IsQuery: isQuery,
+	}
+	if v, ok := cmd.Args["id"]; ok {
+		args.ID = v
+	}
+	if v, ok := cmd.Args["field"]; ok {
+		args.Field = v
+	}
+	if v, ok := cmd.Args["write"]; ok { // write in most cases will normally return nothing or an error
+		args.Write = v
+	}
+	if v, ok := cmd.Args["value"]; ok {
+		args.Value = v
+	}
+	if v, ok := cmd.Args["as"]; ok {
+		args.ReturnAs = v
+	}
+
+	if cmd.Thing == commandObjects {
+		if args.Write != "" {
+			return commandString, args
+		}
+		return commandObjects, args
+	}
+
+	if cmd.Thing == commandObject {
+		if args.Write != "" {
+			return commandObject, args
+		}
+		return commandObject, args
+	}
+
+	if cmd.Thing == commandInputs || cmd.Thing == commandOutputs {
+		if isSet { // update name, value of a port
+			return commandString, args
+		}
+		return commandPorts, args
+	}
+	if cmd.Thing == commandInput || cmd.Thing == commandOutput {
+		if isSet { // update name, value of a port
+			return commandString, args
+		}
+		return commandPort, args
+	}
+
+	return "", args
 }
 
 // --------------- COMMANDS ----------------
 
-func (inst *RuntimeImpl) CommandObject(cmd *Command) any {
-	if cmd == nil {
-		return nil
+func (inst *RuntimeImpl) handleGetManyAsObjects(cmd *Command, objects []Object, parsed *parsedCommand) []Object {
+	var results []Object
+	for _, object := range objects {
+		result := inst.handleGetCommandObject(cmd, object, parsed)
+		results = append(results, result)
 	}
-	commandType := cmd.CommandType
-	thing := cmd.Thing
+	return results
+}
 
-	var result any
-	if cmd.Query != "" {
-		fmt.Println(cmd.Query)
-		objects := inst.Query(cmd.Query)
-		fmt.Printf("found objects: %d from query -type: %s -cmd: %s \n", len(objects), commandType, cmd.Thing)
-		switch strings.ToLower(string(commandType)) {
-		case "get":
-			result = inst.handleGetCommandForMultipleObjects(cmd, objects)
-		case "set":
-			result = inst.handleSetCommandForMultipleObjects(cmd, objects)
-		default:
-			result = fmt.Errorf("unknown command type: %s", commandType)
-		}
-	} else {
-		field := cmd.Field
-		fieldEntry := cmd.FieldEntry
-		if commandType == "get" && thing == "objects" {
-			if field == "returnType" && fieldEntry == "json" {
-				return SerializeCurrentFlowArray(inst.Get())
-			}
-		}
-
-		if field == "" {
-			return fmt.Errorf("field can not be empty")
-		}
-		if fieldEntry == "" {
-			return fmt.Errorf("fieldEntry can not be empty")
-		}
-		var object Object
-		if field == "uuid" {
-			object = inst.GetByUUID(fieldEntry)
-		} else if field == "name" {
-			object = inst.GetFirstByName(fieldEntry)
-		}
-
-		if object == nil {
-			return fmt.Errorf("object not found field: %s fieldEntry: %s", field, fieldEntry)
-		}
-
-		switch strings.ToLower(string(commandType)) {
-		case "get":
-			result = inst.handleGetCommand(cmd, object)
-		case "set":
-			result = inst.handleSetCommand(cmd, object)
-		default:
-			result = fmt.Errorf("unknown command type: %s", commandType)
-		}
+func (inst *RuntimeImpl) handleGetManyAsString(cmd *Command, objects []Object, parsed *parsedCommand) []string {
+	var results []string
+	for _, object := range objects {
+		result := inst.handleGetCommandString(cmd, object, parsed)
+		results = append(results, result)
 	}
+	return results
+}
 
-	return result
+func (inst *RuntimeImpl) handleGetCommandObject(cmd *Command, object Object, parsed *parsedCommand) Object {
+	switch strings.ToLower(cmd.Thing) {
+	case "object":
+		return object
+	}
+	return nil
+
+}
+
+func (inst *RuntimeImpl) handleGetCommandString(cmd *Command, object Object, parsed *parsedCommand) string {
+	switch strings.ToLower(cmd.Thing) {
+	case "uuid":
+		return object.GetUUID()
+	case "name":
+		return object.GetName()
+	}
+	return ""
+
 }
 
 func (inst *RuntimeImpl) handleGetCommandForMultipleObjects(cmd *Command, objects []Object) any {
@@ -462,13 +604,6 @@ func containsObject(slice []Object, obj Object) bool {
 		}
 	}
 	return false
-}
-
-func (inst *RuntimeImpl) AddObjectResp(object Object) *ObjectResponse {
-	inst.mutex.Lock()
-	defer inst.mutex.Unlock()
-	inst.objects = append(inst.objects, object)
-	return nil
 }
 
 func (inst *RuntimeImpl) AddObject(object Object) {

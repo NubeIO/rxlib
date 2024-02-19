@@ -7,9 +7,11 @@ import (
 
 func TestCommandBuilder(t *testing.T) {
 
-	cmdString := `writeInput --query:(objects:name == math-add-2) --id:"in 1" --write:"22.5" --value:"new name"`
-	cmdString = `writeInput --name:"math-add-2" --id:"in 1" --write:"22.5" --value:"new name"`
-	cmdString = `getObject --name:"math-add-2"`
+	cmdString := `writeInput --query:(objects:name == math-add-2) --id:"in 1" --field:"value" --value:22.5` // []string
+	cmdString = `setObject --name:"math-add-2" --field:"name" --value:"new name"`                           // string
+	cmdString = `getObject --name:"math-add-2"`                                                             // object
+	cmdString = `getObjects --query:(objects:name == math-add-2)`                                           // []Object
+	cmdString = `getInputs--query:(objects:name == math-add-2)`                                             // map[string][]*Ports
 	//cmdString = `getObjects --return:json`
 
 	cp := NewCommandParse()
