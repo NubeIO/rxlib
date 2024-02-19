@@ -2,6 +2,8 @@ package rxlib
 
 import (
 	"fmt"
+	"github.com/NubeIO/rxlib/libs/convert"
+	"github.com/NubeIO/rxlib/priority"
 	"strconv"
 	"strings"
 	"sync"
@@ -50,10 +52,9 @@ type Runtime interface {
 	First() Object
 	Filtered() []Object
 
-	Query(query string, r Runtime) []Object
-	Operation(objects []Object, operation string)
-	FilterPortValues(objects []Object, method string) *DataOp
-	FilterPorts(objects []Object, method string) []*Port
+	Query(query string) []Object
+
+	CommandObject(cmd *Command) any
 }
 
 func NewRuntime(objs []Object) Runtime {
@@ -74,6 +75,162 @@ type RuntimeImpl struct {
 	mutex           sync.RWMutex
 }
 
+// --------------- COMMANDS ----------------
+
+func (inst *RuntimeImpl) CommandObject(cmd *Command) any {
+	if cmd == nil {
+		return nil
+	}
+	commandType := cmd.CommandType
+	field := cmd.Field
+	uuidName := cmd.FieldEntry
+
+	var result any
+	if cmd.Query != "" {
+		fmt.Println(cmd.Query)
+		objects := inst.Query(cmd.Query)
+		fmt.Printf("found objects: %d from query -type: %s -cmd: %s \n", len(objects), commandType, cmd.CommandName)
+		switch strings.ToLower(string(commandType)) {
+		case "get":
+			result = handleGetCommandForMultipleObjects(cmd, objects)
+		case "set":
+			result = handleSetCommandForMultipleObjects(cmd, objects)
+		default:
+			result = fmt.Errorf("unknown command type: %s", commandType)
+		}
+	} else {
+		var object Object
+		if field == "uuid" {
+			object = inst.GetByUUID(uuidName)
+		} else if field == "name" {
+			object = inst.GetFirstByName(uuidName)
+		}
+
+		if object == nil {
+			return fmt.Errorf("object not found field: %s fieldEntry: %s", field, uuidName)
+		}
+
+		switch strings.ToLower(string(commandType)) {
+		case "get":
+			result = handleGetCommand(cmd, object)
+		case "set":
+			result = handleSetCommand(cmd, object)
+		default:
+			result = fmt.Errorf("unknown command type: %s", commandType)
+		}
+	}
+
+	return result
+}
+
+func handleGetCommandForMultipleObjects(cmd *Command, objects []Object) any {
+	var results []any
+	for _, object := range objects {
+		result := handleGetCommand(cmd, object)
+		results = append(results, result)
+	}
+	return results
+}
+
+func handleSetCommandForMultipleObjects(cmd *Command, objects []Object) any {
+	var results []any
+	for _, object := range objects {
+		result := handleSetCommand(cmd, object)
+		results = append(results, result)
+	}
+	return results
+}
+
+func handleGetCommand(cmd *Command, object Object) any {
+	fmt.Println(cmd.CommandName)
+	switch strings.ToLower(cmd.CommandName) {
+	case "object":
+		return object
+
+	case "uuid":
+		return object.GetUUID()
+	case "name":
+		return object.GetName()
+	case "inputs":
+		return object.GetInputs()
+	case "input":
+		return handlePort(cmd.Args, object)
+	default:
+		return fmt.Errorf("unknown get command: %s", cmd.CommandName)
+	}
+
+}
+
+func handlePort(args []string, object Object) any {
+	fmt.Println("&&&&&&&&&&&&&&&&")
+	if len(args) < 1 {
+		return fmt.Errorf("getInput command requires an argument")
+	}
+	fmt.Println(args)
+	if len(args) == 3 {
+		arg1 := args[0] // id
+		arg2 := args[1] // value
+		arg3 := args[2] // data, value, name
+		if arg1 == "id" {
+			var port *Port
+			port = object.GetInput(arg2)
+			if arg3 == "name" {
+				return port.GetName()
+			}
+			if arg3 == "value" || arg3 == "data" {
+				return port.GetValueDisplay()
+			}
+		}
+	}
+	return fmt.Errorf("unknown get command")
+}
+
+func handleSetCommand(cmd *Command, object Object) any {
+	switch strings.ToLower(cmd.CommandName) {
+	case "name":
+		if len(cmd.Args) < 1 {
+			return fmt.Errorf("setname command requires an argument")
+		}
+		return object.SetName(cmd.Args[0])
+	case "input":
+		if len(cmd.Args) < 1 {
+			return fmt.Errorf("getInput command requires an argument")
+		}
+		if len(cmd.Args) == 4 {
+			arg1 := cmd.Args[0] // id
+			arg2 := cmd.Args[1] // value
+			arg3 := cmd.Args[2] // data, value, name
+			arg4 := cmd.Args[3] // 22.5, "new name"
+
+			if arg1 == "id" {
+				var port *Port
+				port = object.GetInput(arg2)
+				if arg3 == "name" {
+					return port.SetName(arg4)
+				}
+				if arg3 == "write" {
+					if port.GetDataType() == priority.TypeFloat {
+						f := convert.AnyToFloatPointer(arg4)
+						if f == nil {
+							return "was unable to parse value as type float"
+						}
+						err := port.Write(f)
+						if err != nil {
+							return err.Error()
+						}
+						return fmt.Sprintf("object: %s updated ok port: %s value: %s", object.GetName(), arg2, arg4)
+					}
+					return port.Write(arg4)
+				}
+			}
+		}
+	default:
+		return fmt.Errorf("unknown set command: %s", cmd.CommandName)
+	}
+	return fmt.Errorf("unknown get command")
+
+}
+
 func (inst *RuntimeImpl) Delete() string {
 	inst.mutex.Lock()
 	defer inst.mutex.Unlock()
@@ -83,7 +240,7 @@ func (inst *RuntimeImpl) Delete() string {
 	return fmt.Sprintf("count deleted: %d current: %d", c, d)
 }
 
-func (inst *RuntimeImpl) Query(query string, r Runtime) []Object {
+func (inst *RuntimeImpl) Query(query string) []Object {
 	var allResults []Object
 	query, limit := extractAndRemoveLimit(query) // get the query limit
 	orSegments := strings.Split(query, "OR")
@@ -96,31 +253,18 @@ func (inst *RuntimeImpl) Query(query string, r Runtime) []Object {
 		if len(andConditions) == 0 {
 			continue
 		}
-		segmentResults = r.Get() // Start with all objects for the first condition
+		segmentResults = inst.Get() // Start with all objects for the first condition
 
-		segmentResults = filterObjectsByCondition(segmentResults, andConditions, limit)
+		segmentResults = filterObjectsByCondition(segmentResults, andConditions)
 		allResults = addUniqueMatches(allResults, segmentResults)
 
 	}
 
-	return allResults
-}
-
-func (inst *RuntimeImpl) Operation(objects []Object, operation string) {
-	for _, obj := range objects {
-		if strings.HasPrefix(operation, "SetName(") {
-			newName := strings.TrimPrefix(operation, ".SetName(")
-			newName = strings.TrimSuffix(newName, ")")
-			newName = strings.Trim(newName, "`")
-			obj.SetName(newName)
-		}
-		if strings.HasPrefix(operation, "GetInputs(") {
-			obj.GetInputs()
-		}
-		if strings.Contains(operation, "Disable()") {
-			obj.GetInputs()
-		}
+	if limit >= 0 && len(allResults) > limit {
+		allResults = allResults[:limit]
 	}
+
+	return allResults
 }
 
 func addUniqueMatches(allResults []Object, segmentResults []Object) []Object {
@@ -132,94 +276,7 @@ func addUniqueMatches(allResults []Object, segmentResults []Object) []Object {
 	return allResults
 }
 
-// FilterPorts filters the result objects based on the provided method call.
-// It returns the ports for which the method call returns true for at least one of the ports.
-func (inst *RuntimeImpl) FilterPorts(objects []Object, method string) []*Port {
-	var filtered []*Port
-	for _, obj := range objects {
-		ports := filterPorts(obj, method)
-		filtered = append(filtered, ports...)
-	}
-	return filtered
-}
-
-func filterPorts(obj Object, method string) []*Port {
-	switch method {
-	case "GetInputs()":
-		return obj.GetInputs()
-	case "GetOutputs()":
-		return obj.GetOutputs()
-	default:
-		return nil
-	}
-}
-
-func (inst *RuntimeImpl) FilterPortValues(objects []Object, method string) *DataOp {
-	var values []float64
-	for _, obj := range objects {
-		ports := filterPorts(obj, method)
-		for _, port := range ports {
-			v := port.GetValue().GetFloatPointer()
-			if v != nil {
-				values = append(values, *v)
-			}
-		}
-	}
-	return &DataOp{
-		valuesFloat: values,
-	}
-}
-
-type DataOp struct {
-	valuesFloat []float64
-}
-
-func (op *DataOp) Sum() float64 {
-	sum := 0.0
-	for _, v := range op.valuesFloat {
-		sum += v
-	}
-	return sum
-}
-
-func (op *DataOp) Count() int {
-	return len(op.valuesFloat)
-}
-
-func (op *DataOp) Avg() float64 {
-	if len(op.valuesFloat) == 0 {
-		return 0
-	}
-	sum := op.Sum()
-	return sum / float64(len(op.valuesFloat))
-}
-
-func (op *DataOp) Max() float64 {
-	if len(op.valuesFloat) == 0 {
-		return 0
-	}
-	m := op.valuesFloat[0]
-	for _, v := range op.valuesFloat {
-		if v > m {
-			m = v
-		}
-	}
-	return m
-}
-
-func (op *DataOp) Min() float64 {
-	if len(op.valuesFloat) == 0 {
-		return 0
-	}
-	m := op.valuesFloat[0]
-	for _, v := range op.valuesFloat {
-		if v < m {
-			m = v
-		}
-	}
-	return m
-}
-func filterObjectsByCondition(segmentResults []Object, andConditions []string, limit int) []Object {
+func filterObjectsByCondition(segmentResults []Object, andConditions []string) []Object {
 	var filteredResults []Object
 
 	for _, andCondition := range andConditions {
@@ -241,13 +298,7 @@ func filterObjectsByCondition(segmentResults []Object, andConditions []string, l
 		segmentResults = matchesForThisCondition
 	}
 
-	// Apply the limit to the segment results
-	if limit >= 0 && len(segmentResults) > limit {
-		filteredResults = segmentResults[:limit]
-	} else {
-		filteredResults = segmentResults
-	}
-
+	filteredResults = segmentResults
 	return filteredResults
 }
 
@@ -624,8 +675,8 @@ func (inst *RuntimeImpl) objectsFilteredIsNil() bool {
 	return false
 }
 
-// let obj = RQL.AllObjects().Where("histories").Field("uuid").Condition("==", "hist_history").First()
-// let obj = RQL.AllObjects().Where("objects").Field("name").Condition("==", "abc").SerialObjects()
+// let obj = RQL.AllObjects().Where("histories").Name("uuid").Condition("==", "hist_history").First()
+// let obj = RQL.AllObjects().Where("objects").Name("name").Condition("==", "abc").SerialObjects()
 func (inst *RuntimeImpl) histories() *RuntimeImpl {
 	//var filtered = make(map[string]Object)
 	//for _, obj := range inst.objectsFiltered {

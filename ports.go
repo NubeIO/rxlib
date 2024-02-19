@@ -115,11 +115,32 @@ func (p *Port) GetValue() *priority.Value {
 }
 
 func (p *Port) GetHighestPriority() any {
+	if p == nil {
+		return nil
+	}
+	if p.Values == nil {
+		return nil
+	}
 	return p.Values.GetHighestPriority()
 }
 
 func (p *Port) GetValueDisplay() *priority.PriorityData {
+	if p == nil {
+		return nil
+	}
+	if p.Values == nil {
+		return nil
+	}
 	return p.Values.PriorityData()
+}
+
+func (p *Port) Write(value any) error {
+	if p == nil {
+		return fmt.Errorf("port is nil")
+	}
+	d, err := p.dataPriority.Apply(value, nil, p.GetDataType())
+	p.Values = d
+	return err
 }
 
 func (p *Port) WritePriority(value any, fromDataType priority.Type) error {
@@ -181,6 +202,9 @@ func (p *Port) SubscriptionDisabled() bool {
 }
 
 func (p *Port) GetDataType() priority.Type {
+	if p == nil {
+		return ""
+	}
 	return p.DataType
 }
 

@@ -3,7 +3,6 @@ package rxlib
 import (
 	"encoding/json"
 	"github.com/NubeIO/rxlib/priority"
-	"strings"
 	"time"
 )
 
@@ -27,34 +26,6 @@ type Payload struct {
 	MappingPayload *MappingPayload `json:"mappingPayload,omitempty"`
 	// generic eventbus message
 	EventBusPayload *EventBusPayload `json:"eventBusPayload,omitempty"`
-}
-
-type Command struct {
-	NameSpace  string `json:"nameSpace,omitempty"`  // name space is like this action.<plugin>.<objectUUID>.<commandName>
-	ObjectUUID string `json:"objectUUID,omitempty"` // or use UUID
-	Key        string `json:"key,omitempty"`
-	Body       any    `json:"body,omitempty"`
-}
-
-type Action struct {
-	Plugin      string
-	ObjectName  string
-	CommandName string
-	Body        any
-}
-
-func CommandParse(input string) *Action {
-	parts := strings.Split(input, ".")
-	// Ensure we have enough parts to construct the struct
-	if len(parts) != 4 {
-		return nil
-	}
-	return &Action{
-		Plugin:      parts[0],
-		ObjectName:  parts[1],
-		CommandName: parts[2],
-		Body:        parts[3],
-	}
 }
 
 type DataPayload struct {

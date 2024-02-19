@@ -19,7 +19,6 @@ type Object interface {
 	Invoke(key string, dataType priority.Type, data any) *ObjectCommandResponse
 	InvokePayload(key string, dataType priority.Type, payload *Payload) *ObjectCommandResponse
 	InvokePayloads(key string, dataType priority.Type, payload []*Payload) *ObjectCommandResponse
-	Command(command *Command) *ObjectCommandResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 	CommandList() []*Invoke
 	Process() error
 	Reset() error // for example this can be called on the 2nd deploy of a counter Obj, and we want to reset the count back to zero
@@ -29,6 +28,8 @@ type Object interface {
 	Unlock()
 	IsLocked() bool
 	IsUnlocked() bool
+
+	Command(command *CommandOld) *ObjectCommandResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 
 	AddRuntime(r Runtime)
 	Runtime() Runtime
@@ -89,8 +90,10 @@ type Object interface {
 	GetInputByConnection(sourceObjectUUID, outputPortID string) *Port
 	GetInputByConnections(sourceObjectUUID, outputPortID string) []*Port
 	UpdateInputsValues(payload *Payload) []error
-	GetInputsValue(portID string) *priority.Value
-	GetInputsValues() map[string]*priority.Value
+	GetInputValue(portID string) *priority.Value
+	AllInputsValues() map[string]*priority.Value
+	GetInputData(portID string) *priority.PriorityData
+	AllInputsData() map[string]*priority.PriorityData
 
 	GetOutputs() []*Port
 	GetOutput(id string) *Port
@@ -100,6 +103,10 @@ type Object interface {
 	PublishValue(portID string) error         // send current port value over the eventbus
 	Subscribe(topic, handlerID string, callBack func(topic string, e bus.Event))
 	SubscribePayload(topic, handlerID string, opts *EventbusOpts, callBack func(topic string, p *Payload, err error))
+	GetOutputValue(portID string) *priority.Value
+	AllOutputsValues() map[string]*priority.Value
+	GetOutputData(portID string) *priority.PriorityData
+	AllOutputsData() map[string]*priority.PriorityData
 
 	// GetRootObject Obj tree
 	GetRootObject(uuid string) (Object, error)
