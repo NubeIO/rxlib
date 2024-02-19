@@ -82,14 +82,13 @@ func (inst *RuntimeImpl) CommandObject(cmd *Command) any {
 		return nil
 	}
 	commandType := cmd.CommandType
-	field := cmd.Field
-	uuidName := cmd.FieldEntry
+	thing := cmd.Thing
 
 	var result any
 	if cmd.Query != "" {
 		fmt.Println(cmd.Query)
 		objects := inst.Query(cmd.Query)
-		fmt.Printf("found objects: %d from query -type: %s -cmd: %s \n", len(objects), commandType, cmd.CommandName)
+		fmt.Printf("found objects: %d from query -type: %s -cmd: %s \n", len(objects), commandType, cmd.Thing)
 		switch strings.ToLower(string(commandType)) {
 		case "get":
 			result = handleGetCommandForMultipleObjects(cmd, objects)
@@ -99,15 +98,29 @@ func (inst *RuntimeImpl) CommandObject(cmd *Command) any {
 			result = fmt.Errorf("unknown command type: %s", commandType)
 		}
 	} else {
+		field := cmd.Field
+		fieldEntry := cmd.FieldEntry
+		if commandType == "get" && thing == "objects" {
+			if field == "returnType" && fieldEntry == "json" {
+				return SerializeCurrentFlowArray(inst.Get())
+			}
+		}
+
+		if field == "" {
+			return fmt.Errorf("field can not be empty")
+		}
+		if fieldEntry == "" {
+			return fmt.Errorf("fieldEntry can not be empty")
+		}
 		var object Object
 		if field == "uuid" {
-			object = inst.GetByUUID(uuidName)
+			object = inst.GetByUUID(fieldEntry)
 		} else if field == "name" {
-			object = inst.GetFirstByName(uuidName)
+			object = inst.GetFirstByName(fieldEntry)
 		}
 
 		if object == nil {
-			return fmt.Errorf("object not found field: %s fieldEntry: %s", field, uuidName)
+			return fmt.Errorf("object not found field: %s fieldEntry: %s", field, fieldEntry)
 		}
 
 		switch strings.ToLower(string(commandType)) {
@@ -142,11 +155,9 @@ func handleSetCommandForMultipleObjects(cmd *Command, objects []Object) any {
 }
 
 func handleGetCommand(cmd *Command, object Object) any {
-	fmt.Println(cmd.CommandName)
-	switch strings.ToLower(cmd.CommandName) {
+	switch strings.ToLower(cmd.Thing) {
 	case "object":
 		return object
-
 	case "uuid":
 		return object.GetUUID()
 	case "name":
@@ -154,78 +165,78 @@ func handleGetCommand(cmd *Command, object Object) any {
 	case "inputs":
 		return object.GetInputs()
 	case "input":
-		return handlePort(cmd.Args, object)
+		return handlePort(cmd, object, true)
+	case "outputs":
+		return object.GetOutputs()
+	case "output":
+		return handlePort(cmd, object, false)
 	default:
-		return fmt.Errorf("unknown get command: %s", cmd.CommandName)
+		return fmt.Errorf("unknown get command: %s", cmd.Thing)
 	}
 
 }
 
-func handlePort(args []string, object Object) any {
-	fmt.Println("&&&&&&&&&&&&&&&&")
-	if len(args) < 1 {
-		return fmt.Errorf("getInput command requires an argument")
+func handlePort(cmd *Command, object Object, isInput bool) any {
+	getID := cmd.GetArgsByKey("id")
+	if getID == "" {
+		return fmt.Errorf("failed to get value required from args :%s", "id")
 	}
-	fmt.Println(args)
-	if len(args) == 3 {
-		arg1 := args[0] // id
-		arg2 := args[1] // value
-		arg3 := args[2] // data, value, name
-		if arg1 == "id" {
-			var port *Port
-			port = object.GetInput(arg2)
-			if arg3 == "name" {
-				return port.GetName()
-			}
-			if arg3 == "value" || arg3 == "data" {
-				return port.GetValueDisplay()
-			}
-		}
+	var port *Port
+	if isInput {
+		port = object.GetInput(getID)
+	} else {
+		port = object.GetOutput(getID)
 	}
-	return fmt.Errorf("unknown get command")
+	if port == nil {
+		return fmt.Errorf("failed to find port by id: %s", getID)
+	}
+	get := cmd.GetArgsByKey("name")
+	if get != "" {
+		return port.GetValueDisplay()
+	}
+	get = cmd.GetArgsByKey("value")
+	if get != "" {
+		return port.GetValueDisplay()
+	}
+	get = cmd.GetArgsByKey("data")
+	if get != "" {
+		return port.GetValueDisplay()
+	}
+	return fmt.Errorf("funknown get command for port by id: %s, try name, value, data", getID)
 }
 
 func handleSetCommand(cmd *Command, object Object) any {
-	switch strings.ToLower(cmd.CommandName) {
+	switch strings.ToLower(cmd.Thing) {
 	case "name":
-		if len(cmd.Args) < 1 {
-			return fmt.Errorf("setname command requires an argument")
+		byName := cmd.GetArgsByKey("name")
+		if byName == "" {
+			return fmt.Errorf("failed to get value required from args :%s", "name")
 		}
-		return object.SetName(cmd.Args[0])
+		return object.SetName(byName)
 	case "input":
-		if len(cmd.Args) < 1 {
-			return fmt.Errorf("getInput command requires an argument")
+		getID := cmd.GetArgsByKey("id")
+		if getID == "" {
+			return fmt.Errorf("failed to get value required from args :%s", "id")
 		}
-		if len(cmd.Args) == 4 {
-			arg1 := cmd.Args[0] // id
-			arg2 := cmd.Args[1] // value
-			arg3 := cmd.Args[2] // data, value, name
-			arg4 := cmd.Args[3] // 22.5, "new name"
-
-			if arg1 == "id" {
-				var port *Port
-				port = object.GetInput(arg2)
-				if arg3 == "name" {
-					return port.SetName(arg4)
+		var port *Port
+		port = object.GetInput(getID)
+		write := cmd.GetArgsByKey("write")
+		if write != "" {
+			if port.GetDataType() == priority.TypeFloat {
+				f := convert.AnyToFloatPointer(write)
+				if f == nil {
+					return "was unable to parse value as type float"
 				}
-				if arg3 == "write" {
-					if port.GetDataType() == priority.TypeFloat {
-						f := convert.AnyToFloatPointer(arg4)
-						if f == nil {
-							return "was unable to parse value as type float"
-						}
-						err := port.Write(f)
-						if err != nil {
-							return err.Error()
-						}
-						return fmt.Sprintf("object: %s updated ok port: %s value: %s", object.GetName(), arg2, arg4)
-					}
-					return port.Write(arg4)
+				err := port.Write(f)
+				if err != nil {
+					return err.Error()
 				}
+				return fmt.Sprintf("object: %s updated ok port: %s value: %s", object.GetName(), port.GetID(), write)
 			}
 		}
+
 	default:
-		return fmt.Errorf("unknown set command: %s", cmd.CommandName)
+		return fmt.Errorf("unknown set command: %s", cmd.Thing)
 	}
 	return fmt.Errorf("unknown get command")
 
@@ -241,23 +252,21 @@ func (inst *RuntimeImpl) Delete() string {
 }
 
 func (inst *RuntimeImpl) Query(query string) []Object {
-	var allResults []Object
 	query, limit := extractAndRemoveLimit(query) // get the query limit
 	orSegments := strings.Split(query, "OR")
 
+	var allResults []Object
 	for _, orSegment := range orSegments {
 		orSegment = strings.TrimSpace(strings.Trim(orSegment, "()"))
 		andConditions := strings.Split(orSegment, "AND") // Split the OR segment into AND conditions
 
-		var segmentResults []Object // Temporarily store results for this OR segment
 		if len(andConditions) == 0 {
 			continue
 		}
-		segmentResults = inst.Get() // Start with all objects for the first condition
 
+		segmentResults := inst.Get() // Start with all objects for the first condition
 		segmentResults = filterObjectsByCondition(segmentResults, andConditions)
 		allResults = addUniqueMatches(allResults, segmentResults)
-
 	}
 
 	if limit >= 0 && len(allResults) > limit {
@@ -267,7 +276,7 @@ func (inst *RuntimeImpl) Query(query string) []Object {
 	return allResults
 }
 
-func addUniqueMatches(allResults []Object, segmentResults []Object) []Object {
+func addUniqueMatches(allResults, segmentResults []Object) []Object {
 	for _, match := range segmentResults {
 		if !containsObject(allResults, match) {
 			allResults = append(allResults, match)
@@ -277,8 +286,6 @@ func addUniqueMatches(allResults []Object, segmentResults []Object) []Object {
 }
 
 func filterObjectsByCondition(segmentResults []Object, andConditions []string) []Object {
-	var filteredResults []Object
-
 	for _, andCondition := range andConditions {
 		field, operator, value := extractFieldAndValue(andCondition)
 		if field == "" {
@@ -298,8 +305,7 @@ func filterObjectsByCondition(segmentResults []Object, andConditions []string) [
 		segmentResults = matchesForThisCondition
 	}
 
-	filteredResults = segmentResults
-	return filteredResults
+	return segmentResults
 }
 
 func matchesCondition(obj Object, field, operator, value string) bool {
@@ -766,4 +772,60 @@ func (inst *RuntimeImpl) AddConnection(sourceUUID, sourcePort, targetUUID, targe
 	//	return nil
 	//}
 	return nil
+}
+
+// ObjectConfig represents configuration for a object.
+type ObjectConfig struct {
+	ID                 string        `json:"id"`
+	Info               *Info         `json:"info"`
+	Inputs             []*Port       `json:"inputs"`
+	Outputs            []*Port       `json:"outputs,omitempty"`
+	Values             []*Port       `json:"values,omitempty"`
+	Connections        []*Connection `json:"connections,omitempty"`
+	Settings           *Settings     `json:"settings,omitempty"`
+	Meta               *Meta         `json:"meta,omitempty"`
+	Stats              *ObjectStats  `json:"stats,omitempty"`
+	WasUpdated         bool          `json:"wasUpdated,omitempty"`
+	dontRecreateObject bool
+}
+
+func SerializeCurrentFlowArray(objects []Object) []*ObjectConfig {
+	var serializedObjects []*ObjectConfig
+	for _, object := range objects {
+		serializedObjects = append(serializedObjects, serializeCurrentFlowArray(object))
+	}
+	return serializedObjects
+}
+
+func serializeCurrentFlowArray(object Object) *ObjectConfig {
+
+	meta := object.GetMeta()
+	if meta == nil {
+		meta = &Meta{
+			Position: Position{
+				PositionY: 0,
+				PositionX: 0,
+			},
+		}
+	}
+	objectConfig := &ObjectConfig{
+		ID:          object.GetID(),
+		Info:        object.GetInfo(),
+		Inputs:      getPortValues(object.GetInputs()),
+		Outputs:     getPortValues(object.GetOutputs()),
+		Connections: object.GetConnections(),
+		Settings:    object.GetSettings(),
+		Stats:       object.GetStats(),
+		Meta:        meta,
+	}
+	return objectConfig
+}
+
+func getPortValues(ports []*Port) []*Port {
+	for _, port := range ports {
+		if port.GetValue() != nil {
+			port.DataDisplay = port.GetValueDisplay()
+		}
+	}
+	return ports
 }

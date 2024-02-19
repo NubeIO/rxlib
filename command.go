@@ -20,12 +20,14 @@ func (c *CommandParse) Parse(command string) (*Command, error) {
 	name := parts[0]
 	commandParts := splitCamelCase(name)
 	if len(commandParts) != 2 {
-		return nil, fmt.Errorf("failed to find vaild command convertion, try setName, getName, getInput")
+		return nil, fmt.Errorf("failed to find valid command conversion, try setName, getName, getInput")
 	}
 	commandType := strings.ToLower(commandParts[0])
 	commandName := strings.ToLower(commandParts[1])
 	if commandType == "set" || commandType == "write" {
 		commandType = "set"
+	} else if commandType == "get" {
+		// ok
 	} else {
 		return nil, fmt.Errorf("incorrect command for set, try set or write eg; setName, writeName")
 	}
@@ -50,12 +52,12 @@ func splitCamelCase(s string) []string {
 }
 
 type PredefinedCommand struct {
-	Name        string   `json:"name,omitempty"`
-	CommandName string   `json:"commandName,omitempty"`
-	Query       string   `json:"query,omitempty"`
-	Field       string   `json:"field,omitempty"`
-	FieldEntry  string   `json:"fieldEntry,omitempty"`
-	Args        []string `json:"args,omitempty"`
+	Name       string            `json:"name,omitempty"`
+	Thing      string            `json:"thing,omitempty"`
+	Query      string            `json:"query,omitempty"`
+	Field      string            `json:"field,omitempty"`
+	FieldEntry string            `json:"fieldEntry,omitempty"`
+	Args       map[string]string `json:"args,omitempty"`
 }
 
 type PredefinedCommandBuilder struct {
@@ -63,7 +65,9 @@ type PredefinedCommandBuilder struct {
 }
 
 func NewPredefinedCommandBuilder() *PredefinedCommandBuilder {
-	return &PredefinedCommandBuilder{command: &PredefinedCommand{}}
+	return &PredefinedCommandBuilder{command: &PredefinedCommand{
+		Args: make(map[string]string),
+	}}
 }
 
 func (b *PredefinedCommandBuilder) SetName(name string) *PredefinedCommandBuilder {
@@ -72,7 +76,7 @@ func (b *PredefinedCommandBuilder) SetName(name string) *PredefinedCommandBuilde
 }
 
 func (b *PredefinedCommandBuilder) SetCommandName(commandName string) *PredefinedCommandBuilder {
-	b.command.CommandName = commandName
+	b.command.Thing = commandName
 	return b
 }
 
@@ -114,13 +118,19 @@ func (b *PredefinedCommandBuilder) AddArgs(args string) *PredefinedCommandBuilde
 		switch key {
 		case "-query":
 			b.command.Query = value
+		case "-returnType":
+			b.command.Field = "returnType"
+			b.command.FieldEntry = value
 		case "-name":
 			b.command.Field = "name"
 			b.command.FieldEntry = value
+		case "-uuid":
+			b.command.Field = "uuid"
+			b.command.FieldEntry = value
 		case "-id":
-			b.command.Args = append(b.command.Args, "id", value)
+			b.command.Args["id"] = value
 		case "-write":
-			b.command.Args = append(b.command.Args, "write", value)
+			b.command.Args["write"] = value
 		}
 	}
 	return b
@@ -169,54 +179,72 @@ func (b *PredefinedCommandBuilder) Build() *PredefinedCommand {
 func (pc *PredefinedCommand) ToCommand() *Command {
 	cmd := &Command{
 		CommandType: CommandType(pc.Name),
-		CommandName: pc.CommandName,
+		Thing:       pc.Thing,
 		Query:       pc.Query,
 		Field:       pc.Field,
 		FieldEntry:  pc.FieldEntry,
-		Args:        pc.Args,
 	}
+	cmd.Args = make(map[string]string)
+	cmd.Args = pc.Args
 	return cmd
 }
 
-type CommandBuilder struct {
-	command *Command
+type Command struct {
+	CommandType CommandType       `json:"type"`            // get
+	Thing       string            `json:"thing"`           // -cmd:inputValues
+	Query       string            `json:"query,omitempty"` //  -query:(objects:name == math-add-2) OR (objects:name == math-add-1)
+	Field       string            `json:"field,omitempty"` // -uuid
+	FieldEntry  string            `json:"entry,omitempty"` // abc
+	Args        map[string]string `json:"args,omitempty"`
 }
 
-func NewCommandBuilder() *CommandBuilder {
-	return &CommandBuilder{
-		command: &Command{},
+func NewCommand() *Command {
+	return &Command{
+		Args: make(map[string]string),
 	}
 }
 
-func (b *CommandBuilder) SetType(commandType CommandType) *CommandBuilder {
-	b.command.CommandType = commandType
-	return b
+// GetArgsByKey retrieves the value of a specific key in the Args map.
+func (c *Command) GetArgsByKey(key string) string {
+	return c.Args[key]
 }
 
-func (b *CommandBuilder) SetCommandName(name string) *CommandBuilder {
-	b.command.CommandName = name
-	return b
+// GetArgsKeys retrieves all keys and values from the Args map.
+func (c *Command) GetArgsKeys() (keys, values []string) {
+	for k, v := range c.Args {
+		keys = append(keys, k)
+		values = append(values, v)
+	}
+	return keys, values
 }
 
-func (b *CommandBuilder) SetQuery(query string) *CommandBuilder {
-	b.command.Query = query
-	return b
+func (c *Command) ToString() string {
+	var fieldPart, queryPart string
+
+	if c.Field != "" && c.FieldEntry != "" {
+		fieldPart = fmt.Sprintf("-%s:%s", c.Field, c.FieldEntry)
+	}
+
+	if c.Query != "" {
+		queryPart = fmt.Sprintf("-query:%s", c.Query)
+	}
+
+	var args []string
+	for key, value := range c.Args {
+		args = append(args, fmt.Sprintf("%s:\"%s\"", key, value))
+	}
+
+	return fmt.Sprintf("%s -cmd:%s %s %s -args: %s",
+		c.CommandType, c.Thing, queryPart, fieldPart, strings.Join(args, ", "))
 }
 
-func (b *CommandBuilder) SetField(field, entry string) *CommandBuilder {
-	b.command.Field = field
-	b.command.FieldEntry = entry
-	return b
-}
+type CommandType string
 
-func (b *CommandBuilder) AddArg(arg string) *CommandBuilder {
-	b.command.Args = append(b.command.Args, arg)
-	return b
-}
-
-func (b *CommandBuilder) Build() *Command {
-	return b.command
-}
+const (
+	CommandTypeGet    CommandType = "get"
+	CommandTypeSet    CommandType = "set"
+	CommandTypeDelete CommandType = "delete"
+)
 
 type CommandOld struct {
 	NameSpace  string `json:"nameSpace,omitempty"`  // name space is like this action.<plugin>.<objectUUID>.<commandName>
@@ -231,39 +259,3 @@ type Action struct {
 	CommandName string
 	Body        any
 }
-
-type Command struct {
-	CommandType CommandType `json:"type"`            // get
-	CommandName string      `json:"name"`            // -cmd:inputValues
-	Query       string      `json:"query,omitempty"` //  -query:(objects:name == math-add-2) OR (objects:name == math-add-1)
-	Field       string      `json:"field,omitempty"` // -uuid
-	FieldEntry  string      `json:"entry,omitempty"` // abc
-	Args        []string    `json:"args,omitempty"`  // all | in1
-}
-
-func NewCommand(c *Command) *Command {
-	return c
-}
-
-func (c *Command) ToString() string {
-	var fieldPart, queryPart string
-
-	if c.Field != "" && c.FieldEntry != "" {
-		fieldPart = fmt.Sprintf("-%s:%s", c.Field, c.FieldEntry)
-	}
-
-	if c.Query != "" {
-		queryPart = fmt.Sprintf("-query:%s", c.Query)
-	}
-
-	return fmt.Sprintf("%s -cmd:%s %s %s -args: %s",
-		c.CommandType, c.CommandName, queryPart, fieldPart, strings.Join(c.Args, ", "))
-}
-
-type CommandType string
-
-const (
-	CommandTypeGet    CommandType = "get"
-	CommandTypeSet    CommandType = "set"
-	CommandTypeDelete CommandType = "delete"
-)
