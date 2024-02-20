@@ -2,7 +2,6 @@ package rxlib
 
 import (
 	"fmt"
-	"github.com/NubeIO/rxlib/helpers/pprint"
 	"github.com/NubeIO/rxlib/libs/convert"
 	"github.com/NubeIO/rxlib/priority"
 	"strconv"
@@ -79,9 +78,9 @@ type RuntimeImpl struct {
 
 type CommandResponse struct {
 	Object           Object             `json:"object,omitempty"`
-	SerializeObject  *ObjectConfig      `json:"serializeObject"`
+	SerializeObject  *ObjectConfig      `json:"serializeObject,omitempty"`
 	Objects          []Object           `json:"objects,omitempty"`
-	SerializeObjects []*ObjectConfig    `json:"serializeObjects"`
+	SerializeObjects []*ObjectConfig    `json:"serializeObjects,omitempty"`
 	Ports            []*Port            `json:"ports,omitempty"`
 	MapPorts         map[string][]*Port `json:"mapPorts,omitempty"`
 	String           string             `json:"string,omitempty"`
@@ -97,31 +96,43 @@ func (inst *RuntimeImpl) CommandObject(command *Command) *CommandResponse {
 		inst.cmd.Error = fmt.Errorf("command cannot be nil")
 		return inst.cmd
 	}
-	returnType, parsedArgs := commandReturnType(command)
+	returnType, parsedArgs, err := commandReturnType(command)
+	if err != nil {
+		inst.cmd.Error = err
+		return inst.cmd
+	}
 	inst.cmd.ReturnType = returnType
+
+	commandType := parsedArgs.CommandType
+	thing := parsedArgs.Thing
+	uuid := parsedArgs.UUID
+	name := parsedArgs.Name
+	byType := parsedArgs.Type
+
 	var returnAsJSON bool
 	if parsedArgs.ReturnAs == commandJSON {
 		returnAsJSON = true
 	}
 	if parsedArgs.ReturnAs != "" {
-		fmt.Printf("type: %s thing: %s type-return: %s --as: %s \n", command.CommandType, command.Thing, returnType, parsedArgs.ReturnAs)
+		fmt.Printf("type: %s thing: %s type-return: %s --as: %s \n", commandType, thing, returnType, parsedArgs.ReturnAs)
 	} else {
-		fmt.Printf("type: %s thing: %s type-return: %s \n", command.CommandType, command.Thing, returnType)
+		fmt.Printf("type: %s thing: %s type-return: %s \n", commandType, thing, returnType)
 	}
 
 	inst.parsedCommand = parsedArgs
-	if command.Query != "" {
-		objects := inst.Query(command.Query)
-		if returnAsJSON {
-			inst.cmd.SerializeObjects = SerializeCurrentFlowArray(objects)
-		} else {
-			inst.cmd.Objects = objects
+	if command.Query != "" || thing == "objects" {
+		if command.Query != "" { // handle query
+			objects := inst.Query(command.Query)
+			if returnAsJSON {
+				inst.cmd.SerializeObjects = SerializeCurrentFlowArray(objects)
+			} else {
+				inst.cmd.Objects = objects
+			}
+			return inst.cmd
 		}
-		return inst.cmd
+		// need to add logic for objects
 	}
-	uuid := parsedArgs.UUID
-	name := parsedArgs.Name
-	byType := parsedArgs.Type
+
 	var object Object
 	if uuid != "" {
 		object = inst.GetByUUID(uuid)
@@ -131,7 +142,11 @@ func (inst *RuntimeImpl) CommandObject(command *Command) *CommandResponse {
 		object = inst.GetFirstByID(name)
 	}
 	if object == nil {
-		inst.cmd.Error = fmt.Errorf("object not found by uuid: %s, name: %s", uuid, name)
+		if uuid != "" {
+			inst.cmd.Error = errMessage(fmt.Sprintf("object not found by uuid: %s", uuid), returnType, parsedArgs)
+		} else {
+			inst.cmd.Error = errMessage(fmt.Sprintf("object not found by name: %s", name), returnType, parsedArgs)
+		}
 		return inst.cmd
 	}
 
@@ -144,30 +159,173 @@ func (inst *RuntimeImpl) CommandObject(command *Command) *CommandResponse {
 		}
 		return inst.cmd
 	case commandString:
-		inst.cmd.String = inst.handleGetCommandString(command, object, parsedArgs)
+		if commandType == "set" {
+			resp, err := inst.handleSetPorts(object, parsedArgs)
+			inst.cmd.Error = err
+			inst.cmd.String = resp
+			return inst.cmd
+		}
+		inst.cmd.String = inst.handleGetCommandString(object, parsedArgs)
 		return inst.cmd
-	default:
+	case commandPorts:
+		ports, err := inst.handlePorts(object, parsedArgs)
+		inst.cmd.Error = err
+		inst.cmd.Ports = ports
+		return inst.cmd
 
 	}
-	inst.cmd.Error = fmt.Errorf("unsupported return type: %s", returnType)
+
 	return inst.cmd
 }
 
+func errMessage(message, returnType string, parsed *parsedCommand) error {
+	return fmt.Errorf("error-message: %s, type: %s, thing: %s, type-return: %s\n", message, parsed.CommandType, parsed.Thing, returnType)
+}
+
+// --------------- COMMANDS ----------------
+
+func (inst *RuntimeImpl) handleGetManyAsObjects(objects []Object, parsed *parsedCommand) []Object {
+	var results []Object
+	for _, object := range objects {
+		result := inst.handleGetCommandObject(object, parsed)
+		results = append(results, result)
+	}
+	return results
+}
+
+func (inst *RuntimeImpl) handleGetCommandObject(object Object, parsed *parsedCommand) Object {
+	switch strings.ToLower(parsed.Thing) {
+	case "object":
+		return object
+	}
+	return nil
+
+}
+
+func (inst *RuntimeImpl) handleGetManyAsString(objects []Object, parsed *parsedCommand) []string {
+	var results []string
+	for _, object := range objects {
+		result := inst.handleGetCommandString(object, parsed)
+		results = append(results, result)
+	}
+	return results
+}
+
+func (inst *RuntimeImpl) handleGetCommandString(object Object, parsed *parsedCommand) string {
+	if isPort(parsed) { // handle ports
+		res, err := inst.handlePortString(object, parsed)
+		if err != nil {
+			return err.Error()
+		}
+		return res
+	}
+
+	switch strings.ToLower(parsed.Field) {
+	case "uuid":
+		return object.GetUUID()
+	case "name":
+		return object.GetName()
+	}
+	return ""
+}
+
+func (inst *RuntimeImpl) handlePortString(object Object, parsed *parsedCommand) (string, error) {
+	port, err := portCommon(object, isInput(parsed), parsed)
+	if err != nil {
+		return "", err
+	}
+	switch strings.ToLower(parsed.Field) {
+	case "values":
+		pri := port.GetValueDisplay()
+		if pri == nil {
+			return "no values found", nil
+		}
+		out := fmt.Sprintf("DataType: %s, HighestPriority: %v RawValue %v", pri.DataType, pri.HighestPriority, pri.RawValue)
+		return out, nil
+	case "value":
+		return fmt.Sprint(port.GetHighestPriority()), nil
+	case "datatype":
+		return string(port.GetDataType()), nil
+	case "uuid":
+		return port.GetUUID(), nil
+	case "name":
+		return port.GetName(), nil
+	}
+	return "", nil
+}
+
+func (inst *RuntimeImpl) handleSetPorts(object Object, parsed *parsedCommand) (string, error) {
+	switch strings.ToLower(parsed.Thing) {
+	case "input":
+		getID := parsed.ID
+		if getID == "" {
+			return "", fmt.Errorf("failed to get value required from args :%s", "id")
+		}
+		var port *Port
+		port = object.GetInput(getID)
+		write := parsed.Write
+		if write != "" {
+			if port.GetDataType() == priority.TypeFloat {
+				f := convert.AnyToFloatPointer(write)
+				if f == nil {
+					return "", fmt.Errorf("was unable to parse value as type float")
+				}
+				err := port.Write(f)
+				if err != nil {
+					return "", err
+				}
+				return "", fmt.Errorf("object: %s updated ok port: %s value: %s", object.GetName(), port.GetID(), write)
+			}
+		}
+
+	default:
+		return "", fmt.Errorf("unknown set command: %s", parsed.Thing)
+	}
+	return "", fmt.Errorf("unknown get command")
+
+}
+
+func (inst *RuntimeImpl) handlePorts(object Object, parsed *parsedCommand) ([]*Port, error) {
+	isInputs := isInput(parsed)
+	if parsed.ID != "" { // handle a one port
+		var out []*Port
+		p, err := portCommon(object, isInputs, parsed)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, p)
+		return out, nil
+	}
+	var ports []*Port
+	if isInputs {
+		ports = object.GetInputs()
+	} else {
+		ports = object.GetOutputs()
+	}
+	if ports == nil {
+		//return nil, fmt.Errorf("failed to find port by id: %s", getID)
+		return nil, nil
+	}
+	return ports, nil
+}
+
 type parsedCommand struct {
-	ID       string `json:"id,omitempty"`
-	Field    string `json:"field,omitempty"`
-	UUID     string `json:"uuid,omitempty"`
-	Name     string `json:"name,omitempty"`
-	Type     string `json:"type,omitempty"`
-	Write    string `json:"write,omitempty"`
-	Value    string `json:"value,omitempty"`
-	ReturnAs string `json:"returnAs"`
-	IsQuery  bool   `json:"isQuery"`
+	CommandType string `json:"commandType"`
+	Thing       string `json:"thing"`
+	ID          string `json:"id,omitempty"`
+	Field       string `json:"field,omitempty"`
+	UUID        string `json:"uuid,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Type        string `json:"type,omitempty"`
+	Write       string `json:"write,omitempty"`
+	Value       string `json:"value,omitempty"`
+	ReturnAs    string `json:"returnAs"`
+	IsQuery     bool   `json:"isQuery"`
 }
 
 const (
-	commandJSON    = "json"
-	commandPort    = "port"
+	commandJSON = "json"
+	//commandPort    = "port"
 	commandPorts   = "ports"
 	commandNumber  = "number"
 	commandString  = "string"
@@ -179,18 +337,20 @@ const (
 	commandInputs  = "inputs"
 )
 
-func commandReturnType(cmd *Command) (string, *parsedCommand) {
+func commandReturnType(cmd *Command) (string, *parsedCommand, error) {
 	var isQuery bool
 	if cmd.Query != "" {
 		isQuery = true
 	}
-	var isSet bool
-	if cmd.CommandType == "set" {
-		isSet = true
-	}
 
 	args := &parsedCommand{
 		IsQuery: isQuery,
+	}
+	if v, ok := cmd.Args["cmd"]; ok {
+		args.CommandType = v
+	}
+	if v, ok := cmd.Args["thing"]; ok {
+		args.Thing = v
 	}
 	if v, ok := cmd.Args["name"]; ok {
 		args.Name = v
@@ -214,96 +374,115 @@ func commandReturnType(cmd *Command) (string, *parsedCommand) {
 		args.ReturnAs = v
 	}
 
-	if cmd.Thing == commandObjects {
+	if args.Thing == commandObjects {
 		if args.Write != "" {
-			return commandString, args
+			return commandString, args, nil
 		}
-		return commandObjects, args
+		return commandObjects, args, nil
 	}
 
-	if cmd.Thing == commandObject {
+	if args.Thing == commandObject {
 		if args.Write != "" {
-			return commandObject, args
+			return commandString, args, nil
 		}
-		return commandObject, args
+		return commandObject, args, nil
 	}
 
-	if cmd.Thing == commandInputs || cmd.Thing == commandOutputs {
-		if isSet { // update name, value of a port
-			return commandString, args
+	if args.Thing == commandInputs || args.Thing == commandOutputs {
+		if args.CommandType == "set" { // update name, value of a port
+			return commandString, args, nil
 		}
-		return commandPorts, args
-	}
-	if cmd.Thing == commandInput || cmd.Thing == commandOutput {
-		if isSet { // update name, value of a port
-			return commandString, args
+		if args.CommandType == "get" && args.Field == "data" { // get port data
+			return commandPorts, args, nil
 		}
-		return commandPort, args
+		return commandPorts, args, nil
+	}
+	if args.Thing == commandInput || args.Thing == commandOutput {
+		if args.CommandType == "set" { // update name, value of a port
+			return commandString, args, nil
+		}
+		if args.CommandType == "get" && args.Field == "data" { // get port data
+			return commandPorts, args, nil
+		}
+		if args.CommandType == "get" && args.Field != "" {
+			return commandString, args, nil
+		}
+		return commandPorts, args, nil
 	}
 
-	return "", args
+	return "not-found", args, fmt.Errorf("failed to find a vaild type, get input, getInput or setInput")
 }
 
-// --------------- COMMANDS ----------------
-
-func (inst *RuntimeImpl) handleGetManyAsObjects(cmd *Command, objects []Object, parsed *parsedCommand) []Object {
-	var results []Object
-	for _, object := range objects {
-		result := inst.handleGetCommandObject(cmd, object, parsed)
-		results = append(results, result)
+func isObject(parsed *parsedCommand) bool {
+	if parsed.Thing == "object" {
+		return true
 	}
-	return results
+	return false
 }
 
-func (inst *RuntimeImpl) handleGetManyAsString(cmd *Command, objects []Object, parsed *parsedCommand) []string {
-	var results []string
-	for _, object := range objects {
-		result := inst.handleGetCommandString(cmd, object, parsed)
-		results = append(results, result)
+func isObjects(parsed *parsedCommand) bool {
+	if parsed.Thing == "objects" {
+		return true
 	}
-	return results
+	return false
 }
 
-func (inst *RuntimeImpl) handleGetCommandObject(cmd *Command, object Object, parsed *parsedCommand) Object {
-	switch strings.ToLower(cmd.Thing) {
-	case "object":
-		return object
+func isInput(parsed *parsedCommand) bool {
+	if parsed.Thing == "inputs" || parsed.Thing == "input" {
+		return true
 	}
-	return nil
-
+	return false
 }
 
-func (inst *RuntimeImpl) handleGetCommandString(cmd *Command, object Object, parsed *parsedCommand) string {
-	switch strings.ToLower(cmd.Thing) {
-	case "uuid":
-		return object.GetUUID()
-	case "name":
-		return object.GetName()
+func isPort(parsed *parsedCommand) bool {
+	if parsed.Thing == "inputs" || parsed.Thing == "input" {
+		return true
 	}
-	return ""
-
+	if parsed.Thing == "outputs" || parsed.Thing == "output" {
+		return true
+	}
+	return false
 }
 
-func (inst *RuntimeImpl) handleGetCommandForMultipleObjects(cmd *Command, objects []Object) any {
+func portCommon(object Object, isInput bool, parsed *parsedCommand) (*Port, error) {
+	getID := parsed.ID
+	if getID == "" {
+		return nil, fmt.Errorf("failed to get value required from args :%s", "id")
+	}
+	var port *Port
+	if isInput {
+		port = object.GetInput(getID)
+	} else {
+		port = object.GetOutput(getID)
+	}
+	if port == nil {
+		var inputCount = len(object.GetInputs())
+		var outputCount = len(object.GetOutputs())
+		return nil, fmt.Errorf("failed to find port by id: %s object inputs count: %d object outputs count: %d", getID, inputCount, outputCount)
+	}
+	return port, nil
+}
+
+func (inst *RuntimeImpl) handleGetCommandForMultipleObjects(cmd *Command, objects []Object, parsed *parsedCommand) any {
 	var results []any
 	for _, object := range objects {
-		result := inst.handleGetCommand(cmd, object)
+		result := inst.handleGetCommand(cmd, object, parsed)
 		results = append(results, result)
 	}
 	return results
 }
 
-func (inst *RuntimeImpl) handleSetCommandForMultipleObjects(cmd *Command, objects []Object) any {
+func (inst *RuntimeImpl) handleSetCommandForMultipleObjects(cmd *Command, objects []Object, parsed *parsedCommand) any {
 	var results []any
 	for _, object := range objects {
-		result := inst.handleSetCommand(cmd, object)
+		result := inst.handleSetCommand(cmd, object, parsed)
 		results = append(results, result)
 	}
 	return results
 }
 
-func (inst *RuntimeImpl) handleGetCommand(cmd *Command, object Object) any {
-	switch strings.ToLower(cmd.Thing) {
+func (inst *RuntimeImpl) handleGetCommand(cmd *Command, object Object, parsed *parsedCommand) any {
+	switch strings.ToLower(parsed.Thing) {
 	case "object":
 		return object
 	case "uuid":
@@ -319,7 +498,7 @@ func (inst *RuntimeImpl) handleGetCommand(cmd *Command, object Object) any {
 	case "output":
 		return inst.handlePort(cmd, object, false)
 	default:
-		return fmt.Errorf("unknown get command: %s", cmd.Thing)
+		return fmt.Errorf("unknown get command: %s", parsed.Thing)
 	}
 
 }
@@ -354,9 +533,8 @@ func (inst *RuntimeImpl) handlePort(cmd *Command, object Object, isInput bool) a
 	return port
 }
 
-func (inst *RuntimeImpl) handleSetCommand(cmd *Command, object Object) any {
-	pprint.PrintJSON(cmd)
-	switch strings.ToLower(cmd.Thing) {
+func (inst *RuntimeImpl) handleSetCommand(cmd *Command, object Object, parsed *parsedCommand) any {
+	switch strings.ToLower(parsed.Thing) {
 	case "object":
 		field := cmd.GetArgsByKey("field")
 		value := cmd.GetArgsByKey("value")
@@ -393,7 +571,7 @@ func (inst *RuntimeImpl) handleSetCommand(cmd *Command, object Object) any {
 		}
 
 	default:
-		return fmt.Errorf("unknown set command: %s", cmd.Thing)
+		return fmt.Errorf("unknown set command: %s", parsed.Thing)
 	}
 	return fmt.Errorf("unknown get command")
 
