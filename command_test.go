@@ -1,6 +1,7 @@
 package rxlib
 
 import (
+	"fmt"
 	"github.com/NubeIO/rxlib/helpers/pprint"
 	"testing"
 )
@@ -11,11 +12,15 @@ func TestCommandBuilder(t *testing.T) {
 	cmdString = `setObject --name:"math-add-2" --field:"name" --value:"new name"`                           // string
 	cmdString = `getObject --name:"math-add-2"`                                                             // object
 	cmdString = `getObjects --query:(objects:name == math-add-2)`                                           // []Object
-	cmdString = `getInputs--query:(objects:name == math-add-2)`                                             // map[string][]*Ports
+	cmdString = `get inputs --query="(objects:name == math-add-2)"  --field=123  --f=23 --a=2 --ddd=222 --aoo=555`
 	//cmdString = `getObjects --return:json`
-
-	cp := NewCommandParse()
-	cmd, _ := cp.Parse(cmdString)
+	cmd := NewCommand()
+	cmd, err := cmd.Parse(cmdString)
+	if err != nil {
+		return
+	}
 	pprint.PrintJSON(cmd)
+
+	fmt.Println(cmd.GetArgsByIndex(0), cmd.GetArgsByIndex(1))
 
 }

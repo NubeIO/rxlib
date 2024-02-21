@@ -57,17 +57,22 @@ const (
 	MappingIntervalPushReceiver  MappingType = "push-receiver"
 )
 
+type MappingRequest struct {
+	RequestMappingUUID  string `json:"requestMappingUUID"`
+	ResponseMappingUUID string `json:"responseMappingUUID"`
+}
+
 type Mapping struct {
-	GlobalID          string           `json:"globalID"`
-	LeaderNetworkUUID string           `json:"leaderNetworkUUID,omitempty"`
-	LeaderMappingUUID string           `json:"leaderMappingUUID,omitempty"`
-	LeaderDataType    priority.Type    `json:"leaderDataType,omitempty"` // make it easy for an Obj to decode in incoming data; eg string, map[], user
-	TargetMappingUUID string           `json:"targetMappingUUID"`
-	TargetNetworkUUID string           `json:"targetNetworkUUID"`
-	TargetDataType    priority.Type    `json:"targetDataType,omitempty"`
-	ResponseUUID      string           `json:"responseUUID"`
-	Type              MappingType      `json:"type"`
-	MappingInterval   *MappingInterval `json:"mappingInterval,omitempty"`
+	GlobalID         string           `json:"globalID"`
+	NetworkUUID      string           `json:"networkUUID,omitempty"`
+	MappingUUID      string           `json:"mappingUUID,omitempty"`
+	DataType         priority.Type    `json:"dataType,omitempty"` // make it easy for an Obj to decode in incoming data; eg string, map[], user
+	SlaveMappingUUID string           `json:"slaveMappingUUID"`
+	SlaveNetworkUUID string           `json:"slaveNetworkUUID"`
+	SlaveDataType    priority.Type    `json:"slaveDataType,omitempty"`
+	ResponseUUID     string           `json:"responseUUID"`
+	Type             MappingType      `json:"type"`
+	MappingInterval  *MappingInterval `json:"mappingInterval,omitempty"`
 }
 type MappingInterval struct {
 	Disable         bool          `json:"disable"`

@@ -77,6 +77,7 @@ type RuntimeImpl struct {
 }
 
 type CommandResponse struct {
+	SenderID         string             `json:"senderID"` // if sent from another ROS instance
 	Object           Object             `json:"object,omitempty"`
 	SerializeObject  *ObjectConfig      `json:"serializeObject,omitempty"`
 	Objects          []Object           `json:"objects,omitempty"`
@@ -88,6 +89,8 @@ type CommandResponse struct {
 	Bool             *bool              `json:"boolean,omitempty"`
 	Error            error              `json:"error,omitempty"`
 	ReturnType       string             `json:"returnType,omitempty"`
+	Any              any                `json:"any,omitempty"`
+	CommandResponse  []*CommandResponse `json:"commandResponse,omitempty"`
 }
 
 func (inst *RuntimeImpl) CommandObject(command *Command) *CommandResponse {
@@ -96,6 +99,7 @@ func (inst *RuntimeImpl) CommandObject(command *Command) *CommandResponse {
 		inst.cmd.Error = fmt.Errorf("command cannot be nil")
 		return inst.cmd
 	}
+	inst.cmd.SenderID = command.SenderID
 	returnType, parsedArgs, err := commandReturnType(command)
 	if err != nil {
 		inst.cmd.Error = err
@@ -104,6 +108,7 @@ func (inst *RuntimeImpl) CommandObject(command *Command) *CommandResponse {
 	inst.cmd.ReturnType = returnType
 
 	commandType := parsedArgs.CommandType
+	query := parsedArgs.Query
 	thing := parsedArgs.Thing
 	uuid := parsedArgs.UUID
 	name := parsedArgs.Name
@@ -118,11 +123,24 @@ func (inst *RuntimeImpl) CommandObject(command *Command) *CommandResponse {
 	} else {
 		fmt.Printf("type: %s thing: %s type-return: %s \n", commandType, thing, returnType)
 	}
-
 	inst.parsedCommand = parsedArgs
-	if command.Query != "" || thing == "objects" {
-		if command.Query != "" { // handle query
-			objects := inst.Query(command.Query)
+	if query != "" || thing == "objects" {
+		if query != "" { // handle query
+			objects := inst.Query(query)
+			if commandType == "invoke" {
+				for _, object := range objects {
+					inst.cmd.CommandResponse = append(inst.cmd.CommandResponse, object.Command(command))
+				}
+				return inst.cmd
+			}
+			if returnAsJSON {
+				inst.cmd.SerializeObjects = SerializeCurrentFlowArray(objects)
+			} else {
+				inst.cmd.Objects = objects
+			}
+			return inst.cmd
+		} else {
+			objects := inst.Get()
 			if returnAsJSON {
 				inst.cmd.SerializeObjects = SerializeCurrentFlowArray(objects)
 			} else {
@@ -130,7 +148,6 @@ func (inst *RuntimeImpl) CommandObject(command *Command) *CommandResponse {
 			}
 			return inst.cmd
 		}
-		// need to add logic for objects
 	}
 
 	var object Object
@@ -172,7 +189,6 @@ func (inst *RuntimeImpl) CommandObject(command *Command) *CommandResponse {
 		inst.cmd.Error = err
 		inst.cmd.Ports = ports
 		return inst.cmd
-
 	}
 
 	return inst.cmd
@@ -320,7 +336,7 @@ type parsedCommand struct {
 	Write       string `json:"write,omitempty"`
 	Value       string `json:"value,omitempty"`
 	ReturnAs    string `json:"returnAs"`
-	IsQuery     bool   `json:"isQuery"`
+	Query       string `json:"query"`
 }
 
 const (
@@ -338,39 +354,34 @@ const (
 )
 
 func commandReturnType(cmd *Command) (string, *parsedCommand, error) {
-	var isQuery bool
-	if cmd.Query != "" {
-		isQuery = true
-	}
 
-	args := &parsedCommand{
-		IsQuery: isQuery,
-	}
-	if v, ok := cmd.Args["cmd"]; ok {
-		args.CommandType = v
-	}
-	if v, ok := cmd.Args["thing"]; ok {
-		args.Thing = v
-	}
-	if v, ok := cmd.Args["name"]; ok {
+	args := &parsedCommand{}
+
+	args.CommandType = cmd.GetArgsByIndex(0)
+	args.Thing = cmd.GetArgsByIndex(1)
+
+	if v, ok := cmd.Data["name"]; ok {
 		args.Name = v
 	}
-	if v, ok := cmd.Args["uuid"]; ok {
+	if v, ok := cmd.Data["uuid"]; ok {
 		args.UUID = v
 	}
-	if v, ok := cmd.Args["id"]; ok {
+	if v, ok := cmd.Data["id"]; ok {
 		args.ID = v
 	}
-	if v, ok := cmd.Args["field"]; ok {
+	if v, ok := cmd.Data["query"]; ok {
+		args.Query = v
+	}
+	if v, ok := cmd.Data["field"]; ok {
 		args.Field = v
 	}
-	if v, ok := cmd.Args["write"]; ok { // write in most cases will normally return nothing or an error
+	if v, ok := cmd.Data["write"]; ok { // write in most cases will normally return nothing or an error
 		args.Write = v
 	}
-	if v, ok := cmd.Args["value"]; ok {
+	if v, ok := cmd.Data["value"]; ok {
 		args.Value = v
 	}
-	if v, ok := cmd.Args["as"]; ok {
+	if v, ok := cmd.Data["as"]; ok {
 		args.ReturnAs = v
 	}
 

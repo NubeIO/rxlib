@@ -6,6 +6,7 @@ import (
 	"github.com/NubeIO/schema"
 	"github.com/gin-gonic/gin"
 	"github.com/mustafaturan/bus/v3"
+	"time"
 )
 
 type Object interface {
@@ -21,7 +22,7 @@ type Object interface {
 	InvokePayloads(key string, dataType priority.Type, payload []*Payload) *ObjectCommandResponse
 	CommandList() []*Invoke
 	Process() error
-	Reset() error // for example this can be called on the 2nd deploy of a counter Obj, and we want to reset the count back to zero
+	Reset() error // for example this can be called on the 2nd deployment of a counter Obj, and we want to reset the count back to zero
 	AllowsReset() bool
 	Delete() error
 	Lock()
@@ -29,7 +30,7 @@ type Object interface {
 	IsLocked() bool
 	IsUnlocked() bool
 
-	Command(command *CommandOld) *ObjectCommandResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
+	Command(command *Command) *CommandResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 
 	AddRuntime(r Runtime)
 	Runtime() Runtime
@@ -198,8 +199,16 @@ type Object interface {
 	AddObjectTags(objectTypeTag ...ObjectTypeTag)
 	GetObjectTags() []ObjectTypeTag
 
+	SetCache(key string, data any, expiration time.Duration, overwriteExisting bool) error
+	GetCache(key string) (data any, found bool)
+
 	AddRouterGroup(c *gin.RouterGroup)
 }
+
+const (
+	NoExpiration      time.Duration = -1
+	DefaultExpiration time.Duration = 0
+)
 
 type ObjectValue struct {
 	ObjectId   string  `json:"objectID"`
