@@ -6,6 +6,7 @@ import (
 	"github.com/NubeIO/schema"
 	"github.com/gin-gonic/gin"
 	"github.com/mustafaturan/bus/v3"
+	"github.com/patrickmn/go-cache"
 	"time"
 )
 
@@ -201,6 +202,7 @@ type Object interface {
 
 	SetCache(key string, data any, expiration time.Duration, overwriteExisting bool) error
 	GetCache(key string) (data any, found bool)
+	CacheAll() map[string]cache.Item
 
 	AddRouterGroup(c *gin.RouterGroup)
 }
