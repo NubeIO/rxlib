@@ -9,27 +9,27 @@ import (
 )
 
 type Port struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	UUID     string `json:"uuid"`
-	Disabled bool   `json:"disabled"`
+	ID       string `json:"id,omitempty"`
+	Name     string `json:"name,omitempty"`
+	UUID     string `json:"uuid,omitempty"`
+	Disabled bool   `json:"disabled,omitempty"`
 
 	// Input/Output port values
-	Values              *priority.Value        `json:"-"`    // value should be used for anything
-	DataDisplay         *priority.PriorityData `json:"data"` // only used for when its called over rest
+	Values              *priority.Value        `json:"-"`              // value should be used for anything
+	DataDisplay         *priority.PriorityData `json:"data,omitempty"` // only used for when its called over rest
 	dataPriority        *priority.DataPriority
-	Transformation      *priority.Transformations      `json:"transformation"`
-	Units               *unitswrapper.EngineeringUnits `json:"units"`
-	Direction           PortDirection                  `json:"direction"`           // input or output
-	DataType            priority.Type                  `json:"dataType"`            // float, bool, string, any, json
-	DisableSubscription bool                           `json:"disableSubscription"` // if set to true we will not set up connection as a subscriber; this would be used when a connection is used to maybe pull the data on an interval
-	OnlyPublishOnCOV    bool                           `json:"onlyPublishOnCOV"`
+	Transformation      *priority.Transformations      `json:"transformation,omitempty"`
+	Units               *unitswrapper.EngineeringUnits `json:"units,omitempty"`
+	Direction           PortDirection                  `json:"direction,omitempty"`           // input or output
+	DataType            priority.Type                  `json:"dataType,omitempty"`            // float, bool, string, any, json
+	DisableSubscription bool                           `json:"disableSubscription,omitempty"` // if set to true we will not set up connection as a subscriber; this would be used when a connection is used to maybe pull the data on an interval
+	OnlyPublishOnCOV    bool                           `json:"onlyPublishOnCOV,omitempty"`
 	PreviousValue       *priority.PreviousValue        `json:"previousValue,omitempty"`
 
 	AllowMultipleConnections bool `json:"allowMultipleConnections,omitempty"`
 
 	// port position is where to show the order on the Obj and where to hide the port or not
-	DefaultPosition   int  `json:"defaultPosition"`
+	DefaultPosition   int  `json:"defaultPosition,omitempty"`
 	Hide              bool `json:"hide,omitempty"`
 	HiddenByDefault   bool `json:"hiddenByDefault,omitempty"`
 	OverPositionValue int  `json:"overPositionValue,omitempty"`

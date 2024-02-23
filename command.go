@@ -7,15 +7,10 @@ import (
 	"strings"
 )
 
-func splitCamelCase(s string) []string {
-	re := regexp.MustCompile(`[a-z]+|[A-Z][a-z]*|[A-Z]+`)
-	words := re.FindAllString(s, -1)
-	return words
-}
-
 type Command struct {
 	SenderGlobalID   string            `json:"senderGlobalID,omitempty"`   // if sent from another ROS instance
 	SenderObjectUUID string            `json:"senderObjectUUID,omitempty"` // if sent from another ROS instance
+	TransactionUUID  string            `json:"transactionUUID,omitempty"`  // add an uuid if you want to keep track of a response over mqtt
 	Key              string            `json:"key,omitempty"`
 	Query            string            `json:"query,omitempty"`
 	Args             []string          `json:"args,omitempty"`
@@ -44,6 +39,50 @@ func (c *Command) QueryObjectsByField(field, value string, limit int, asJSON boo
 	}
 	c.buildCommand("get", "objects", "type", value, asJSON)
 	return c
+}
+
+func (c *Command) GetArgsByIndex(i int) string {
+	if len(c.Args) > i {
+		return c.Args[i]
+	}
+	return ""
+}
+
+// GetArgsByKey retrieves the value of a specific key in the Args map.
+func (c *Command) GetArgsByKey(key string) string {
+	return c.Data[key]
+}
+
+// GetArgsKeys retrieves all keys and values from the Args map.
+func (c *Command) GetArgsKeys() (keys, values []string) {
+	for k, v := range c.Data {
+		keys = append(keys, k)
+		values = append(values, v)
+	}
+	return keys, values
+}
+
+func (c *Command) GetName() string {
+	return c.GetArgsByKey("name")
+}
+
+func (c *Command) GetUUID() string {
+	return c.GetArgsByKey("uuid")
+}
+
+func (c *Command) GetID() string {
+	return c.GetArgsByKey("id")
+}
+
+func (c *Command) GetField() string {
+	return c.GetArgsByKey("field")
+}
+
+func (c *Command) GetKey() string {
+	if c.Key == "" {
+		return c.GetArgsByKey("key")
+	}
+	return c.Key
 }
 
 func (c *Command) GetObjectByUUID(value string, asJSON bool) *Command {
@@ -88,7 +127,19 @@ func (c *Command) Parse(cmdSting string) (*Command, error) {
 			posArgs = append(posArgs, trimmedPart)
 		}
 	}
-	return &Command{Args: posArgs, Data: argMap}, nil
+	if len(posArgs) == 1 {
+		parts := splitCamelCase(posArgs[0])
+		if len(parts) > 1 {
+			cmdType := strings.ToLower(parts[0])
+			things := strings.ToLower(parts[1])
+			posArgs = nil
+			posArgs = append(posArgs, cmdType)
+			posArgs = append(posArgs, things)
+		}
+	}
+	out := &Command{Args: posArgs, Data: argMap}
+	out.Key = argMap["key"]
+	return out, nil
 }
 
 func UnmarshalCommand(payload any) (*Command, error) {
@@ -148,27 +199,6 @@ func splitArgs(input string) []string {
 	return parts
 }
 
-func (c *Command) GetArgsByIndex(i int) string {
-	if len(c.Args) > i {
-		return c.Args[i]
-	}
-	return ""
-}
-
-// GetArgsByKey retrieves the value of a specific key in the Args map.
-func (c *Command) GetArgsByKey(key string) string {
-	return c.Data[key]
-}
-
-// GetArgsKeys retrieves all keys and values from the Args map.
-func (c *Command) GetArgsKeys() (keys, values []string) {
-	for k, v := range c.Data {
-		keys = append(keys, k)
-		values = append(values, v)
-	}
-	return keys, values
-}
-
 type CommandType string
 
 const (
@@ -177,29 +207,53 @@ const (
 	CommandTypeDelete CommandType = "delete"
 )
 
-func (p *parsedCommand) getCommandType() string {
+func (p *ParsedCommand) GetCommandType() string {
 	return p.CommandType
 }
 
-func (p *parsedCommand) isSet() bool {
-	if p.getCommandType() == "set" {
+func (p *ParsedCommand) IsSet() bool {
+	if p.GetCommandType() == "set" {
 		return true
 	}
 	return false
 }
 
-func (p *parsedCommand) isGet() bool {
-	if p.getCommandType() == "get" {
+func (p *ParsedCommand) IsGet() bool {
+	if p.GetCommandType() == "get" {
 		return true
 	}
 	return false
 }
 
-func (p *parsedCommand) getField() string {
+func (p *ParsedCommand) IsRun() bool {
+	if p.GetCommandType() == "run" {
+		return true
+	}
+	return false
+}
+
+func (p *ParsedCommand) NameUUID() bool {
+	if p.GetID() != "" {
+		return true
+	}
+	if p.GetName() != "" {
+		return true
+	}
+	if p.GetUUID() != "" {
+		return true
+	}
+	return false
+}
+
+func (p *ParsedCommand) GetField() string {
 	return p.Field
 }
 
-func (p *parsedCommand) isFieldPort() bool {
+func (p *ParsedCommand) GetKey() string {
+	return p.Key
+}
+
+func (p *ParsedCommand) IsFieldPort() bool {
 	if p.Field == "input" {
 		return true
 	}
@@ -215,35 +269,95 @@ func (p *parsedCommand) isFieldPort() bool {
 	return false
 }
 
-func (p *parsedCommand) getThing() string {
+func (p *ParsedCommand) GetThing() string {
 	return p.Thing
 }
 
-func (p *parsedCommand) getQuery() string {
+func (p *ParsedCommand) ThingIsPorts() bool {
+	if p.Thing == "input" {
+		return true
+	}
+	if p.Thing == "inputs" {
+		return true
+	}
+	if p.Thing == "output" {
+		return true
+	}
+	if p.Thing == "outputs" {
+		return true
+	}
+	return false
+}
+
+func (p *ParsedCommand) ThingIsObject() bool {
+	if p.Thing == "object" {
+		return true
+	}
+	if p.Thing == "objects" {
+		return true
+	}
+	return false
+}
+
+func (p *ParsedCommand) GetQuery() string {
 	return p.Query
 }
 
-func (p *parsedCommand) getID() string {
+func (p *ParsedCommand) GetCategory() string {
+	return p.Category
+}
+
+func (p *ParsedCommand) GetType() string {
+	return p.Type
+}
+
+func (p *ParsedCommand) GetObjectID() string {
+	return p.ObjectID
+}
+
+func (p *ParsedCommand) GetObjectCategory() string {
+	return p.ObjectCategory
+}
+
+func (p *ParsedCommand) GetObjectName() string {
+	return p.ObjectName
+}
+
+func (p *ParsedCommand) GetObjectUUID() string {
+	return p.ObjectUUID
+}
+
+func (p *ParsedCommand) GetID() string {
 	return p.ID
 }
 
-func (p *parsedCommand) returnAs() string {
+func (p *ParsedCommand) GetReturnAs() string {
 	return p.ReturnAs
 }
 
-func (p *parsedCommand) getName() string {
+func (p *ParsedCommand) GetName() string {
 	return p.Name
 }
 
-func (p *parsedCommand) getUUID() string {
+func (p *ParsedCommand) GetUUID() string {
 	return p.UUID
 }
 
-func commandReturnType(cmd *Command) (*parsedCommand, error) {
+func (p *ParsedCommand) SetReturnAsIfNil(s string) {
+	p.ReturnAs = s
+}
+
+func splitCamelCase(s string) []string {
+	re := regexp.MustCompile(`[a-z]+|[A-Z][a-z]*|[A-Z]+`)
+	words := re.FindAllString(s, -1)
+	return words
+}
+
+func (c *Command) CommandReturnType(cmd *Command) (*ParsedCommand, error) {
 	if cmd == nil {
 		return nil, fmt.Errorf("command can not be empty")
 	}
-	args := &parsedCommand{}
+	args := &ParsedCommand{}
 
 	args.CommandType = cmd.GetArgsByIndex(0)
 	args.Thing = cmd.GetArgsByIndex(1)
@@ -278,13 +392,28 @@ func commandReturnType(cmd *Command) (*parsedCommand, error) {
 	if v, ok := cmd.Data["type"]; ok {
 		args.Type = v
 	}
+	if v, ok := cmd.Data["objectCategory"]; ok {
+		args.ObjectCategory = v
+	}
+	if v, ok := cmd.Data["objectName"]; ok {
+		args.ObjectName = v
+	}
+	if v, ok := cmd.Data["objectUUID"]; ok {
+		args.ObjectUUID = v
+	}
+	if v, ok := cmd.Data["objectID"]; ok {
+		args.ObjectID = v
+	}
 
-	switch args.getThing() {
+	switch args.GetThing() {
+	case commandCommand:
+		return args, nil
 	case commandObjects, commandObject:
 		return args, nil
 	case commandInputs, commandOutputs, commandInput, commandOutput:
-		if args.isSet() || (args.isGet() && args.getField() == "data") || (args.isGet() && args.getField() != "") {
-			args.ReturnAs = commandString
+		if args.IsSet() || (args.IsGet() && args.GetField() == "data") || (args.IsGet() && args.GetField() != "") {
+			//args.ReturnAs = commandString
+			args.SetReturnAsIfNil(commandString)
 			return args, nil
 		}
 		return args, nil
@@ -293,28 +422,28 @@ func commandReturnType(cmd *Command) (*parsedCommand, error) {
 	}
 }
 
-func isObject(parsed *parsedCommand) bool {
+func IsObject(parsed *ParsedCommand) bool {
 	if parsed.Thing == "object" {
 		return true
 	}
 	return false
 }
 
-func isObjects(parsed *parsedCommand) bool {
+func IsObjects(parsed *ParsedCommand) bool {
 	if parsed.Thing == "objects" {
 		return true
 	}
 	return false
 }
 
-func isInput(parsed *parsedCommand) bool {
+func IsInput(parsed *ParsedCommand) bool {
 	if parsed.Thing == "inputs" || parsed.Thing == "input" {
 		return true
 	}
 	return false
 }
 
-func isPort(parsed *parsedCommand) bool {
+func IsPort(parsed *ParsedCommand) bool {
 	if parsed.Thing == "inputs" || parsed.Thing == "input" {
 		return true
 	}

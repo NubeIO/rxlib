@@ -147,7 +147,7 @@ type Object interface {
 	// id
 	GetID() string
 
-	// Obj type is for example a driver, service, logic
+	// GetObjectType type is for example a driver, service, logic
 	GetObjectType() ObjectType
 
 	// uuid, set from Meta
