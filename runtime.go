@@ -8,6 +8,7 @@ import (
 
 type Runtime interface {
 	Get() []Object
+	GetObject() []*ObjectConfig
 	Delete() string
 	GetByUUID(uuid string) Object
 	GetFirstByID(objectID string) Object
@@ -53,6 +54,10 @@ type RuntimeImpl struct {
 	parsedCommand   *ParsedCommand
 	command         *Command
 	tree            *tree
+}
+
+func (inst *RuntimeImpl) GetObject() []*ObjectConfig {
+	return SerializeCurrentFlowArray(inst.Get())
 }
 
 func NewCommandResponse() *CommandResponse {
