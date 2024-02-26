@@ -1,0 +1,406 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "runtime.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "RuntimeService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/objects": {
+      "get": {
+        "operationId": "RuntimeService_GetObjects",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeObjectsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/objects/{uuid}": {
+      "get": {
+        "operationId": "RuntimeService_GetObject",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeObjectResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "RuntimeConnection": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "targetConnectionUUID": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "sourceHandle": {
+          "type": "string"
+        },
+        "sourcePortUUID": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "targetHandle": {
+          "type": "string"
+        },
+        "targetPortUUID": {
+          "type": "string"
+        },
+        "flowDirection": {
+          "type": "string"
+        }
+      }
+    },
+    "RuntimeData": {
+      "type": "object",
+      "properties": {
+        "priority": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "highestPriority": {
+          "type": "number",
+          "format": "float"
+        },
+        "dataType": {
+          "type": "string"
+        },
+        "rawValue": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "RuntimeInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "pluginName": {
+          "type": "string"
+        },
+        "workingGroupLeader": {
+          "type": "string"
+        },
+        "workingGroupObjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "workingGroupChildObjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "objectTags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "permissions": {
+          "$ref": "#/definitions/RuntimePermissions"
+        },
+        "requirements": {
+          "$ref": "#/definitions/RuntimeRequirements"
+        }
+      }
+    },
+    "RuntimeInput": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "direction": {
+          "type": "string"
+        },
+        "dataType": {
+          "type": "string"
+        },
+        "defaultPosition": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "RuntimeLoggerOpts": {
+      "type": "object",
+      "properties": {
+        "loggerName": {
+          "type": "string"
+        },
+        "loggerColour": {
+          "type": "string"
+        }
+      }
+    },
+    "RuntimeMeta": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/definitions/RuntimePosition"
+        }
+      }
+    },
+    "RuntimeObject": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "info": {
+          "$ref": "#/definitions/RuntimeInfo"
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeInput"
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeOutput"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/RuntimeMeta"
+        },
+        "stats": {
+          "$ref": "#/definitions/RuntimeStats"
+        },
+        "connections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeConnection"
+          }
+        }
+      }
+    },
+    "RuntimeObjectResponse": {
+      "type": "object",
+      "properties": {
+        "object": {
+          "$ref": "#/definitions/RuntimeObject"
+        }
+      }
+    },
+    "RuntimeObjectsResponse": {
+      "type": "object",
+      "properties": {
+        "objects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeObject"
+          }
+        }
+      }
+    },
+    "RuntimeOutput": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "direction": {
+          "type": "string"
+        },
+        "dataType": {
+          "type": "string"
+        },
+        "defaultPosition": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "$ref": "#/definitions/RuntimeData"
+        }
+      }
+    },
+    "RuntimePermissions": {
+      "type": "object",
+      "properties": {
+        "canBeUpdated": {
+          "type": "boolean"
+        },
+        "allPermissions": {
+          "type": "boolean"
+        }
+      }
+    },
+    "RuntimePosition": {
+      "type": "object",
+      "properties": {
+        "positionY": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "positionX": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "RuntimeRequirements": {
+      "type": "object",
+      "properties": {
+        "callResetOnDeploy": {
+          "type": "boolean"
+        },
+        "maxOne": {
+          "type": "boolean"
+        },
+        "mustLiveInObjectType": {
+          "type": "boolean"
+        },
+        "mustLiveParent": {
+          "type": "boolean"
+        },
+        "requiresLogger": {
+          "type": "boolean"
+        },
+        "supportsActions": {
+          "type": "boolean"
+        },
+        "LoggerOpts": {
+          "$ref": "#/definitions/RuntimeLoggerOpts"
+        }
+      }
+    },
+    "RuntimeStats": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "loaded": {
+          "type": "string"
+        },
+        "timeSince": {
+          "type": "string"
+        },
+        "loopCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "lastUpdated": {
+          "type": "string"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

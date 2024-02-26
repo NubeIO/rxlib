@@ -1,0 +1,136 @@
+syntax = "proto3";
+
+option go_package = "./;protoruntime";
+
+package App.Runtime;
+import "google/api/annotations.proto";
+
+service RuntimeService {
+
+    rpc GetObjects (Empty) returns (ObjectsResponse) {
+        option (google.api.http) = {
+            get: "/api/objects"
+        };
+    };
+
+
+    rpc GetObject (ObjectRequest) returns (ObjectResponse) {
+        option (google.api.http) = {
+            get: "/api/objects/{uuid}"
+        };
+    };
+}
+
+message Empty {}
+
+message ObjectsResponse {
+    repeated Object objects = 1;
+}
+
+message ObjectRequest {
+    string uuid = 1;
+}
+
+message ObjectResponse {
+    Object object = 1;
+}
+
+message Object {
+    string id = 1;
+    Info info = 2;
+    repeated Input inputs = 3;
+    repeated Output outputs = 4;
+    Meta meta = 5;
+    Stats stats = 6;
+    repeated Connection connections = 7;
+}
+
+message Info {
+    string id = 1;
+    string type = 2;
+    string category = 3;
+    string pluginName = 4;
+    string workingGroupLeader = 5;
+    repeated string workingGroupObjects = 6;
+    repeated string workingGroupChildObjects = 7;
+    repeated string objectTags = 8;
+    Permissions permissions = 9;
+    Requirements requirements = 10;
+}
+
+message Permissions {
+    bool canBeUpdated = 1;
+    bool allPermissions = 2;
+}
+
+message Requirements {
+    bool callResetOnDeploy = 1;
+    bool maxOne = 2;
+    bool mustLiveInObjectType = 3;
+    bool mustLiveParent = 4;
+    bool requiresLogger = 5;
+    bool supportsActions = 6;
+    LoggerOpts LoggerOpts = 7;
+}
+
+message LoggerOpts {
+    string loggerName = 1;
+    string loggerColour = 2;
+}
+
+message Input {
+    string id = 1;
+    string name = 2;
+    string uuid = 3;
+    string direction = 4;
+    string dataType = 5;
+    int32 defaultPosition = 6;
+}
+
+message Output {
+    string id = 1;
+    string name = 2;
+    string uuid = 3;
+    string direction = 4;
+    string dataType = 5;
+    int32 defaultPosition = 6;
+    Data data = 7;
+}
+
+message Data {
+    map<string, float> priority = 1;
+    float highestPriority = 2;
+    string dataType = 3;
+    float rawValue = 4;
+}
+
+message Meta {
+    string uuid = 1;
+    string name = 2;
+    Position position = 3;
+}
+
+message Position {
+    int32 positionY = 1;
+    int32 positionX = 2;
+}
+
+message Stats {
+    string status = 1;
+    string loaded = 2;
+    string timeSince = 3;
+    int32 loopCount = 4;
+    string lastUpdated = 5;
+}
+
+message Connection {
+    string uuid = 1;
+    string targetConnectionUUID = 2;
+    string source = 3;
+    string sourceHandle = 4;
+    string sourcePortUUID = 5;
+    string target = 6;
+    string targetHandle = 7;
+    string targetPortUUID = 8;
+    string flowDirection = 9;
+}
