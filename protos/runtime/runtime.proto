@@ -9,17 +9,37 @@ service RuntimeService {
 
     rpc GetObjects (Empty) returns (ObjectsResponse) {
         option (google.api.http) = {
-            get: "/api/objects"
+            get: "/api/runtime"
         };
     };
 
 
     rpc GetObject (ObjectRequest) returns (ObjectResponse) {
         option (google.api.http) = {
-            get: "/api/objects/{uuid}"
+            get: "/api/runtime/{uuid}"
+        };
+    };
+
+    rpc ObjectsDeploy (ObjectDeployRequest) returns (ObjectDeployRequest) {
+        option (google.api.http) = {
+            post: "/api/runtime"
+            body: "*"
         };
     };
 }
+
+
+message ObjectDeployRequest {
+    ObjectDeploy objectDeploy = 1;
+    int32 timeout = 2;
+}
+
+message ObjectDeploy {
+    repeated string deleted = 1;
+    repeated Object new = 2;
+    repeated Object updated = 3;
+}
+
 
 message Empty {}
 
@@ -85,6 +105,7 @@ message Input {
     string direction = 4;
     string dataType = 5;
     int32 defaultPosition = 6;
+    Data data = 7;
 }
 
 message Output {

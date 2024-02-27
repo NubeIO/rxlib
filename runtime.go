@@ -316,6 +316,17 @@ type ObjectConfig struct {
 	dontRecreateObject bool
 }
 
+type Deploy struct {
+	ObjectDeploy `json:"objectDeploy"`
+	Timeout      int `json:"timeout"`
+}
+
+type ObjectDeploy struct {
+	Deleted []string        `json:"deleted"`
+	New     []*ObjectConfig `json:"new"`
+	Updated []*ObjectConfig `json:"updated"`
+}
+
 func SerializeCurrentFlowArray(objects []Object) []*ObjectConfig {
 	var serializedObjects []*ObjectConfig
 	for _, object := range objects {

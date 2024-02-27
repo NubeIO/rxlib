@@ -16,7 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/api/objects": {
+    "/api/runtime": {
       "get": {
         "operationId": "RuntimeService_GetObjects",
         "responses": {
@@ -36,9 +36,39 @@
         "tags": [
           "RuntimeService"
         ]
+      },
+      "post": {
+        "operationId": "RuntimeService_ObjectsDeploy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeObjectDeployRequest"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeObjectDeployRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
       }
     },
-    "/api/objects/{uuid}": {
+    "/api/runtime/{uuid}": {
       "get": {
         "operationId": "RuntimeService_GetObject",
         "responses": {
@@ -190,6 +220,9 @@
         "defaultPosition": {
           "type": "integer",
           "format": "int32"
+        },
+        "data": {
+          "$ref": "#/definitions/RuntimeData"
         }
       }
     },
@@ -253,6 +286,43 @@
             "type": "object",
             "$ref": "#/definitions/RuntimeConnection"
           }
+        }
+      }
+    },
+    "RuntimeObjectDeploy": {
+      "type": "object",
+      "properties": {
+        "deleted": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "new": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeObject"
+          }
+        },
+        "updated": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeObject"
+          }
+        }
+      }
+    },
+    "RuntimeObjectDeployRequest": {
+      "type": "object",
+      "properties": {
+        "objectDeploy": {
+          "$ref": "#/definitions/RuntimeObjectDeploy"
+        },
+        "timeout": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

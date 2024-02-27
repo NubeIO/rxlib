@@ -2,22 +2,22 @@ package runtime
 
 import (
 	"github.com/NubeIO/rxlib"
-	protoruntime "github.com/NubeIO/rxlib/protos/runtime/pb"
+	runtimeServer "github.com/NubeIO/rxlib/protos/runtime/runtimeserver"
 )
 
-func ObjectConfigToProto(obj *rxlib.ObjectConfig) *protoruntime.Object {
-	return &protoruntime.Object{
+func ObjectConfigToProto(obj *rxlib.ObjectConfig) *runtimeServer.Object {
+	return &runtimeServer.Object{
 		Id: obj.ID,
 	}
 }
 
-func ObjectConfigFromProto(protoObj *protoruntime.Object) *rxlib.ObjectConfig {
+func ObjectConfigFromProto(protoObj *runtimeServer.Object) *rxlib.ObjectConfig {
 	return &rxlib.ObjectConfig{
 		ID: protoObj.Id,
 	}
 }
 
-func ConvertProtoConnectionToStruct(protoConn *protoruntime.Connection) *rxlib.Connection {
+func ConvertProtoConnectionToStruct(protoConn *runtimeServer.Connection) *rxlib.Connection {
 	conn := &rxlib.Connection{
 		UUID:                 protoConn.GetUuid(),
 		TargetConnectionUUID: protoConn.GetTargetConnectionUUID(),
@@ -32,8 +32,8 @@ func ConvertProtoConnectionToStruct(protoConn *protoruntime.Connection) *rxlib.C
 	return conn
 }
 
-func ConvertStructConnectionToProto(conn *rxlib.Connection) *protoruntime.Connection {
-	protoConn := &protoruntime.Connection{
+func ConvertStructConnectionToProto(conn *rxlib.Connection) *runtimeServer.Connection {
+	protoConn := &runtimeServer.Connection{
 		Uuid:                 conn.UUID,
 		TargetConnectionUUID: conn.TargetConnectionUUID,
 		Source:               conn.SourceUUID,

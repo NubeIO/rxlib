@@ -7,10 +7,14 @@ if [ -z $protoExec ]; then
     exit 0
 fi
 
-protos_dir=$root_dir/runtime
-pb_dir=$root_dir/runtime/pb
-client_dir=$root_dir/runtime/client
-openapi_dir=$root_dir/runtime/openapi
+name=runtime
+server=runtimeserver
+client=runtimeclient
+
+protos_dir=$root_dir/$name
+pb_dir=$root_dir/$name/$server
+client_dir=$root_dir/$name/$client
+openapi_dir=$root_dir/$name/openapi
 
 mkdir -p $pb_dir
 mkdir -p $client_dir
