@@ -22,6 +22,8 @@ const (
 	RuntimeService_GetObjects_FullMethodName    = "/App.Runtime.RuntimeService/GetObjects"
 	RuntimeService_GetObject_FullMethodName     = "/App.Runtime.RuntimeService/GetObject"
 	RuntimeService_ObjectsDeploy_FullMethodName = "/App.Runtime.RuntimeService/ObjectsDeploy"
+	RuntimeService_Ping_FullMethodName          = "/App.Runtime.RuntimeService/Ping"
+	RuntimeService_ObjectCommand_FullMethodName = "/App.Runtime.RuntimeService/ObjectCommand"
 )
 
 // RuntimeServiceClient is the client API for RuntimeService service.
@@ -31,6 +33,8 @@ type RuntimeServiceClient interface {
 	GetObjects(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ObjectsResponse, error)
 	GetObject(ctx context.Context, in *ObjectRequest, opts ...grpc.CallOption) (*ObjectResponse, error)
 	ObjectsDeploy(ctx context.Context, in *ObjectDeployRequest, opts ...grpc.CallOption) (*ObjectDeployRequest, error)
+	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
+	ObjectCommand(ctx context.Context, in *ObjectCommandRequest, opts ...grpc.CallOption) (*CommandResponse, error)
 }
 
 type runtimeServiceClient struct {
@@ -68,6 +72,24 @@ func (c *runtimeServiceClient) ObjectsDeploy(ctx context.Context, in *ObjectDepl
 	return out, nil
 }
 
+func (c *runtimeServiceClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error) {
+	out := new(PingResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_Ping_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) ObjectCommand(ctx context.Context, in *ObjectCommandRequest, opts ...grpc.CallOption) (*CommandResponse, error) {
+	out := new(CommandResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_ObjectCommand_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RuntimeServiceServer is the server API for RuntimeService service.
 // All implementations must embed UnimplementedRuntimeServiceServer
 // for forward compatibility
@@ -75,6 +97,8 @@ type RuntimeServiceServer interface {
 	GetObjects(context.Context, *Empty) (*ObjectsResponse, error)
 	GetObject(context.Context, *ObjectRequest) (*ObjectResponse, error)
 	ObjectsDeploy(context.Context, *ObjectDeployRequest) (*ObjectDeployRequest, error)
+	Ping(context.Context, *PingRequest) (*PingResponse, error)
+	ObjectCommand(context.Context, *ObjectCommandRequest) (*CommandResponse, error)
 	mustEmbedUnimplementedRuntimeServiceServer()
 }
 
@@ -90,6 +114,12 @@ func (UnimplementedRuntimeServiceServer) GetObject(context.Context, *ObjectReque
 }
 func (UnimplementedRuntimeServiceServer) ObjectsDeploy(context.Context, *ObjectDeployRequest) (*ObjectDeployRequest, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ObjectsDeploy not implemented")
+}
+func (UnimplementedRuntimeServiceServer) Ping(context.Context, *PingRequest) (*PingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+}
+func (UnimplementedRuntimeServiceServer) ObjectCommand(context.Context, *ObjectCommandRequest) (*CommandResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ObjectCommand not implemented")
 }
 func (UnimplementedRuntimeServiceServer) mustEmbedUnimplementedRuntimeServiceServer() {}
 
@@ -158,6 +188,42 @@ func _RuntimeService_ObjectsDeploy_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RuntimeService_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).Ping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_Ping_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).Ping(ctx, req.(*PingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_ObjectCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ObjectCommandRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).ObjectCommand(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_ObjectCommand_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).ObjectCommand(ctx, req.(*ObjectCommandRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RuntimeService_ServiceDesc is the grpc.ServiceDesc for RuntimeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +242,14 @@ var RuntimeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ObjectsDeploy",
 			Handler:    _RuntimeService_ObjectsDeploy_Handler,
+		},
+		{
+			MethodName: "Ping",
+			Handler:    _RuntimeService_Ping_Handler,
+		},
+		{
+			MethodName: "ObjectCommand",
+			Handler:    _RuntimeService_ObjectCommand_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

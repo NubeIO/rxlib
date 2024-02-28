@@ -67,7 +67,7 @@ func NewCommandResponse() *CommandResponse {
 type CommandResponse struct {
 	SenderID         string             `json:"senderID,omitempty"` // if sent from another ROS instance
 	Count            *int               `json:"count,omitempty"`
-	Objects          []Object           `json:"objects,omitempty"`
+	Objects          []Object           `json:"-,omitempty"`
 	SerializeObjects []*ObjectConfig    `json:"serializeObjects,omitempty"`
 	MapPorts         map[string][]*Port `json:"mapPorts,omitempty"`
 	MapStrings       map[string]string  `json:"mapStrings,omitempty"`

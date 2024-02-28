@@ -6,20 +6,23 @@ import (
 	"errors"
 	"fmt"
 	"github.com/NubeIO/rxlib"
+	"github.com/NubeIO/rxlib/helpers"
 	runtimeClient "github.com/NubeIO/rxlib/protos/runtime/runtimeclient"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/go-resty/resty/v2"
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-
 	"time"
 )
 
 type Protocol interface {
 	ObjectsDeploy(object *rxlib.Deploy, opts *Opts, callback func(*Callback, error)) (string, error)
 	Close() error
+	Ping(opts *Opts, callback func(string, *Message, error)) (string, error)
 }
+
+const defaultTimeout = 2
 
 type Callback struct {
 	UUID string
@@ -27,12 +30,23 @@ type Callback struct {
 }
 
 type Opts struct {
-	// Your options
+	Timeout time.Duration
+	Headers map[string]string
+}
+
+type Message struct {
+	UUID    string
+	Message string
 }
 
 type GRPCClient struct {
 	client runtimeClient.RuntimeServiceClient
 	conn   *grpc.ClientConn
+}
+
+func (g *GRPCClient) Ping(opts *Opts, callback func(string, *Message, error)) (string, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (g *GRPCClient) ObjectsDeploy(object *rxlib.Deploy, opts *Opts, callback func(*Callback, error)) (string, error) {
@@ -72,82 +86,219 @@ func (m *MQTTClient) Close() error {
 }
 
 type MQTTPayload struct {
-	RequestUUID string      `json:"request_uuid"`
+	RequestUUID string      `json:"requestUUID"`
 	Payload     interface{} `json:"payload"`
 }
 
-func newMQTTClient(opts *mqtt.ClientOptions) *MQTTClient {
-	return &MQTTClient{
-		Client:   mqtt.NewClient(opts),
-		requests: make(map[string]chan *MQTTPayload),
+func newMQTTClient() (*MQTTClient, error) {
+	// Create MQTT client options
+	opts := mqtt.NewClientOptions().AddBroker("tcp://localhost:1883")
+	// Create MQTT client
+	client := mqtt.NewClient(opts)
+	// Connect to the broker
+	if token := client.Connect(); token.Wait() && token.Error() != nil {
+		return nil, fmt.Errorf("error connecting to MQTT broker: %v", token.Error())
 	}
+
+	return &MQTTClient{
+		Client:   client,
+		requests: make(map[string]chan *MQTTPayload),
+	}, nil
 }
 
-func (m *MQTTClient) ObjectsDeploy(object *rxlib.Deploy, opts *Opts, callback func(*Callback, error)) (string, error) {
-	// Define the request and response topics
-	requestTopic := "objects/deploy/request"
-	responseTopic := "objects/deploy/response"
+func (m *MQTTClient) Ping(opts *Opts, callback func(string, *Message, error)) (string, error) {
+	requestTopic := "ros/api/RX-1/ping"
+	payloadData := &rxlib.Command{
+		SenderGlobalID: "RX-1",
+		Key:            "ping",
+	}
+	return m.RequestResponse(requestTopic, payloadData, func(uuid string, payload *Payload, err error) {
+		var message *Message
+		if err == nil && payload != nil {
+			err = json.Unmarshal(payload.Payload, &message)
+		}
+		callback(uuid, message, err)
+	})
+}
 
-	uuid := uuid.New().String()
+type Payload struct {
+	Payload []byte
+	Topic   string
+	UUID    string
+}
 
-	// Create a channel to receive the response
-	responseChan := make(chan *MQTTPayload, 1)
-	m.requests[uuid] = responseChan
-	defer delete(m.requests, uuid)
+func (m *MQTTClient) RequestResponse(requestTopic string, payloadData interface{}, callback func(string, *Payload, error)) (string, error) {
+	newUUID := helpers.UUID()
+	requestTopicWithUUID := fmt.Sprintf("%s_%s", requestTopic, newUUID)
+	respTopicWithUUID := fmt.Sprintf("%s/response", requestTopicWithUUID)
+	// Channel to signal the receipt of the message
+	done := make(chan struct{})
 
 	// Subscribe to the response topic
-	token := m.Subscribe(responseTopic, 0, func(client mqtt.Client, msg mqtt.Message) {
-		var response MQTTPayload
-		if err := json.Unmarshal(msg.Payload(), &response); err != nil {
-			// Handle JSON unmarshal error
+	token := m.Subscribe(respTopicWithUUID, 0, func(client mqtt.Client, msg mqtt.Message) {
+		response := &Payload{
+			Payload: msg.Payload(),
+			Topic:   msg.Topic(),
+		}
+		_, requestUUID, err := ExtractApiTopicPath(msg.Topic())
+		if err != nil {
 			return
 		}
-		if response.RequestUUID == uuid {
-			// Send the response to the channel
-			responseChan <- &response
+		if requestUUID == newUUID {
+			// Handle the response
+			callback(requestUUID, response, nil)
+			close(done) // Signal that the message has been received
+			return
 		}
 	})
 	token.Wait()
 	if token.Error() != nil {
 		return "", token.Error()
 	}
-	defer m.Unsubscribe(responseTopic)
+	defer m.Unsubscribe(respTopicWithUUID)
 
 	// Marshal the payload to JSON
-	marshaledPayload, err := json.Marshal(MQTTPayload{
-		RequestUUID: uuid,
-		Payload:     object,
-	})
+	marshaledPayload, err := json.Marshal(payloadData)
 	if err != nil {
 		return "", err
 	}
 
 	// Publish the request
-	m.Publish(requestTopic, 0, false, marshaledPayload)
+	m.Publish(requestTopicWithUUID, 0, false, marshaledPayload)
 
-	// Start a goroutine to handle the response
-	go func() {
-		select {
-		case response := <-responseChan:
-			// Unmarshal the response payload into a rxlib.Deploy object
-			var responseObject rxlib.Deploy
-			if err := json.Unmarshal(response.Payload.([]byte), &responseObject); err != nil {
-				callback(nil, err)
-				return
-			}
-			callback(&Callback{UUID: uuid, Body: &responseObject}, nil)
-		case <-time.After(10 * time.Second): // Adjust the timeout as needed
-			callback(nil, fmt.Errorf("request timed out"))
-		}
-	}()
+	// Wait for response or timeout
+	select {
+	case <-done:
+		// Message received
+	case <-time.After(2 * time.Second):
+		// Timeout occurred
+		callback("", nil, fmt.Errorf("timeout occurred"))
+	}
 
-	return uuid, nil
+	return newUUID, nil
+}
+
+func (m *MQTTClient) ObjectsDeploy(object *rxlib.Deploy, opts *Opts, callback func(*Callback, error)) (string, error) {
+	//uuid := uuid.New().String()
+	//
+	//requestTopic := fmt.Sprintf("objects/deploy/%s/request", uuid)
+	//responseTopic := fmt.Sprintf("objects/deploy/%s/response", uuid)
+	//
+	//// Subscribe to the response topic
+	//token := m.Subscribe(responseTopic, 0, func(client mqtt.Client, msg mqtt.Message) {
+	//	var response MQTTPayload
+	//	if err := json.Unmarshal(msg.Payload(), &response); err != nil {
+	//		// Handle JSON unmarshal error
+	//		return
+	//	}
+	//	if response.RequestUUID == uuid {
+	//		// Handle the response
+	//		callback(response.RequestUUID, response.Payload, nil)
+	//	}
+	//})
+	//token.Wait()
+	//if token.Error() != nil {
+	//	return "", token.Error()
+	//}
+	//defer m.Unsubscribe(responseTopic)
+	//
+	//// Marshal the payload to JSON
+	//marshaledPayload, err := json.Marshal(MQTTPayload{
+	//	RequestUUID: uuid,
+	//	Payload:     object,
+	//})
+	//if err != nil {
+	//	return "", err
+	//}
+	//
+	//// Publish the request
+	//m.Publish(requestTopic, 0, false, marshaledPayload)
+	//
+	//// Wait for response or timeout
+	//select {
+	//case <-time.After(2 * time.Second):
+	//	// Timeout occurred
+	//	callback("", nil, fmt.Errorf("timeout occurred"))
+	//}
+
+	return "uuid", nil
 }
 
 // HTTPClient implements the Protocol for HTTP (using resty)
 type HTTPClient struct {
 	client  *resty.Client
 	baseURL string
+}
+
+func (h *HTTPClient) Ping(opts *Opts, callback func(string, *Message, error)) (string, error) {
+	go func() {
+		resp, err := h.httpRequestWithTimeout("GET", "/ping", nil, opts)
+		if err != nil {
+			callback("", nil, err)
+			return
+		}
+
+		if resp.IsError() {
+			callback("", nil, fmt.Errorf("HTTP request failed with status code: %d", resp.StatusCode()))
+			return
+		}
+
+		var result *Message
+		err = json.Unmarshal(resp.Body(), &result)
+		if err != nil {
+			callback("", nil, fmt.Errorf("error unmarshaling response: %v", err))
+			return
+		}
+
+		callback("", result, nil)
+	}()
+
+	return "", nil
+}
+
+func (h *HTTPClient) httpRequestWithTimeout(method, endpoint string, body interface{}, opts *Opts) (*resty.Response, error) {
+	request := h.client.R()
+	if body != nil {
+		request.SetBody(body)
+	}
+	var timeout time.Duration
+	if opts != nil {
+		if opts.Timeout == 0 {
+			opts.Timeout = duration(2)
+		}
+
+		if opts.Headers != nil {
+			for key, value := range opts.Headers {
+				request.SetHeader(key, value)
+			}
+		}
+	} else {
+		timeout = duration(defaultTimeout)
+	}
+
+	// Create a context with the specified timeout
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel() // Make sure to cancel the context to release resources
+
+	// Use the context in the request
+	request.SetContext(ctx)
+
+	var resp *resty.Response
+	var err error
+	switch method {
+	case "GET":
+		resp, err = request.Get(h.baseURL + endpoint)
+	case "POST":
+		resp, err = request.Post(h.baseURL + endpoint)
+	case "PUT":
+		resp, err = request.Put(h.baseURL + endpoint)
+	case "DELETE":
+		resp, err = request.Delete(h.baseURL + endpoint)
+	default:
+		return nil, fmt.Errorf("unsupported HTTP method: %s", method)
+	}
+
+	return resp, err
 }
 
 func (h *HTTPClient) ObjectsDeploy(object *rxlib.Deploy, opts *Opts, callback func(*Callback, error)) (string, error) {
@@ -201,7 +352,12 @@ type Client struct {
 	protocol Protocol
 }
 
-func NewClient(protocol string, port, httpPort int) (*Client, error) {
+func (m *Client) Close() error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func NewClient(protocol string, port, httpPort int) (Protocol, error) {
 	switch protocol {
 	case "grpc":
 		conn, err := grpc.Dial(fmt.Sprintf("localhost:%d", port), grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -212,23 +368,27 @@ func NewClient(protocol string, port, httpPort int) (*Client, error) {
 		return &Client{protocol: &GRPCClient{client: c, conn: conn}}, nil
 	case "http":
 		client := resty.New()
-		client.BaseURL = fmt.Sprintf("http:localhost:%d/api", httpPort)
+		client.BaseURL = fmt.Sprintf("http://localhost:%d/api", httpPort)
 		return &Client{protocol: &HTTPClient{client: client}}, nil
 	case "mqtt":
-
-		return &Client{protocol: &MQTTClient{}}, nil
+		c, _ := newMQTTClient()
+		return &Client{protocol: c}, nil
 	default:
 		return nil, errors.New("unsupported protocol")
 	}
 }
 
-// Add other missing methods similar to the above implementations
-func (m *Client) Close() {
-	m.protocol.Close()
-}
+//// Close Add other missing methods similar to the above implementations
+//func (m *Client) Close() {
+//	m.protocol.Close()
+//}
 
 func (m *Client) ObjectsDeploy(object *rxlib.Deploy, opts *Opts, callback func(*Callback, error)) (string, error) {
 	return m.protocol.ObjectsDeploy(object, opts, callback)
+}
+
+func (m *Client) Ping(opts *Opts, callback func(string, *Message, error)) (string, error) {
+	return m.protocol.Ping(opts, callback)
 }
 
 func duration(timeout int32) time.Duration {

@@ -2,10 +2,8 @@ package client
 
 import (
 	"fmt"
-	runtimeClient "github.com/NubeIO/rxlib/protos/runtime/runtimeclient"
-	"github.com/golang/protobuf/jsonpb"
-	"github.com/golang/protobuf/proto"
 	"testing"
+	"time"
 )
 
 var jsonString = `
@@ -51,26 +49,37 @@ var jsonString = `
     "timeout": 10
     }`
 
-func TestConvertStructConnectionToProto(t *testing.T) {
-	// Unmarshal JSON to proto message
-	objDeploy := &runtimeClient.ObjectDeployRequest{}
-	if err := jsonpb.UnmarshalString(jsonString, objDeploy); err != nil {
-		fmt.Println("Error unmarshalling JSON:", err)
-		return
-	}
-
-	//fmt.Println(proto.MarshalTextString(objDeploy))
-
+func TestConvertRestPING(t *testing.T) {
 	c, err := NewClient("http", 9090, 8080)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	deploy, err := c.ObjectsDeploy(objDeploy)
+	resp, err := c.Ping(nil, callback)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(proto.MarshalTextString(deploy))
+	fmt.Println(resp)
+	time.Sleep(time.Second * 2)
+}
 
+func TestConvertRestMQTT(t *testing.T) {
+	c, err := NewClient("mqtt", 9090, 8080)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	resp, err := c.Ping(nil, callback)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(resp)
+	time.Sleep(time.Second * 2)
+}
+
+func callback(string2 string, any2 *Message, err error) {
+	fmt.Println("RESP")
+	fmt.Println(string2, any2, err)
 }
