@@ -8,16 +8,13 @@ if [ -z $protoExec ]; then
 fi
 
 name=runtime
-server=runtimeserver
-client=runtimeclient
+combined_dir=protoruntime
 
 protos_dir=$root_dir/$name
-pb_dir=$root_dir/$name/$server
-client_dir=$root_dir/$name/$client
+combined_dir=$root_dir/$name/$combined_dir
 openapi_dir=$root_dir/$name/openapi
 
-mkdir -p $pb_dir
-mkdir -p $client_dir
+mkdir -p $combined_dir
 mkdir -p $openapi_dir
 
 echo "generating code"
@@ -31,20 +28,17 @@ protoc -I $protos_dir --openapiv2_out $openapi_dir \
     --openapiv2_opt=json_names_for_fields=false \
     $protos_dir/*.proto
 
-# go grpc code
+# go grpc code (both server and client)
 protoc -I $protos_dir \
-    --go_out $pb_dir --go_opt paths=source_relative \
-    --go-grpc_out $pb_dir --go-grpc_opt paths=source_relative \
+    --go_out $combined_dir --go_opt paths=source_relative \
+    --go-grpc_out $combined_dir --go-grpc_opt paths=source_relative \
     $protos_dir/*.proto
 
 # http gw code
-protoc -I $protos_dir --grpc-gateway_out $pb_dir \
+protoc -I $protos_dir --grpc-gateway_out $combined_dir \
     --grpc-gateway_opt logtostderr=true \
     --grpc-gateway_opt paths=source_relative \
     $protos_dir/*.proto
-
-# cp golang client code
-cp -R $pb_dir/*.go $client_dir
 
 echo "generating golang code success"
 

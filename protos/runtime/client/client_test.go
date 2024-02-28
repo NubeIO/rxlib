@@ -49,6 +49,21 @@ var jsonString = `
     "timeout": 10
     }`
 
+func TestConvertGRPCPING(t *testing.T) {
+	c, err := NewClient("grpc", 9090, 8080)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	resp, err := c.Ping(nil, callback)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(resp)
+	time.Sleep(time.Second * 2)
+}
+
 func TestConvertRestPING(t *testing.T) {
 	c, err := NewClient("http", 9090, 8080)
 	if err != nil {

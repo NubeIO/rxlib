@@ -2,8 +2,7 @@ package runtime
 
 import (
 	"fmt"
-
-	runtimeServer "github.com/NubeIO/rxlib/protos/runtime/runtimeserver"
+	"github.com/NubeIO/rxlib/protos/runtime/protoruntime"
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
 	"testing"
@@ -55,7 +54,7 @@ var jsonString = `
 
 func TestConvertStructConnectionToProto(t *testing.T) {
 	// Unmarshal JSON to proto message
-	objDeploy := &runtimeServer.ObjectDeployRequest{}
+	objDeploy := &protoruntime.ObjectDeployRequest{}
 	if err := jsonpb.UnmarshalString(jsonString, objDeploy); err != nil {
 		fmt.Println("Error unmarshalling JSON:", err)
 		return

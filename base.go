@@ -31,7 +31,7 @@ type Object interface {
 	IsUnlocked() bool
 
 	Command(command *Command) *CommandResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
-
+	CommandResponse(response *CommandResponse)
 	AddRuntime(r Runtime)
 	Runtime() Runtime
 	RemoveObjectFromRuntime()
@@ -101,13 +101,16 @@ type Object interface {
 	OutputExists(id string) error
 	GetOutputByUUID(uuid string) *Port
 	SetOutput(portID string, value any) error // Set current output value & send over the eventbus
-	PublishValue(portID string) error         // send current port value over the eventbus
-	Subscribe(topic, handlerID string, callBack func(topic string, e bus.Event))
-	SubscribePayload(topic, handlerID string, opts *EventbusOpts, callBack func(topic string, p *Payload, err error))
 	GetOutputValue(portID string) *priority.Value
 	AllOutputsValues() map[string]*priority.Value
 	GetOutputData(portID string) *priority.PriorityData
 	AllOutputsData() map[string]*priority.PriorityData
+
+	// PublishValue eventbus
+	PublishValue(portID string) error // send current port value over the eventbus
+	PublishCommand(command *Command) error
+	Subscribe(topic, handlerID string, callBack func(topic string, e bus.Event))
+	SubscribePayload(topic, handlerID string, opts *EventbusOpts, callBack func(topic string, p *Payload, err error))
 
 	// GetRootObject Obj tree
 	GetRootObject(uuid string) (Object, error)
