@@ -34,7 +34,6 @@ func NewRuntime(objs []Object) Runtime {
 	r := &RuntimeImpl{
 		tree: &tree{},
 	}
-	r.tree.addObjects(objs)
 	r.objects = objs
 	if r.objects == nil {
 		panic("NewRuntime []Object can not be empty")
@@ -54,6 +53,7 @@ type RuntimeImpl struct {
 	parsedCommand   *ParsedCommand
 	command         *Command
 	tree            *tree
+	addedObject     bool
 }
 
 func (inst *RuntimeImpl) GetObject() []*ObjectConfig {
@@ -80,10 +80,18 @@ type CommandResponse struct {
 }
 
 func (inst *RuntimeImpl) GetTreeMapRoot() *ObjectsRootMap {
+	if !inst.addedObject {
+		inst.tree.addObjects(inst.objects)
+	}
+	inst.addedObject = true
 	return inst.tree.GetTreeMapRoot()
 }
 
 func (inst *RuntimeImpl) GetAncestorTreeByUUID(objectUUID string) *AncestorTreeNode {
+	if !inst.addedObject {
+		inst.tree.addObjects(inst.objects)
+	}
+	inst.addedObject = true
 	return inst.tree.GetAncestorTreeByUUID(objectUUID)
 }
 

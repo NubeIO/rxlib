@@ -2,6 +2,7 @@ package runtime
 
 import (
 	"github.com/NubeIO/rxlib"
+	"github.com/NubeIO/rxlib/libs/nils"
 	"github.com/NubeIO/rxlib/protos/runtime/protoruntime"
 )
 
@@ -45,4 +46,53 @@ func ConvertStructConnectionToProto(conn *rxlib.Connection) *protoruntime.Connec
 	}
 
 	return protoConn
+}
+
+func ConvertCommand(command *protoruntime.CommandRequest) *rxlib.Command {
+	c := command.GetCommand()
+	out := &rxlib.Command{
+		TargetGlobalID:   c.GetTargetGlobalID(),
+		SenderGlobalID:   c.GetSenderGlobalID(),
+		SenderObjectUUID: c.GetSenderObjectUUID(),
+		TransactionUUID:  c.GetTransactionUUID(),
+		Key:              c.GetKey(),
+		Query:            c.GetQuery(),
+		Args:             c.GetArgs(),
+		Data:             c.GetData(),
+		Body:             c.Body.GetValue(),
+	}
+	return out
+}
+
+func convertCommandResponse(c *rxlib.CommandResponse) *protoruntime.CommandResponse {
+	out := &protoruntime.CommandResponse{
+		SenderID:   c.SenderID,
+		Count:      int32(nils.GetInt(c.Count)),
+		MapStrings: c.MapStrings,
+		Number:     nils.GetFloat64(c.Float),
+		Boolean:    nils.GetBool(c.Bool),
+		Error:      c.Error,
+		ReturnType: c.ReturnType,
+		//Response:   c.CommandResponse,
+	}
+	return out
+}
+
+func ConvertCommandResponse(c *rxlib.CommandResponse) *protoruntime.CommandResponse {
+	cmd := convertCommandResponse(c)
+	if len(c.CommandResponse) > 0 {
+		var out []*protoruntime.CommandResponse
+		for _, response := range c.CommandResponse {
+			out = append(out, convertCommandResponse(response))
+		}
+		cmd.Response = out
+	}
+	if len(c.SerializeObjects) > 0 {
+		var out []*protoruntime.Object
+		for _, response := range c.SerializeObjects {
+			out = append(out, ObjectConfigToProto(response))
+		}
+		cmd.SerializeObjects = out
+	}
+	return cmd
 }

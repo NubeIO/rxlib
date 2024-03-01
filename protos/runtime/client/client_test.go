@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"github.com/NubeIO/mqttwrapper"
 	"testing"
 	"time"
 )
@@ -50,7 +51,7 @@ var jsonString = `
     }`
 
 func TestConvertGRPCPING(t *testing.T) {
-	c, err := NewClient("grpc", 9090, 8080)
+	c, err := NewClient("grpc", 9090, 8080, nil)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -65,7 +66,7 @@ func TestConvertGRPCPING(t *testing.T) {
 }
 
 func TestConvertRestPING(t *testing.T) {
-	c, err := NewClient("http", 9090, 8080)
+	c, err := NewClient("http", 9090, 8080, nil)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -80,12 +81,20 @@ func TestConvertRestPING(t *testing.T) {
 }
 
 func TestConvertRestMQTT(t *testing.T) {
-	c, err := NewClient("mqtt", 9090, 8080)
+	c, err := mqttwrapper.NewMqttClient(mqttwrapper.Config{})
+	if err != nil {
+		return
+	}
+	c.Connect()
+	c.StartProcessingMessages()
+	c.StartPublishRateLimiting()
+
+	client, err := NewClient("mqtt", 9090, 8080, c)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	resp, err := c.Ping(nil, callback)
+	resp, err := client.Ping(nil, callback)
 	if err != nil {
 		fmt.Println(err)
 		return

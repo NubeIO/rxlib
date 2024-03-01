@@ -3,6 +3,7 @@ package client
 import (
 	"errors"
 	"fmt"
+	"github.com/NubeIO/mqttwrapper"
 	"github.com/NubeIO/rxlib"
 	runtimeClient "github.com/NubeIO/rxlib/protos/runtime/protoruntime"
 	"github.com/go-resty/resty/v2"
@@ -43,7 +44,7 @@ func (m *Client) Close() error {
 	panic("implement me")
 }
 
-func NewClient(protocol string, port, httpPort int) (Protocol, error) {
+func NewClient(protocol string, port, httpPort int, mqtt mqttwrapper.MQTT) (Protocol, error) {
 	switch protocol {
 	case "grpc":
 		conn, err := grpc.Dial(fmt.Sprintf("localhost:%d", port), grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -57,7 +58,7 @@ func NewClient(protocol string, port, httpPort int) (Protocol, error) {
 		client.BaseURL = fmt.Sprintf("http://localhost:%d/api", httpPort)
 		return &Client{protocol: &HTTPClient{client: client}}, nil
 	case "mqtt":
-		c, _ := newMQTTClient()
+		c, _ := newMQTTClient(mqtt)
 		return &Client{protocol: c}, nil
 	default:
 		return nil, errors.New("unsupported protocol")

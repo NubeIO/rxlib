@@ -39,7 +39,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/RuntimeObjectCommandRequest"
+              "$ref": "#/definitions/RuntimeCommandRequest"
             }
           }
         ],
@@ -157,6 +157,9 @@
     "RuntimeCommand": {
       "type": "object",
       "properties": {
+        "targetGlobalID": {
+          "type": "string"
+        },
         "senderGlobalID": {
           "type": "string"
         },
@@ -186,6 +189,14 @@
         },
         "body": {
           "$ref": "#/definitions/protobufAny"
+        }
+      }
+    },
+    "RuntimeCommandRequest": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "$ref": "#/definitions/RuntimeCommand"
         }
       }
     },
@@ -226,6 +237,13 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/RuntimeCommandResponse"
+          }
+        },
+        "serializeObjects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeObject"
           }
         }
       }
@@ -416,14 +434,6 @@
             "type": "object",
             "$ref": "#/definitions/RuntimeConnection"
           }
-        }
-      }
-    },
-    "RuntimeObjectCommandRequest": {
-      "type": "object",
-      "properties": {
-        "command": {
-          "$ref": "#/definitions/RuntimeCommand"
         }
       }
     },

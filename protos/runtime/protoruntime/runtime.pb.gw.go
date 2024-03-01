@@ -146,7 +146,7 @@ func local_request_RuntimeService_Ping_0(ctx context.Context, marshaler runtime.
 }
 
 func request_RuntimeService_ObjectCommand_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ObjectCommandRequest
+	var protoReq CommandRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
@@ -159,7 +159,7 @@ func request_RuntimeService_ObjectCommand_0(ctx context.Context, marshaler runti
 }
 
 func local_request_RuntimeService_ObjectCommand_0(ctx context.Context, marshaler runtime.Marshaler, server RuntimeServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ObjectCommandRequest
+	var protoReq CommandRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
