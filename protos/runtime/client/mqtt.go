@@ -14,6 +14,25 @@ type MQTTClient struct {
 	requests   map[string]chan *MQTTPayload
 }
 
+func (m *MQTTClient) Command(opts *Opts, command *rxlib.Command, callback func(string, *rxlib.CommandResponse, error)) (string, error) {
+	if opts == nil {
+		return "", fmt.Errorf("opts body can not be empty")
+	}
+	requestTopic := fmt.Sprintf("ros/api/%s/command", opts.TargetGlobalID)
+	newUUID := helpers.UUID()
+	go func() {
+		m.RequestResponse(newUUID, requestTopic, command, func(uuid string, payload *Payload, err error) {
+			var message *rxlib.CommandResponse
+			if err == nil && payload != nil {
+				err = json.Unmarshal(payload.Payload, &message)
+			}
+			callback(newUUID, message, err)
+		})
+	}()
+	// Return the newUUID immediately
+	return newUUID, nil
+}
+
 func (m *MQTTClient) Close() error {
 	//TODO implement me
 	panic("implement me")
@@ -26,7 +45,6 @@ type MQTTPayload struct {
 
 func newMQTTClient(mqtt mqttwrapper.MQTT) (*MQTTClient, error) {
 	// Create MQTT client options
-
 	return &MQTTClient{
 		mqttClient: mqtt,
 		requests:   make(map[string]chan *MQTTPayload),
@@ -34,18 +52,29 @@ func newMQTTClient(mqtt mqttwrapper.MQTT) (*MQTTClient, error) {
 }
 
 func (m *MQTTClient) Ping(opts *Opts, callback func(string, *Message, error)) (string, error) {
-	requestTopic := "ros/api/RX-1/ping"
+	if opts == nil {
+		return "", fmt.Errorf("opts body can not be empty")
+	}
+	requestTopic := fmt.Sprintf("ros/api/%s/ping", opts.TargetGlobalID)
 	payloadData := &rxlib.Command{
-		SenderGlobalID: "RX-1",
+		SenderGlobalID: opts.SenderGlobalID,
 		Key:            "ping",
 	}
-	return m.RequestResponse(requestTopic, payloadData, func(uuid string, payload *Payload, err error) {
-		var message *Message
-		if err == nil && payload != nil {
-			err = json.Unmarshal(payload.Payload, &message)
-		}
-		callback(uuid, message, err)
-	})
+	newUUID := helpers.UUID()
+
+	// Start a goroutine to handle the request and callback asynchronously
+	go func() {
+		m.RequestResponse(newUUID, requestTopic, payloadData, func(uuid string, payload *Payload, err error) {
+			var message *Message
+			if err == nil && payload != nil {
+				err = json.Unmarshal(payload.Payload, &message)
+			}
+			callback(newUUID, message, err)
+		})
+	}()
+
+	// Return the newUUID immediately
+	return newUUID, nil
 }
 
 type Payload struct {
@@ -54,8 +83,8 @@ type Payload struct {
 	UUID    string
 }
 
-func (m *MQTTClient) RequestResponse(requestTopic string, payloadData interface{}, callback func(string, *Payload, error)) (string, error) {
-	newUUID := helpers.UUID()
+func (m *MQTTClient) RequestResponse(newUUID, requestTopic string, payloadData interface{}, callback func(string, *Payload, error)) (string, error) {
+
 	requestTopicWithUUID := fmt.Sprintf("%s_%s", requestTopic, newUUID)
 	respTopicWithUUID := fmt.Sprintf("%s/response", requestTopicWithUUID)
 	// Channel to signal the receipt of the message
@@ -71,7 +100,6 @@ func (m *MQTTClient) RequestResponse(requestTopic string, payloadData interface{
 			return
 		}
 		if requestUUID == newUUID {
-			// Handle the respfunc(uuid string, payload any)onse
 			callback(requestUUID, response, nil)
 			close(done) // Signal that the message has been received
 			return
@@ -81,23 +109,15 @@ func (m *MQTTClient) RequestResponse(requestTopic string, payloadData interface{
 		return "", err
 	}
 
-	// Subscribe to the response topic
-	//token.Wait()
-	//if token.Error() != nil {
-	//	return "", token.Error()
-	//}
 	defer m.mqttClient.Unsubscribe(respTopicWithUUID)
 
-	// Marshal the payload to JSON
 	marshaledPayload, err := json.Marshal(payloadData)
 	if err != nil {
 		return "", err
 	}
 
-	// Publish the request
 	m.mqttClient.Publish(requestTopicWithUUID, marshaledPayload)
 
-	// Wait for response or timeout
 	select {
 	case <-done:
 		// Message received

@@ -13,10 +13,10 @@ type Command struct {
 	SenderObjectUUID string            `json:"senderObjectUUID,omitempty"` // if sent from another ROS instance
 	TransactionUUID  string            `json:"transactionUUID,omitempty"`  // add an uuid if you want to keep track of a response over mqtt
 	Key              string            `json:"key,omitempty"`
-	Query            string            `json:"query,omitempty"`
 	Args             []string          `json:"args,omitempty"`
 	Data             map[string]string `json:"data,omitempty"`
 	Body             any               `json:"body,omitempty"`
+	query            string
 }
 
 func NewCommand() *Command {
@@ -25,8 +25,33 @@ func NewCommand() *Command {
 	}
 }
 
-func (c *Command) GetObjectByName(value string, asJSON bool) *Command {
-	c.buildCommand("get", "object", "name", value, asJSON)
+func CommandPing() *Command {
+	c := NewCommand()
+	c.buildCommand("get", "ping", "", "", false)
+	return c
+}
+
+func GetSerializeObjectByUUID(value string) *Command {
+	c := NewCommand()
+	c.buildCommand("get", "object", "uuid", value, true)
+	return c
+}
+
+func GetObjectByUUID(value string) *Command {
+	c := NewCommand()
+	c.buildCommand("get", "object", "uuid", value, false)
+	return c
+}
+
+func GetSerializeObjectByName(value string) *Command {
+	c := NewCommand()
+	c.buildCommand("get", "object", "name", value, true)
+	return c
+}
+
+func GetObjectByName(value string) *Command {
+	c := NewCommand()
+	c.buildCommand("get", "object", "name", value, false)
 	return c
 }
 
@@ -34,9 +59,9 @@ func (c *Command) GetObjectByName(value string, asJSON bool) *Command {
 // eg; QueryObjectByField("category", "math", 1, false)
 func (c *Command) QueryObjectsByField(field, value string, limit int, asJSON bool) *Command {
 	if limit > 0 {
-		c.Query = fmt.Sprintf("objects:%s == %s limit:%d", field, value, limit)
+		c.query = fmt.Sprintf("objects:%s == %s limit:%d", field, value, limit)
 	} else {
-		c.Query = fmt.Sprintf("objects:%s == %s", field, value)
+		c.query = fmt.Sprintf("objects:%s == %s", field, value)
 	}
 	c.buildCommand("get", "objects", "type", value, asJSON)
 	return c
@@ -407,6 +432,8 @@ func (c *Command) CommandReturnType(cmd *Command) (*ParsedCommand, error) {
 	}
 
 	switch args.GetThing() {
+	case "ping":
+		return args, nil
 	case commandCommand:
 		return args, nil
 	case commandObjects, commandObject:

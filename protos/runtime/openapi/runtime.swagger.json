@@ -39,7 +39,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/RuntimeCommandRequest"
+              "$ref": "#/definitions/RuntimeCommand"
             }
           }
         ],
@@ -192,14 +192,6 @@
         }
       }
     },
-    "RuntimeCommandRequest": {
-      "type": "object",
-      "properties": {
-        "command": {
-          "$ref": "#/definitions/RuntimeCommand"
-        }
-      }
-    },
     "RuntimeCommandResponse": {
       "type": "object",
       "properties": {
@@ -230,7 +222,8 @@
           "type": "string"
         },
         "any": {
-          "$ref": "#/definitions/protobufAny"
+          "type": "string",
+          "format": "byte"
         },
         "response": {
           "type": "array",
@@ -280,36 +273,13 @@
         }
       }
     },
-    "RuntimeData": {
-      "type": "object",
-      "properties": {
-        "priority": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "number",
-            "format": "float"
-          }
-        },
-        "highestPriority": {
-          "type": "number",
-          "format": "float"
-        },
-        "dataType": {
-          "type": "string"
-        },
-        "rawValue": {
-          "type": "number",
-          "format": "float"
-        }
-      }
-    },
     "RuntimeInfo": {
       "type": "object",
       "properties": {
-        "id": {
+        "objectId": {
           "type": "string"
         },
-        "type": {
+        "objectType": {
           "type": "string"
         },
         "category": {
@@ -318,7 +288,13 @@
         "pluginName": {
           "type": "string"
         },
+        "workingGroup": {
+          "type": "string"
+        },
         "workingGroupLeader": {
+          "type": "string"
+        },
+        "workingGroupParent": {
           "type": "string"
         },
         "workingGroupObjects": {
@@ -344,44 +320,6 @@
         },
         "requirements": {
           "$ref": "#/definitions/RuntimeRequirements"
-        }
-      }
-    },
-    "RuntimeInput": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "uuid": {
-          "type": "string"
-        },
-        "direction": {
-          "type": "string"
-        },
-        "dataType": {
-          "type": "string"
-        },
-        "defaultPosition": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "data": {
-          "$ref": "#/definitions/RuntimeData"
-        }
-      }
-    },
-    "RuntimeLoggerOpts": {
-      "type": "object",
-      "properties": {
-        "loggerName": {
-          "type": "string"
-        },
-        "loggerColour": {
-          "type": "string"
         }
       }
     },
@@ -412,14 +350,14 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/RuntimeInput"
+            "$ref": "#/definitions/RuntimePort"
           }
         },
         "outputs": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/RuntimeOutput"
+            "$ref": "#/definitions/RuntimePort"
           }
         },
         "meta": {
@@ -494,7 +432,42 @@
         }
       }
     },
-    "RuntimeOutput": {
+    "RuntimePermissions": {
+      "type": "object",
+      "properties": {
+        "allPermissions": {
+          "type": "boolean"
+        },
+        "canBeCreated": {
+          "type": "boolean"
+        },
+        "canBeDeleted": {
+          "type": "boolean"
+        },
+        "canBeUpdated": {
+          "type": "boolean"
+        },
+        "readOnly": {
+          "type": "boolean"
+        },
+        "allowHotFix": {
+          "type": "boolean"
+        },
+        "forceDelete": {
+          "type": "boolean"
+        }
+      }
+    },
+    "RuntimePingResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "New message for the Ping response"
+    },
+    "RuntimePort": {
       "type": "object",
       "properties": {
         "id": {
@@ -517,29 +490,10 @@
           "format": "int32"
         },
         "data": {
-          "$ref": "#/definitions/RuntimeData"
+          "type": "string",
+          "format": "byte"
         }
       }
-    },
-    "RuntimePermissions": {
-      "type": "object",
-      "properties": {
-        "canBeUpdated": {
-          "type": "boolean"
-        },
-        "allPermissions": {
-          "type": "boolean"
-        }
-      }
-    },
-    "RuntimePingResponse": {
-      "type": "object",
-      "properties": {
-        "message": {
-          "type": "string"
-        }
-      },
-      "title": "New message for the Ping response"
     },
     "RuntimePosition": {
       "type": "object",
@@ -560,6 +514,9 @@
         "callResetOnDeploy": {
           "type": "boolean"
         },
+        "allowRuntimeAccess": {
+          "type": "boolean"
+        },
         "maxOne": {
           "type": "boolean"
         },
@@ -575,8 +532,11 @@
         "supportsActions": {
           "type": "boolean"
         },
-        "LoggerOpts": {
-          "$ref": "#/definitions/RuntimeLoggerOpts"
+        "servicesRequirements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

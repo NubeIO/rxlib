@@ -34,7 +34,7 @@ service RuntimeService {
         };
     };
 
-    rpc ObjectCommand (CommandRequest) returns (CommandResponse) {
+    rpc ObjectCommand (Command) returns (CommandResponse) {
         option (google.api.http) = {
             post: "/api/command"
             body: "*"
@@ -42,10 +42,6 @@ service RuntimeService {
     };
 }
 
-
-message CommandRequest {
-    Command command = 1;
-}
 
 message Command {
     string targetGlobalID = 1;
@@ -68,7 +64,7 @@ message CommandResponse {
     bool boolean = 5;
     string error = 6;
     string returnType = 7;
-    google.protobuf.Any any = 8;
+    bytes any = 8;
     repeated CommandResponse response = 9;
     repeated Object serializeObjects = 10;
 }
@@ -115,72 +111,61 @@ message ObjectResponse {
 message Object {
     string id = 1;
     Info info = 2;
-    repeated Input inputs = 3;
-    repeated Output outputs = 4;
+    repeated Port inputs = 3;
+    repeated Port outputs = 4;
     Meta meta = 5;
     Stats stats = 6;
     repeated Connection connections = 7;
 }
 
 message Info {
-    string id = 1;
-    string type = 2;
+    string objectId = 1;
+    string objectType = 2;
     string category = 3;
     string pluginName = 4;
-    string workingGroupLeader = 5;
-    repeated string workingGroupObjects = 6;
-    repeated string workingGroupChildObjects = 7;
-    repeated string objectTags = 8;
-    Permissions permissions = 9;
-    Requirements requirements = 10;
+    string workingGroup = 5;
+    string workingGroupLeader = 6;
+    string workingGroupParent = 7;
+    repeated string workingGroupObjects = 8;
+    repeated string workingGroupChildObjects = 9;
+    repeated string objectTags = 10;
+    Permissions permissions = 11;
+    Requirements requirements = 12;
 }
 
 message Permissions {
-    bool canBeUpdated = 1;
-    bool allPermissions = 2;
+    bool allPermissions = 1;
+    bool canBeCreated = 2;
+    bool canBeDeleted = 3;
+    bool canBeUpdated = 4;
+    bool readOnly = 5;
+    bool allowHotFix = 6;
+    bool forceDelete = 7;
 }
 
 message Requirements {
     bool callResetOnDeploy = 1;
-    bool maxOne = 2;
-    bool mustLiveInObjectType = 3;
-    bool mustLiveParent = 4;
-    bool requiresLogger = 5;
-    bool supportsActions = 6;
-    LoggerOpts LoggerOpts = 7;
+    bool allowRuntimeAccess = 2;
+    bool maxOne = 3;
+    bool mustLiveInObjectType = 4;
+    bool mustLiveParent = 5;
+    bool requiresLogger = 6;
+    bool supportsActions = 7;
+    repeated string servicesRequirements = 8;
 }
 
-message LoggerOpts {
-    string loggerName = 1;
-    string loggerColour = 2;
-}
 
-message Input {
+
+message Port {
     string id = 1;
     string name = 2;
     string uuid = 3;
     string direction = 4;
     string dataType = 5;
     int32 defaultPosition = 6;
-    Data data = 7;
+    bytes data = 7;
 }
 
-message Output {
-    string id = 1;
-    string name = 2;
-    string uuid = 3;
-    string direction = 4;
-    string dataType = 5;
-    int32 defaultPosition = 6;
-    Data data = 7;
-}
-
-message Data {
-    map<string, float> priority = 1;
-    float highestPriority = 2;
-    string dataType = 3;
-    float rawValue = 4;
-}
 
 message Meta {
     string uuid = 1;

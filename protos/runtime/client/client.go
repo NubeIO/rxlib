@@ -16,6 +16,7 @@ type Protocol interface {
 	ObjectsDeploy(object *rxlib.Deploy, opts *Opts, callback func(*Callback, error)) (string, error)
 	Close() error
 	Ping(opts *Opts, callback func(string, *Message, error)) (string, error)
+	Command(opts *Opts, command *rxlib.Command, callback func(string, *rxlib.CommandResponse, error)) (string, error)
 }
 
 const defaultTimeout = 2
@@ -26,8 +27,11 @@ type Callback struct {
 }
 
 type Opts struct {
-	Timeout time.Duration
-	Headers map[string]string
+	RequestUUID    string
+	TargetGlobalID string
+	SenderGlobalID string
+	Timeout        time.Duration
+	Headers        map[string]string
 }
 
 type Message struct {
@@ -39,15 +43,22 @@ type Client struct {
 	protocol Protocol
 }
 
+func (m *Client) Command(opts *Opts, command *rxlib.Command, callback func(string, *rxlib.CommandResponse, error)) (string, error) {
+	return m.protocol.Command(opts, command, callback)
+}
+
 func (m *Client) Close() error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func NewClient(protocol string, port, httpPort int, mqtt mqttwrapper.MQTT) (Protocol, error) {
+func NewClient(ip, protocol string, port, httpPort int, mqtt mqttwrapper.MQTT) (Protocol, error) {
+	if ip == "" {
+		ip = "localhost"
+	}
 	switch protocol {
 	case "grpc":
-		conn, err := grpc.Dial(fmt.Sprintf("localhost:%d", port), grpc.WithTransportCredentials(insecure.NewCredentials()))
+		conn, err := grpc.Dial(fmt.Sprintf("%s:%d", ip, port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			return nil, fmt.Errorf("did not connect: %v", err)
 		}
@@ -55,7 +66,7 @@ func NewClient(protocol string, port, httpPort int, mqtt mqttwrapper.MQTT) (Prot
 		return &Client{protocol: &GRPCClient{client: c, conn: conn}}, nil
 	case "http":
 		client := resty.New()
-		client.BaseURL = fmt.Sprintf("http://localhost:%d/api", httpPort)
+		client.BaseURL = fmt.Sprintf("http://%s:%d/api", ip, httpPort)
 		return &Client{protocol: &HTTPClient{client: client}}, nil
 	case "mqtt":
 		c, _ := newMQTTClient(mqtt)

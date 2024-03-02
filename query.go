@@ -1,6 +1,7 @@
 package rxlib
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/NubeIO/rxlib/libs/convert"
 	"github.com/NubeIO/rxlib/libs/nils"
@@ -29,6 +30,14 @@ func (inst *RuntimeImpl) CommandObject(command *Command) *CommandResponse {
 	inst.parsedCommand = parsedArgs
 
 	switch parsedArgs.Thing {
+	case "ping":
+
+		marshal, err := json.Marshal(map[string]string{"message": "OK"})
+		if err != nil {
+			return nil
+		}
+		inst.response.Any = marshal
+		return inst.response
 	case "objects", "object", "command":
 		return inst.handleObjects(parsedArgs)
 	default:

@@ -196,11 +196,10 @@ type Object interface {
 
 	// requirements
 	GetRequirements() *Requirements
-	GetRubixServicesRequirement() []*RubixServicesRequirement
 
 	// tags
-	AddObjectTags(objectTypeTag ...ObjectTypeTag)
-	GetObjectTags() []ObjectTypeTag
+	AddObjectTags(objectTypeTag ...string)
+	GetObjectTags() []string
 
 	SetCache(key string, data any, expiration time.Duration, overwriteExisting bool) error
 	GetCache(key string) (data any, found bool)

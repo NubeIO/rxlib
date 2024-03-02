@@ -15,6 +15,15 @@ type GRPCClient struct {
 	conn   *grpc.ClientConn
 }
 
+func (g *GRPCClient) Command(opts *Opts, command *rxlib.Command, callback func(string, *rxlib.CommandResponse, error)) (string, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (g *GRPCClient) command(object *protoruntime.Command) (*protoruntime.Command, error) {
+	return nil, nil
+}
+
 func (g *GRPCClient) Ping(opts *Opts, callback func(string, *Message, error)) (string, error) {
 	uuid := uuid.New().String()
 	go func() {

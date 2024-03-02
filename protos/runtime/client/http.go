@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/NubeIO/rxlib"
+	"github.com/NubeIO/rxlib/helpers"
 	"github.com/NubeIO/rxlib/protos/runtime/protoruntime"
 	"github.com/go-resty/resty/v2"
 	"github.com/google/uuid"
@@ -24,34 +25,20 @@ type Response struct {
 
 func (h *HTTPClient) Ping(opts *Opts, callback func(string, *Message, error)) (string, error) {
 	endpoint := "/ping"
-
-	return h.makeRequestWithCallback("GET", endpoint, nil, opts, func(response *Response, err error) {
-		var message *Message
-		if err == nil && response != nil {
-			err = json.Unmarshal(response.Body.([]byte), &message)
-		}
-		callback(response.UUID, message, err)
-	})
-}
-
-func (h *HTTPClient) makeRequestWithCallback(method, endpoint string, body interface{}, opts *Opts, callback func(*Response, error)) (string, error) {
-	newUUID := uuid.New().String() // Generate a UUID for the request
-
+	newUUID := uuid.New().String()
 	go func() {
-		resp, err := h.httpRequestWithTimeout(method, endpoint, body, opts)
+		resp, err := h.httpRequestWithTimeout("GET", endpoint, nil, opts)
 		if err != nil {
-			callback(nil, err)
+			callback(newUUID, nil, err)
 			return
 		}
 
 		if resp.IsError() {
-			callback(nil, fmt.Errorf("HTTP request failed with status code: %d", resp.StatusCode()))
+			callback(newUUID, nil, fmt.Errorf("HTTP request failed with status code: %d", resp.StatusCode()))
 			return
 		}
-
-		callback(&Response{UUID: newUUID, Body: resp.Body()}, nil)
+		callback(newUUID, &Message{"OK"}, nil)
 	}()
-
 	return newUUID, nil
 }
 
@@ -95,6 +82,36 @@ func (h *HTTPClient) httpRequestWithTimeout(method, endpoint string, body interf
 	}
 
 	return resp, err
+}
+
+func (h *HTTPClient) Command(opts *Opts, command *rxlib.Command, callback func(string, *rxlib.CommandResponse, error)) (string, error) {
+	endpoint := "/command"
+	if opts == nil {
+		return "", fmt.Errorf("opts body can not be empty")
+	}
+	newUUID := helpers.UUID()
+	go func() {
+		resp, err := h.httpRequestWithTimeout("POST", endpoint, command, opts)
+		if err != nil {
+			callback(newUUID, nil, err)
+			return
+		}
+		if resp.IsError() {
+			callback(newUUID, nil, fmt.Errorf("HTTP request failed with status code: %d err: %s", resp.StatusCode(), resp.String()))
+			return
+		}
+		var result *rxlib.CommandResponse
+		err = json.Unmarshal(resp.Body(), &result)
+		callback(newUUID, result, nil)
+	}()
+	return newUUID, nil
+
+}
+
+func (h *HTTPClient) makeRequestWithCallback(method, endpoint string, body interface{}, opts *Opts, callback func(*Response, error)) (string, error) {
+	newUUID := uuid.New().String() // Generate a UUID for the request
+
+	return newUUID, nil
 }
 
 func (h *HTTPClient) ObjectsDeploy(object *rxlib.Deploy, opts *Opts, callback func(*Callback, error)) (string, error) {

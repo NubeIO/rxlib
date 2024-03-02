@@ -34,7 +34,7 @@ type RuntimeServiceClient interface {
 	GetObject(ctx context.Context, in *ObjectRequest, opts ...grpc.CallOption) (*ObjectResponse, error)
 	ObjectsDeploy(ctx context.Context, in *ObjectDeployRequest, opts ...grpc.CallOption) (*ObjectDeployRequest, error)
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
-	ObjectCommand(ctx context.Context, in *CommandRequest, opts ...grpc.CallOption) (*CommandResponse, error)
+	ObjectCommand(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error)
 }
 
 type runtimeServiceClient struct {
@@ -81,7 +81,7 @@ func (c *runtimeServiceClient) Ping(ctx context.Context, in *PingRequest, opts .
 	return out, nil
 }
 
-func (c *runtimeServiceClient) ObjectCommand(ctx context.Context, in *CommandRequest, opts ...grpc.CallOption) (*CommandResponse, error) {
+func (c *runtimeServiceClient) ObjectCommand(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error) {
 	out := new(CommandResponse)
 	err := c.cc.Invoke(ctx, RuntimeService_ObjectCommand_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -98,7 +98,7 @@ type RuntimeServiceServer interface {
 	GetObject(context.Context, *ObjectRequest) (*ObjectResponse, error)
 	ObjectsDeploy(context.Context, *ObjectDeployRequest) (*ObjectDeployRequest, error)
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
-	ObjectCommand(context.Context, *CommandRequest) (*CommandResponse, error)
+	ObjectCommand(context.Context, *Command) (*CommandResponse, error)
 	mustEmbedUnimplementedRuntimeServiceServer()
 }
 
@@ -118,7 +118,7 @@ func (UnimplementedRuntimeServiceServer) ObjectsDeploy(context.Context, *ObjectD
 func (UnimplementedRuntimeServiceServer) Ping(context.Context, *PingRequest) (*PingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
-func (UnimplementedRuntimeServiceServer) ObjectCommand(context.Context, *CommandRequest) (*CommandResponse, error) {
+func (UnimplementedRuntimeServiceServer) ObjectCommand(context.Context, *Command) (*CommandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ObjectCommand not implemented")
 }
 func (UnimplementedRuntimeServiceServer) mustEmbedUnimplementedRuntimeServiceServer() {}
@@ -207,7 +207,7 @@ func _RuntimeService_Ping_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _RuntimeService_ObjectCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CommandRequest)
+	in := new(Command)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -219,7 +219,7 @@ func _RuntimeService_ObjectCommand_Handler(srv interface{}, ctx context.Context,
 		FullMethod: RuntimeService_ObjectCommand_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).ObjectCommand(ctx, req.(*CommandRequest))
+		return srv.(RuntimeServiceServer).ObjectCommand(ctx, req.(*Command))
 	}
 	return interceptor(ctx, in, info, handler)
 }

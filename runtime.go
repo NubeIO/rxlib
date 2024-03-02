@@ -75,7 +75,7 @@ type CommandResponse struct {
 	Bool             *bool              `json:"boolean,omitempty"`
 	Error            string             `json:"error,omitempty"`
 	ReturnType       string             `json:"returnType,omitempty"`
-	Any              any                `json:"any,omitempty"`
+	Any              []byte             `json:"any,omitempty"`
 	CommandResponse  []*CommandResponse `json:"response,omitempty"`
 }
 

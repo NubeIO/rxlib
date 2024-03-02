@@ -5,6 +5,21 @@ import (
 	"log"
 )
 
+type Info struct {
+	ObjectID                 string        `json:"id"`
+	ObjectType               ObjectType    `json:"type"`
+	Category                 string        `json:"category"`
+	PluginName               string        `json:"pluginName"`
+	WorkingGroup             string        `json:"workingGroup,omitempty"`             // modbus
+	WorkingGroupLeader       string        `json:"workingGroupLeader,omitempty"`       // modbus-network
+	WorkingGroupParent       string        `json:"workingGroupParent,omitempty"`       // a points parent is the device
+	WorkingGroupObjects      []string      `json:"workingGroupObjects,omitempty"`      // modbus network [network, device, point]
+	WorkingGroupChildObjects []string      `json:"workingGroupChildObjects,omitempty"` // modbus network direct child [device]
+	ObjectTags               []string      `json:"objectTags,omitempty"`
+	Permissions              *Permissions  `json:"permissions"`
+	Requirements             *Requirements `json:"requirements,omitempty"`
+}
+
 type ObjectInfo interface {
 	InfoBuilder
 }
@@ -20,15 +35,15 @@ type Permissions struct {
 }
 
 type Requirements struct {
-	CallResetOnDeploy         bool                        `json:"callResetOnDeploy"`
-	AllowRuntimeAccess        bool                        `json:"allowRuntimeAccess,omitempty"`
-	MaxOne                    bool                        `json:"maxOne,omitempty"`
-	MustLiveInObjectType      bool                        `json:"mustLiveInObjectType"` // modbus-network can only be in Obj-type: drivers
-	MustLiveParent            bool                        `json:"mustLiveParent"`       // a modbus device can only be added under its parent being a modbus-network
-	RequiresLogger            bool                        `json:"requiresLogger,omitempty"`
-	SupportsActions           bool                        `json:"supportsActions"`
-	RubixServicesRequirements []*RubixServicesRequirement `json:"rubixServicesRequirements,omitempty"`
-	LoggerOpts                *LoggerOpts                 `json:"LoggerOpts,omitempty"`
+	CallResetOnDeploy    bool        `json:"callResetOnDeploy"`
+	AllowRuntimeAccess   bool        `json:"allowRuntimeAccess,omitempty"`
+	MaxOne               bool        `json:"maxOne,omitempty"`
+	MustLiveInObjectType bool        `json:"mustLiveInObjectType"` // modbus-network can only be in Obj-type: drivers
+	MustLiveParent       bool        `json:"mustLiveParent"`       // a modbus device can only be added under its parent being a modbus-network
+	RequiresLogger       bool        `json:"requiresLogger,omitempty"`
+	SupportsActions      bool        `json:"supportsActions"`
+	ServicesRequirements []string    `json:"servicesRequirements,omitempty"`
+	LoggerOpts           *LoggerOpts `json:"LoggerOpts,omitempty"`
 }
 
 type RubixRequirement string
@@ -39,15 +54,15 @@ const (
 	RubixSchedulesManager RubixRequirement = "schedules-manager"
 )
 
-func NewServicesRequirement(name RubixRequirement) *RubixServicesRequirement {
-	return &RubixServicesRequirement{
-		Name: name,
-	}
-}
+//func NewServicesRequirement(name RubixRequirement) *RubixServicesRequirement {
+//	return &RubixServicesRequirement{
+//		Name: name,
+//	}
+//}
 
-type RubixServicesRequirement struct {
-	Name RubixRequirement `json:"name"` // gin-router RubixGinRouter, history RubixHistoriesManager
-}
+//type RubixServicesRequirement struct {
+//	Name RubixRequirement `json:"name"` // gin-router RubixGinRouter, history RubixHistoriesManager
+//}
 
 type LoggerOpts struct {
 	LoggerName   string `json:"loggerName"`
@@ -59,21 +74,6 @@ func NewLoggerOpts(loggerName, colour string) *LoggerOpts {
 		LoggerName:   loggerName,
 		LoggerColour: colour,
 	}
-}
-
-type Info struct {
-	ObjectID                 string          `json:"id"`
-	ObjectType               ObjectType      `json:"type"`
-	Category                 string          `json:"category"`
-	PluginName               string          `json:"pluginName"`
-	WorkingGroup             string          `json:"workingGroup,omitempty"`             // modbus
-	WorkingGroupLeader       string          `json:"workingGroupLeader,omitempty"`       // modbus-network
-	WorkingGroupParent       string          `json:"workingGroupParent,omitempty"`       // a points parent is the device
-	WorkingGroupObjects      []string        `json:"workingGroupObjects,omitempty"`      // modbus network [network, device, point]
-	WorkingGroupChildObjects []string        `json:"workingGroupChildObjects,omitempty"` // modbus network direct child [device]
-	ObjectTags               []ObjectTypeTag `json:"objectTags,omitempty"`
-	Permissions              *Permissions    `json:"permissions"`
-	Requirements             *Requirements   `json:"requirements,omitempty"`
 }
 
 type InfoBuilder interface {
@@ -120,8 +120,6 @@ type InfoBuilder interface {
 
 	// requirements
 	GetRequirements() *Requirements
-	GetRubixServicesRequirement() []*RubixServicesRequirement
-	SetRubixServicesRequirement([]*RubixServicesRequirement) InfoBuilder
 	SetCallResetOnDeploy() InfoBuilder
 	SetAllowRuntimeAccess() InfoBuilder
 	SetMaxOne() InfoBuilder // only max one Obj can be added
@@ -136,8 +134,8 @@ type InfoBuilder interface {
 	GetMustLiveParent() bool
 
 	// tags
-	AddObjectTags(objectTypeTag ...ObjectTypeTag) InfoBuilder
-	GetObjectTags() []ObjectTypeTag
+	AddObjectTags(objectTypeTag ...string) InfoBuilder
+	GetObjectTags() []string
 }
 
 func NewObjectInfo() InfoBuilder {
@@ -280,17 +278,6 @@ func (builder *infoBuilder) GetPluginName() string {
 	return builder.info.PluginName
 }
 
-func (builder *infoBuilder) GetRubixServicesRequirement() []*RubixServicesRequirement {
-	ensureRequirements(builder.info)
-	return builder.info.Requirements.RubixServicesRequirements
-}
-
-func (builder *infoBuilder) SetRubixServicesRequirement(requirements []*RubixServicesRequirement) InfoBuilder {
-	ensureRequirements(builder.info)
-	builder.info.Requirements.RubixServicesRequirements = requirements
-	return builder
-}
-
 func (builder *infoBuilder) SetAllowRuntimeAccess() InfoBuilder {
 	ensureRequirements(builder.info)
 	builder.info.Requirements.AllowRuntimeAccess = true
@@ -333,13 +320,13 @@ func (builder *infoBuilder) SetCanBeUpdated() InfoBuilder {
 	return builder
 }
 
-func (builder *infoBuilder) AddObjectTags(objectTypeTag ...ObjectTypeTag) InfoBuilder {
+func (builder *infoBuilder) AddObjectTags(objectTypeTag ...string) InfoBuilder {
 	builder.info.ObjectTags = append(builder.info.ObjectTags, objectTypeTag...)
 	return builder
 }
 
 // GetObjectTags returns the ObjectTypeTags associated with the InfoBuilder.
-func (builder *infoBuilder) GetObjectTags() []ObjectTypeTag {
+func (builder *infoBuilder) GetObjectTags() []string {
 	return builder.info.ObjectTags
 }
 
