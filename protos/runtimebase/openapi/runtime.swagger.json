@@ -70,7 +70,7 @@
         ]
       }
     },
-    "/api/runtime": {
+    "/api/runtimebase": {
       "get": {
         "operationId": "RuntimeService_GetObjects",
         "responses": {
@@ -97,7 +97,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/RuntimeObjectDeployRequest"
+              "$ref": "#/definitions/RuntimeObjectConfig"
             }
           },
           "default": {
@@ -113,7 +113,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/RuntimeObjectDeployRequest"
+              "$ref": "#/definitions/RuntimeObjectConfig"
             }
           }
         ],
@@ -122,7 +122,7 @@
         ]
       }
     },
-    "/api/runtime/{uuid}": {
+    "/api/runtimebase/{uuid}": {
       "get": {
         "operationId": "RuntimeService_GetObject",
         "responses": {
@@ -244,39 +244,67 @@
     "RuntimeConnection": {
       "type": "object",
       "properties": {
-        "uuid": {
+        "connectionUUID": {
           "type": "string"
         },
         "targetConnectionUUID": {
           "type": "string"
         },
-        "source": {
+        "sourceUUID": {
           "type": "string"
         },
-        "sourceHandle": {
+        "sourcePort": {
           "type": "string"
         },
         "sourcePortUUID": {
           "type": "string"
         },
-        "target": {
+        "targetUUID": {
           "type": "string"
         },
-        "targetHandle": {
+        "targetPort": {
           "type": "string"
         },
         "targetPortUUID": {
           "type": "string"
         },
+        "isExistingConnection": {
+          "type": "boolean"
+        },
         "flowDirection": {
           "type": "string"
+        },
+        "disable": {
+          "type": "boolean"
+        },
+        "isError": {
+          "type": "boolean"
+        },
+        "created": {
+          "type": "string"
+        },
+        "lastOk": {
+          "type": "string"
+        },
+        "lastFail": {
+          "type": "string"
+        },
+        "failCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "error": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
     "RuntimeInfo": {
       "type": "object",
       "properties": {
-        "objectId": {
+        "objectID": {
           "type": "string"
         },
         "objectType": {
@@ -326,10 +354,13 @@
     "RuntimeMeta": {
       "type": "object",
       "properties": {
-        "uuid": {
+        "objectUUID": {
           "type": "string"
         },
-        "name": {
+        "objectName": {
+          "type": "string"
+        },
+        "parentUUID": {
           "type": "string"
         },
         "position": {
@@ -375,7 +406,7 @@
         }
       }
     },
-    "RuntimeObjectDeploy": {
+    "RuntimeObjectConfig": {
       "type": "object",
       "properties": {
         "deleted": {
@@ -397,18 +428,6 @@
             "type": "object",
             "$ref": "#/definitions/RuntimeObject"
           }
-        }
-      }
-    },
-    "RuntimeObjectDeployRequest": {
-      "type": "object",
-      "properties": {
-        "objectDeploy": {
-          "$ref": "#/definitions/RuntimeObjectDeploy"
-        },
-        "timeout": {
-          "type": "integer",
-          "format": "int32"
         }
       }
     },
@@ -476,7 +495,7 @@
         "name": {
           "type": "string"
         },
-        "uuid": {
+        "portUUID": {
           "type": "string"
         },
         "direction": {
@@ -533,6 +552,12 @@
           "type": "boolean"
         },
         "servicesRequirements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "loggerOptions": {
           "type": "array",
           "items": {
             "type": "string"

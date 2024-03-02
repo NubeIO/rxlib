@@ -2,11 +2,11 @@
 // source: runtime.proto
 
 /*
-Package protoruntime is a reverse proxy.
+Package runtime is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
-package protoruntime
+package runtime
 
 import (
 	"context"
@@ -102,7 +102,7 @@ func local_request_RuntimeService_GetObject_0(ctx context.Context, marshaler run
 }
 
 func request_RuntimeService_ObjectsDeploy_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ObjectDeployRequest
+	var protoReq ObjectConfig
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
@@ -115,7 +115,7 @@ func request_RuntimeService_ObjectsDeploy_0(ctx context.Context, marshaler runti
 }
 
 func local_request_RuntimeService_ObjectsDeploy_0(ctx context.Context, marshaler runtime.Marshaler, server RuntimeServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ObjectDeployRequest
+	var protoReq ObjectConfig
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
@@ -185,7 +185,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjects", runtime.WithHTTPPathPattern("/api/runtime"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjects", runtime.WithHTTPPathPattern("/api/runtimebase"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -210,7 +210,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObject", runtime.WithHTTPPathPattern("/api/runtime/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObject", runtime.WithHTTPPathPattern("/api/runtimebase/{uuid}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -235,7 +235,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/ObjectsDeploy", runtime.WithHTTPPathPattern("/api/runtime"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/ObjectsDeploy", runtime.WithHTTPPathPattern("/api/runtimebase"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -349,7 +349,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjects", runtime.WithHTTPPathPattern("/api/runtime"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjects", runtime.WithHTTPPathPattern("/api/runtimebase"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -371,7 +371,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObject", runtime.WithHTTPPathPattern("/api/runtime/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObject", runtime.WithHTTPPathPattern("/api/runtimebase/{uuid}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -393,7 +393,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/ObjectsDeploy", runtime.WithHTTPPathPattern("/api/runtime"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/ObjectsDeploy", runtime.WithHTTPPathPattern("/api/runtimebase"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -457,11 +457,11 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 }
 
 var (
-	pattern_RuntimeService_GetObjects_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "runtime"}, ""))
+	pattern_RuntimeService_GetObjects_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "runtimebase"}, ""))
 
-	pattern_RuntimeService_GetObject_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "runtime", "uuid"}, ""))
+	pattern_RuntimeService_GetObject_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "runtimebase", "uuid"}, ""))
 
-	pattern_RuntimeService_ObjectsDeploy_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "runtime"}, ""))
+	pattern_RuntimeService_ObjectsDeploy_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "runtimebase"}, ""))
 
 	pattern_RuntimeService_Ping_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "ping"}, ""))
 

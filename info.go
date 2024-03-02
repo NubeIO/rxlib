@@ -1,49 +1,12 @@
 package rxlib
 
 import (
-	"fmt"
+	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"log"
 )
 
-type Info struct {
-	ObjectID                 string        `json:"id"`
-	ObjectType               ObjectType    `json:"type"`
-	Category                 string        `json:"category"`
-	PluginName               string        `json:"pluginName"`
-	WorkingGroup             string        `json:"workingGroup,omitempty"`             // modbus
-	WorkingGroupLeader       string        `json:"workingGroupLeader,omitempty"`       // modbus-network
-	WorkingGroupParent       string        `json:"workingGroupParent,omitempty"`       // a points parent is the device
-	WorkingGroupObjects      []string      `json:"workingGroupObjects,omitempty"`      // modbus network [network, device, point]
-	WorkingGroupChildObjects []string      `json:"workingGroupChildObjects,omitempty"` // modbus network direct child [device]
-	ObjectTags               []string      `json:"objectTags,omitempty"`
-	Permissions              *Permissions  `json:"permissions"`
-	Requirements             *Requirements `json:"requirements,omitempty"`
-}
-
 type ObjectInfo interface {
 	InfoBuilder
-}
-
-type Permissions struct {
-	AllPermissions bool `json:"allPermissions,omitempty"`
-	CanBeCreated   bool `json:"canBeCreated,omitempty"`
-	CanBeDeleted   bool `json:"canBeDeleted,omitempty"`
-	CanBeUpdated   bool `json:"canBeUpdated,omitempty"`
-	ReadOnly       bool `json:"readOnly,omitempty"`
-	AllowHotFix    bool `json:"allowHotFix,omitempty"`
-	ForceDelete    bool `json:"forceDelete,omitempty"`
-}
-
-type Requirements struct {
-	CallResetOnDeploy    bool        `json:"callResetOnDeploy"`
-	AllowRuntimeAccess   bool        `json:"allowRuntimeAccess,omitempty"`
-	MaxOne               bool        `json:"maxOne,omitempty"`
-	MustLiveInObjectType bool        `json:"mustLiveInObjectType"` // modbus-network can only be in Obj-type: drivers
-	MustLiveParent       bool        `json:"mustLiveParent"`       // a modbus device can only be added under its parent being a modbus-network
-	RequiresLogger       bool        `json:"requiresLogger,omitempty"`
-	SupportsActions      bool        `json:"supportsActions"`
-	ServicesRequirements []string    `json:"servicesRequirements,omitempty"`
-	LoggerOpts           *LoggerOpts `json:"LoggerOpts,omitempty"`
 }
 
 type RubixRequirement string
@@ -54,30 +17,8 @@ const (
 	RubixSchedulesManager RubixRequirement = "schedules-manager"
 )
 
-//func NewServicesRequirement(name RubixRequirement) *RubixServicesRequirement {
-//	return &RubixServicesRequirement{
-//		Name: name,
-//	}
-//}
-
-//type RubixServicesRequirement struct {
-//	Name RubixRequirement `json:"name"` // gin-router RubixGinRouter, history RubixHistoriesManager
-//}
-
-type LoggerOpts struct {
-	LoggerName   string `json:"loggerName"`
-	LoggerColour string `json:"loggerColour"`
-}
-
-func NewLoggerOpts(loggerName, colour string) *LoggerOpts {
-	return &LoggerOpts{
-		LoggerName:   loggerName,
-		LoggerColour: colour,
-	}
-}
-
 type InfoBuilder interface {
-	Build() *Info
+	Build() *runtime.Info
 	String() string
 
 	// id
@@ -111,7 +52,7 @@ type InfoBuilder interface {
 	GetPluginName() string
 
 	// permissions
-	GetPermissions() *Permissions
+	GetPermissions() *runtime.Permissions
 	SetReadOnly() InfoBuilder
 	SetAllPermissions() InfoBuilder
 	SetCanBeCreated() InfoBuilder
@@ -119,11 +60,11 @@ type InfoBuilder interface {
 	SetCanBeUpdated() InfoBuilder
 
 	// requirements
-	GetRequirements() *Requirements
+	GetRequirements() *runtime.Requirements
 	SetCallResetOnDeploy() InfoBuilder
 	SetAllowRuntimeAccess() InfoBuilder
 	SetMaxOne() InfoBuilder // only max one Obj can be added
-	SetLogger(opts *LoggerOpts) InfoBuilder
+	SetLogger(opts []string) InfoBuilder
 
 	SetSupportsActions() InfoBuilder
 	GetSupportsActions() bool
@@ -139,14 +80,14 @@ type InfoBuilder interface {
 }
 
 func NewObjectInfo() InfoBuilder {
-	return &infoBuilder{info: &Info{}}
+	return &infoBuilder{info: &runtime.Info{}}
 }
 
 type infoBuilder struct {
-	info *Info
+	info *runtime.Info
 }
 
-func (builder *infoBuilder) Build() *Info {
+func (builder *infoBuilder) Build() *runtime.Info {
 	builder.checks()
 	return builder.info
 }
@@ -161,12 +102,12 @@ func (builder *infoBuilder) GetID() string {
 }
 
 func (builder *infoBuilder) SetObjectType(objectType ObjectType) InfoBuilder {
-	builder.info.ObjectType = objectType
+	builder.info.ObjectType = string(objectType)
 	return builder
 }
 
 func (builder *infoBuilder) GetObjectType() ObjectType {
-	return builder.info.ObjectType
+	return ObjectType(builder.info.ObjectType)
 }
 
 func (builder *infoBuilder) SetCategory(value string) InfoBuilder {
@@ -223,13 +164,12 @@ func (builder *infoBuilder) GetWorkingGroupChildObjects() []string {
 	return builder.info.WorkingGroupChildObjects
 }
 
-func (builder *infoBuilder) SetLogger(opts *LoggerOpts) InfoBuilder {
+func (builder *infoBuilder) SetLogger(opts []string) InfoBuilder {
 	ensureRequirements(builder.info)
 	builder.info.Requirements.RequiresLogger = true
 	if opts == nil {
 		log.Fatalf("rxlib.SetLogger opts can not be empty")
 	}
-	builder.info.Requirements.LoggerOpts = opts
 	return builder
 }
 
@@ -330,11 +270,11 @@ func (builder *infoBuilder) GetObjectTags() []string {
 	return builder.info.ObjectTags
 }
 
-func (builder *infoBuilder) GetPermissions() *Permissions {
+func (builder *infoBuilder) GetPermissions() *runtime.Permissions {
 	return builder.info.Permissions
 }
 
-func (builder *infoBuilder) GetRequirements() *Requirements {
+func (builder *infoBuilder) GetRequirements() *runtime.Requirements {
 	return builder.info.Requirements
 }
 
@@ -352,27 +292,18 @@ func (builder *infoBuilder) checks() {
 	if builder.info.ObjectType == "" {
 		crashMe("info.ObjectType")
 	}
-	var validType bool
-	for _, o := range AllObjectType {
-		if o == builder.info.ObjectType {
-			validType = true
-		}
-	}
-	if !validType {
-		log.Fatalf("rxlib.SetObjectType() invaild Obj type: %s try: %s", builder.info.ObjectType, AllObjectType[0])
-	}
 
 }
 
-func ensurePermissions(info *Info) {
+func ensurePermissions(info *runtime.Info) {
 	if info.Permissions == nil {
-		info.Permissions = &Permissions{}
+		info.Permissions = &runtime.Permissions{}
 	}
 }
 
-func ensureRequirements(info *Info) {
+func ensureRequirements(info *runtime.Info) {
 	if info.Requirements == nil {
-		info.Requirements = &Requirements{}
+		info.Requirements = &runtime.Requirements{}
 	}
 }
 
@@ -380,9 +311,9 @@ func (builder *infoBuilder) String() string {
 	return builder.info.String()
 }
 
-func (info *Info) String() string {
-	return fmt.Sprintf("ObjectID: %s\nPluginName: %s\nCategory: %s\nPermissions: %+v", info.ObjectID, info.PluginName, info.Category, info.Permissions)
-}
+//func (info *Info) String() string {
+//	return fmt.Sprintf("ObjectID: %s\nPluginName: %s\nCategory: %s\nPermissions: %+v", info.ObjectID, info.PluginName, info.Category, info.Permissions)
+//}
 
 func crashMe(name string) {
 	log.Fatalf("rxlib.Checks() %s is empty", name)

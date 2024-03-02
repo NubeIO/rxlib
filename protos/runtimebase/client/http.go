@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/NubeIO/rxlib"
 	"github.com/NubeIO/rxlib/helpers"
-	"github.com/NubeIO/rxlib/protos/runtime/protoruntime"
+	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/go-resty/resty/v2"
 	"github.com/google/uuid"
 	"time"
@@ -124,7 +124,7 @@ func (h *HTTPClient) ObjectsDeploy(object *rxlib.Deploy, opts *Opts, callback fu
 	return uuid, nil
 }
 
-func (h *HTTPClient) objectsDeploy(object *protoruntime.ObjectDeployRequest) (*protoruntime.ObjectDeploy, error) {
+func (h *HTTPClient) objectsDeploy(object *runtime.ObjectConfig) (*runtime.ObjectConfig, error) {
 	// convert the object to JSON
 	jsonObject, err := json.Marshal(object)
 	if err != nil {
@@ -135,7 +135,7 @@ func (h *HTTPClient) objectsDeploy(object *protoruntime.ObjectDeployRequest) (*p
 	resp, err := h.client.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(jsonObject).
-		Post(fmt.Sprintf("/%s", "runtime/deploy"))
+		Post(fmt.Sprintf("/%s", "runtimebase/deploy"))
 
 	if err != nil {
 		return nil, fmt.Errorf("error making HTTP request: %v", err)
@@ -146,7 +146,7 @@ func (h *HTTPClient) objectsDeploy(object *protoruntime.ObjectDeployRequest) (*p
 	}
 
 	// unmarshal the response into a runtimeClient.ObjectDeploy struct
-	var result protoruntime.ObjectDeploy
+	var result runtime.ObjectConfig
 	err = json.Unmarshal(resp.Body(), &result)
 	if err != nil {
 		return nil, fmt.Errorf("error unmarshaling response: %v", err)

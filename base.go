@@ -3,6 +3,7 @@ package rxlib
 import (
 	"github.com/NubeIO/rxlib/libs/history"
 	"github.com/NubeIO/rxlib/priority"
+	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/NubeIO/schema"
 	"github.com/mustafaturan/bus/v3"
 	"github.com/patrickmn/go-cache"
@@ -71,16 +72,16 @@ type Object interface {
 	OverrideValue(value any, portID string) error
 	ReleaseOverride(portID string) error
 
-	CreateConnection(connection *Connection) // CreateConnection is for just adding a rubix without adding it to the eventbus
+	CreateConnection(connection *runtime.Connection) // CreateConnection is for just adding a rubix without adding it to the eventbus
 	NewOutputConnection(portID, targetUUID, targetPort string) error
 
-	GetConnection(uuid string) *Connection
-	GetExistingConnection(sourceObjectUUID, targetObjectUUID, targetPortID string) *Connection
-	GetConnections() []*Connection
+	GetConnection(uuid string) *runtime.Connection
+	GetExistingConnection(sourceObjectUUID, targetObjectUUID, targetPortID string) *runtime.Connection
+	GetConnections() []*runtime.Connection
 
-	RemoveConnection(connection *Connection) error
+	RemoveConnection(connection *runtime.Connection) error
 	DropConnections() []error
-	RemoveOldConnections(newConnections []*Connection) []error
+	RemoveOldConnections(newConnections []*runtime.Connection) []error
 	AddSubscriptionConnection(sourceObjectUUID, sourcePortID, targetObjectUUID, targetPortID string)
 
 	// inputs
@@ -143,8 +144,8 @@ type Object interface {
 	UpdateCustomStat(name string, stat *CustomStatus)
 
 	// SetInfo -------------------OBJECT INFO------------------
-	SetInfo(info *Info)
-	GetInfo() *Info
+	SetInfo(info *runtime.Info)
+	GetInfo() *runtime.Info
 
 	// id
 	GetID() string
@@ -179,7 +180,7 @@ type Object interface {
 	GetRequiresLogger() bool
 	AddLogger(trace *Logger)
 	Logger() (*Logger, error)
-	GetLoggerInfo() (*LoggerOpts, error)
+	GetLoggerInfo() ([]string, error)
 
 	// scheam
 	GetSchema() *schema.Generated
@@ -188,14 +189,14 @@ type Object interface {
 	SetSettings(settings *Settings) error
 
 	// GetMeta  meta will also set the Obj-name at parentUUID
-	GetMeta() *Meta
-	SetMeta(meta *Meta) error
+	GetMeta() *runtime.Meta
+	SetMeta(meta *runtime.Meta) error
 
 	// permissions
-	GetPermissions() *Permissions
+	GetPermissions() *runtime.Permissions
 
 	// requirements
-	GetRequirements() *Requirements
+	GetRequirements() *runtime.Requirements
 
 	// tags
 	AddObjectTags(objectTypeTag ...string)
@@ -217,19 +218,19 @@ type ObjectValue struct {
 	Ports      []*Port `json:"ports"`
 }
 
-type Position struct {
-	PositionY int `json:"positionY"`
-	PositionX int `json:"positionX"`
-}
+//type Position struct {
+//	PositionY int `json:"positionY"`
+//	PositionX int `json:"positionX"`
+//}
+//
+//type Meta struct {
+//	ObjectUUID string   `json:"uuid"`                 // comes from UI need to set in objectInfo
+//	ObjectName string   `json:"name"`                 // comes from UI need to set in objectInfo
+//	ParentUUID string   `json:"parentUUID,omitempty"` // comes from UI need to set in objectInfo
+//	Position   Position `json:"position"`
+//}
 
-type Meta struct {
-	ObjectUUID string   `json:"uuid"`                 // comes from UI need to set in objectInfo
-	ObjectName string   `json:"name"`                 // comes from UI need to set in objectInfo
-	ParentUUID string   `json:"parentUUID,omitempty"` // comes from UI need to set in objectInfo
-	Position   Position `json:"position"`
-}
-
-func NewMeta(meta *Meta) *Meta {
+func NewMeta(meta *runtime.Meta) *runtime.Meta {
 	return meta
 }
 

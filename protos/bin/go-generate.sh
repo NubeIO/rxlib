@@ -7,8 +7,8 @@ if [ -z $protoExec ]; then
     exit 0
 fi
 
-name=runtime
-combined_dir=protoruntime
+name=runtimebase
+combined_dir=runtime
 
 protos_dir=$root_dir/$name
 combined_dir=$root_dir/$name/$combined_dir

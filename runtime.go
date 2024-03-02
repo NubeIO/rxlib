@@ -3,6 +3,7 @@ package rxlib
 import (
 	"fmt"
 	"github.com/NubeIO/rxlib/plugins"
+	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"sync"
 )
 
@@ -311,16 +312,16 @@ func (inst *RuntimeImpl) AddConnection(sourceUUID, sourcePort, targetUUID, targe
 
 // ObjectConfig represents configuration for a object.
 type ObjectConfig struct {
-	ID                 string        `json:"id"`
-	Info               *Info         `json:"info"`
-	Inputs             []*Port       `json:"inputs"`
-	Outputs            []*Port       `json:"outputs,omitempty"`
-	Values             []*Port       `json:"values,omitempty"`
-	Connections        []*Connection `json:"connections,omitempty"`
-	Settings           *Settings     `json:"settings,omitempty"`
-	Meta               *Meta         `json:"meta,omitempty"`
-	Stats              *ObjectStats  `json:"stats,omitempty"`
-	WasUpdated         bool          `json:"wasUpdated,omitempty"`
+	ID                 string                `json:"id"`
+	Info               *runtime.Info         `json:"info"`
+	Inputs             []*Port               `json:"inputs"`
+	Outputs            []*Port               `json:"outputs,omitempty"`
+	Values             []*Port               `json:"values,omitempty"`
+	Connections        []*runtime.Connection `json:"connections,omitempty"`
+	Settings           *Settings             `json:"settings,omitempty"`
+	Meta               *runtime.Meta         `json:"meta,omitempty"`
+	Stats              *ObjectStats          `json:"stats,omitempty"`
+	WasUpdated         bool                  `json:"wasUpdated,omitempty"`
 	dontRecreateObject bool
 }
 
@@ -347,8 +348,8 @@ func serializeCurrentFlowArray(object Object) *ObjectConfig {
 
 	meta := object.GetMeta()
 	if meta == nil {
-		meta = &Meta{
-			Position: Position{
+		meta = &runtime.Meta{
+			Position: &runtime.Position{
 				PositionY: 0,
 				PositionX: 0,
 			},

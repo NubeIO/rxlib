@@ -4,7 +4,7 @@
 // - protoc             v3.12.4
 // source: runtime.proto
 
-package protoruntime
+package runtime
 
 import (
 	context "context"
@@ -32,7 +32,7 @@ const (
 type RuntimeServiceClient interface {
 	GetObjects(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ObjectsResponse, error)
 	GetObject(ctx context.Context, in *ObjectRequest, opts ...grpc.CallOption) (*ObjectResponse, error)
-	ObjectsDeploy(ctx context.Context, in *ObjectDeployRequest, opts ...grpc.CallOption) (*ObjectDeployRequest, error)
+	ObjectsDeploy(ctx context.Context, in *ObjectConfig, opts ...grpc.CallOption) (*ObjectConfig, error)
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
 	ObjectCommand(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error)
 }
@@ -63,8 +63,8 @@ func (c *runtimeServiceClient) GetObject(ctx context.Context, in *ObjectRequest,
 	return out, nil
 }
 
-func (c *runtimeServiceClient) ObjectsDeploy(ctx context.Context, in *ObjectDeployRequest, opts ...grpc.CallOption) (*ObjectDeployRequest, error) {
-	out := new(ObjectDeployRequest)
+func (c *runtimeServiceClient) ObjectsDeploy(ctx context.Context, in *ObjectConfig, opts ...grpc.CallOption) (*ObjectConfig, error) {
+	out := new(ObjectConfig)
 	err := c.cc.Invoke(ctx, RuntimeService_ObjectsDeploy_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -96,7 +96,7 @@ func (c *runtimeServiceClient) ObjectCommand(ctx context.Context, in *Command, o
 type RuntimeServiceServer interface {
 	GetObjects(context.Context, *Empty) (*ObjectsResponse, error)
 	GetObject(context.Context, *ObjectRequest) (*ObjectResponse, error)
-	ObjectsDeploy(context.Context, *ObjectDeployRequest) (*ObjectDeployRequest, error)
+	ObjectsDeploy(context.Context, *ObjectConfig) (*ObjectConfig, error)
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
 	ObjectCommand(context.Context, *Command) (*CommandResponse, error)
 	mustEmbedUnimplementedRuntimeServiceServer()
@@ -112,7 +112,7 @@ func (UnimplementedRuntimeServiceServer) GetObjects(context.Context, *Empty) (*O
 func (UnimplementedRuntimeServiceServer) GetObject(context.Context, *ObjectRequest) (*ObjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetObject not implemented")
 }
-func (UnimplementedRuntimeServiceServer) ObjectsDeploy(context.Context, *ObjectDeployRequest) (*ObjectDeployRequest, error) {
+func (UnimplementedRuntimeServiceServer) ObjectsDeploy(context.Context, *ObjectConfig) (*ObjectConfig, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ObjectsDeploy not implemented")
 }
 func (UnimplementedRuntimeServiceServer) Ping(context.Context, *PingRequest) (*PingResponse, error) {
@@ -171,7 +171,7 @@ func _RuntimeService_GetObject_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _RuntimeService_ObjectsDeploy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ObjectDeployRequest)
+	in := new(ObjectConfig)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -183,7 +183,7 @@ func _RuntimeService_ObjectsDeploy_Handler(srv interface{}, ctx context.Context,
 		FullMethod: RuntimeService_ObjectsDeploy_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).ObjectsDeploy(ctx, req.(*ObjectDeployRequest))
+		return srv.(RuntimeServiceServer).ObjectsDeploy(ctx, req.(*ObjectConfig))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/NubeIO/mqttwrapper"
 	"github.com/NubeIO/rxlib"
-	runtimeClient "github.com/NubeIO/rxlib/protos/runtime/protoruntime"
+	runtimeClient "github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/go-resty/resty/v2"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -91,16 +91,13 @@ func duration(timeout int32) time.Duration {
 	return time.Second * time.Duration(timeout)
 }
 
-func ObjectDeployToProto(obj *rxlib.Deploy) *runtimeClient.ObjectDeployRequest {
-	a := &runtimeClient.ObjectDeploy{
+func ObjectDeployToProto(obj *rxlib.Deploy) *runtimeClient.ObjectConfig {
+	a := &runtimeClient.ObjectConfig{
 		Deleted: obj.Deleted,
 		New:     ObjectsConfigToProto(obj.New),
 		Updated: ObjectsConfigToProto(obj.Updated),
 	}
-	return &runtimeClient.ObjectDeployRequest{
-		ObjectDeploy: a,
-		Timeout:      0,
-	}
+	return a
 }
 
 func ObjectsConfigToProto(objs []*rxlib.ObjectConfig) []*runtimeClient.Object {

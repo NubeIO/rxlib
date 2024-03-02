@@ -1,29 +1,30 @@
 syntax = "proto3";
 
-option go_package = "./;protoruntime";
+option go_package = "./;runtime";
 
 package App.Runtime;
 import "google/api/annotations.proto";
 import "google/protobuf/any.proto";
 
+
 service RuntimeService {
 
     rpc GetObjects (Empty) returns (ObjectsResponse) {
         option (google.api.http) = {
-            get: "/api/runtime"
+            get: "/api/runtimebase"
         };
     };
 
 
     rpc GetObject (ObjectRequest) returns (ObjectResponse) {
         option (google.api.http) = {
-            get: "/api/runtime/{uuid}"
+            get: "/api/runtimebase/{uuid}"
         };
     };
 
-    rpc ObjectsDeploy (ObjectDeployRequest) returns (ObjectDeployRequest) {
+    rpc ObjectsDeploy (ObjectConfig) returns (ObjectConfig) {
         option (google.api.http) = {
-            post: "/api/runtime"
+            post: "/api/runtimebase"
             body: "*"
         };
     };
@@ -82,12 +83,8 @@ message PingResponse {
     string message = 1;
 }
 
-message ObjectDeployRequest {
-    ObjectDeploy objectDeploy = 1;
-    int32 timeout = 2;
-}
 
-message ObjectDeploy {
+message ObjectConfig {
     repeated string deleted = 1;
     repeated Object new = 2;
     repeated Object updated = 3;
@@ -119,7 +116,7 @@ message Object {
 }
 
 message Info {
-    string objectId = 1;
+    string objectID = 1;
     string objectType = 2;
     string category = 3;
     string pluginName = 4;
@@ -152,6 +149,7 @@ message Requirements {
     bool requiresLogger = 6;
     bool supportsActions = 7;
     repeated string servicesRequirements = 8;
+    repeated string loggerOptions = 9;
 }
 
 
@@ -159,7 +157,7 @@ message Requirements {
 message Port {
     string id = 1;
     string name = 2;
-    string uuid = 3;
+    string portUUID = 3;
     string direction = 4;
     string dataType = 5;
     int32 defaultPosition = 6;
@@ -168,9 +166,10 @@ message Port {
 
 
 message Meta {
-    string uuid = 1;
-    string name = 2;
-    Position position = 3;
+    string objectUUID = 1;
+    string objectName = 2;
+    string parentUUID = 3;
+    Position position = 4;
 }
 
 message Position {
@@ -187,13 +186,22 @@ message Stats {
 }
 
 message Connection {
-    string uuid = 1;
+    string connectionUUID = 1;;
     string targetConnectionUUID = 2;
-    string source = 3;
-    string sourceHandle = 4;
+    string sourceUUID = 3;
+    string sourcePort = 4;
     string sourcePortUUID = 5;
-    string target = 6;
-    string targetHandle = 7;
+    string targetUUID = 6;
+    string targetPort = 7;
     string targetPortUUID = 8;
-    string flowDirection = 9;
+    bool isExistingConnection = 9;
+    string flowDirection = 10;
+    bool disable = 11;
+    bool isError = 12;
+    string created = 13;
+    string lastOk = 14;
+    string lastFail = 15;
+    int32 failCount = 16;
+    repeated string error = 17;
 }
+
