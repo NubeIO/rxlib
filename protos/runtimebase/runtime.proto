@@ -11,20 +11,26 @@ service RuntimeService {
 
     rpc GetObjects (Empty) returns (ObjectsResponse) {
         option (google.api.http) = {
-            get: "/api/runtimebase"
+            get: "/api/runtime"
+        };
+    };
+
+    rpc GetTreeMapRoot (Empty) returns (ObjectsRootMap) {
+        option (google.api.http) = {
+            get: "/api/runtime/tree"
         };
     };
 
 
     rpc GetObject (ObjectRequest) returns (ObjectResponse) {
         option (google.api.http) = {
-            get: "/api/runtimebase/{uuid}"
+            get: "/api/runtime/object/{uuid}"
         };
     };
 
-    rpc ObjectsDeploy (ObjectConfig) returns (ObjectConfig) {
+    rpc ObjectsDeploy (ObjectDeploy) returns (ObjectDeploy) {
         option (google.api.http) = {
-            post: "/api/runtimebase"
+            post: "/api/runtime"
             body: "*"
         };
     };
@@ -67,7 +73,7 @@ message CommandResponse {
     string returnType = 7;
     bytes any = 8;
     repeated CommandResponse response = 9;
-    repeated Object serializeObjects = 10;
+    repeated ObjectConfig serializeObjects = 10;
 }
 
 
@@ -84,17 +90,17 @@ message PingResponse {
 }
 
 
-message ObjectConfig {
+message ObjectDeploy {
     repeated string deleted = 1;
-    repeated Object new = 2;
-    repeated Object updated = 3;
+    repeated ObjectConfig new = 2;
+    repeated ObjectConfig updated = 3;
 }
 
 
 message Empty {}
 
 message ObjectsResponse {
-    repeated Object objects = 1;
+    repeated ObjectConfig objects = 1;
 }
 
 message ObjectRequest {
@@ -102,16 +108,16 @@ message ObjectRequest {
 }
 
 message ObjectResponse {
-    Object object = 1;
+    ObjectConfig object = 1;
 }
 
-message Object {
+message ObjectConfig {
     string id = 1;
     Info info = 2;
     repeated Port inputs = 3;
     repeated Port outputs = 4;
     Meta meta = 5;
-    Stats stats = 6;
+    ObjectStats stats = 6;
     repeated Connection connections = 7;
     Settings settings = 8;
 }
@@ -158,6 +164,13 @@ message Requirements {
 }
 
 
+message ObjectStats {
+    string status = 1;
+    string loaded = 2;
+    uint32 loopCount = 3;
+    string timeSince = 6;
+}
+
 
 message Port {
     string id = 1;
@@ -182,13 +195,6 @@ message Position {
     int32 positionX = 2;
 }
 
-message Stats {
-    string status = 1;
-    string loaded = 2;
-    string timeSince = 3;
-    int32 loopCount = 4;
-    string lastUpdated = 5;
-}
 
 message Connection {
     string connectionUUID = 1;;
@@ -208,5 +214,32 @@ message Connection {
     string lastFail = 15;
     int32 failCount = 16;
     repeated string error = 17;
+}
+
+
+message ObjectExtractedDetails {
+    string id = 1;
+    string name = 2;
+    string uuid = 3;
+    string parentUUID = 4;
+    string category = 5;
+    string objectType = 6;
+    bool isParent = 7;
+    repeated ObjectExtractedDetails children = 8;
+}
+
+message ObjectsRootMap {
+    string rubixNetworkName = 1;
+    string rubixNetworkDesc = 2;
+    repeated ObjectExtractedDetails rubixNetwork = 3;
+    string driversName = 4;
+    string driversDesc = 5;
+    repeated ObjectExtractedDetails drivers = 6;
+    string servicesName = 7;
+    string servicesDesc = 8;
+    repeated ObjectExtractedDetails services = 9;
+    string logicName = 10;
+    string logicDesc = 11;
+    repeated ObjectExtractedDetails logic = 12;
 }
 

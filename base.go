@@ -137,11 +137,7 @@ type Object interface {
 	GetLoopCount() uint
 	IncrementLoopCount()
 	ResetLoopCount()
-	GetStats() *ObjectStats
-	AddCustomStat(name string, stat *CustomStatus)
-	GetCustomStat(name string) (*CustomStatus, bool)
-	DeleteCustomStat(name string)
-	UpdateCustomStat(name string, stat *CustomStatus)
+	GetStats() *runtime.ObjectStats
 
 	// SetInfo -------------------OBJECT INFO------------------
 	SetInfo(info *runtime.Info)

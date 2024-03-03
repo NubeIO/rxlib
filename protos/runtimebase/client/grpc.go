@@ -42,11 +42,11 @@ func (g *GRPCClient) Ping(opts *Opts, callback func(string, *Message, error)) (s
 func (g *GRPCClient) ObjectsDeploy(object *rxlib.Deploy, opts *Opts, callback func(*Callback, error)) (string, error) {
 	uuid := uuid.New().String()
 	go func() {
-		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-		defer cancel()
-
-		resp, err := g.client.ObjectsDeploy(ctx, ObjectDeployToProto(object))
-		callback(&Callback{UUID: uuid, Body: resp}, err)
+		//ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+		//defer cancel()
+		//
+		//resp, err := g.client.ObjectsDeploy(ctx, ObjectDeployToProto(object))
+		//callback(&Callback{UUID: uuid, Body: resp}, err)
 	}()
 	return uuid, nil
 }
@@ -55,7 +55,7 @@ func (g *GRPCClient) Close() error {
 	return g.conn.Close()
 }
 
-func (g *GRPCClient) objectsDeploy(object *runtime.ObjectConfig) (*runtime.ObjectConfig, error) {
+func (g *GRPCClient) objectsDeploy(object *runtime.ObjectDeploy) (*runtime.ObjectDeploy, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
 	defer cancel()
 	r, err := g.client.ObjectsDeploy(ctx, object)

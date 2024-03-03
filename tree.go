@@ -1,68 +1,70 @@
 package rxlib
 
+import "github.com/NubeIO/rxlib/protos/runtimebase/runtime"
+
 type tree struct {
 	objects []Object
 }
 
-type ExtractedDetails struct {
-	ID         string              `json:"objectID,omitempty"`
-	Name       string              `json:"name,omitempty"`
-	UUID       string              `json:"uuid,omitempty"`
-	ParentUUID string              `json:"parentUUID"`
-	Category   string              `json:"category,omitempty"`
-	ObjectType string              `json:"objectType,omitempty"`
-	IsParent   bool                `json:"isParent,omitempty"`
-	Children   []*ExtractedDetails `json:"children,omitempty"`
-}
-
-type ObjectsRootMap struct {
-	RubixNetworkName string              `json:"rubixNetworkName"`
-	RubixNetworkDesc string              `json:"RubixNetworkDesc"`
-	RubixNetwork     []*ExtractedDetails `json:"rubixNetwork"`
-	DriversName      string              `json:"driversName"`
-	DriversDesc      string              `json:"driversDesc"`
-	Drivers          []*ExtractedDetails `json:"drivers"`
-	ServicesName     string              `json:"servicesName"`
-	ServicesDesc     string              `json:"servicesDesc"`
-	Services         []*ExtractedDetails `json:"services"`
-	LogicName        string              `json:"logicName"`
-	LogicDesc        string              `json:"logicDesc"`
-	Logic            []*ExtractedDetails `json:"logic"`
-}
+//type ObjectExtractedDetails struct {
+//	ID         string                    `json:"objectID,omitempty"`
+//	Name       string                    `json:"name,omitempty"`
+//	UUID       string                    `json:"uuid,omitempty"`
+//	ParentUUID string                    `json:"parentUUID"`
+//	Category   string                    `json:"category,omitempty"`
+//	ObjectType string                    `json:"objectType,omitempty"`
+//	IsParent   bool                      `json:"isParent,omitempty"`
+//	Children   []*ObjectExtractedDetails `json:"children,omitempty"`
+//}
+//
+//type ObjectsRootMap struct {
+//	RubixNetworkName string                    `json:"rubixNetworkName"`
+//	RubixNetworkDesc string                    `json:"RubixNetworkDesc"`
+//	RubixNetwork     []*ObjectExtractedDetails `json:"rubixNetwork"`
+//	DriversName      string                    `json:"driversName"`
+//	DriversDesc      string                    `json:"driversDesc"`
+//	Drivers          []*ObjectExtractedDetails `json:"drivers"`
+//	ServicesName     string                    `json:"servicesName"`
+//	ServicesDesc     string                    `json:"servicesDesc"`
+//	Services         []*ObjectExtractedDetails `json:"services"`
+//	LogicName        string                    `json:"logicName"`
+//	LogicDesc        string                    `json:"logicDesc"`
+//	Logic            []*ObjectExtractedDetails `json:"logic"`
+//}
 
 func (t *tree) addObjects(objects []Object) {
 	t.objects = objects
 }
 
-func (t *tree) GetTreeMapRoot() *ObjectsRootMap {
-	rootTreeMap := &ObjectsRootMap{
+func (t *tree) GetTreeMapRoot() *runtime.ObjectsRootMap {
+	rootTreeMap := &runtime.ObjectsRootMap{
 		RubixNetworkName: "Rubix Networks",
 		RubixNetworkDesc: "A place to add rubix-networks",
-		RubixNetwork:     []*ExtractedDetails{},
+		RubixNetwork:     []*runtime.ObjectExtractedDetails{},
 		DriversName:      "Protocol Drivers",
 		DriversDesc:      "Network protocols",
-		Drivers:          []*ExtractedDetails{},
+		Drivers:          []*runtime.ObjectExtractedDetails{},
 		ServicesName:     "System Services",
 		ServicesDesc:     "Services for managing things like a user or network settings",
-		Services:         []*ExtractedDetails{},
+		Services:         []*runtime.ObjectExtractedDetails{},
 		LogicName:        "Logic Programs",
 		LogicDesc:        "Logic Wiresheet Programs",
-		Logic:            []*ExtractedDetails{},
+		Logic:            []*runtime.ObjectExtractedDetails{},
 	}
 
 	// Create a map to hold all objects for quick access by UUID
-	objectMap := make(map[string]*ExtractedDetails)
+	objectMap := make(map[string]*runtime.ObjectExtractedDetails)
 
 	// First pass: Create all objects and add them to the map
 	for _, obj := range t.objects {
-		details := &ExtractedDetails{
-			ID:         obj.GetID(),
+		details := &runtime.ObjectExtractedDetails{
+			Id:         obj.GetID(),
 			Name:       obj.GetName(),
-			UUID:       obj.GetUUID(),
+			Uuid:       obj.GetUUID(),
 			ParentUUID: obj.GetParentUUID(),
 			Category:   obj.GetCategory(),
 			ObjectType: string(obj.GetObjectType()),
-			Children:   []*ExtractedDetails{},
+			Children:   []*runtime.ObjectExtractedDetails{},
 		}
 		objectMap[obj.GetUUID()] = details
 	}
@@ -95,7 +97,7 @@ func (t *tree) GetTreeMapRoot() *ObjectsRootMap {
 //	objects []Object
 //}
 //
-//type ExtractedDetails struct {
+//type ObjectExtractedDetails struct {
 //	ID         string              `json:"objectID,omitempty"`
 //	Name       string              `json:"name,omitempty"`
 //	UUID       string              `json:"uuid,omitempty"`
@@ -103,22 +105,22 @@ func (t *tree) GetTreeMapRoot() *ObjectsRootMap {
 //	Category   string              `json:"category,omitempty"`
 //	ObjectType string              `json:"objectType,omitempty"`
 //	IsParent   bool                `json:"isParent,omitempty"`
-//	Children   []*ExtractedDetails `json:"children,omitempty"`
+//	Children   []*ObjectExtractedDetails `json:"children,omitempty"`
 //}
 //
 //type ObjectsRootMap struct {
 //	RubixNetworkName string              `json:"rubixNetworkName"`
 //	RubixNetworkDesc string              `json:"RubixNetworkDesc"`
-//	RubixNetwork     []*ExtractedDetails `json:"rubixNetwork"`
+//	RubixNetwork     []*ObjectExtractedDetails `json:"rubixNetwork"`
 //	DriversName      string              `json:"driversName"`
 //	DriversDesc      string              `json:"driversDesc"`
-//	Drivers          []*ExtractedDetails `json:"drivers"`
+//	Drivers          []*ObjectExtractedDetails `json:"drivers"`
 //	ServicesName     string              `json:"servicesName"`
 //	ServicesDesc     string              `json:"servicesDesc"`
-//	Services         []*ExtractedDetails `json:"services"`
+//	Services         []*ObjectExtractedDetails `json:"services"`
 //	LogicName        string              `json:"logicName"`
 //	LogicDesc        string              `json:"logicDesc"`
-//	Logic            []*ExtractedDetails `json:"logic"`
+//	Logic            []*ObjectExtractedDetails `json:"logic"`
 //}
 //
 //func (t *tree) addObjects(objects []Object) {
@@ -129,20 +131,20 @@ func (t *tree) GetTreeMapRoot() *ObjectsRootMap {
 //	rootTreeMap := &ObjectsRootMap{
 //		RubixNetworkName: "Rubix Networks",
 //		RubixNetworkDesc: "A place to add rubix-networks",
-//		RubixNetwork:     []*ExtractedDetails{},
+//		RubixNetwork:     []*ObjectExtractedDetails{},
 //		DriversName:      "Protocol Drivers",
 //		DriversDesc:      "Network protocols",
-//		Drivers:          []*ExtractedDetails{},
+//		Drivers:          []*ObjectExtractedDetails{},
 //		ServicesName:     "System Services",
 //		ServicesDesc:     "Services for manging things like a user or network settings",
-//		Services:         []*ExtractedDetails{},
+//		Services:         []*ObjectExtractedDetails{},
 //		LogicName:        "Logic Programs",
 //		LogicDesc:        "Logic Wiresheet Programs",
-//		Logic:            []*ExtractedDetails{},
+//		Logic:            []*ObjectExtractedDetails{},
 //	}
 //
 //	// Create a helper function to add children to the appropriate category
-//	addToCategory := func(category string, obj *ExtractedDetails) {
+//	addToCategory := func(category string, obj *ObjectExtractedDetails) {
 //		switch category {
 //		case "driver":
 //			rootTreeMap.Drivers = append(rootTreeMap.Drivers, obj)
@@ -159,14 +161,14 @@ func (t *tree) GetTreeMapRoot() *ObjectsRootMap {
 //	for _, obj := range t.objects {
 //		if obj.GetParentUUID() == "" {
 //			// Create the root object
-//			details := &ExtractedDetails{
+//			details := &ObjectExtractedDetails{
 //				ID:         obj.GetID(),
 //				Name:       obj.GetName(),
 //				UUID:       obj.GetUUID(),
 //				Category:   obj.GetCategory(),
 //				ObjectType: string(obj.GetObjectType()),
 //				IsParent:   true,
-//				Children:   []*ExtractedDetails{},
+//				Children:   []*ObjectExtractedDetails{},
 //			}
 //
 //			// Add root object to the appropriate category
@@ -181,17 +183,17 @@ func (t *tree) GetTreeMapRoot() *ObjectsRootMap {
 //}
 //
 //// Updated buildTreeForTreeMap function with addToCategory callback
-//func (t *tree) buildTreeForTreeMap(details *ExtractedDetails, uuid string, addToCategory func(string, *ExtractedDetails)) {
+//func (t *tree) buildTreeForTreeMap(details *ObjectExtractedDetails, uuid string, addToCategory func(string, *ObjectExtractedDetails)) {
 //	// Continue building the tree with children objects
 //	for _, obj := range t.objects {
 //		if obj.GetParentUUID() == uuid {
-//			childDetails := &ExtractedDetails{
+//			childDetails := &ObjectExtractedDetails{
 //				ID:         obj.GetID(),
 //				Name:       obj.GetName(),
 //				UUID:       obj.GetUUID(),
 //				Category:   obj.GetCategory(),
 //				ObjectType: string(obj.GetObjectType()),
-//				Children:   []*ExtractedDetails{},
+//				Children:   []*ObjectExtractedDetails{},
 //			}
 //			details.Children = append(details.Children, childDetails)
 //

@@ -116,15 +116,15 @@ func (h *HTTPClient) makeRequestWithCallback(method, endpoint string, body inter
 
 func (h *HTTPClient) ObjectsDeploy(object *rxlib.Deploy, opts *Opts, callback func(*Callback, error)) (string, error) {
 	uuid := uuid.New().String()
-	go func() {
-		// Assuming you have a method `httpObjectsDeploy` that makes the HTTP request
-		resp, err := h.objectsDeploy(ObjectDeployToProto(object))
-		callback(&Callback{UUID: uuid, Body: resp}, err)
-	}()
+	//go func() {
+	//	// Assuming you have a method `httpObjectsDeploy` that makes the HTTP request
+	//	resp, err := h.objectsDeploy(ObjectDeployToProto(object))
+	//	callback(&Callback{UUID: uuid, Body: resp}, err)
+	//}()
 	return uuid, nil
 }
 
-func (h *HTTPClient) objectsDeploy(object *runtime.ObjectConfig) (*runtime.ObjectConfig, error) {
+func (h *HTTPClient) objectsDeploy(object *runtime.ObjectDeploy) (*runtime.ObjectDeploy, error) {
 	// convert the object to JSON
 	jsonObject, err := json.Marshal(object)
 	if err != nil {
@@ -146,7 +146,7 @@ func (h *HTTPClient) objectsDeploy(object *runtime.ObjectConfig) (*runtime.Objec
 	}
 
 	// unmarshal the response into a runtimeClient.ObjectDeploy struct
-	var result runtime.ObjectConfig
+	var result runtime.ObjectDeploy
 	err = json.Unmarshal(resp.Body(), &result)
 	if err != nil {
 		return nil, fmt.Errorf("error unmarshaling response: %v", err)

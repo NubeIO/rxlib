@@ -91,32 +91,32 @@ func duration(timeout int32) time.Duration {
 	return time.Second * time.Duration(timeout)
 }
 
-func ObjectDeployToProto(obj *rxlib.Deploy) *runtimeClient.ObjectConfig {
-	a := &runtimeClient.ObjectConfig{
-		Deleted: obj.Deleted,
-		New:     ObjectsConfigToProto(obj.New),
-		Updated: ObjectsConfigToProto(obj.Updated),
-	}
-	return a
-}
+//func ObjectDeployToProto(obj *rxlib.Deploy) *runtimeClient.ObjectDeploy {
+//	a := &runtimeClient.ObjectDeploy{
+//		Deleted: obj.Deleted,
+//		New:     ObjectsConfigToProto(obj.New),
+//		Updated: ObjectsConfigToProto(obj.Updated),
+//	}
+//	return a
+//}
 
-func ObjectsConfigToProto(objs []*rxlib.ObjectConfig) []*runtimeClient.Object {
-	var out []*runtimeClient.Object
-	for _, obj := range objs {
-		out = append(out, ObjectConfigToProto(obj))
-	}
-	out = append(out)
-	return out
-}
+//func ObjectsConfigToProto(objs []*runtime.ObjectConfig) []*runtimeClient.ObjectConfig {
+//	var out []*runtimeClient.ObjectConfig
+//	for _, obj := range objs {
+//		out = append(out, ObjectConfigToProto(obj))
+//	}
+//	out = append(out)
+//	return out
+//}
 
-func ObjectConfigToProto(obj *rxlib.ObjectConfig) *runtimeClient.Object {
-	return &runtimeClient.Object{
-		Id:          obj.ID,
-		Info:        nil,
-		Inputs:      nil,
-		Outputs:     nil,
-		Meta:        nil,
-		Stats:       nil,
-		Connections: nil,
-	}
-}
+//func ObjectConfigToProto(obj *runtime.ObjectConfig) *runtimeClient.ObjectConfig {
+//	return &runtimeClient.ObjectConfig{
+//		Id:          obj.ID,
+//		Info:        nil,
+//		Inputs:      nil,
+//		Outputs:     nil,
+//		Meta:        nil,
+//		Stats:       nil,
+//		Connections: nil,
+//	}
+//}

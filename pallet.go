@@ -1,11 +1,14 @@
 package rxlib
 
-import "github.com/NubeIO/rxlib/plugins"
+import (
+	"github.com/NubeIO/rxlib/plugins"
+	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
+)
 
 type PalletTree struct {
-	Drivers  []*ObjectConfig `json:"drivers"`
-	Logic    []*ObjectConfig `json:"logic"`
-	Services []*ObjectConfig `json:"services"`
+	Drivers  []*runtime.ObjectConfig `json:"drivers"`
+	Logic    []*runtime.ObjectConfig `json:"logic"`
+	Services []*runtime.ObjectConfig `json:"services"`
 }
 
 func (inst *RuntimeImpl) AllPlugins() []*plugins.Export {

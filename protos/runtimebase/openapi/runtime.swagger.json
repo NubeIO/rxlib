@@ -70,7 +70,7 @@
         ]
       }
     },
-    "/api/runtimebase": {
+    "/api/runtime": {
       "get": {
         "operationId": "RuntimeService_GetObjects",
         "responses": {
@@ -97,7 +97,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/RuntimeObjectConfig"
+              "$ref": "#/definitions/RuntimeObjectDeploy"
             }
           },
           "default": {
@@ -113,7 +113,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/RuntimeObjectConfig"
+              "$ref": "#/definitions/RuntimeObjectDeploy"
             }
           }
         ],
@@ -122,7 +122,7 @@
         ]
       }
     },
-    "/api/runtimebase/{uuid}": {
+    "/api/runtime/object/{uuid}": {
       "get": {
         "operationId": "RuntimeService_GetObject",
         "responses": {
@@ -147,6 +147,28 @@
             "type": "string"
           }
         ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/runtime/tree": {
+      "get": {
+        "operationId": "RuntimeService_GetTreeMapRoot",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeObjectsRootMap"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
         "tags": [
           "RuntimeService"
         ]
@@ -236,7 +258,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/RuntimeObject"
+            "$ref": "#/definitions/RuntimeObjectConfig"
           }
         }
       }
@@ -368,7 +390,7 @@
         }
       }
     },
-    "RuntimeObject": {
+    "RuntimeObjectConfig": {
       "type": "object",
       "properties": {
         "id": {
@@ -395,7 +417,7 @@
           "$ref": "#/definitions/RuntimeMeta"
         },
         "stats": {
-          "$ref": "#/definitions/RuntimeStats"
+          "$ref": "#/definitions/RuntimeObjectStats"
         },
         "connections": {
           "type": "array",
@@ -409,7 +431,7 @@
         }
       }
     },
-    "RuntimeObjectConfig": {
+    "RuntimeObjectDeploy": {
       "type": "object",
       "properties": {
         "deleted": {
@@ -422,14 +444,47 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/RuntimeObject"
+            "$ref": "#/definitions/RuntimeObjectConfig"
           }
         },
         "updated": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/RuntimeObject"
+            "$ref": "#/definitions/RuntimeObjectConfig"
+          }
+        }
+      }
+    },
+    "RuntimeObjectExtractedDetails": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "parentUUID": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "objectType": {
+          "type": "string"
+        },
+        "isParent": {
+          "type": "boolean"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeObjectExtractedDetails"
           }
         }
       }
@@ -438,7 +493,25 @@
       "type": "object",
       "properties": {
         "object": {
-          "$ref": "#/definitions/RuntimeObject"
+          "$ref": "#/definitions/RuntimeObjectConfig"
+        }
+      }
+    },
+    "RuntimeObjectStats": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "loaded": {
+          "type": "string"
+        },
+        "loopCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "timeSince": {
+          "type": "string"
         }
       }
     },
@@ -449,7 +522,64 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/RuntimeObject"
+            "$ref": "#/definitions/RuntimeObjectConfig"
+          }
+        }
+      }
+    },
+    "RuntimeObjectsRootMap": {
+      "type": "object",
+      "properties": {
+        "rubixNetworkName": {
+          "type": "string"
+        },
+        "rubixNetworkDesc": {
+          "type": "string"
+        },
+        "rubixNetwork": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeObjectExtractedDetails"
+          }
+        },
+        "driversName": {
+          "type": "string"
+        },
+        "driversDesc": {
+          "type": "string"
+        },
+        "drivers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeObjectExtractedDetails"
+          }
+        },
+        "servicesName": {
+          "type": "string"
+        },
+        "servicesDesc": {
+          "type": "string"
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeObjectExtractedDetails"
+          }
+        },
+        "logicName": {
+          "type": "string"
+        },
+        "logicDesc": {
+          "type": "string"
+        },
+        "logic": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeObjectExtractedDetails"
           }
         }
       }
@@ -574,27 +704,6 @@
         "value": {
           "type": "string",
           "format": "byte"
-        }
-      }
-    },
-    "RuntimeStats": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
-        },
-        "loaded": {
-          "type": "string"
-        },
-        "timeSince": {
-          "type": "string"
-        },
-        "loopCount": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "lastUpdated": {
-          "type": "string"
         }
       }
     },

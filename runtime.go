@@ -3,13 +3,14 @@ package rxlib
 import (
 	"fmt"
 	"github.com/NubeIO/rxlib/plugins"
+	"github.com/NubeIO/rxlib/priority"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"sync"
 )
 
 type Runtime interface {
 	Get() []Object
-	GetObject() []*ObjectConfig
+	GetObjectsConfig() []*runtime.ObjectConfig
 	Delete() string
 	GetByUUID(uuid string) Object
 	GetFirstByID(objectID string) Object
@@ -22,7 +23,7 @@ type Runtime interface {
 	AddObject(object Object)
 	CommandObject(cmd *ExtendedCommand) *CommandResponse
 
-	GetTreeMapRoot() *ObjectsRootMap
+	GetTreeMapRoot() *runtime.ObjectsRootMap
 	GetAncestorTreeByUUID(objectUUID string) *AncestorTreeNode
 	GetChilds(objectUUID string) *AncestorTreeNode
 
@@ -57,7 +58,7 @@ type RuntimeImpl struct {
 	addedObject     bool
 }
 
-func (inst *RuntimeImpl) GetObject() []*ObjectConfig {
+func (inst *RuntimeImpl) GetObjectsConfig() []*runtime.ObjectConfig {
 	return SerializeCurrentFlowArray(inst.Get())
 }
 
@@ -66,21 +67,21 @@ func NewCommandResponse() *CommandResponse {
 }
 
 type CommandResponse struct {
-	SenderID         string             `json:"senderID,omitempty"` // if sent from another ROS instance
-	Count            *int               `json:"count,omitempty"`
-	Objects          []Object           `json:"-,omitempty"`
-	SerializeObjects []*ObjectConfig    `json:"serializeObjects,omitempty"`
-	MapPorts         map[string][]*Port `json:"mapPorts,omitempty"`
-	MapStrings       map[string]string  `json:"mapStrings,omitempty"`
-	Float            *float64           `json:"number,omitempty"`
-	Bool             *bool              `json:"boolean,omitempty"`
-	Error            string             `json:"error,omitempty"`
-	ReturnType       string             `json:"returnType,omitempty"`
-	Any              []byte             `json:"any,omitempty"`
-	CommandResponse  []*CommandResponse `json:"response,omitempty"`
+	SenderID         string                  `json:"senderID,omitempty"` // if sent from another ROS instance
+	Count            *int                    `json:"count,omitempty"`
+	Objects          []Object                `json:"-,omitempty"`
+	SerializeObjects []*runtime.ObjectConfig `json:"serializeObjects,omitempty"`
+	MapPorts         map[string][]*Port      `json:"mapPorts,omitempty"`
+	MapStrings       map[string]string       `json:"mapStrings,omitempty"`
+	Float            *float64                `json:"number,omitempty"`
+	Bool             *bool                   `json:"boolean,omitempty"`
+	Error            string                  `json:"error,omitempty"`
+	ReturnType       string                  `json:"returnType,omitempty"`
+	Any              []byte                  `json:"any,omitempty"`
+	CommandResponse  []*CommandResponse      `json:"response,omitempty"`
 }
 
-func (inst *RuntimeImpl) GetTreeMapRoot() *ObjectsRootMap {
+func (inst *RuntimeImpl) GetTreeMapRoot() *runtime.ObjectsRootMap {
 	if !inst.addedObject {
 		inst.tree.addObjects(inst.objects)
 	}
@@ -311,19 +312,19 @@ func (inst *RuntimeImpl) AddConnection(sourceUUID, sourcePort, targetUUID, targe
 }
 
 // ObjectConfig represents configuration for a object.
-type ObjectConfig struct {
-	ID                 string                `json:"id"`
-	Info               *runtime.Info         `json:"info"`
-	Inputs             []*Port               `json:"inputs"`
-	Outputs            []*Port               `json:"outputs,omitempty"`
-	Values             []*Port               `json:"values,omitempty"`
-	Connections        []*runtime.Connection `json:"connections,omitempty"`
-	Settings           *runtime.Settings     `json:"settings,omitempty"`
-	Meta               *runtime.Meta         `json:"meta,omitempty"`
-	Stats              *ObjectStats          `json:"stats,omitempty"`
-	WasUpdated         bool                  `json:"wasUpdated,omitempty"`
-	dontRecreateObject bool
-}
+//type ObjectConfig struct {
+//	ID                 string                `json:"id"`
+//	Info               *runtime.Info         `json:"info"`
+//	Inputs             []*Port               `json:"inputs"`
+//	Outputs            []*Port               `json:"outputs,omitempty"`
+//	Values             []*Port               `json:"values,omitempty"`
+//	Connections        []*runtime.Connection `json:"connections,omitempty"`
+//	Settings           *runtime.Settings     `json:"settings,omitempty"`
+//	Meta               *runtime.Meta         `json:"meta,omitempty"`
+//	Stats              *ObjectStats          `json:"stats,omitempty"`
+//	WasUpdated         bool                  `json:"wasUpdated,omitempty"`
+//	dontRecreateObject bool
+//}
 
 type Deploy struct {
 	ObjectDeploy `json:"objectDeploy"`
@@ -331,20 +332,20 @@ type Deploy struct {
 }
 
 type ObjectDeploy struct {
-	Deleted []string        `json:"deleted"`
-	New     []*ObjectConfig `json:"new"`
-	Updated []*ObjectConfig `json:"updated"`
+	Deleted []string                `json:"deleted"`
+	New     []*runtime.ObjectConfig `json:"new"`
+	Updated []*runtime.ObjectConfig `json:"updated"`
 }
 
-func SerializeCurrentFlowArray(objects []Object) []*ObjectConfig {
-	var serializedObjects []*ObjectConfig
+func SerializeCurrentFlowArray(objects []Object) []*runtime.ObjectConfig {
+	var serializedObjects []*runtime.ObjectConfig
 	for _, object := range objects {
 		serializedObjects = append(serializedObjects, serializeCurrentFlowArray(object))
 	}
 	return serializedObjects
 }
 
-func serializeCurrentFlowArray(object Object) *ObjectConfig {
+func serializeCurrentFlowArray(object Object) *runtime.ObjectConfig {
 
 	meta := object.GetMeta()
 	if meta == nil {
@@ -355,11 +356,11 @@ func serializeCurrentFlowArray(object Object) *ObjectConfig {
 			},
 		}
 	}
-	objectConfig := &ObjectConfig{
-		ID:          object.GetID(),
-		Info:        object.GetInfo(),
-		Inputs:      getPortValues(object.GetInputs()),
-		Outputs:     getPortValues(object.GetOutputs()),
+	objectConfig := &runtime.ObjectConfig{
+		Id:     object.GetID(),
+		Info:   object.GetInfo(),
+		Inputs: PortsToProto(object.GetInputs()),
+		//Outputs:     runtimebase.PortsToProto(object.GetOutputs()),
 		Connections: object.GetConnections(),
 		Settings:    object.GetSettings(),
 		Stats:       object.GetStats(),
@@ -375,4 +376,42 @@ func getPortValues(ports []*Port) []*Port {
 		}
 	}
 	return ports
+}
+
+func ProtosToPort(obj []*runtime.Port) []*Port {
+	var out []*Port
+	for _, port := range obj {
+		out = append(out, ProtoToPort(port))
+	}
+	return out
+}
+
+func PortsToProto(obj []*Port) []*runtime.Port {
+	var out []*runtime.Port
+	for _, port := range obj {
+		out = append(out, PortToProto(port))
+	}
+	return out
+}
+
+func PortToProto(obj *Port) *runtime.Port {
+	return &runtime.Port{
+		Id:              obj.ID,
+		Name:            obj.Name,
+		PortUUID:        obj.UUID,
+		Direction:       string(obj.Direction),
+		DataType:        string(obj.DataType),
+		DefaultPosition: int32(obj.DefaultPosition),
+	}
+}
+
+func ProtoToPort(obj *runtime.Port) *Port {
+	return &Port{
+		ID:              obj.Id,
+		Name:            obj.Name,
+		UUID:            obj.PortUUID,
+		Direction:       PortDirection(obj.Direction),
+		DataType:        priority.Type(obj.DataType),
+		DefaultPosition: int(obj.DefaultPosition),
+	}
 }
