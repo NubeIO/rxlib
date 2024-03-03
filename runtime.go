@@ -11,6 +11,7 @@ import (
 type Runtime interface {
 	Get() []Object
 	GetObjectsConfig() []*runtime.ObjectConfig
+	GetObjectConfig(uuid string) *runtime.ObjectConfig
 	Delete() string
 	GetByUUID(uuid string) Object
 	GetFirstByID(objectID string) Object
@@ -60,6 +61,10 @@ type RuntimeImpl struct {
 
 func (inst *RuntimeImpl) GetObjectsConfig() []*runtime.ObjectConfig {
 	return SerializeCurrentFlowArray(inst.Get())
+}
+
+func (inst *RuntimeImpl) GetObjectConfig(uuid string) *runtime.ObjectConfig {
+	return serializeCurrentFlowArray(inst.GetByUUID(uuid))
 }
 
 func NewCommandResponse() *CommandResponse {
@@ -346,7 +351,9 @@ func SerializeCurrentFlowArray(objects []Object) []*runtime.ObjectConfig {
 }
 
 func serializeCurrentFlowArray(object Object) *runtime.ObjectConfig {
-
+	if object == nil {
+		return nil
+	}
 	meta := object.GetMeta()
 	if meta == nil {
 		meta = &runtime.Meta{

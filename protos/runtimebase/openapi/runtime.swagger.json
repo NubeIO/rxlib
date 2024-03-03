@@ -144,14 +144,14 @@
         ]
       }
     },
-    "/api/runtime/object/{uuid}": {
+    "/api/runtime/objects/{uuid}": {
       "get": {
         "operationId": "RuntimeService_GetObject",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/RuntimeObjectResponse"
+              "$ref": "#/definitions/RuntimeObjectConfig"
             }
           },
           "default": {
@@ -522,14 +522,6 @@
         }
       }
     },
-    "RuntimeObjectResponse": {
-      "type": "object",
-      "properties": {
-        "object": {
-          "$ref": "#/definitions/RuntimeObjectConfig"
-        }
-      }
-    },
     "RuntimeObjectStats": {
       "type": "object",
       "properties": {
@@ -708,9 +700,8 @@
           "type": "integer",
           "format": "int32"
         },
-        "data": {
-          "type": "string",
-          "format": "byte"
+        "value": {
+          "type": "string"
         }
       }
     },
