@@ -20,7 +20,7 @@ type Runtime interface {
 	GetChildObjects(parentUUID string) []Object
 	GetAllObjectValues() []*ObjectValue
 	AddObject(object Object)
-	CommandObject(cmd *Command) *CommandResponse
+	CommandObject(cmd *ExtendedCommand) *CommandResponse
 
 	GetTreeMapRoot() *ObjectsRootMap
 	GetAncestorTreeByUUID(objectUUID string) *AncestorTreeNode
@@ -52,7 +52,7 @@ type RuntimeImpl struct {
 	mutex           sync.RWMutex
 	response        *CommandResponse
 	parsedCommand   *ParsedCommand
-	command         *Command
+	command         *ExtendedCommand
 	tree            *tree
 	addedObject     bool
 }

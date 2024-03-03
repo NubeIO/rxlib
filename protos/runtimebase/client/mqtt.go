@@ -6,6 +6,7 @@ import (
 	"github.com/NubeIO/mqttwrapper"
 	"github.com/NubeIO/rxlib"
 	"github.com/NubeIO/rxlib/helpers"
+	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"time"
 )
 
@@ -14,7 +15,7 @@ type MQTTClient struct {
 	requests   map[string]chan *MQTTPayload
 }
 
-func (m *MQTTClient) Command(opts *Opts, command *rxlib.Command, callback func(string, *rxlib.CommandResponse, error)) (string, error) {
+func (m *MQTTClient) Command(opts *Opts, command *rxlib.ExtendedCommand, callback func(string, *rxlib.CommandResponse, error)) (string, error) {
 	if opts == nil {
 		return "", fmt.Errorf("opts body can not be empty")
 	}
@@ -56,9 +57,11 @@ func (m *MQTTClient) Ping(opts *Opts, callback func(string, *Message, error)) (s
 		return "", fmt.Errorf("opts body can not be empty")
 	}
 	requestTopic := fmt.Sprintf("ros/api/%s/ping", opts.TargetGlobalID)
-	payloadData := &rxlib.Command{
-		SenderGlobalID: opts.SenderGlobalID,
-		Key:            "ping",
+	payloadData := &rxlib.ExtendedCommand{
+		Command: &runtime.Command{
+			SenderGlobalID: opts.SenderGlobalID,
+			Key:            "ping",
+		},
 	}
 	newUUID := helpers.UUID()
 

@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func (inst *RuntimeImpl) CommandObject(command *Command) *CommandResponse {
+func (inst *RuntimeImpl) CommandObject(command *ExtendedCommand) *CommandResponse {
 	inst.response = &CommandResponse{
 		MapStrings: make(map[string]string),
 	}
@@ -394,7 +394,7 @@ func portCommon(object Object, isInput bool, parsed *ParsedCommand) (*Port, erro
 	return port, nil
 }
 
-func (inst *RuntimeImpl) handleSetCommand(cmd *Command, object Object, parsed *ParsedCommand) any {
+func (inst *RuntimeImpl) handleSetCommand(cmd *ExtendedCommand, object Object, parsed *ParsedCommand) any {
 	switch strings.ToLower(parsed.Thing) {
 	case "object":
 		field := cmd.GetArgsByKey("field")

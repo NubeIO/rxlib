@@ -15,7 +15,7 @@ type GRPCClient struct {
 	conn   *grpc.ClientConn
 }
 
-func (g *GRPCClient) Command(opts *Opts, command *rxlib.Command, callback func(string, *rxlib.CommandResponse, error)) (string, error) {
+func (g *GRPCClient) Command(opts *Opts, command *rxlib.ExtendedCommand, callback func(string, *rxlib.CommandResponse, error)) (string, error) {
 	//TODO implement me
 	panic("implement me")
 }

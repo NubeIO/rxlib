@@ -84,7 +84,7 @@ func (h *HTTPClient) httpRequestWithTimeout(method, endpoint string, body interf
 	return resp, err
 }
 
-func (h *HTTPClient) Command(opts *Opts, command *rxlib.Command, callback func(string, *rxlib.CommandResponse, error)) (string, error) {
+func (h *HTTPClient) Command(opts *Opts, command *rxlib.ExtendedCommand, callback func(string, *rxlib.CommandResponse, error)) (string, error) {
 	endpoint := "/command"
 	if opts == nil {
 		return "", fmt.Errorf("opts body can not be empty")

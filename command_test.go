@@ -27,7 +27,7 @@ func TestCommandBuilder(t *testing.T) {
 
 func Test_new2(t *testing.T) {
 	new2(&Command2{
-		Command: nil,
-		Key:     "",
+		ExtendedCommand: nil,
+		Key:             "",
 	})
 }

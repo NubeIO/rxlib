@@ -3,53 +3,57 @@ package rxlib
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"regexp"
 	"strings"
 )
 
-type Command struct {
-	TargetGlobalID   string            `json:"targetGlobalID,omitempty"`   // remote target ROS global ID, this would be used to form the MQTT topic
-	SenderGlobalID   string            `json:"senderGlobalID,omitempty"`   // if sent from another ROS instance
-	SenderObjectUUID string            `json:"senderObjectUUID,omitempty"` // if sent from another ROS instance
-	TransactionUUID  string            `json:"transactionUUID,omitempty"`  // add an uuid if you want to keep track of a response over mqtt
-	Key              string            `json:"key,omitempty"`
-	Args             []string          `json:"args,omitempty"`
-	Data             map[string]string `json:"data,omitempty"`
-	Body             any               `json:"body,omitempty"`
-	query            string
+type ExtendedCommand struct {
+	*runtime.Command
+	//TargetGlobalID   string            `json:"targetGlobalID,omitempty"`   // remote target ROS global ID, this would be used to form the MQTT topic
+	//SenderGlobalID   string            `json:"senderGlobalID,omitempty"`   // if sent from another ROS instance
+	//SenderObjectUUID string            `json:"senderObjectUUID,omitempty"` // if sent from another ROS instance
+	//TransactionUUID  string            `json:"transactionUUID,omitempty"`  // add an uuid if you want to keep track of a response over mqtt
+	//Key              string            `json:"key,omitempty"`
+	//Args             []string          `json:"args,omitempty"`
+	//Data             map[string]string `json:"data,omitempty"`
+	//Body             any               `json:"body,omitempty"`
+	//query            string
 }
 
-func NewCommand() *Command {
-	return &Command{
-		Data: make(map[string]string),
+func NewCommand() *ExtendedCommand {
+	return &ExtendedCommand{
+		Command: &runtime.Command{
+			Data: make(map[string]string),
+		},
 	}
 }
 
-func CommandPing() *Command {
+func CommandPing() *ExtendedCommand {
 	c := NewCommand()
 	c.buildCommand("get", "ping", "", "", false)
 	return c
 }
 
-func GetSerializeObjectByUUID(value string) *Command {
+func GetSerializeObjectByUUID(value string) *ExtendedCommand {
 	c := NewCommand()
 	c.buildCommand("get", "object", "uuid", value, true)
 	return c
 }
 
-func GetObjectByUUID(value string) *Command {
+func GetObjectByUUID(value string) *ExtendedCommand {
 	c := NewCommand()
 	c.buildCommand("get", "object", "uuid", value, false)
 	return c
 }
 
-func GetSerializeObjectByName(value string) *Command {
+func GetSerializeObjectByName(value string) *ExtendedCommand {
 	c := NewCommand()
 	c.buildCommand("get", "object", "name", value, true)
 	return c
 }
 
-func GetObjectByName(value string) *Command {
+func GetObjectByName(value string) *ExtendedCommand {
 	c := NewCommand()
 	c.buildCommand("get", "object", "name", value, false)
 	return c
@@ -57,17 +61,17 @@ func GetObjectByName(value string) *Command {
 
 // QueryObjectsByField
 // eg; QueryObjectByField("category", "math", 1, false)
-func (c *Command) QueryObjectsByField(field, value string, limit int, asJSON bool) *Command {
+func (c *ExtendedCommand) QueryObjectsByField(field, value string, limit int, asJSON bool) *ExtendedCommand {
 	if limit > 0 {
-		c.query = fmt.Sprintf("objects:%s == %s limit:%d", field, value, limit)
+		c.Query = fmt.Sprintf("objects:%s == %s limit:%d", field, value, limit)
 	} else {
-		c.query = fmt.Sprintf("objects:%s == %s", field, value)
+		c.Query = fmt.Sprintf("objects:%s == %s", field, value)
 	}
 	c.buildCommand("get", "objects", "type", value, asJSON)
 	return c
 }
 
-func (c *Command) GetArgsByIndex(i int) string {
+func (c *ExtendedCommand) GetArgsByIndex(i int) string {
 	if len(c.Args) > i {
 		return c.Args[i]
 	}
@@ -75,12 +79,12 @@ func (c *Command) GetArgsByIndex(i int) string {
 }
 
 // GetArgsByKey retrieves the value of a specific key in the Args map.
-func (c *Command) GetArgsByKey(key string) string {
+func (c *ExtendedCommand) GetArgsByKey(key string) string {
 	return c.Data[key]
 }
 
 // GetArgsKeys retrieves all keys and values from the Args map.
-func (c *Command) GetArgsKeys() (keys, values []string) {
+func (c *ExtendedCommand) GetArgsKeys() (keys, values []string) {
 	for k, v := range c.Data {
 		keys = append(keys, k)
 		values = append(values, v)
@@ -88,35 +92,35 @@ func (c *Command) GetArgsKeys() (keys, values []string) {
 	return keys, values
 }
 
-func (c *Command) GetName() string {
+func (c *ExtendedCommand) GetName() string {
 	return c.GetArgsByKey("name")
 }
 
-func (c *Command) GetUUID() string {
+func (c *ExtendedCommand) GetUUID() string {
 	return c.GetArgsByKey("uuid")
 }
 
-func (c *Command) GetID() string {
+func (c *ExtendedCommand) GetID() string {
 	return c.GetArgsByKey("id")
 }
 
-func (c *Command) GetField() string {
+func (c *ExtendedCommand) GetField() string {
 	return c.GetArgsByKey("field")
 }
 
-func (c *Command) GetKey() string {
+func (c *ExtendedCommand) GetKey() string {
 	if c.Key == "" {
 		return c.GetArgsByKey("key")
 	}
 	return c.Key
 }
 
-func (c *Command) GetObjectByUUID(value string, asJSON bool) *Command {
+func (c *ExtendedCommand) GetObjectByUUID(value string, asJSON bool) *ExtendedCommand {
 	c.buildCommand("get", "object", "uuid", value, asJSON)
 	return c
 }
 
-func (c *Command) buildCommand(commandType, thing, fieldName, fieldValue string, asJSON bool) *Command {
+func (c *ExtendedCommand) buildCommand(commandType, thing, fieldName, fieldValue string, asJSON bool) *ExtendedCommand {
 	c.Args = append(c.Args, commandType)
 	c.Args = append(c.Args, thing)
 	c.Data[fieldName] = fieldValue
@@ -125,7 +129,7 @@ func (c *Command) buildCommand(commandType, thing, fieldName, fieldValue string,
 	}
 	return c
 }
-func (c *Command) Parse(cmdSting string) (*Command, error) {
+func (c *ExtendedCommand) Parse(cmdSting string) (*ExtendedCommand, error) {
 	argMap := make(map[string]string)
 	var posArgs []string // Initialize as an empty slice
 
@@ -163,17 +167,23 @@ func (c *Command) Parse(cmdSting string) (*Command, error) {
 			posArgs = append(posArgs, things)
 		}
 	}
-	out := &Command{Args: posArgs, Data: argMap}
+
+	out := &ExtendedCommand{
+		Command: &runtime.Command{
+			Args: posArgs,
+			Data: argMap,
+		},
+	}
 	out.Key = argMap["key"]
 	return out, nil
 }
 
-func UnmarshalCommand(payload any) (*Command, error) {
+func UnmarshalCommand(payload any) (*ExtendedCommand, error) {
 	marshal, err := json.Marshal(payload)
 	if err != nil {
 		return nil, err
 	}
-	var data *Command
+	var data *ExtendedCommand
 	err = json.Unmarshal(marshal, &data)
 	if err != nil {
 		return nil, err
@@ -379,7 +389,7 @@ func splitCamelCase(s string) []string {
 	return words
 }
 
-func (c *Command) CommandReturnType(cmd *Command) (*ParsedCommand, error) {
+func (c *ExtendedCommand) CommandReturnType(cmd *ExtendedCommand) (*ParsedCommand, error) {
 	if cmd == nil {
 		return nil, fmt.Errorf("command can not be empty")
 	}

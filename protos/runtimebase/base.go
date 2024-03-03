@@ -24,18 +24,18 @@ func ObjectConfigFromProto(protoObj *runtime.Object) *rxlib.ObjectConfig {
 	}
 }
 
-func ConvertCommand(c *runtime.Command) *rxlib.Command {
-	out := &rxlib.Command{
-		TargetGlobalID:   c.GetTargetGlobalID(),
-		SenderGlobalID:   c.GetSenderGlobalID(),
-		SenderObjectUUID: c.GetSenderObjectUUID(),
-		TransactionUUID:  c.GetTransactionUUID(),
-		Key:              c.GetKey(),
-		Args:             c.GetArgs(),
-		Data:             c.GetData(),
-		Body:             c.Body.GetValue(),
-	}
-	return out
+func ConvertCommand(c *runtime.Command) *rxlib.ExtendedCommand {
+	//out := &rxlib.ExtendedCommand{
+	//	TargetGlobalID:   c.GetTargetGlobalID(),
+	//	SenderGlobalID:   c.GetSenderGlobalID(),
+	//	SenderObjectUUID: c.GetSenderObjectUUID(),
+	//	TransactionUUID:  c.GetTransactionUUID(),
+	//	Key:              c.GetKey(),
+	//	Args:             c.GetArgs(),
+	//	Data:             c.GetData(),
+	//	Body:             c.Body.GetValue(),
+	//}
+	return nil
 }
 
 func convertCommandResponse(c *rxlib.CommandResponse) *runtime.CommandResponse {

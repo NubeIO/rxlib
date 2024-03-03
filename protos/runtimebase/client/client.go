@@ -16,7 +16,7 @@ type Protocol interface {
 	ObjectsDeploy(object *rxlib.Deploy, opts *Opts, callback func(*Callback, error)) (string, error)
 	Close() error
 	Ping(opts *Opts, callback func(string, *Message, error)) (string, error)
-	Command(opts *Opts, command *rxlib.Command, callback func(string, *rxlib.CommandResponse, error)) (string, error)
+	Command(opts *Opts, command *rxlib.ExtendedCommand, callback func(string, *rxlib.CommandResponse, error)) (string, error)
 }
 
 const defaultTimeout = 2
@@ -43,7 +43,7 @@ type Client struct {
 	protocol Protocol
 }
 
-func (m *Client) Command(opts *Opts, command *rxlib.Command, callback func(string, *rxlib.CommandResponse, error)) (string, error) {
+func (m *Client) Command(opts *Opts, command *rxlib.ExtendedCommand, callback func(string, *rxlib.CommandResponse, error)) (string, error) {
 	return m.protocol.Command(opts, command, callback)
 }
 

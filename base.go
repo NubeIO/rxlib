@@ -31,7 +31,7 @@ type Object interface {
 	IsLocked() bool
 	IsUnlocked() bool
 
-	Command(command *Command) *CommandResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
+	Command(command *ExtendedCommand) *CommandResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 	CommandResponse(response *CommandResponse)
 	AddRuntime(r Runtime)
 	Runtime() Runtime
@@ -109,7 +109,7 @@ type Object interface {
 
 	// PublishValue eventbus
 	PublishValue(portID string) error // send current port value over the eventbus
-	PublishCommand(command *Command) error
+	PublishCommand(command *ExtendedCommand) error
 	Subscribe(topic, handlerID string, callBack func(topic string, e bus.Event))
 	SubscribePayload(topic, handlerID string, opts *EventbusOpts, callBack func(topic string, p *Payload, err error))
 
