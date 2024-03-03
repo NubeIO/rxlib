@@ -24,10 +24,3 @@ func TestCommandBuilder(t *testing.T) {
 	fmt.Println(cmd.GetArgsByIndex(0), cmd.GetArgsByIndex(1))
 
 }
-
-func Test_new2(t *testing.T) {
-	new2(&Command2{
-		ExtendedCommand: nil,
-		Key:             "",
-	})
-}

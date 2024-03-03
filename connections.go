@@ -27,22 +27,3 @@ func NewConnection(sourceUUID, sourcePort, targetUUID, targetPort string) (publi
 	}
 	return publisher, subscriber
 }
-
-//type UpdateConnectionsReport struct {
-//	ExistingCount int      `json:"existingCount"` // before we started updating/deleting get the existing count
-//	DeletedCount  int      `json:"deletedCount"`
-//	DeployedCount int      `json:"newCount"`
-//	Errors        []string `json:"errors"`
-//}
-
-//type RemoveConnectionReport struct {
-//	ConnectionUUID string        `json:"connectionUUID,omitempty"`
-//	ObjectUUID     string        `json:"objectUUID,omitempty"`
-//	ObjectID       string        `json:"objectID,omitempty"`
-//	TargetUUID     string        `json:"targetUUID,omitempty"`
-//	TargetPort     string        `json:"targetPort,omitempty"`
-//	SourceUUID     string        `json:"sourceUUID,omitempty"`
-//	SourcePort     string        `json:"sourcePort,omitempty"`
-//	FlowDirection  FlowDirection `json:"flowDirection,omitempty"`
-//	Error          string        `json:"Err,omitempty"`
-//}

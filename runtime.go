@@ -318,7 +318,7 @@ type ObjectConfig struct {
 	Outputs            []*Port               `json:"outputs,omitempty"`
 	Values             []*Port               `json:"values,omitempty"`
 	Connections        []*runtime.Connection `json:"connections,omitempty"`
-	Settings           *Settings             `json:"settings,omitempty"`
+	Settings           *runtime.Settings     `json:"settings,omitempty"`
 	Meta               *runtime.Meta         `json:"meta,omitempty"`
 	Stats              *ObjectStats          `json:"stats,omitempty"`
 	WasUpdated         bool                  `json:"wasUpdated,omitempty"`

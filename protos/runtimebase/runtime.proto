@@ -113,6 +113,11 @@ message Object {
     Meta meta = 5;
     Stats stats = 6;
     repeated Connection connections = 7;
+    Settings settings = 8;
+}
+
+message Settings {
+    bytes value = 1;
 }
 
 message Info {

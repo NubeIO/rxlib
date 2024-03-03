@@ -403,6 +403,9 @@
             "type": "object",
             "$ref": "#/definitions/RuntimeConnection"
           }
+        },
+        "settings": {
+          "$ref": "#/definitions/RuntimeSettings"
         }
       }
     },
@@ -562,6 +565,15 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "RuntimeSettings": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },

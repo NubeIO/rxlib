@@ -10,15 +10,6 @@ import (
 
 type ExtendedCommand struct {
 	*runtime.Command
-	//TargetGlobalID   string            `json:"targetGlobalID,omitempty"`   // remote target ROS global ID, this would be used to form the MQTT topic
-	//SenderGlobalID   string            `json:"senderGlobalID,omitempty"`   // if sent from another ROS instance
-	//SenderObjectUUID string            `json:"senderObjectUUID,omitempty"` // if sent from another ROS instance
-	//TransactionUUID  string            `json:"transactionUUID,omitempty"`  // add an uuid if you want to keep track of a response over mqtt
-	//Key              string            `json:"key,omitempty"`
-	//Args             []string          `json:"args,omitempty"`
-	//Data             map[string]string `json:"data,omitempty"`
-	//Body             any               `json:"body,omitempty"`
-	//query            string
 }
 
 func NewCommand() *ExtendedCommand {
