@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	RuntimeService_GetObjects_FullMethodName     = "/App.Runtime.RuntimeService/GetObjects"
 	RuntimeService_GetTreeMapRoot_FullMethodName = "/App.Runtime.RuntimeService/GetTreeMapRoot"
+	RuntimeService_GetPalletTree_FullMethodName  = "/App.Runtime.RuntimeService/GetPalletTree"
 	RuntimeService_GetObject_FullMethodName      = "/App.Runtime.RuntimeService/GetObject"
 	RuntimeService_ObjectsDeploy_FullMethodName  = "/App.Runtime.RuntimeService/ObjectsDeploy"
 	RuntimeService_Ping_FullMethodName           = "/App.Runtime.RuntimeService/Ping"
@@ -33,6 +34,7 @@ const (
 type RuntimeServiceClient interface {
 	GetObjects(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ObjectsResponse, error)
 	GetTreeMapRoot(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ObjectsRootMap, error)
+	GetPalletTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PalletTree, error)
 	GetObject(ctx context.Context, in *ObjectRequest, opts ...grpc.CallOption) (*ObjectResponse, error)
 	ObjectsDeploy(ctx context.Context, in *ObjectDeploy, opts ...grpc.CallOption) (*ObjectDeploy, error)
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
@@ -59,6 +61,15 @@ func (c *runtimeServiceClient) GetObjects(ctx context.Context, in *Empty, opts .
 func (c *runtimeServiceClient) GetTreeMapRoot(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ObjectsRootMap, error) {
 	out := new(ObjectsRootMap)
 	err := c.cc.Invoke(ctx, RuntimeService_GetTreeMapRoot_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) GetPalletTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PalletTree, error) {
+	out := new(PalletTree)
+	err := c.cc.Invoke(ctx, RuntimeService_GetPalletTree_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -107,6 +118,7 @@ func (c *runtimeServiceClient) ObjectCommand(ctx context.Context, in *Command, o
 type RuntimeServiceServer interface {
 	GetObjects(context.Context, *Empty) (*ObjectsResponse, error)
 	GetTreeMapRoot(context.Context, *Empty) (*ObjectsRootMap, error)
+	GetPalletTree(context.Context, *Empty) (*PalletTree, error)
 	GetObject(context.Context, *ObjectRequest) (*ObjectResponse, error)
 	ObjectsDeploy(context.Context, *ObjectDeploy) (*ObjectDeploy, error)
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
@@ -123,6 +135,9 @@ func (UnimplementedRuntimeServiceServer) GetObjects(context.Context, *Empty) (*O
 }
 func (UnimplementedRuntimeServiceServer) GetTreeMapRoot(context.Context, *Empty) (*ObjectsRootMap, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTreeMapRoot not implemented")
+}
+func (UnimplementedRuntimeServiceServer) GetPalletTree(context.Context, *Empty) (*PalletTree, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPalletTree not implemented")
 }
 func (UnimplementedRuntimeServiceServer) GetObject(context.Context, *ObjectRequest) (*ObjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetObject not implemented")
@@ -181,6 +196,24 @@ func _RuntimeService_GetTreeMapRoot_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimeServiceServer).GetTreeMapRoot(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_GetPalletTree_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).GetPalletTree(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_GetPalletTree_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).GetPalletTree(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -271,6 +304,10 @@ var RuntimeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTreeMapRoot",
 			Handler:    _RuntimeService_GetTreeMapRoot_Handler,
+		},
+		{
+			MethodName: "GetPalletTree",
+			Handler:    _RuntimeService_GetPalletTree_Handler,
 		},
 		{
 			MethodName: "GetObject",

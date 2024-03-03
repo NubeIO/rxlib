@@ -70,6 +70,28 @@
         ]
       }
     },
+    "/api/plugins/pallet": {
+      "get": {
+        "operationId": "RuntimeService_GetPalletTree",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimePalletTree"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
     "/api/runtime": {
       "get": {
         "operationId": "RuntimeService_GetObjects",
@@ -390,6 +412,17 @@
         }
       }
     },
+    "RuntimeNestedObjectConfigMap": {
+      "type": "object",
+      "properties": {
+        "entries": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/RuntimeObjectConfig"
+          }
+        }
+      }
+    },
     "RuntimeObjectConfig": {
       "type": "object",
       "properties": {
@@ -584,6 +617,17 @@
         }
       }
     },
+    "RuntimePalletTree": {
+      "type": "object",
+      "properties": {
+        "plugins": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/RuntimePlugin"
+          }
+        }
+      }
+    },
     "RuntimePermissions": {
       "type": "object",
       "properties": {
@@ -618,6 +662,29 @@
         }
       },
       "title": "New message for the Ping response"
+    },
+    "RuntimePlugin": {
+      "type": "object",
+      "properties": {
+        "drivers": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/RuntimeNestedObjectConfigMap"
+          }
+        },
+        "logic": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/RuntimeNestedObjectConfigMap"
+          }
+        },
+        "services": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/RuntimeNestedObjectConfigMap"
+          }
+        }
+      }
     },
     "RuntimePort": {
       "type": "object",

@@ -357,10 +357,10 @@ func serializeCurrentFlowArray(object Object) *runtime.ObjectConfig {
 		}
 	}
 	objectConfig := &runtime.ObjectConfig{
-		Id:     object.GetID(),
-		Info:   object.GetInfo(),
-		Inputs: PortsToProto(object.GetInputs()),
-		//Outputs:     runtimebase.PortsToProto(object.GetOutputs()),
+		Id:          object.GetID(),
+		Info:        object.GetInfo(),
+		Inputs:      PortsToProto(object.GetInputs()),
+		Outputs:     PortsToProto(object.GetOutputs()),
 		Connections: object.GetConnections(),
 		Settings:    object.GetSettings(),
 		Stats:       object.GetStats(),

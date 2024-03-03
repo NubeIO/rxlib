@@ -21,6 +21,12 @@ service RuntimeService {
         };
     };
 
+    rpc GetPalletTree (Empty) returns (PalletTree) {
+        option (google.api.http) = {
+            get: "/api/plugins/pallet"
+        };
+    };
+
 
     rpc GetObject (ObjectRequest) returns (ObjectResponse) {
         option (google.api.http) = {
@@ -49,6 +55,20 @@ service RuntimeService {
     };
 }
 
+
+message PalletTree {
+    map<string, Plugin> plugins = 1;
+}
+
+message Plugin {
+    map<string, NestedObjectConfigMap> drivers = 1;
+    map<string, NestedObjectConfigMap> logic = 2;
+    map<string, NestedObjectConfigMap> services = 3;
+}
+
+message NestedObjectConfigMap {
+    map<string, ObjectConfig> entries = 1;
+}
 
 message Command {
     string targetGlobalID = 1;
