@@ -19,13 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	RuntimeService_GetObjects_FullMethodName     = "/App.Runtime.RuntimeService/GetObjects"
-	RuntimeService_GetObject_FullMethodName      = "/App.Runtime.RuntimeService/GetObject"
-	RuntimeService_GetTreeMapRoot_FullMethodName = "/App.Runtime.RuntimeService/GetTreeMapRoot"
-	RuntimeService_GetPalletTree_FullMethodName  = "/App.Runtime.RuntimeService/GetPalletTree"
-	RuntimeService_ObjectsDeploy_FullMethodName  = "/App.Runtime.RuntimeService/ObjectsDeploy"
-	RuntimeService_Ping_FullMethodName           = "/App.Runtime.RuntimeService/Ping"
-	RuntimeService_ObjectCommand_FullMethodName  = "/App.Runtime.RuntimeService/ObjectCommand"
+	RuntimeService_GetObjects_FullMethodName       = "/App.Runtime.RuntimeService/GetObjects"
+	RuntimeService_GetObject_FullMethodName        = "/App.Runtime.RuntimeService/GetObject"
+	RuntimeService_GetTreeMapRoot_FullMethodName   = "/App.Runtime.RuntimeService/GetTreeMapRoot"
+	RuntimeService_GetPalletTree_FullMethodName    = "/App.Runtime.RuntimeService/GetPalletTree"
+	RuntimeService_ObjectsDeploy_FullMethodName    = "/App.Runtime.RuntimeService/ObjectsDeploy"
+	RuntimeService_Ping_FullMethodName             = "/App.Runtime.RuntimeService/Ping"
+	RuntimeService_ObjectCommand_FullMethodName    = "/App.Runtime.RuntimeService/ObjectCommand"
+	RuntimeService_GetObjectsValues_FullMethodName = "/App.Runtime.RuntimeService/GetObjectsValues"
+	RuntimeService_GetObjectValues_FullMethodName  = "/App.Runtime.RuntimeService/GetObjectValues"
+	RuntimeService_GetPortValue_FullMethodName     = "/App.Runtime.RuntimeService/GetPortValue"
 )
 
 // RuntimeServiceClient is the client API for RuntimeService service.
@@ -39,6 +42,11 @@ type RuntimeServiceClient interface {
 	ObjectsDeploy(ctx context.Context, in *ObjectDeploy, opts ...grpc.CallOption) (*ObjectDeploy, error)
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
 	ObjectCommand(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error)
+	GetObjectsValues(ctx context.Context, in *ObjectsValuesRequest, opts ...grpc.CallOption) (*GetObjectsValuesResponse, error)
+	// all port values for an object
+	GetObjectValues(ctx context.Context, in *ObjectsValueRequest, opts ...grpc.CallOption) (*GetObjectValuesResponse, error)
+	// single port value for an object
+	GetPortValue(ctx context.Context, in *PortRequest, opts ...grpc.CallOption) (*PortValue, error)
 }
 
 type runtimeServiceClient struct {
@@ -112,6 +120,33 @@ func (c *runtimeServiceClient) ObjectCommand(ctx context.Context, in *Command, o
 	return out, nil
 }
 
+func (c *runtimeServiceClient) GetObjectsValues(ctx context.Context, in *ObjectsValuesRequest, opts ...grpc.CallOption) (*GetObjectsValuesResponse, error) {
+	out := new(GetObjectsValuesResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_GetObjectsValues_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) GetObjectValues(ctx context.Context, in *ObjectsValueRequest, opts ...grpc.CallOption) (*GetObjectValuesResponse, error) {
+	out := new(GetObjectValuesResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_GetObjectValues_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) GetPortValue(ctx context.Context, in *PortRequest, opts ...grpc.CallOption) (*PortValue, error) {
+	out := new(PortValue)
+	err := c.cc.Invoke(ctx, RuntimeService_GetPortValue_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RuntimeServiceServer is the server API for RuntimeService service.
 // All implementations must embed UnimplementedRuntimeServiceServer
 // for forward compatibility
@@ -123,6 +158,11 @@ type RuntimeServiceServer interface {
 	ObjectsDeploy(context.Context, *ObjectDeploy) (*ObjectDeploy, error)
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
 	ObjectCommand(context.Context, *Command) (*CommandResponse, error)
+	GetObjectsValues(context.Context, *ObjectsValuesRequest) (*GetObjectsValuesResponse, error)
+	// all port values for an object
+	GetObjectValues(context.Context, *ObjectsValueRequest) (*GetObjectValuesResponse, error)
+	// single port value for an object
+	GetPortValue(context.Context, *PortRequest) (*PortValue, error)
 	mustEmbedUnimplementedRuntimeServiceServer()
 }
 
@@ -150,6 +190,15 @@ func (UnimplementedRuntimeServiceServer) Ping(context.Context, *PingRequest) (*P
 }
 func (UnimplementedRuntimeServiceServer) ObjectCommand(context.Context, *Command) (*CommandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ObjectCommand not implemented")
+}
+func (UnimplementedRuntimeServiceServer) GetObjectsValues(context.Context, *ObjectsValuesRequest) (*GetObjectsValuesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetObjectsValues not implemented")
+}
+func (UnimplementedRuntimeServiceServer) GetObjectValues(context.Context, *ObjectsValueRequest) (*GetObjectValuesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetObjectValues not implemented")
+}
+func (UnimplementedRuntimeServiceServer) GetPortValue(context.Context, *PortRequest) (*PortValue, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPortValue not implemented")
 }
 func (UnimplementedRuntimeServiceServer) mustEmbedUnimplementedRuntimeServiceServer() {}
 
@@ -290,6 +339,60 @@ func _RuntimeService_ObjectCommand_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RuntimeService_GetObjectsValues_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ObjectsValuesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).GetObjectsValues(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_GetObjectsValues_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).GetObjectsValues(ctx, req.(*ObjectsValuesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_GetObjectValues_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ObjectsValueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).GetObjectValues(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_GetObjectValues_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).GetObjectValues(ctx, req.(*ObjectsValueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_GetPortValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PortRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).GetPortValue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_GetPortValue_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).GetPortValue(ctx, req.(*PortRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RuntimeService_ServiceDesc is the grpc.ServiceDesc for RuntimeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -324,6 +427,18 @@ var RuntimeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ObjectCommand",
 			Handler:    _RuntimeService_ObjectCommand_Handler,
+		},
+		{
+			MethodName: "GetObjectsValues",
+			Handler:    _RuntimeService_GetObjectsValues_Handler,
+		},
+		{
+			MethodName: "GetObjectValues",
+			Handler:    _RuntimeService_GetObjectValues_Handler,
+		},
+		{
+			MethodName: "GetPortValue",
+			Handler:    _RuntimeService_GetPortValue_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

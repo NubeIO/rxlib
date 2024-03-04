@@ -65,6 +65,7 @@ type Object interface {
 	NewOutputPort(port *NewPort) error
 	NewOutputPorts(port []*NewPort) error
 	GetAllPorts() []*Port
+	GetPortValue(id string, asBytes bool) *runtime.PortValue
 	EnablePort(portID string) error
 	DisablePort(portID string) error
 	IsPortDisable(portID string) (bool, error)
@@ -87,25 +88,15 @@ type Object interface {
 	// inputs
 	GetInput(id string) *Port
 	InputExists(id string) error
-	GetInputByUUID(uuid string) *Port
 	GetInputs() []*Port
 	GetInputByConnection(sourceObjectUUID, outputPortID string) *Port
 	GetInputByConnections(sourceObjectUUID, outputPortID string) []*Port
 	UpdateInputsValues(payload *Payload) []error
-	GetInputValue(portID string) *priority.Value
-	AllInputsValues() map[string]*priority.Value
-	GetInputData(portID string) *priority.PriorityData
-	AllInputsData() map[string]*priority.PriorityData
 
 	GetOutputs() []*Port
 	GetOutput(id string) *Port
 	OutputExists(id string) error
-	GetOutputByUUID(uuid string) *Port
 	SetOutput(portID string, value any) error // Set current output value & send over the eventbus
-	GetOutputValue(portID string) *priority.Value
-	AllOutputsValues() map[string]*priority.Value
-	GetOutputData(portID string) *priority.PriorityData
-	AllOutputsData() map[string]*priority.PriorityData
 
 	// PublishValue eventbus
 	PublishValue(portID string) error // send current port value over the eventbus

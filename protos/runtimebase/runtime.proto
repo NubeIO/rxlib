@@ -9,54 +9,106 @@ import "google/protobuf/any.proto";
 
 service RuntimeService {
 
-    rpc GetObjects (ObjectsRequest) returns (ObjectsResponse) {
-        option (google.api.http) = {
-            get: "/api/runtime"
-        };
+  rpc GetObjects (ObjectsRequest) returns (ObjectsResponse) {
+    option (google.api.http) = {
+      get: "/api/runtime"
     };
+  };
 
-    rpc GetObject (ObjectRequest) returns (ObjectConfig) {
-        option (google.api.http) = {
-            get: "/api/runtime/objects/{uuid}"
-        };
+  rpc GetObject (ObjectRequest) returns (ObjectConfig) {
+    option (google.api.http) = {
+      get: "/api/runtime/objects/{uuid}"
     };
+  };
 
-    rpc GetTreeMapRoot (ObjectsRequest) returns (ObjectsRootMap) {
-        option (google.api.http) = {
-            get: "/api/runtime/tree"
-        };
+  rpc GetTreeMapRoot (ObjectsRequest) returns (ObjectsRootMap) {
+    option (google.api.http) = {
+      get: "/api/runtime/tree"
     };
+  };
 
-    rpc GetPalletTree (PalletRequest) returns (PalletTree) {
-        option (google.api.http) = {
-            get: "/api/plugins/pallet"
-        };
+  rpc GetPalletTree (PalletRequest) returns (PalletTree) {
+    option (google.api.http) = {
+      get: "/api/plugins/pallet"
     };
+  };
 
 
-    rpc ObjectsDeploy (ObjectDeploy) returns (ObjectDeploy) {
-        option (google.api.http) = {
-            post: "/api/runtime"
-            body: "*"
-        };
+  rpc ObjectsDeploy (ObjectDeploy) returns (ObjectDeploy) {
+    option (google.api.http) = {
+      post: "/api/runtime"
+      body: "*"
     };
+  };
 
-    rpc Ping (PingRequest) returns (PingResponse) {
-        option (google.api.http) = {
-            get: "/api/ping"
-        };
+  rpc Ping (PingRequest) returns (PingResponse) {
+    option (google.api.http) = {
+      get: "/api/ping"
     };
+  };
 
-    rpc ObjectCommand (Command) returns (CommandResponse) {
-        option (google.api.http) = {
-            post: "/api/command"
-            body: "*"
-        };
+  rpc ObjectCommand (Command) returns (CommandResponse) {
+    option (google.api.http) = {
+      post: "/api/command"
+      body: "*"
     };
+  };
+
+  rpc GetObjectsValues (ObjectsValuesRequest) returns (GetObjectsValuesResponse) {
+    option (google.api.http) = {
+      get: "/api/runtime/objects/values"
+    };
+  };
+
+  // all port values for an object
+  rpc GetObjectValues (ObjectsValueRequest) returns (GetObjectValuesResponse) {
+    option (google.api.http) = {
+      get: "/api/runtime/objects/values/{uuid}"
+    };
+  };
+
+  // single port value for an object
+  rpc GetPortValue (PortRequest) returns (PortValue) {
+    option (google.api.http) = {
+      get: "/api/runtime/objects/{objectUUID}/port/{portID}"
+    };
+  };
+}
+
+message GetObjectsValuesResponse {
+  map<string, GetObjectValuesResponse> values = 1;
 }
 
 
+message GetObjectValuesResponse {
+  repeated  PortValue values = 1;
+}
+
+message ObjectsValuesRequest {
+  bool asBytes = 2;
+}
+
+message ObjectsValueRequest {
+  string uuid = 1;
+  bool asBytes = 2;
+}
+
+message PortRequest {
+  string objectUUID = 1;
+  string portID = 2;
+  bool asBytes = 3;
+}
+
+message PortValue {
+  string portID = 2;
+  string value = 3;
+  bytes valueBytes = 4;
+}
+
+
+
 message ObjectsRequest {
+  bool withData = 1;
 }
 
 message PalletRequest {
@@ -64,43 +116,43 @@ message PalletRequest {
 
 
 message PalletTree {
-    map<string, Plugin> plugins = 1;
+  map<string, Plugin> plugins = 1;
 }
 
 message Plugin {
-    map<string, NestedObjectConfigMap> drivers = 1;
-    map<string, NestedObjectConfigMap> logic = 2;
-    map<string, NestedObjectConfigMap> services = 3;
+  map<string, NestedObjectConfigMap> drivers = 1;
+  map<string, NestedObjectConfigMap> logic = 2;
+  map<string, NestedObjectConfigMap> services = 3;
 }
 
 message NestedObjectConfigMap {
-    map<string, ObjectConfig> entries = 1;
+  map<string, ObjectConfig> entries = 1;
 }
 
 message Command {
-    string targetGlobalID = 1;
-    string senderGlobalID = 2;
-    string senderObjectUUID = 3;
-    string transactionUUID = 4;
-    string key = 5;
-    string query = 6;
-    repeated string args = 7;
-    map<string, string> data = 8;
-    google.protobuf.Any body = 9;
+  string targetGlobalID = 1;
+  string senderGlobalID = 2;
+  string senderObjectUUID = 3;
+  string transactionUUID = 4;
+  string key = 5;
+  string query = 6;
+  repeated string args = 7;
+  map<string, string> data = 8;
+  google.protobuf.Any body = 9;
 }
 
 
 message CommandResponse {
-    string senderID = 1;
-    int32 count = 2;
-    map<string, string> mapStrings = 3;
-    double number = 4;
-    bool boolean = 5;
-    string error = 6;
-    string returnType = 7;
-    bytes any = 8;
-    repeated CommandResponse response = 9;
-    repeated ObjectConfig serializeObjects = 10;
+  string senderID = 1;
+  int32 count = 2;
+  map<string, string> mapStrings = 3;
+  double number = 4;
+  bool boolean = 5;
+  string error = 6;
+  string returnType = 7;
+  bytes any = 8;
+  repeated CommandResponse response = 9;
+  repeated ObjectConfig serializeObjects = 10;
 }
 
 
@@ -113,158 +165,158 @@ message PingRequest {
 
 // New message for the Ping response
 message PingResponse {
-    string message = 1;
+  string message = 1;
 }
 
 
 message ObjectDeploy {
-    repeated string deleted = 1;
-    repeated ObjectConfig new = 2;
-    repeated ObjectConfig updated = 3;
+  repeated string deleted = 1;
+  repeated ObjectConfig new = 2;
+  repeated ObjectConfig updated = 3;
 }
 
 
 message Empty {}
 
 message ObjectsResponse {
-    repeated ObjectConfig objects = 1;
+  repeated ObjectConfig objects = 1;
 }
 
 message ObjectRequest {
-    string uuid = 1;
+  string uuid = 1;
 }
 
 
 
 message ObjectConfig {
-    string id = 1;
-    Info info = 2;
-    repeated Port inputs = 3;
-    repeated Port outputs = 4;
-    Meta meta = 5;
-    ObjectStats stats = 6;
-    repeated Connection connections = 7;
-    Settings settings = 8;
+  string id = 1;
+  Info info = 2;
+  repeated Port inputs = 3;
+  repeated Port outputs = 4;
+  Meta meta = 5;
+  ObjectStats stats = 6;
+  repeated Connection connections = 7;
+  Settings settings = 8;
 }
 
 message Settings {
-    bytes value = 1;
+  bytes value = 1;
 }
 
 message Info {
-    string objectID = 1;
-    string objectType = 2;
-    string category = 3;
-    string pluginName = 4;
-    string workingGroup = 5;
-    string workingGroupLeader = 6;
-    string workingGroupParent = 7;
-    repeated string workingGroupObjects = 8;
-    repeated string workingGroupChildObjects = 9;
-    repeated string objectTags = 10;
-    Permissions permissions = 11;
-    Requirements requirements = 12;
+  string objectID = 1;
+  string objectType = 2;
+  string category = 3;
+  string pluginName = 4;
+  string workingGroup = 5;
+  string workingGroupLeader = 6;
+  string workingGroupParent = 7;
+  repeated string workingGroupObjects = 8;
+  repeated string workingGroupChildObjects = 9;
+  repeated string objectTags = 10;
+  Permissions permissions = 11;
+  Requirements requirements = 12;
 }
 
 message Permissions {
-    bool allPermissions = 1;
-    bool canBeCreated = 2;
-    bool canBeDeleted = 3;
-    bool canBeUpdated = 4;
-    bool readOnly = 5;
-    bool allowHotFix = 6;
-    bool forceDelete = 7;
+  bool allPermissions = 1;
+  bool canBeCreated = 2;
+  bool canBeDeleted = 3;
+  bool canBeUpdated = 4;
+  bool readOnly = 5;
+  bool allowHotFix = 6;
+  bool forceDelete = 7;
 }
 
 message Requirements {
-    bool callResetOnDeploy = 1;
-    bool allowRuntimeAccess = 2;
-    bool maxOne = 3;
-    bool mustLiveInObjectType = 4;
-    bool mustLiveParent = 5;
-    bool requiresLogger = 6;
-    bool supportsActions = 7;
-    repeated string servicesRequirements = 8;
-    repeated string loggerOptions = 9;
+  bool callResetOnDeploy = 1;
+  bool allowRuntimeAccess = 2;
+  bool maxOne = 3;
+  bool mustLiveInObjectType = 4;
+  bool mustLiveParent = 5;
+  bool requiresLogger = 6;
+  bool supportsActions = 7;
+  repeated string servicesRequirements = 8;
+  repeated string loggerOptions = 9;
 }
 
 
 message ObjectStats {
-    string status = 1;
-    string loaded = 2;
-    uint32 loopCount = 3;
-    string timeSince = 6;
+  string status = 1;
+  string loaded = 2;
+  uint32 loopCount = 3;
+  string timeSince = 6;
 }
 
 
 message Port {
-    string id = 1;
-    string name = 2;
-    string portUUID = 3;
-    string direction = 4;
-    string dataType = 5;
-    int32 defaultPosition = 6;
-    string value = 7;
+  string id = 1;
+  string name = 2;
+  string portUUID = 3;
+  string direction = 4;
+  string dataType = 5;
+  int32 defaultPosition = 6;
+  string value = 7;
 }
 
 
 message Meta {
-    string objectUUID = 1;
-    string objectName = 2;
-    string parentUUID = 3;
-    Position position = 4;
+  string objectUUID = 1;
+  string objectName = 2;
+  string parentUUID = 3;
+  Position position = 4;
 }
 
 message Position {
-    int32 positionY = 1;
-    int32 positionX = 2;
+  int32 positionY = 1;
+  int32 positionX = 2;
 }
 
 
 message Connection {
-    string connectionUUID = 1;;
-    string targetConnectionUUID = 2;
-    string sourceUUID = 3;
-    string sourcePort = 4;
-    string sourcePortUUID = 5;
-    string targetUUID = 6;
-    string targetPort = 7;
-    string targetPortUUID = 8;
-    bool isExistingConnection = 9;
-    string flowDirection = 10;
-    bool disable = 11;
-    bool isError = 12;
-    string created = 13;
-    string lastOk = 14;
-    string lastFail = 15;
-    int32 failCount = 16;
-    repeated string error = 17;
+  string connectionUUID = 1;;
+  string targetConnectionUUID = 2;
+  string sourceUUID = 3;
+  string sourcePort = 4;
+  string sourcePortUUID = 5;
+  string targetUUID = 6;
+  string targetPort = 7;
+  string targetPortUUID = 8;
+  bool isExistingConnection = 9;
+  string flowDirection = 10;
+  bool disable = 11;
+  bool isError = 12;
+  string created = 13;
+  string lastOk = 14;
+  string lastFail = 15;
+  int32 failCount = 16;
+  repeated string error = 17;
 }
 
 
 message ObjectExtractedDetails {
-    string id = 1;
-    string name = 2;
-    string uuid = 3;
-    string parentUUID = 4;
-    string category = 5;
-    string objectType = 6;
-    bool isParent = 7;
-    repeated ObjectExtractedDetails children = 8;
+  string id = 1;
+  string name = 2;
+  string uuid = 3;
+  string parentUUID = 4;
+  string category = 5;
+  string objectType = 6;
+  bool isParent = 7;
+  repeated ObjectExtractedDetails children = 8;
 }
 
 message ObjectsRootMap {
-    string rubixNetworkName = 1;
-    string rubixNetworkDesc = 2;
-    repeated ObjectExtractedDetails rubixNetwork = 3;
-    string driversName = 4;
-    string driversDesc = 5;
-    repeated ObjectExtractedDetails drivers = 6;
-    string servicesName = 7;
-    string servicesDesc = 8;
-    repeated ObjectExtractedDetails services = 9;
-    string logicName = 10;
-    string logicDesc = 11;
-    repeated ObjectExtractedDetails logic = 12;
+  string rubixNetworkName = 1;
+  string rubixNetworkDesc = 2;
+  repeated ObjectExtractedDetails rubixNetwork = 3;
+  string driversName = 4;
+  string driversDesc = 5;
+  repeated ObjectExtractedDetails drivers = 6;
+  string servicesName = 7;
+  string servicesDesc = 8;
+  repeated ObjectExtractedDetails services = 9;
+  string logicName = 10;
+  string logicDesc = 11;
+  repeated ObjectExtractedDetails logic = 12;
 }
 

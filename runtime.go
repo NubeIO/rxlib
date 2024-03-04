@@ -12,6 +12,10 @@ type Runtime interface {
 	Get() []Object
 	GetObjectsConfig() []*runtime.ObjectConfig
 	GetObjectConfig(uuid string) *runtime.ObjectConfig
+
+	GetObjectValues(objectUUID string, asByte bool) []*runtime.PortValue
+	GetObjectsValues(asByte bool) map[string][]*runtime.PortValue
+
 	Delete() string
 	GetByUUID(uuid string) Object
 	GetFirstByID(objectID string) Object
@@ -57,6 +61,31 @@ type RuntimeImpl struct {
 	command         *ExtendedCommand
 	tree            *tree
 	addedObject     bool
+}
+
+func (inst *RuntimeImpl) GetObjectValues(objectUUID string, asByte bool) []*runtime.PortValue {
+	obj := inst.GetByUUID(objectUUID)
+	if obj == nil {
+		return nil
+	}
+	var out []*runtime.PortValue
+	inputs := obj.GetInputs()
+	for _, port := range inputs {
+		out = append(out, obj.GetPortValue(port.GetID(), asByte))
+	}
+	outputs := obj.GetOutputs()
+	for _, port := range outputs {
+		out = append(out, obj.GetPortValue(port.GetID(), asByte))
+	}
+	return out
+}
+
+func (inst *RuntimeImpl) GetObjectsValues(asByte bool) map[string][]*runtime.PortValue {
+	out := make(map[string][]*runtime.PortValue)
+	for _, object := range inst.Get() {
+		out[object.GetUUID()] = inst.GetObjectValues(object.GetUUID(), asByte)
+	}
+	return out
 }
 
 func (inst *RuntimeImpl) GetObjectsConfig() []*runtime.ObjectConfig {

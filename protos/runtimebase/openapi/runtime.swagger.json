@@ -109,6 +109,14 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "withData",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
         "tags": [
           "RuntimeService"
         ]
@@ -137,6 +145,116 @@
             "schema": {
               "$ref": "#/definitions/RuntimeObjectDeploy"
             }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/runtime/objects/values": {
+      "get": {
+        "operationId": "RuntimeService_GetObjectsValues",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeGetObjectsValuesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "asBytes",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/runtime/objects/values/{uuid}": {
+      "get": {
+        "summary": "all port values for an object",
+        "operationId": "RuntimeService_GetObjectValues",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeGetObjectValuesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "asBytes",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/runtime/objects/{objectUUID}/port/{portID}": {
+      "get": {
+        "summary": "single port value for an object",
+        "operationId": "RuntimeService_GetPortValue",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimePortValue"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "objectUUID",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "portID",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "asBytes",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -191,6 +309,14 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "withData",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
         "tags": [
           "RuntimeService"
         ]
@@ -341,6 +467,29 @@
           "type": "array",
           "items": {
             "type": "string"
+          }
+        }
+      }
+    },
+    "RuntimeGetObjectValuesResponse": {
+      "type": "object",
+      "properties": {
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimePortValue"
+          }
+        }
+      }
+    },
+    "RuntimeGetObjectsValuesResponse": {
+      "type": "object",
+      "properties": {
+        "values": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/RuntimeGetObjectValuesResponse"
           }
         }
       }
@@ -702,6 +851,21 @@
         },
         "value": {
           "type": "string"
+        }
+      }
+    },
+    "RuntimePortValue": {
+      "type": "object",
+      "properties": {
+        "portID": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "valueBytes": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },
