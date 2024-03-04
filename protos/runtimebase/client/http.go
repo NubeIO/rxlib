@@ -53,7 +53,6 @@ func (h *HTTPClient) httpRequestWithTimeout(method, endpoint string, body interf
 	} else {
 		timeout = 2 * time.Second // Default timeout
 	}
-
 	if opts != nil && opts.Headers != nil {
 		for key, value := range opts.Headers {
 			request.SetHeader(key, value)

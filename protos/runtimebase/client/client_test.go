@@ -11,12 +11,12 @@ import (
 )
 
 func TestConvertGRPCPING(t *testing.T) {
-	c, err := NewClient("", "grpc", 9090, 8080, nil)
+	c, err := NewClient("", "grpc", 9090, 1770, nil)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	resp, err := c.Ping(nil, callback)
+	resp, err := c.Ping(&Opts{Timeout: defaultTimeout}, callback)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -26,18 +26,19 @@ func TestConvertGRPCPING(t *testing.T) {
 }
 
 func TestConvertRestPING(t *testing.T) {
-	c, err := NewClient("", "http", 9090, 8080, nil)
+	c, err := NewClient("", "http", 9090, 1770, nil)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	command := rxlib.CommandPing()
-	_, err = c.Command(&Opts{}, command, callbackCommand)
+	pprint.PrintJSON(command)
+	uuid, err := c.Command(&Opts{}, command, callbackCommand)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-
+	fmt.Println(uuid)
 	time.Sleep(time.Second * 2)
 }
 
@@ -50,12 +51,12 @@ func TestConvertRestMQTT(t *testing.T) {
 	c.StartProcessingMessages()
 	c.StartPublishRateLimiting()
 
-	client, err := NewClient("", "mqtt", 9090, 8080, c)
+	client, err := NewClient("", "mqtt", 9090, 1770, c)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	resp, err := client.Ping(nil, callback)
+	resp, err := client.Ping(&Opts{Timeout: defaultTimeout}, callback)
 	if err != nil {
 		fmt.Println(err)
 		return
