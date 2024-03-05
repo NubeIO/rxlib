@@ -5,6 +5,7 @@ import (
 	"github.com/NubeIO/rxlib/plugins"
 	"github.com/NubeIO/rxlib/priority"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
+	"github.com/NubeIO/scheduler"
 	"sync"
 )
 
@@ -23,6 +24,8 @@ type Runtime interface {
 	GetFirstByName(name string) Object
 	GetAllByName(name string) []Object
 
+	GetChildObjectsByWorkingGroup(objectUUID, workingGroup string) []Object
+
 	GetChildObjects(parentUUID string) []Object
 	GetAllObjectValues() []*ObjectValue
 	AddObject(object Object)
@@ -35,13 +38,20 @@ type Runtime interface {
 	AllPlugins() []*plugins.Export
 
 	GetObjectsPallet() *PalletTree
+
+	Scheduler() scheduler.Scheduler
 }
 
-func NewRuntime(objs []Object) Runtime {
+type RuntimeOpts struct {
+	Scheduler scheduler.Scheduler
+}
+
+func NewRuntime(objs []Object, opts *RuntimeOpts) Runtime {
 	r := &RuntimeImpl{
 		tree: &tree{},
 	}
 	r.objects = objs
+	r.scheduler = opts.Scheduler
 	if r.objects == nil {
 		panic("NewRuntime []Object can not be empty")
 	}
@@ -61,6 +71,25 @@ type RuntimeImpl struct {
 	command         *ExtendedCommand
 	tree            *tree
 	addedObject     bool
+	scheduler       scheduler.Scheduler
+}
+
+func (inst *RuntimeImpl) Scheduler() scheduler.Scheduler {
+	return inst.scheduler
+}
+
+// GetChildObjectsByWorkingGroup
+// for example get all the childs object for working group "rubix"
+func (inst *RuntimeImpl) GetChildObjectsByWorkingGroup(objectUUID, workingGroup string) []Object {
+	var out []Object
+	for _, object := range inst.Get() {
+		if object.GetUUID() == objectUUID {
+			if object.GetWorkingGroup() == workingGroup {
+				out = append(out, object)
+			}
+		}
+	}
+	return out
 }
 
 func (inst *RuntimeImpl) GetObjectValues(objectUUID string, asByte bool) []*runtime.PortValue {

@@ -184,6 +184,7 @@ message ObjectsResponse {
 
 message ObjectRequest {
   string uuid = 1;
+  bool withPoints =2;
 }
 
 

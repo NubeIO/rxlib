@@ -37,10 +37,7 @@ type Object interface {
 	Runtime() Runtime
 	RemoveObjectFromRuntime()
 
-	GetChildObjectsByType(objectID string) []Object // for example get all modbus/device that are inside its parent modbus/network Object
-	GetChildObjects() []Object
 	GetParentObject() Object
-	GetChildObject(objectUUID string) Object
 	GetParentUUID() string
 
 	// AddExtension extension are a way to extend the functionalists of an Obj; for example add a history extension
@@ -152,8 +149,6 @@ type Object interface {
 
 	// working group; a group of objects that work together like a network driver
 	GetWorkingGroup() string
-	GetWorkingGroupObjects() []string
-	GetWorkingGroupChildObjects() []string
 	GetWorkingGroupParent() string
 	GetWorkingGroupLeader() string
 	GetWorkingGroupLeaderObjectUUID() string
