@@ -16,7 +16,7 @@ type Port struct {
 
 	// Input/Output port values
 	Values              *priority.Value        `json:"-"`              // value should be used for anything
-	DataDisplay         *priority.PriorityData `json:"data,omitempty"` // only used for when its called over rest
+	DataDisplay         *priority.PriorityData `json:"data,omitempty"` // only used for when it's called over rest
 	dataPriority        *priority.DataPriority
 	Transformation      *priority.Transformations      `json:"transformation,omitempty"`
 	Units               *unitswrapper.EngineeringUnits `json:"units,omitempty"`
