@@ -14,7 +14,7 @@ type Runtime interface {
 	GetObjectsConfig() []*runtime.ObjectConfig
 	GetObjectConfig(uuid string) *runtime.ObjectConfig
 
-	GetObjectValues(objectUUID string, asByte bool) []*runtime.PortValue
+	GetObjectValues(objectUUID string) []*runtime.PortValue
 	GetObjectsValues(asByte bool) map[string][]*runtime.PortValue
 
 	Delete() string
@@ -92,7 +92,7 @@ func (inst *RuntimeImpl) GetChildObjectsByWorkingGroup(objectUUID, workingGroup 
 	return out
 }
 
-func (inst *RuntimeImpl) GetObjectValues(objectUUID string, asByte bool) []*runtime.PortValue {
+func (inst *RuntimeImpl) GetObjectValues(objectUUID string) []*runtime.PortValue {
 	obj := inst.GetByUUID(objectUUID)
 	if obj == nil {
 		return nil
@@ -100,11 +100,11 @@ func (inst *RuntimeImpl) GetObjectValues(objectUUID string, asByte bool) []*runt
 	var out []*runtime.PortValue
 	inputs := obj.GetInputs()
 	for _, port := range inputs {
-		out = append(out, obj.GetPortValue(port.GetID(), asByte))
+		out = append(out, obj.GetPortValue(port.GetID()))
 	}
 	outputs := obj.GetOutputs()
 	for _, port := range outputs {
-		out = append(out, obj.GetPortValue(port.GetID(), asByte))
+		out = append(out, obj.GetPortValue(port.GetID()))
 	}
 	return out
 }
@@ -112,7 +112,7 @@ func (inst *RuntimeImpl) GetObjectValues(objectUUID string, asByte bool) []*runt
 func (inst *RuntimeImpl) GetObjectsValues(asByte bool) map[string][]*runtime.PortValue {
 	out := make(map[string][]*runtime.PortValue)
 	for _, object := range inst.Get() {
-		out[object.GetUUID()] = inst.GetObjectValues(object.GetUUID(), asByte)
+		out[object.GetUUID()] = inst.GetObjectValues(object.GetUUID())
 	}
 	return out
 }

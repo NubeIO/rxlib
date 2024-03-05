@@ -6,13 +6,24 @@ import (
 )
 
 func TestNewPayload(t *testing.T) {
-	p, _ := NewPayload(&DataPayload{
+	var f float64 = 10
+	p, _ := NewPayload(&Body{
 		PortID:   "a",
 		DataType: "float64",
 		IsNil:    false,
-		Data:     22.2,
+		Data:     f,
 	})
 	float, err := p.ToFloat()
+	if err != nil {
+		return
+	}
+	fmt.Println(float + 10)
+	f = 20
+	p, err = p.ApplyData(f)
+	if err != nil {
+		return
+	}
+	float, err = p.ToFloat()
 	if err != nil {
 		return
 	}
@@ -25,7 +36,7 @@ type person struct {
 }
 
 func TestNewPayloadJSON(t *testing.T) {
-	p, _ := NewPayload(&DataPayload{
+	p, _ := NewPayload(&Body{
 		PortID:   "a",
 		DataType: "json",
 		IsNil:    false,

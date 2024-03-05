@@ -95,14 +95,20 @@ message ObjectsValueRequest {
 message PortRequest {
   string objectUUID = 1;
   string portID = 2;
-  bool asBytes = 3;
 }
 
 message PortValue {
   string portID = 1;
   string dataType = 2;
   bool isNil = 3;
-  bytes data = 4;
+  bool transformationApplied = 4;
+  bytes data = 5;
+  ValueTransformation transformation = 6;
+}
+
+message ValueTransformation {
+  string unit = 1;
+  bytes rawData = 2;
 }
 
 

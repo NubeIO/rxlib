@@ -9,21 +9,34 @@ import (
 	"reflect"
 )
 
-type DataPayload struct {
-	PortID   string
-	DataType string
-	IsNil    bool
-	Data     any
+type Body struct {
+	PortID                string
+	DataType              string
+	IsNil                 bool
+	IsInOverride          bool
+	TransformationApplied bool
+	Data                  any
 }
 
 type Payload struct {
 	*runtime.PortValue
+	body *Body
 }
 
-func NewPayload(body *DataPayload) (*Payload, error) {
+func NewPayload(body *Body) (*Payload, error) {
 	if body == nil {
 		return nil, fmt.Errorf("body is nil")
 	}
+	p := &Payload{
+		body: body,
+	}
+
+	return p.ApplyData(body.Data)
+
+}
+
+func (p *Payload) ApplyData(data any) (*Payload, error) {
+	body := p.body
 	dataType := body.DataType
 	portID := body.PortID
 	if body.IsNil {
@@ -37,7 +50,6 @@ func NewPayload(body *DataPayload) (*Payload, error) {
 	}
 	var err error
 	var byteData []byte
-	data := body.Data
 	if dataType == "" {
 		dataType = "json"
 	}
@@ -59,9 +71,9 @@ func NewPayload(body *DataPayload) (*Payload, error) {
 		if err != nil {
 			return nil, err
 		}
-
 	}
 	return &Payload{
+		body: body,
 		PortValue: &runtime.PortValue{
 			PortID:   portID,
 			DataType: dataType,

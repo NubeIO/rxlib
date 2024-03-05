@@ -62,7 +62,7 @@ type Object interface {
 	NewOutputPort(port *NewPort) error
 	NewOutputPorts(port []*NewPort) error
 	GetAllPorts() []*Port
-	GetPortValue(id string, asBytes bool) *runtime.PortValue
+	GetPortValue(id string) *runtime.PortValue
 	EnablePort(portID string) error
 	DisablePort(portID string) error
 	IsPortDisable(portID string) (bool, error)
