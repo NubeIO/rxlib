@@ -19,10 +19,7 @@ func TestNewPayload(t *testing.T) {
 	}
 	fmt.Println(float + 10)
 	f = 20
-	p, err = p.ApplyData(f)
-	if err != nil {
-		return
-	}
+	p.ApplyData(f)
 	float, err = p.ToFloat()
 	if err != nil {
 		return

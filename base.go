@@ -2,6 +2,7 @@ package rxlib
 
 import (
 	"github.com/NubeIO/rxlib/libs/history"
+	"github.com/NubeIO/rxlib/payload"
 	"github.com/NubeIO/rxlib/priority"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/NubeIO/schema"
@@ -57,12 +58,15 @@ type Object interface {
 
 	// ports
 	NewPort(port *Port)
+
 	NewInputPort(port *NewPort) error
 	NewInputPorts(port []*NewPort) error
 	NewOutputPort(port *NewPort) error
 	NewOutputPorts(port []*NewPort) error
 	GetAllPorts() []*Port
-	GetPortValue(id string) *runtime.PortValue
+	GetPortPayload(portID string) (*payload.Payload, error)
+	SetPortPayload(portID string, data any) error
+	GetPortValue(portID string) *runtime.PortValue
 	EnablePort(portID string) error
 	DisablePort(portID string) error
 	IsPortDisable(portID string) (bool, error)
@@ -73,10 +77,11 @@ type Object interface {
 	CreateConnection(connection *runtime.Connection) // CreateConnection is for just adding a rubix without adding it to the eventbus
 	NewOutputConnection(portID, targetUUID, targetPort string) error
 
+	GetPortConnections(portID string) []*runtime.Connection
 	GetConnection(uuid string) *runtime.Connection
 	GetExistingConnection(sourceObjectUUID, targetObjectUUID, targetPortID string) *runtime.Connection
 	GetConnections() []*runtime.Connection
-
+	PortHasConnection(portID string) (has bool, count int)
 	RemoveConnection(connection *runtime.Connection) error
 	DropConnections() []error
 	RemoveOldConnections(newConnections []*runtime.Connection) []error
@@ -88,7 +93,7 @@ type Object interface {
 	GetInputs() []*Port
 	GetInputByConnection(sourceObjectUUID, outputPortID string) *Port
 	GetInputByConnections(sourceObjectUUID, outputPortID string) []*Port
-	UpdateInputsValues(payload *Payload) []error
+	UpdateInputsValues(payload *payload.Payload) []error
 
 	GetOutputs() []*Port
 	GetOutput(id string) *Port
@@ -99,7 +104,7 @@ type Object interface {
 	PublishValue(portID string) error // send current port value over the eventbus
 	PublishCommand(command *ExtendedCommand) error
 	Subscribe(topic, handlerID string, callBack func(topic string, e bus.Event))
-	SubscribePayload(topic, handlerID string, opts *EventbusOpts, callBack func(topic string, p *Payload, err error))
+	SubscribePayload(topic, handlerID string, opts *EventbusOpts, callBack func(topic string, p *payload.Payload, err error))
 
 	// GetRootObject Obj tree
 	GetRootObject(uuid string) (Object, error)

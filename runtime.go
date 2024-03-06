@@ -436,15 +436,6 @@ func serializeCurrentFlowArray(object Object) *runtime.ObjectConfig {
 	return objectConfig
 }
 
-func getPortValues(ports []*Port) []*Port {
-	for _, port := range ports {
-		if port.GetValue() != nil {
-			port.DataDisplay = port.GetValueDisplay()
-		}
-	}
-	return ports
-}
-
 func ProtosToPort(obj []*runtime.Port) []*Port {
 	var out []*Port
 	for _, port := range obj {

@@ -3,8 +3,6 @@ package rxlib
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/NubeIO/rxlib/libs/convert"
-	"github.com/NubeIO/rxlib/priority"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"strconv"
 	"strings"
@@ -260,57 +258,57 @@ func (inst *RuntimeImpl) handleGetCommandString(object Object, parsed *ParsedCom
 }
 
 func (inst *RuntimeImpl) handlePortString(object Object, parsed *ParsedCommand) (string, error) {
-	port, err := portCommon(object, IsInput(parsed), parsed)
-	if err != nil {
-		return "", err
-	}
-	switch strings.ToLower(parsed.Field) {
-	case "values":
-		pri := port.GetValueDisplay()
-		if pri == nil {
-			return "no values found", nil
-		}
-		out := fmt.Sprintf("DataType: %s, HighestPriority: %v RawValue %v", pri.DataType, pri.HighestPriority, pri.RawValue)
-		return out, nil
-	case "value":
-		return fmt.Sprint(port.GetHighestPriority()), nil
-	case "datatype":
-		return string(port.GetDataType()), nil
-	case "uuid":
-		return port.GetUUID(), nil
-	case "name":
-		return port.GetName(), nil
-	}
+	//port, err := portCommon(object, IsInput(parsed), parsed)
+	//if err != nil {
+	//	return "", err
+	//}
+	//switch strings.ToLower(parsed.Field) {
+	//case "values":
+	//	pri := port.GetValueDisplay()
+	//	if pri == nil {
+	//		return "no values found", nil
+	//	}
+	//	out := fmt.Sprintf("DataType: %s, HighestPriority: %v RawValue %v", pri.DataType, pri.HighestPriority, pri.RawValue)
+	//	return out, nil
+	//case "value":
+	//	return fmt.Sprint(port.GetHighestPriority()), nil
+	//case "datatype":
+	//	return string(port.GetDataType()), nil
+	//case "uuid":
+	//	return port.GetUUID(), nil
+	//case "name":
+	//	return port.GetName(), nil
+	//}
 	return "", nil
 }
 
 func (inst *RuntimeImpl) handleSetPorts(object Object, parsed *ParsedCommand) (string, error) {
-	switch strings.ToLower(parsed.Thing) {
-	case "input":
-		getID := parsed.ID
-		if getID == "" {
-			return "", fmt.Errorf("failed to get value required from args :%s", "id")
-		}
-		var port *Port
-		port = object.GetInput(getID)
-		write := parsed.Write
-		if write != "" {
-			if port.GetDataType() == priority.TypeFloat {
-				f := convert.AnyToFloatPointer(write)
-				if f == nil {
-					return "", fmt.Errorf("was unable to parse value as type float")
-				}
-				err := port.Write(f)
-				if err != nil {
-					return "", err
-				}
-				return "", fmt.Errorf("object: %s updated ok port: %s value: %s", object.GetName(), port.GetID(), write)
-			}
-		}
-
-	default:
-		return "", fmt.Errorf("unknown set command: %s", parsed.Thing)
-	}
+	//switch strings.ToLower(parsed.Thing) {
+	//case "input":
+	//	getID := parsed.ID
+	//	if getID == "" {
+	//		return "", fmt.Errorf("failed to get value required from args :%s", "id")
+	//	}
+	//	var port *Port
+	//	port = object.GetInput(getID)
+	//	write := parsed.Write
+	//	if write != "" {
+	//		if port.GetDataType() == priority.TypeFloat {
+	//			f := convert.AnyToFloatPointer(write)
+	//			if f == nil {
+	//				return "", fmt.Errorf("was unable to parse value as type float")
+	//			}
+	//			err := port.Write(f)
+	//			if err != nil {
+	//				return "", err
+	//			}
+	//			return "", fmt.Errorf("object: %s updated ok port: %s value: %s", object.GetName(), port.GetID(), write)
+	//		}
+	//	}
+	//
+	//default:
+	//	return "", fmt.Errorf("unknown set command: %s", parsed.Thing)
+	//}
 	return "", fmt.Errorf("unknown get command")
 
 }
@@ -414,21 +412,21 @@ func (inst *RuntimeImpl) handleSetCommand(cmd *ExtendedCommand, object Object, p
 		if getID == "" {
 			return fmt.Errorf("failed to get value required from args :%s", "id")
 		}
-		var port *Port
-		port = object.GetInput(getID)
+		//var port *Port
+		//port = object.GetInput(getID)
 		write := cmd.GetArgsByKey("write")
 		if write != "" {
-			if port.GetDataType() == priority.TypeFloat {
-				f := convert.AnyToFloatPointer(write)
-				if f == nil {
-					return "was unable to parse value as type float"
-				}
-				err := port.Write(f)
-				if err != nil {
-					return err.Error()
-				}
-				return fmt.Sprintf("object: %s updated ok port: %s value: %s", object.GetName(), port.GetID(), write)
-			}
+			//if port.GetDataType() == priority.TypeFloat {
+			//	f := convert.AnyToFloatPointer(write)
+			//	if f == nil {
+			//		return "was unable to parse value as type float"
+			//	}
+			//	err := port.Write(f)
+			//	if err != nil {
+			//		return err.Error()
+			//	}
+			//	return fmt.Sprintf("object: %s updated ok port: %s value: %s", object.GetName(), port.GetID(), write)
+			//}
 		}
 
 	default:
@@ -552,24 +550,25 @@ func matchesPortCondition(ports []*Port, field, operator, value string) bool {
 }
 
 func matchesPortAttributeCondition(port *Port, attribute, operator, value string) bool {
-	switch attribute {
-	case "value":
-		if value == "null" { // get all ports that are null/nil
-			isNull := port.GetValue().IsNull()
-			if isNull {
-				return true
-			}
-			return false
-		}
-		compareValue, err := strconv.ParseFloat(value, 64)
-		if err != nil {
-			return false // Invalid comparison value, return false
-		}
-		portValue := port.GetValue().GetFloat()
-		return compareFloat64(portValue, operator, compareValue)
-	default:
-		return false // Invalid attribute, return false
-	}
+	//switch attribute {
+	//case "value":
+	//	if value == "null" { // get all ports that are null/nil
+	//		isNull := port.GetValue().IsNull()
+	//		if isNull {
+	//			return true
+	//		}
+	//		return false
+	//	}
+	//	compareValue, err := strconv.ParseFloat(value, 64)
+	//	if err != nil {
+	//		return false // Invalid comparison value, return false
+	//	}
+	//	portValue := port.GetValue().GetFloat()
+	//	return compareFloat64(portValue, operator, compareValue)
+	//default:
+	//	return false // Invalid attribute, return false
+	//}
+	return false
 }
 
 func compareFloat64(portValue float64, operator string, compareValue float64) bool {

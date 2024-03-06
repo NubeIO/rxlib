@@ -27,29 +27,30 @@ func NewPayload(body *Body) (*Payload, error) {
 	if body == nil {
 		return nil, fmt.Errorf("body is nil")
 	}
+	dataType := body.DataType
+	portID := body.PortID
 	p := &Payload{
+		PortValue: &runtime.PortValue{
+			PortID:   portID,
+			DataType: dataType,
+		},
 		body: body,
 	}
-
-	return p.ApplyData(body.Data)
+	if body.Data != nil {
+		return p.ApplyData(body.Data)
+	}
+	return p, nil
 
 }
 
 func (p *Payload) ApplyData(data any) (*Payload, error) {
 	body := p.body
-	dataType := body.DataType
-	portID := body.PortID
 	if body.IsNil {
-		return &Payload{
-			PortValue: &runtime.PortValue{
-				PortID:   portID,
-				DataType: dataType,
-				IsNil:    true,
-			},
-		}, nil
+		return p, nil
 	}
 	var err error
 	var byteData []byte
+	dataType := p.DataType
 	if dataType == "" {
 		dataType = "json"
 	}
@@ -72,19 +73,12 @@ func (p *Payload) ApplyData(data any) (*Payload, error) {
 			return nil, err
 		}
 	}
-	return &Payload{
-		body: body,
-		PortValue: &runtime.PortValue{
-			PortID:   portID,
-			DataType: dataType,
-			IsNil:    false,
-			Data:     byteData,
-		},
-	}, nil
+	p.Data = byteData
+	return p, nil
 }
 
 func (p *Payload) ToFloat() (float64, error) {
-	if p.DataType != "float64" || p.IsNil {
+	if p.DataType != "float" || p.IsNil {
 		return 0, fmt.Errorf("data is not float64 or is nil")
 	}
 	if len(p.Data) < 8 {

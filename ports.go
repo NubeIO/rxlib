@@ -1,9 +1,10 @@
 package rxlib
 
 import (
-	"fmt"
 	"github.com/NubeIO/rxlib/libs/nils"
+	"github.com/NubeIO/rxlib/payload"
 	"github.com/NubeIO/rxlib/priority"
+	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/NubeIO/rxlib/unitswrapper"
 	"time"
 )
@@ -14,10 +15,13 @@ type Port struct {
 	UUID     string `json:"uuid,omitempty"`
 	Disabled bool   `json:"disabled,omitempty"`
 
+	PortValue *runtime.PortValue `json:"portValue"`
+	Payload   *payload.Payload   `json:"payload"`
+
 	// Input/Output port values
-	Values              *priority.Value        `json:"-"`              // value should be used for anything
-	DataDisplay         *priority.PriorityData `json:"data,omitempty"` // only used for when it's called over rest
-	dataPriority        *priority.DataPriority
+	//Values              *priority.Value        `json:"-"`              // value should be used for anything
+	//DataDisplay         *priority.PriorityData `json:"data,omitempty"` // only used for when it's called over rest
+	//dataPriority        *priority.DataPriority
 	Transformation      *priority.Transformations      `json:"transformation,omitempty"`
 	Units               *unitswrapper.EngineeringUnits `json:"units,omitempty"`
 	Direction           PortDirection                  `json:"direction,omitempty"`           // input or output
@@ -27,7 +31,7 @@ type Port struct {
 	PreviousValue       *priority.PreviousValue        `json:"previousValue,omitempty"`
 
 	AllowMultipleConnections bool `json:"allowMultipleConnections,omitempty"`
-
+	HasConnection            bool `json:"hasConnection"`
 	// port position is where to show the order on the Obj and where to hide the port or not
 	DefaultPosition   int  `json:"defaultPosition,omitempty"`
 	Hide              bool `json:"hide,omitempty"`
@@ -39,7 +43,7 @@ type Port struct {
 	LastFail    *time.Time `json:"LastFail,omitempty"`
 	FailMessage string     `json:"failMessage,omitempty"`
 
-	OnMessage func(msg *Payload) `json:"-"` // used for the evntbus
+	OnMessage func(msg *payload.Payload) `json:"-"` // used for the evntbus
 
 }
 
@@ -53,6 +57,14 @@ func (p *Port) GetUUID() string {
 
 func (p *Port) GetName() string {
 	return p.Name
+}
+
+func (p *Port) SetHasConnection(state bool) {
+	p.HasConnection = state
+}
+
+func (p *Port) GetHasConnection() bool {
+	return p.HasConnection
 }
 
 func (p *Port) SetName(v string) string {
@@ -73,9 +85,9 @@ func (p *Port) SetLastFail(message string) string {
 }
 
 func (p *Port) initPriority(dataType priority.Type, decimal int) {
-	if p.dataPriority == nil {
-		p.dataPriority = priority.NewValuePriority(dataType, nil, nil, decimal)
-	}
+	//if p.dataPriority == nil {
+	//	p.dataPriority = priority.NewValuePriority(dataType, nil, nil, decimal)
+	//}
 }
 
 func (p *Port) InitPriority(dataType priority.Type, decimal int) {
@@ -83,86 +95,87 @@ func (p *Port) InitPriority(dataType priority.Type, decimal int) {
 }
 
 func (p *Port) AddTransformation(v *priority.Transformations) error {
-	if p.dataPriority == nil {
-		return fmt.Errorf("data priority is empty")
-	}
-	p.dataPriority.AddTransformation(v)
+	//if p.dataPriority == nil {
+	//	return fmt.Errorf("data priority is empty")
+	//}
+	//p.dataPriority.AddTransformation(v)
 	return nil
 
 }
 
 func (p *Port) AddUnits(v *unitswrapper.EngineeringUnits) error {
-	if p.dataPriority == nil {
-		return fmt.Errorf("data priority is empty")
-	}
-	p.dataPriority.AddUnits(v)
+	//if p.dataPriority == nil {
+	//	return fmt.Errorf("data priority is empty")
+	//}
+	//p.dataPriority.AddUnits(v)
 	return nil
 }
 
 func (p *Port) AddEnums(v []*priority.Enums) error {
-	if p.dataPriority == nil {
-		return fmt.Errorf("data priority is empty")
-	}
-	if p.Transformation == nil {
-		return fmt.Errorf("transformation is empty")
-	}
-	p.Transformation.Enums = v
+	//if p.dataPriority == nil {
+	//	return fmt.Errorf("data priority is empty")
+	//}
+	//if p.Transformation == nil {
+	//	return fmt.Errorf("transformation is empty")
+	//}
+	//p.Transformation.Enums = v
 	return nil
 }
 
-func (p *Port) GetValue() *priority.Value {
-	return p.Values
-}
-
-func (p *Port) GetHighestPriority() any {
-	if p == nil {
-		return nil
-	}
-	if p.Values == nil {
-		return nil
-	}
-	return p.Values.GetHighestPriority()
-}
-
-func (p *Port) GetValueDisplay() *priority.PriorityData {
-	if p == nil {
-		return nil
-	}
-	if p.Values == nil {
-		return nil
-	}
-	return p.Values.PriorityData()
-}
-
-func (p *Port) Write(value any) error {
-	if p == nil {
-		return fmt.Errorf("port is nil")
-	}
-	d, err := p.dataPriority.Apply(value, nil, p.GetDataType())
-	p.Values = d
-	return err
-}
-
-func (p *Port) WritePriority(value any, fromDataType priority.Type) error {
-	d, err := p.dataPriority.Apply(value, nil, fromDataType)
-	p.Values = d
-	return err
-}
-
-func (p *Port) OverrideValue(value any) (*priority.Value, error) {
-	d, err := p.dataPriority.Apply(nil, value, p.DataType)
-	p.Values = d
-	return p.Values, err
-}
-
-func (p *Port) ReleaseOverride() error {
-	d, err := p.dataPriority.Apply(nil, nil, p.DataType)
-	if err != nil {
-		return err
-	}
-	p.Values = d
-	return nil
-}
+//
+//func (p *Port) GetValue() *priority.Value {
+//	return nil
+//}
+//
+//func (p *Port) GetHighestPriority() any {
+//	if p == nil {
+//		return nil
+//	}
+//	if p.Values == nil {
+//		return nil
+//	}
+//	return p.Values.GetHighestPriority()
+//}
+//
+//func (p *Port) GetValueDisplay() *priority.PriorityData {
+//	if p == nil {
+//		return nil
+//	}
+//	if p.Values == nil {
+//		return nil
+//	}
+//	return p.Values.PriorityData()
+//}
+//
+//func (p *Port) Write(value any) error {
+//	if p == nil {
+//		return fmt.Errorf("port is nil")
+//	}
+//	d, err := p.dataPriority.Apply(value, nil, p.GetDataType())
+//	p.Values = d
+//	return err
+//}
+//
+//func (p *Port) WritePriority(value any, fromDataType priority.Type) error {
+//	d, err := p.dataPriority.Apply(value, nil, fromDataType)
+//	p.Values = d
+//	return err
+//}
+//
+//func (p *Port) OverrideValue(value any) (*priority.Value, error) {
+//	d, err := p.dataPriority.Apply(nil, value, p.DataType)
+//	p.Values = d
+//	return p.Values, err
+//}
+//
+//func (p *Port) ReleaseOverride() error {
+//	d, err := p.dataPriority.Apply(nil, nil, p.DataType)
+//	if err != nil {
+//		return err
+//	}
+//	p.Values = d
+//	return nil
+//}
 
 func (p *Port) IsEnabled() bool {
 	if p.Disabled {
@@ -237,7 +250,7 @@ func portOpts(opts ...*PortOpts) *PortOpts {
 	return p
 }
 
-func NewPortFloatCallBack(id string, f func(message *Payload), opts ...*PortOpts) *NewPort {
+func NewPortFloatCallBack(id string, f func(message *payload.Payload), opts ...*PortOpts) *NewPort {
 	p := &NewPort{
 		ID:        id,
 		Name:      id,
@@ -250,7 +263,7 @@ func NewPortFloatCallBack(id string, f func(message *Payload), opts ...*PortOpts
 	return p
 }
 
-func NewPortAnyCallBack(id string, f func(message *Payload), opts ...*PortOpts) *NewPort {
+func NewPortAnyCallBack(id string, f func(message *payload.Payload), opts ...*PortOpts) *NewPort {
 	p := &NewPort{
 		ID:        id,
 		Name:      id,
@@ -327,10 +340,10 @@ type NewPort struct {
 	ID                       string
 	Name                     string
 	DataType                 priority.Type
-	AllowMultipleConnections bool               `json:"allowMultipleConnections,omitempty"`
-	DefaultPosition          int                `json:"defaultPosition"`
-	HiddenByDefault          bool               `json:"hiddenByDefault,omitempty"`
-	OnMessage                func(msg *Payload) `json:"-"`
+	AllowMultipleConnections bool                       `json:"allowMultipleConnections,omitempty"`
+	DefaultPosition          int                        `json:"defaultPosition"`
+	HiddenByDefault          bool                       `json:"hiddenByDefault,omitempty"`
+	OnMessage                func(msg *payload.Payload) `json:"-"`
 }
 
 type Override struct {
