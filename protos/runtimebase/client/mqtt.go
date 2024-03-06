@@ -15,7 +15,7 @@ type MQTTClient struct {
 	requests   map[string]chan *MQTTPayload
 }
 
-func (m *MQTTClient) Command(opts *Opts, command *rxlib.ExtendedCommand, callback func(string, *rxlib.CommandResponse, error)) (string, error) {
+func (m *MQTTClient) Command(opts *Opts, command *rxlib.ExtendedCommand, callback func(string, *runtime.CommandResponse, error)) (string, error) {
 	if opts == nil {
 		return "", fmt.Errorf("opts body can not be empty")
 	}
@@ -23,7 +23,7 @@ func (m *MQTTClient) Command(opts *Opts, command *rxlib.ExtendedCommand, callbac
 	newUUID := helpers.UUID()
 	go func() {
 		m.RequestResponse(newUUID, requestTopic, command, func(uuid string, payload *Payload, err error) {
-			var message *rxlib.CommandResponse
+			var message *runtime.CommandResponse
 			if err == nil && payload != nil {
 				err = json.Unmarshal(payload.Payload, &message)
 			}

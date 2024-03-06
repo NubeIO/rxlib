@@ -83,7 +83,7 @@ func (h *HTTPClient) httpRequestWithTimeout(method, endpoint string, body interf
 	return resp, err
 }
 
-func (h *HTTPClient) Command(opts *Opts, command *rxlib.ExtendedCommand, callback func(string, *rxlib.CommandResponse, error)) (string, error) {
+func (h *HTTPClient) Command(opts *Opts, command *rxlib.ExtendedCommand, callback func(string, *runtime.CommandResponse, error)) (string, error) {
 	endpoint := "/command"
 	if opts == nil {
 		return "", fmt.Errorf("opts body can not be empty")
@@ -99,7 +99,7 @@ func (h *HTTPClient) Command(opts *Opts, command *rxlib.ExtendedCommand, callbac
 			callback(newUUID, nil, fmt.Errorf("HTTP request failed with status code: %d err: %s", resp.StatusCode(), resp.String()))
 			return
 		}
-		var result *rxlib.CommandResponse
+		var result *runtime.CommandResponse
 		err = json.Unmarshal(resp.Body(), &result)
 		callback(newUUID, result, nil)
 	}()

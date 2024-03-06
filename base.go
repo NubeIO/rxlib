@@ -31,8 +31,8 @@ type Object interface {
 	IsLocked() bool
 	IsUnlocked() bool
 
-	Command(command *ExtendedCommand) *CommandResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
-	CommandResponse(response *CommandResponse)
+	Command(command *ExtendedCommand) *runtime.CommandResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
+	CommandResponse(response *runtime.CommandResponse)
 	AddRuntime(r Runtime)
 	Runtime() Runtime
 	RemoveObjectFromRuntime()

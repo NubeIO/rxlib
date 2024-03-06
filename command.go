@@ -3,7 +3,6 @@ package rxlib
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/NubeIO/rxlib/libs/nils"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"regexp"
 	"strings"
@@ -186,12 +185,12 @@ func UnmarshalCommand(payload any) (*ExtendedCommand, error) {
 	return data, nil
 }
 
-func UnmarshalCommandResponse(payload any) (*CommandResponse, error) {
+func UnmarshalCommandResponse(payload any) (*runtime.CommandResponse, error) {
 	marshal, err := json.Marshal(payload)
 	if err != nil {
 		return nil, err
 	}
-	var data *CommandResponse
+	var data *runtime.CommandResponse
 	err = json.Unmarshal(marshal, &data)
 	if err != nil {
 		return nil, err
@@ -501,28 +500,28 @@ func ConvertCommand(c *runtime.Command) *ExtendedCommand {
 	return out
 }
 
-func convertCommandResponse(c *CommandResponse) *runtime.CommandResponse {
-	out := &runtime.CommandResponse{
-		SenderID:   c.SenderID,
-		Count:      int32(nils.GetInt(c.Count)),
-		MapStrings: c.MapStrings,
-		Number:     nils.GetFloat64(c.Float),
-		Boolean:    nils.GetBool(c.Bool),
-		Error:      c.Error,
-		ReturnType: c.ReturnType,
-		Any:        c.Any,
-	}
-	return out
-}
+//func convertCommandResponse(c *CommandResponse) *runtime.CommandResponse {
+//	out := &runtime.CommandResponse{
+//		SenderID:   c.SenderID,
+//		Count:      int32(nils.GetInt(c.Count)),
+//		MapStrings: c.MapStrings,
+//		Number:     nils.GetFloat64(c.Float),
+//		Boolean:    nils.GetBool(c.Bool),
+//		Error:      c.Error,
+//		ReturnType: c.ReturnType,
+//		Any:        c.Any,
+//	}
+//	return out
+//}
 
-func ConvertCommandResponse(c *CommandResponse) *runtime.CommandResponse {
-	cmd := convertCommandResponse(c)
-	if len(c.CommandResponse) > 0 {
-		var out []*runtime.CommandResponse
-		for _, response := range c.CommandResponse {
-			out = append(out, convertCommandResponse(response))
-		}
-		cmd.Response = out
-	}
-	return cmd
-}
+//func ConvertCommandResponse(c *CommandResponse) *runtime.CommandResponse {
+//	cmd := convertCommandResponse(c)
+//	if len(c.CommandResponse) > 0 {
+//		var out []*runtime.CommandResponse
+//		for _, response := range c.CommandResponse {
+//			out = append(out, convertCommandResponse(response))
+//		}
+//		cmd.Response = out
+//	}
+//	return cmd
+//}

@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/NubeIO/rxlib/libs/convert"
-	"github.com/NubeIO/rxlib/libs/nils"
 	"github.com/NubeIO/rxlib/priority"
+	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"strconv"
 	"strings"
 )
 
-func (inst *RuntimeImpl) CommandObject(command *ExtendedCommand) *CommandResponse {
-	inst.response = &CommandResponse{
+func (inst *RuntimeImpl) CommandObject(command *ExtendedCommand) *runtime.CommandResponse {
+	inst.response = &runtime.CommandResponse{
 		MapStrings: make(map[string]string),
 	}
 	if command == nil {
@@ -46,7 +46,7 @@ func (inst *RuntimeImpl) CommandObject(command *ExtendedCommand) *CommandRespons
 	}
 }
 
-func (inst *RuntimeImpl) handleObjects(parsedArgs *ParsedCommand) *CommandResponse {
+func (inst *RuntimeImpl) handleObjects(parsedArgs *ParsedCommand) *runtime.CommandResponse {
 	var objects []Object
 	objects = inst.getObjects(parsedArgs)
 	objectsLen := len(objects)
@@ -128,9 +128,9 @@ func (inst *RuntimeImpl) handleCommandTypeObjects(parsedArgs *ParsedCommand, obj
 	case "run":
 		if parsedArgs.GetThing() == "command" {
 			parsedArgs.SetReturnAsIfNil("command")
-			for _, object := range objects {
-				inst.response.CommandResponse = append(inst.response.CommandResponse, object.Command(inst.command))
-			}
+			//for _, object := range objects {
+			//	inst.response.CommandResponse = append(inst.response.CommandResponse, object.Command(inst.command))
+			//}
 		}
 	case "set":
 
@@ -146,64 +146,64 @@ func (inst *RuntimeImpl) handleReturnType(parsedArgs *ParsedCommand, objects []O
 	switch parsedArgs.GetReturnAs() {
 	case commandCount:
 		if parsedArgs.ThingIsObject() {
-			inst.response.Count = nils.ToInt(len(objects))
-			inst.response.Objects = nil
+			inst.response.Count = int32(len(objects))
+			//inst.response.Objects = nil
 		}
 		if parsedArgs.ThingIsPorts() {
-			inst.response.Count = nils.ToInt(len(inst.response.MapPorts))
-			inst.response.MapPorts = nil
-			inst.response.Objects = nil
+			//inst.response.Count = nils.ToInt(len(inst.response.MapPorts))
+			//inst.response.MapPorts = nil
+			//inst.response.Objects = nil
 		}
 	case commandJSON:
 		inst.response.SerializeObjects = SerializeCurrentFlowArray(objects)
-		inst.response.Count = nils.ToInt(len(inst.response.SerializeObjects))
+		//inst.response.Count = nils.ToInt(len(inst.response.SerializeObjects))
 	case commandCommand:
-		inst.response.Count = nils.ToInt(len(inst.response.CommandResponse))
-		inst.response.Objects = nil
+		//inst.response.Count = nils.ToInt(len(inst.response.CommandResponse))
+		//inst.response.Objects = nil
 	case commandString:
-		inst.response.Objects = nil
+		//inst.response.Objects = nil
 	case commandPorts:
-		inst.response.Objects = nil
-		inst.response.Count = nils.ToInt(len(inst.response.MapPorts))
+		//inst.response.Objects = nil
+		//inst.response.Count = nils.ToInt(len(inst.response.MapPorts))
 	default:
-		inst.response.Objects = objects
-		inst.response.Count = nils.ToInt(len(objects))
+		//inst.response.Objects = objects
+		inst.response.Count = int32(len(objects))
 	}
 }
 
 func (inst *RuntimeImpl) handleCommandTypePorts(parsedArgs *ParsedCommand, objects []Object) {
-	if !parsedArgs.IsFieldPort() {
-		return
-	}
-
-	inst.response.ReturnType = "ports"
-	parsedArgs.SetReturnAsIfNil(inst.response.ReturnType)
-	inst.response.MapPorts = make(map[string][]*Port)
-	switch parsedArgs.GetField() {
-	case "input":
-		for _, object := range objects {
-			port := object.GetInput(parsedArgs.GetID())
-			fmt.Println(port, "port")
-			if port != nil {
-				inst.response.MapPorts[object.GetUUID()] = []*Port{port}
-			}
-		}
-	case "inputs":
-		for _, object := range objects {
-			inst.response.MapPorts[object.GetUUID()] = object.GetOutputs()
-		}
-	case "output":
-		for _, object := range objects {
-			port := object.GetOutput(parsedArgs.GetID())
-			if port != nil {
-				inst.response.MapPorts[object.GetUUID()] = []*Port{port}
-			}
-		}
-	case "outputs":
-		for _, object := range objects {
-			inst.response.MapPorts[object.GetUUID()] = object.GetOutputs()
-		}
-	}
+	//if !parsedArgs.IsFieldPort() {
+	//	return
+	//}
+	//
+	//inst.response.ReturnType = "ports"
+	//parsedArgs.SetReturnAsIfNil(inst.response.ReturnType)
+	//inst.response.MapPorts = make(map[string][]*Port)
+	//switch parsedArgs.GetField() {
+	//case "input":
+	//	for _, object := range objects {
+	//		port := object.GetInput(parsedArgs.GetID())
+	//		fmt.Println(port, "port")
+	//		if port != nil {
+	//			inst.response.MapPorts[object.GetUUID()] = []*Port{port}
+	//		}
+	//	}
+	//case "inputs":
+	//	for _, object := range objects {
+	//		inst.response.MapPorts[object.GetUUID()] = object.GetOutputs()
+	//	}
+	//case "output":
+	//	for _, object := range objects {
+	//		port := object.GetOutput(parsedArgs.GetID())
+	//		if port != nil {
+	//			inst.response.MapPorts[object.GetUUID()] = []*Port{port}
+	//		}
+	//	}
+	//case "outputs":
+	//	for _, object := range objects {
+	//		inst.response.MapPorts[object.GetUUID()] = object.GetOutputs()
+	//	}
+	//}
 }
 
 func errMessage(message, returnType string, parsed *ParsedCommand) error {

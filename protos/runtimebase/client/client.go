@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/NubeIO/mqttwrapper"
 	"github.com/NubeIO/rxlib"
-	runtimeClient "github.com/NubeIO/rxlib/protos/runtimebase/runtime"
+	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/go-resty/resty/v2"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -16,7 +16,7 @@ type Protocol interface {
 	ObjectsDeploy(object *rxlib.Deploy, opts *Opts, callback func(*Callback, error)) (string, error)
 	Close() error
 	Ping(opts *Opts, callback func(string, *Message, error)) (string, error)
-	Command(opts *Opts, command *rxlib.ExtendedCommand, callback func(string, *rxlib.CommandResponse, error)) (string, error)
+	Command(opts *Opts, command *rxlib.ExtendedCommand, callback func(string, *runtime.CommandResponse, error)) (string, error)
 }
 
 const defaultTimeout = 2
@@ -43,7 +43,7 @@ type Client struct {
 	protocol Protocol
 }
 
-func (m *Client) Command(opts *Opts, command *rxlib.ExtendedCommand, callback func(string, *rxlib.CommandResponse, error)) (string, error) {
+func (m *Client) Command(opts *Opts, command *rxlib.ExtendedCommand, callback func(string, *runtime.CommandResponse, error)) (string, error) {
 	return m.protocol.Command(opts, command, callback)
 }
 
@@ -62,7 +62,7 @@ func NewClient(ip, protocol string, port, httpPort int, mqtt mqttwrapper.MQTT) (
 		if err != nil {
 			return nil, fmt.Errorf("did not connect: %v", err)
 		}
-		c := runtimeClient.NewRuntimeServiceClient(conn)
+		c := runtime.NewRuntimeServiceClient(conn)
 		return &Client{protocol: &GRPCClient{client: c, conn: conn}}, nil
 	case "http":
 		client := resty.New()

@@ -29,7 +29,7 @@ type Runtime interface {
 	GetChildObjects(parentUUID string) []Object
 	GetAllObjectValues() []*ObjectValue
 	AddObject(object Object)
-	CommandObject(cmd *ExtendedCommand) *CommandResponse
+	CommandObject(cmd *ExtendedCommand) *runtime.CommandResponse
 
 	GetTreeMapRoot() *runtime.ObjectsRootMap
 	GetAncestorTreeByUUID(objectUUID string) *AncestorTreeNode
@@ -66,7 +66,7 @@ type RuntimeImpl struct {
 	where           string
 	field           string
 	mutex           sync.RWMutex
-	response        *CommandResponse
+	response        *runtime.CommandResponse
 	parsedCommand   *ParsedCommand
 	command         *ExtendedCommand
 	tree            *tree
@@ -125,24 +125,26 @@ func (inst *RuntimeImpl) GetObjectConfig(uuid string) *runtime.ObjectConfig {
 	return serializeCurrentFlowArray(inst.GetByUUID(uuid))
 }
 
-func NewCommandResponse() *CommandResponse {
-	return &CommandResponse{}
+func NewCommandResponse() *runtime.CommandResponse {
+	return &runtime.CommandResponse{}
 }
 
-type CommandResponse struct {
-	SenderID         string                  `json:"senderID,omitempty"` // if sent from another ROS instance
-	Count            *int                    `json:"count,omitempty"`
-	Objects          []Object                `json:"-,omitempty"`
-	SerializeObjects []*runtime.ObjectConfig `json:"serializeObjects,omitempty"`
-	MapPorts         map[string][]*Port      `json:"mapPorts,omitempty"`
-	MapStrings       map[string]string       `json:"mapStrings,omitempty"`
-	Float            *float64                `json:"number,omitempty"`
-	Bool             *bool                   `json:"boolean,omitempty"`
-	Error            string                  `json:"error,omitempty"`
-	ReturnType       string                  `json:"returnType,omitempty"`
-	Any              []byte                  `json:"any,omitempty"`
-	CommandResponse  []*CommandResponse      `json:"response,omitempty"`
-}
+//type CommandResponse struct {
+//	*runtime.CommandResponse
+//	//SenderID         string                  `json:"senderID,omitempty"` // if sent from another ROS instance
+//	//Count            *int                    `json:"count,omitempty"`
+//	Objects []Object `json:"-,omitempty"`
+//	//SerializeObjects []*runtime.ObjectConfig `json:"serializeObjects,omitempty"`
+//	//MapPorts         map[string][]*Port      `json:"mapPorts,omitempty"`
+//	//MapStrings       map[string]string       `json:"mapStrings,omitempty"`
+//	//Float            *float64                `json:"number,omitempty"`
+//	//Bool             *bool                   `json:"boolean,omitempty"`
+//	//Error            string                  `json:"error,omitempty"`
+//	//ReturnType       string                  `json:"returnType,omitempty"`
+//	//Any              []byte                  `json:"any,omitempty"`
+//	//CommandResponse  []*CommandResponse      `json:"response,omitempty"`
+//
+//}
 
 func (inst *RuntimeImpl) GetTreeMapRoot() *runtime.ObjectsRootMap {
 	if !inst.addedObject {
