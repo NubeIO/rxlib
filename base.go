@@ -18,9 +18,6 @@ type Object interface {
 	SetLoaded() // used normally for the Start() to set it that it has booted
 	IsNotLoaded() bool
 	IsLoaded() bool // where the Obj Start() method has been called
-	//Invoke(key string, dataType priority.Type, data any) *ObjectCommandResponse
-	//InvokePayload(key string, dataType priority.Type, payload *Payload) *ObjectCommandResponse
-	//InvokePayloads(key string, dataType priority.Type, payload []*Payload) *ObjectCommandResponse
 	CommandList() []*Invoke
 	Process() error
 	Reset() error // for example this can be called on the 2nd deployment of a counter Obj, and we want to reset the count back to zero
