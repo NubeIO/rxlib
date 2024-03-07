@@ -3,13 +3,44 @@ package rxlib
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/NubeIO/rxlib/libs/convert"
+	"github.com/NubeIO/rxlib/priority"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"strconv"
 	"strings"
 )
 
-func (inst *RuntimeImpl) CommandObject(command *ExtendedCommand) *runtime.CommandResponse {
-	inst.response = &runtime.CommandResponse{
+func convertCommand(resp *CommandResponse) *runtime.CommandResponse {
+	return &runtime.CommandResponse{
+		SenderID:         resp.SenderID,
+		Count:            int32(resp.Count),
+		MapStrings:       resp.MapStrings,
+		Number:           resp.Float,
+		Boolean:          resp.Bool,
+		Error:            resp.Error,
+		ReturnType:       resp.ReturnType,
+		Any:              resp.Any,
+		Response:         convertCommands(resp.CommandResponse),
+		SerializeObjects: resp.SerializeObjects,
+	}
+}
+
+func convertCommands(resp []*CommandResponse) []*runtime.CommandResponse {
+	var out []*runtime.CommandResponse
+	for _, response := range resp {
+		out = append(out, convertCommand(response))
+	}
+	return out
+}
+
+func (inst *RuntimeImpl) Command(cmd *ExtendedCommand) *runtime.CommandResponse {
+	resp := inst.CommandObject(cmd)
+	return convertCommand(resp)
+
+}
+
+func (inst *RuntimeImpl) CommandObject(command *ExtendedCommand) *CommandResponse {
+	inst.response = &CommandResponse{
 		MapStrings: make(map[string]string),
 	}
 	if command == nil {
@@ -29,7 +60,6 @@ func (inst *RuntimeImpl) CommandObject(command *ExtendedCommand) *runtime.Comman
 
 	switch parsedArgs.Thing {
 	case "ping":
-
 		marshal, err := json.Marshal(map[string]string{"message": "OK"})
 		if err != nil {
 			return nil
@@ -44,7 +74,7 @@ func (inst *RuntimeImpl) CommandObject(command *ExtendedCommand) *runtime.Comman
 	}
 }
 
-func (inst *RuntimeImpl) handleObjects(parsedArgs *ParsedCommand) *runtime.CommandResponse {
+func (inst *RuntimeImpl) handleObjects(parsedArgs *ParsedCommand) *CommandResponse {
 	var objects []Object
 	objects = inst.getObjects(parsedArgs)
 	objectsLen := len(objects)
@@ -126,14 +156,14 @@ func (inst *RuntimeImpl) handleCommandTypeObjects(parsedArgs *ParsedCommand, obj
 	case "run":
 		if parsedArgs.GetThing() == "command" {
 			parsedArgs.SetReturnAsIfNil("command")
-			//for _, object := range objects {
-			//	inst.response.CommandResponse = append(inst.response.CommandResponse, object.Command(inst.command))
-			//}
+			for _, object := range objects {
+				inst.response.CommandResponse = append(inst.response.CommandResponse, object.CommandObject(inst.command))
+			}
 		}
 	case "set":
 
 	case "get":
-		//inst.response.MapStrings = inst.handleGetManyAsString(objects, parsedArgs)
+		inst.response.MapStrings = inst.handleGetManyAsString(objects, parsedArgs)
 
 	case "invoke":
 
@@ -144,28 +174,28 @@ func (inst *RuntimeImpl) handleReturnType(parsedArgs *ParsedCommand, objects []O
 	switch parsedArgs.GetReturnAs() {
 	case commandCount:
 		if parsedArgs.ThingIsObject() {
-			inst.response.Count = int32(len(objects))
-			//inst.response.Objects = nil
+			inst.response.Count = len(objects)
+			inst.response.Objects = nil
 		}
 		if parsedArgs.ThingIsPorts() {
-			//inst.response.Count = nils.ToInt(len(inst.response.MapPorts))
-			//inst.response.MapPorts = nil
-			//inst.response.Objects = nil
+			inst.response.Count = len(inst.response.MapPorts)
+			inst.response.MapPorts = nil
+			inst.response.Objects = nil
 		}
 	case commandJSON:
 		inst.response.SerializeObjects = SerializeCurrentFlowArray(objects)
-		//inst.response.Count = nils.ToInt(len(inst.response.SerializeObjects))
+		inst.response.Count = len(inst.response.SerializeObjects)
 	case commandCommand:
-		//inst.response.Count = nils.ToInt(len(inst.response.CommandResponse))
-		//inst.response.Objects = nil
+		inst.response.Count = len(inst.response.CommandResponse)
+		inst.response.Objects = nil
 	case commandString:
-		//inst.response.Objects = nil
+		inst.response.Objects = nil
 	case commandPorts:
-		//inst.response.Objects = nil
-		//inst.response.Count = nils.ToInt(len(inst.response.MapPorts))
+		inst.response.Objects = nil
+		inst.response.Count = len(inst.response.MapPorts)
 	default:
-		//inst.response.Objects = objects
-		inst.response.Count = int32(len(objects))
+		inst.response.Objects = objects
+		inst.response.Count = len(objects)
 	}
 }
 
@@ -283,32 +313,32 @@ func (inst *RuntimeImpl) handlePortString(object Object, parsed *ParsedCommand) 
 }
 
 func (inst *RuntimeImpl) handleSetPorts(object Object, parsed *ParsedCommand) (string, error) {
-	//switch strings.ToLower(parsed.Thing) {
-	//case "input":
-	//	getID := parsed.ID
-	//	if getID == "" {
-	//		return "", fmt.Errorf("failed to get value required from args :%s", "id")
-	//	}
-	//	var port *Port
-	//	port = object.GetInput(getID)
-	//	write := parsed.Write
-	//	if write != "" {
-	//		if port.GetDataType() == priority.TypeFloat {
-	//			f := convert.AnyToFloatPointer(write)
-	//			if f == nil {
-	//				return "", fmt.Errorf("was unable to parse value as type float")
-	//			}
-	//			err := port.Write(f)
-	//			if err != nil {
-	//				return "", err
-	//			}
-	//			return "", fmt.Errorf("object: %s updated ok port: %s value: %s", object.GetName(), port.GetID(), write)
-	//		}
-	//	}
-	//
-	//default:
-	//	return "", fmt.Errorf("unknown set command: %s", parsed.Thing)
-	//}
+	switch strings.ToLower(parsed.Thing) {
+	case "input":
+		getID := parsed.ID
+		if getID == "" {
+			return "", fmt.Errorf("failed to get value required from args :%s", "id")
+		}
+		var port *Port
+		port = object.GetInput(getID)
+		write := parsed.Write
+		if write != "" {
+			if port.GetDataType() == priority.TypeFloat {
+				f := convert.AnyToFloatPointer(write)
+				if f == nil {
+					return "", fmt.Errorf("was unable to parse value as type float")
+				}
+				//err := port.Write(f)
+				//if err != nil {
+				//	return "", err
+				//}
+				return "", fmt.Errorf("object: %s updated ok port: %s value: %s", object.GetName(), port.GetID(), write)
+			}
+		}
+
+	default:
+		return "", fmt.Errorf("unknown set command: %s", parsed.Thing)
+	}
 	return "", fmt.Errorf("unknown get command")
 
 }

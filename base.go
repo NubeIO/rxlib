@@ -3,7 +3,6 @@ package rxlib
 import (
 	"github.com/NubeIO/rxlib/libs/history"
 	"github.com/NubeIO/rxlib/payload"
-	"github.com/NubeIO/rxlib/priority"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/NubeIO/schema"
 	"github.com/mustafaturan/bus/v3"
@@ -19,9 +18,9 @@ type Object interface {
 	SetLoaded() // used normally for the Start() to set it that it has booted
 	IsNotLoaded() bool
 	IsLoaded() bool // where the Obj Start() method has been called
-	Invoke(key string, dataType priority.Type, data any) *ObjectCommandResponse
-	InvokePayload(key string, dataType priority.Type, payload *Payload) *ObjectCommandResponse
-	InvokePayloads(key string, dataType priority.Type, payload []*Payload) *ObjectCommandResponse
+	//Invoke(key string, dataType priority.Type, data any) *ObjectCommandResponse
+	//InvokePayload(key string, dataType priority.Type, payload *Payload) *ObjectCommandResponse
+	//InvokePayloads(key string, dataType priority.Type, payload []*Payload) *ObjectCommandResponse
 	CommandList() []*Invoke
 	Process() error
 	Reset() error // for example this can be called on the 2nd deployment of a counter Obj, and we want to reset the count back to zero
@@ -32,6 +31,7 @@ type Object interface {
 	IsLocked() bool
 	IsUnlocked() bool
 
+	CommandObject(command *ExtendedCommand) *CommandResponse   // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 	Command(command *ExtendedCommand) *runtime.CommandResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 	CommandResponse(response *runtime.CommandResponse)
 	AddRuntime(r Runtime)
@@ -101,8 +101,8 @@ type Object interface {
 	SetOutput(portID string, value any) error // Set current output value & send over the eventbus
 
 	// PublishValue eventbus
-	PublishValue(portID string) error // send current port value over the eventbus
-	PublishCommand(command *ExtendedCommand) error
+	PublishValue(portID string) error              // send current port value over the eventbus
+	PublishCommand(command *ExtendedCommand) error // send a command over the eventbus, this is used to send external commands (eg; over mqtt)
 	Subscribe(topic, handlerID string, callBack func(topic string, e bus.Event))
 	SubscribePayload(topic, handlerID string, opts *EventbusOpts, callBack func(topic string, p *payload.Payload, err error))
 
