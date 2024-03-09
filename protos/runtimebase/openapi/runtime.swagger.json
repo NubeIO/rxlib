@@ -70,6 +70,82 @@
         ]
       }
     },
+    "/api/plugins/deregister": {
+      "post": {
+        "operationId": "RuntimeService_DeregisterPlugin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimePluginResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimePluginInfo"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/plugins/get": {
+      "get": {
+        "operationId": "RuntimeService_GetPlugins",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimePluginList"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/plugins/list": {
+      "get": {
+        "operationId": "RuntimeService_ListPlugins",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimePluginList"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
     "/api/plugins/pallet": {
       "get": {
         "operationId": "RuntimeService_GetPalletTree",
@@ -87,6 +163,130 @@
             }
           }
         },
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/plugins/ping/{uuid}": {
+      "post": {
+        "operationId": "RuntimeService_PingPlugin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimePluginResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeServicePingPluginBody"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/plugins/pingall": {
+      "get": {
+        "operationId": "RuntimeService_PingAll",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimePluginResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/plugins/register": {
+      "post": {
+        "operationId": "RuntimeService_RegisterPlugin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimePluginResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimePluginInfo"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/plugins/reportstatus": {
+      "post": {
+        "operationId": "RuntimeService_ReportStatus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimePluginResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeStatusRequest"
+            }
+          }
+        ],
         "tags": [
           "RuntimeService"
         ]
@@ -545,6 +745,24 @@
         }
       }
     },
+    "RuntimeMessageRequest": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "topic": {
+          "type": "string"
+        },
+        "pallet": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeObjectConfig"
+          }
+        }
+      }
+    },
     "RuntimeMeta": {
       "type": "object",
       "properties": {
@@ -828,6 +1046,44 @@
         }
       }
     },
+    "RuntimePluginInfo": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "pallet": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeObjectConfig"
+          }
+        }
+      }
+    },
+    "RuntimePluginList": {
+      "type": "object",
+      "properties": {
+        "plugins": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimePluginInfo"
+          }
+        }
+      }
+    },
+    "RuntimePluginResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "RuntimePort": {
       "type": "object",
       "properties": {
@@ -930,12 +1186,38 @@
         }
       }
     },
+    "RuntimeServicePingPluginBody": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "pallet": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeObjectConfig"
+          }
+        }
+      }
+    },
     "RuntimeSettings": {
       "type": "object",
       "properties": {
         "value": {
           "type": "string",
           "format": "byte"
+        }
+      }
+    },
+    "RuntimeStatusRequest": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },

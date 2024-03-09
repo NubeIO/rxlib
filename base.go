@@ -202,17 +202,26 @@ type ObjectValue struct {
 	Ports      []*Port `json:"ports"`
 }
 
-//type Position struct {
-//	PositionY int `json:"positionY"`
-//	PositionX int `json:"positionX"`
-//}
-//
-//type Meta struct {
-//	ObjectUUID string   `json:"uuid"`                 // comes from UI need to set in objectInfo
-//	ObjectName string   `json:"name"`                 // comes from UI need to set in objectInfo
-//	ParentUUID string   `json:"parentUUID,omitempty"` // comes from UI need to set in objectInfo
-//	Position   Position `json:"position"`
-//}
+func ConvertObjects(objects []Object) []*runtime.ObjectConfig {
+	var out []*runtime.ObjectConfig
+	for _, object := range objects {
+		out = append(out, ConvertObject(object))
+	}
+	return out
+}
+
+func ConvertObject(object Object) *runtime.ObjectConfig {
+	return &runtime.ObjectConfig{
+		Id:          object.GetInfo().ObjectID,
+		Info:        object.GetInfo(),
+		Inputs:      PortsToProto(object.GetInputs()),
+		Outputs:     PortsToProto(object.GetOutputs()),
+		Meta:        nil,
+		Stats:       nil,
+		Connections: nil,
+		Settings:    nil,
+	}
+}
 
 func NewMeta(meta *runtime.Meta) *runtime.Meta {
 	return meta

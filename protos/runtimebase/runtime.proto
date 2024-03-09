@@ -72,7 +72,86 @@ service RuntimeService {
       get: "/api/runtime/objects/{objectUUID}/port/{portID}"
     };
   };
+
+
+  rpc RegisterPlugin (PluginInfo) returns (PluginResponse) {
+    option (google.api.http) = {
+      post: "/api/plugins/register"
+      body: "*"
+    };
+  };
+
+  rpc DeregisterPlugin (PluginInfo) returns (PluginResponse) {
+    option (google.api.http) = {
+      post: "/api/plugins/deregister"
+      body: "*"
+    };
+  };
+
+  rpc ListPlugins (Empty) returns (PluginList) {
+    option (google.api.http) = {
+      get: "/api/plugins/list"
+    };
+  };
+
+  rpc PingAll (Empty) returns (PluginResponse) {
+    option (google.api.http) = {
+      get: "/api/plugins/pingall"
+    };
+  };
+
+  rpc PingPlugin (PluginInfo) returns (PluginResponse) {
+    option (google.api.http) = {
+      post: "/api/plugins/ping/{uuid}"
+      body: "*"
+    };
+  };
+
+  rpc GetPlugins (Empty) returns (PluginList) {
+    option (google.api.http) = {
+      get: "/api/plugins/get"
+    };
+  };
+
+
+  rpc ReportStatus (StatusRequest) returns (PluginResponse) {
+    option (google.api.http) = {
+      post: "/api/plugins/reportstatus"
+      body: "*"
+    };
+  };
+
+
+  rpc PluginStreamMessages(stream MessageRequest) returns (stream MessageRequest);
+
 }
+
+message MessageRequest {
+  string uuid = 1;
+  string topic = 2;
+  repeated ObjectConfig pallet = 4;
+}
+
+message StatusRequest {
+  string uuid = 1;
+  string status = 2;
+}
+
+
+message PluginInfo {
+  string name = 1;
+  string uuid = 2;
+  repeated ObjectConfig pallet = 4;
+}
+
+message PluginResponse {
+  string message = 1;
+}
+
+message PluginList {
+  repeated PluginInfo plugins = 1;
+}
+
 
 message GetObjectsValuesResponse {
   map<string, GetObjectValuesResponse> values = 1;

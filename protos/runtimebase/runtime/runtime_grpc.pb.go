@@ -19,16 +19,24 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	RuntimeService_GetObjects_FullMethodName       = "/App.Runtime.RuntimeService/GetObjects"
-	RuntimeService_GetObject_FullMethodName        = "/App.Runtime.RuntimeService/GetObject"
-	RuntimeService_GetTreeMapRoot_FullMethodName   = "/App.Runtime.RuntimeService/GetTreeMapRoot"
-	RuntimeService_GetPalletTree_FullMethodName    = "/App.Runtime.RuntimeService/GetPalletTree"
-	RuntimeService_ObjectsDeploy_FullMethodName    = "/App.Runtime.RuntimeService/ObjectsDeploy"
-	RuntimeService_Ping_FullMethodName             = "/App.Runtime.RuntimeService/Ping"
-	RuntimeService_ObjectCommand_FullMethodName    = "/App.Runtime.RuntimeService/ObjectCommand"
-	RuntimeService_GetObjectsValues_FullMethodName = "/App.Runtime.RuntimeService/GetObjectsValues"
-	RuntimeService_GetObjectValues_FullMethodName  = "/App.Runtime.RuntimeService/GetObjectValues"
-	RuntimeService_GetPortValue_FullMethodName     = "/App.Runtime.RuntimeService/GetPortValue"
+	RuntimeService_GetObjects_FullMethodName           = "/App.Runtime.RuntimeService/GetObjects"
+	RuntimeService_GetObject_FullMethodName            = "/App.Runtime.RuntimeService/GetObject"
+	RuntimeService_GetTreeMapRoot_FullMethodName       = "/App.Runtime.RuntimeService/GetTreeMapRoot"
+	RuntimeService_GetPalletTree_FullMethodName        = "/App.Runtime.RuntimeService/GetPalletTree"
+	RuntimeService_ObjectsDeploy_FullMethodName        = "/App.Runtime.RuntimeService/ObjectsDeploy"
+	RuntimeService_Ping_FullMethodName                 = "/App.Runtime.RuntimeService/Ping"
+	RuntimeService_ObjectCommand_FullMethodName        = "/App.Runtime.RuntimeService/ObjectCommand"
+	RuntimeService_GetObjectsValues_FullMethodName     = "/App.Runtime.RuntimeService/GetObjectsValues"
+	RuntimeService_GetObjectValues_FullMethodName      = "/App.Runtime.RuntimeService/GetObjectValues"
+	RuntimeService_GetPortValue_FullMethodName         = "/App.Runtime.RuntimeService/GetPortValue"
+	RuntimeService_RegisterPlugin_FullMethodName       = "/App.Runtime.RuntimeService/RegisterPlugin"
+	RuntimeService_DeregisterPlugin_FullMethodName     = "/App.Runtime.RuntimeService/DeregisterPlugin"
+	RuntimeService_ListPlugins_FullMethodName          = "/App.Runtime.RuntimeService/ListPlugins"
+	RuntimeService_PingAll_FullMethodName              = "/App.Runtime.RuntimeService/PingAll"
+	RuntimeService_PingPlugin_FullMethodName           = "/App.Runtime.RuntimeService/PingPlugin"
+	RuntimeService_GetPlugins_FullMethodName           = "/App.Runtime.RuntimeService/GetPlugins"
+	RuntimeService_ReportStatus_FullMethodName         = "/App.Runtime.RuntimeService/ReportStatus"
+	RuntimeService_PluginStreamMessages_FullMethodName = "/App.Runtime.RuntimeService/PluginStreamMessages"
 )
 
 // RuntimeServiceClient is the client API for RuntimeService service.
@@ -47,6 +55,14 @@ type RuntimeServiceClient interface {
 	GetObjectValues(ctx context.Context, in *ObjectsValueRequest, opts ...grpc.CallOption) (*GetObjectValuesResponse, error)
 	// single port value for an object
 	GetPortValue(ctx context.Context, in *PortRequest, opts ...grpc.CallOption) (*PortValue, error)
+	RegisterPlugin(ctx context.Context, in *PluginInfo, opts ...grpc.CallOption) (*PluginResponse, error)
+	DeregisterPlugin(ctx context.Context, in *PluginInfo, opts ...grpc.CallOption) (*PluginResponse, error)
+	ListPlugins(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PluginList, error)
+	PingAll(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PluginResponse, error)
+	PingPlugin(ctx context.Context, in *PluginInfo, opts ...grpc.CallOption) (*PluginResponse, error)
+	GetPlugins(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PluginList, error)
+	ReportStatus(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*PluginResponse, error)
+	PluginStreamMessages(ctx context.Context, opts ...grpc.CallOption) (RuntimeService_PluginStreamMessagesClient, error)
 }
 
 type runtimeServiceClient struct {
@@ -147,6 +163,100 @@ func (c *runtimeServiceClient) GetPortValue(ctx context.Context, in *PortRequest
 	return out, nil
 }
 
+func (c *runtimeServiceClient) RegisterPlugin(ctx context.Context, in *PluginInfo, opts ...grpc.CallOption) (*PluginResponse, error) {
+	out := new(PluginResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_RegisterPlugin_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) DeregisterPlugin(ctx context.Context, in *PluginInfo, opts ...grpc.CallOption) (*PluginResponse, error) {
+	out := new(PluginResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_DeregisterPlugin_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) ListPlugins(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PluginList, error) {
+	out := new(PluginList)
+	err := c.cc.Invoke(ctx, RuntimeService_ListPlugins_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) PingAll(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PluginResponse, error) {
+	out := new(PluginResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_PingAll_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) PingPlugin(ctx context.Context, in *PluginInfo, opts ...grpc.CallOption) (*PluginResponse, error) {
+	out := new(PluginResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_PingPlugin_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) GetPlugins(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PluginList, error) {
+	out := new(PluginList)
+	err := c.cc.Invoke(ctx, RuntimeService_GetPlugins_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) ReportStatus(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*PluginResponse, error) {
+	out := new(PluginResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_ReportStatus_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) PluginStreamMessages(ctx context.Context, opts ...grpc.CallOption) (RuntimeService_PluginStreamMessagesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &RuntimeService_ServiceDesc.Streams[0], RuntimeService_PluginStreamMessages_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &runtimeServicePluginStreamMessagesClient{stream}
+	return x, nil
+}
+
+type RuntimeService_PluginStreamMessagesClient interface {
+	Send(*MessageRequest) error
+	Recv() (*MessageRequest, error)
+	grpc.ClientStream
+}
+
+type runtimeServicePluginStreamMessagesClient struct {
+	grpc.ClientStream
+}
+
+func (x *runtimeServicePluginStreamMessagesClient) Send(m *MessageRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *runtimeServicePluginStreamMessagesClient) Recv() (*MessageRequest, error) {
+	m := new(MessageRequest)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // RuntimeServiceServer is the server API for RuntimeService service.
 // All implementations must embed UnimplementedRuntimeServiceServer
 // for forward compatibility
@@ -163,6 +273,14 @@ type RuntimeServiceServer interface {
 	GetObjectValues(context.Context, *ObjectsValueRequest) (*GetObjectValuesResponse, error)
 	// single port value for an object
 	GetPortValue(context.Context, *PortRequest) (*PortValue, error)
+	RegisterPlugin(context.Context, *PluginInfo) (*PluginResponse, error)
+	DeregisterPlugin(context.Context, *PluginInfo) (*PluginResponse, error)
+	ListPlugins(context.Context, *Empty) (*PluginList, error)
+	PingAll(context.Context, *Empty) (*PluginResponse, error)
+	PingPlugin(context.Context, *PluginInfo) (*PluginResponse, error)
+	GetPlugins(context.Context, *Empty) (*PluginList, error)
+	ReportStatus(context.Context, *StatusRequest) (*PluginResponse, error)
+	PluginStreamMessages(RuntimeService_PluginStreamMessagesServer) error
 	mustEmbedUnimplementedRuntimeServiceServer()
 }
 
@@ -199,6 +317,30 @@ func (UnimplementedRuntimeServiceServer) GetObjectValues(context.Context, *Objec
 }
 func (UnimplementedRuntimeServiceServer) GetPortValue(context.Context, *PortRequest) (*PortValue, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPortValue not implemented")
+}
+func (UnimplementedRuntimeServiceServer) RegisterPlugin(context.Context, *PluginInfo) (*PluginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterPlugin not implemented")
+}
+func (UnimplementedRuntimeServiceServer) DeregisterPlugin(context.Context, *PluginInfo) (*PluginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeregisterPlugin not implemented")
+}
+func (UnimplementedRuntimeServiceServer) ListPlugins(context.Context, *Empty) (*PluginList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListPlugins not implemented")
+}
+func (UnimplementedRuntimeServiceServer) PingAll(context.Context, *Empty) (*PluginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PingAll not implemented")
+}
+func (UnimplementedRuntimeServiceServer) PingPlugin(context.Context, *PluginInfo) (*PluginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PingPlugin not implemented")
+}
+func (UnimplementedRuntimeServiceServer) GetPlugins(context.Context, *Empty) (*PluginList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPlugins not implemented")
+}
+func (UnimplementedRuntimeServiceServer) ReportStatus(context.Context, *StatusRequest) (*PluginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReportStatus not implemented")
+}
+func (UnimplementedRuntimeServiceServer) PluginStreamMessages(RuntimeService_PluginStreamMessagesServer) error {
+	return status.Errorf(codes.Unimplemented, "method PluginStreamMessages not implemented")
 }
 func (UnimplementedRuntimeServiceServer) mustEmbedUnimplementedRuntimeServiceServer() {}
 
@@ -393,6 +535,158 @@ func _RuntimeService_GetPortValue_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RuntimeService_RegisterPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PluginInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).RegisterPlugin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_RegisterPlugin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).RegisterPlugin(ctx, req.(*PluginInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_DeregisterPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PluginInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).DeregisterPlugin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_DeregisterPlugin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).DeregisterPlugin(ctx, req.(*PluginInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_ListPlugins_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).ListPlugins(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_ListPlugins_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).ListPlugins(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_PingAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).PingAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_PingAll_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).PingAll(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_PingPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PluginInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).PingPlugin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_PingPlugin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).PingPlugin(ctx, req.(*PluginInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_GetPlugins_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).GetPlugins(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_GetPlugins_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).GetPlugins(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_ReportStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).ReportStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_ReportStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).ReportStatus(ctx, req.(*StatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_PluginStreamMessages_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(RuntimeServiceServer).PluginStreamMessages(&runtimeServicePluginStreamMessagesServer{stream})
+}
+
+type RuntimeService_PluginStreamMessagesServer interface {
+	Send(*MessageRequest) error
+	Recv() (*MessageRequest, error)
+	grpc.ServerStream
+}
+
+type runtimeServicePluginStreamMessagesServer struct {
+	grpc.ServerStream
+}
+
+func (x *runtimeServicePluginStreamMessagesServer) Send(m *MessageRequest) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *runtimeServicePluginStreamMessagesServer) Recv() (*MessageRequest, error) {
+	m := new(MessageRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // RuntimeService_ServiceDesc is the grpc.ServiceDesc for RuntimeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -440,7 +734,42 @@ var RuntimeService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetPortValue",
 			Handler:    _RuntimeService_GetPortValue_Handler,
 		},
+		{
+			MethodName: "RegisterPlugin",
+			Handler:    _RuntimeService_RegisterPlugin_Handler,
+		},
+		{
+			MethodName: "DeregisterPlugin",
+			Handler:    _RuntimeService_DeregisterPlugin_Handler,
+		},
+		{
+			MethodName: "ListPlugins",
+			Handler:    _RuntimeService_ListPlugins_Handler,
+		},
+		{
+			MethodName: "PingAll",
+			Handler:    _RuntimeService_PingAll_Handler,
+		},
+		{
+			MethodName: "PingPlugin",
+			Handler:    _RuntimeService_PingPlugin_Handler,
+		},
+		{
+			MethodName: "GetPlugins",
+			Handler:    _RuntimeService_GetPlugins_Handler,
+		},
+		{
+			MethodName: "ReportStatus",
+			Handler:    _RuntimeService_ReportStatus_Handler,
+		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "PluginStreamMessages",
+			Handler:       _RuntimeService_PluginStreamMessages_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "runtime.proto",
 }
