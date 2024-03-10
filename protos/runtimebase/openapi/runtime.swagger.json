@@ -48,6 +48,38 @@
         ]
       }
     },
+    "/api/invoke": {
+      "post": {
+        "operationId": "RuntimeService_ObjectInvoke",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeCommandResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeCommand"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
     "/api/ping": {
       "get": {
         "operationId": "RuntimeService_Ping",
@@ -533,6 +565,9 @@
         "senderGlobalID": {
           "type": "string"
         },
+        "targetObjectUUID": {
+          "type": "string"
+        },
         "senderObjectUUID": {
           "type": "string"
         },
@@ -560,6 +595,16 @@
         "body": {
           "type": "string",
           "format": "byte"
+        },
+        "object": {
+          "$ref": "#/definitions/RuntimeObjectConfig"
+        },
+        "portValues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimePortValue"
+          }
         }
       }
     },
@@ -751,8 +796,11 @@
         "uuid": {
           "type": "string"
         },
-        "topic": {
+        "key": {
           "type": "string"
+        },
+        "object": {
+          "$ref": "#/definitions/RuntimeObjectConfig"
         },
         "pallet": {
           "type": "array",
@@ -760,6 +808,13 @@
             "type": "object",
             "$ref": "#/definitions/RuntimeObjectConfig"
           }
+        },
+        "body": {
+          "type": "string",
+          "format": "byte"
+        },
+        "command": {
+          "$ref": "#/definitions/RuntimeCommand"
         }
       }
     },
@@ -1130,8 +1185,18 @@
           "type": "string",
           "format": "byte"
         },
+        "number": {
+          "type": "number",
+          "format": "double"
+        },
         "transformation": {
           "$ref": "#/definitions/RuntimeValueTransformation"
+        },
+        "portIDs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

@@ -19,6 +19,8 @@ type Body struct {
 }
 
 type Payload struct {
+	FromPortID     string
+	FromObjectUUID string
 	*runtime.PortValue
 	body *Body
 }

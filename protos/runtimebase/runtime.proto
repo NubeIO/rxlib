@@ -53,6 +53,13 @@ service RuntimeService {
     };
   };
 
+  rpc ObjectInvoke (Command) returns (CommandResponse) {
+    option (google.api.http) = {
+      post: "/api/invoke"
+      body: "*"
+    };
+  };
+
   rpc GetObjectsValues (ObjectsValuesRequest) returns (GetObjectsValuesResponse) {
     option (google.api.http) = {
       get: "/api/runtime/objects/values"
@@ -128,8 +135,11 @@ service RuntimeService {
 
 message MessageRequest {
   string uuid = 1;
-  string topic = 2;
+  string key = 2;
+  ObjectConfig object = 3;
   repeated ObjectConfig pallet = 4;
+  bytes body = 5;
+  Command command = 6;
 }
 
 message StatusRequest {
@@ -182,7 +192,9 @@ message PortValue {
   bool isNil = 3;
   bool transformationApplied = 4;
   bytes data = 5;
-  ValueTransformation transformation = 6;
+  double number = 6;
+  ValueTransformation transformation = 7;
+  repeated string portIDs = 8;
 }
 
 message ValueTransformation {
@@ -217,13 +229,16 @@ message NestedObjectConfigMap {
 message Command {
   string targetGlobalID = 1;
   string senderGlobalID = 2;
-  string senderObjectUUID = 3;
-  string transactionUUID = 4;
-  string key = 5;
-  string query = 6;
-  repeated string args = 7;
-  map<string, string> data = 8;
-  bytes body = 9;
+  string targetObjectUUID = 3;
+  string senderObjectUUID = 4;
+  string transactionUUID = 5;
+  string key = 6;
+  string query = 7;
+  repeated string args = 8;
+  map<string, string> data = 9;
+  bytes body = 10;
+  ObjectConfig object = 11;
+  repeated PortValue portValues = 12;
 }
 
 

@@ -20,14 +20,14 @@ type Object interface {
 	IsLoaded() bool // where the Obj Start() method has been called
 	CommandList() []*Invoke
 	Process() error
-	Reset() error // for example this can be called on the 2nd deployment of a counter Obj, and we want to reset the count back to zero
+	Reset() error // for example this can be called on the 2nd deployment of a add Obj, and we want to reset the count back to zero
 	AllowsReset() bool
 	Delete() error
 	Lock()
 	Unlock()
 	IsLocked() bool
 	IsUnlocked() bool
-
+	Invoke(command *runtime.Command) (*runtime.CommandResponse, error)
 	CommandObject(command *ExtendedCommand) *CommandResponse   // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 	Command(command *ExtendedCommand) *runtime.CommandResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 	CommandResponse(response *runtime.CommandResponse)
@@ -62,7 +62,7 @@ type Object interface {
 	NewOutputPorts(port []*NewPort) error
 	GetAllPorts() []*Port
 	GetPortPayload(portID string) (*payload.Payload, error)
-	SetPortPayload(portID string, data any) error
+	//SetPortPayload(portID string, data *payload.Payload) error
 	GetPortValue(portID string) *runtime.PortValue
 	EnablePort(portID string) error
 	DisablePort(portID string) error

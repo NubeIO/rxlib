@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/NubeIO/rxlib/protos/plugintest/counter"
+	"github.com/NubeIO/rxlib/protos/plugintest/add"
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"google.golang.org/grpc"
@@ -13,10 +13,12 @@ import (
 )
 
 type client struct {
-	callbacks map[string]func(message *runtime.MessageRequest)
-	stream    runtime.RuntimeService_PluginStreamMessagesClient
-	pallet    []reactive.Object
-	runtime   []reactive.Object
+	pluginName       string
+	callbacks        map[string]func(message *runtime.MessageRequest)
+	stream           runtime.RuntimeService_PluginStreamMessagesClient
+	pallet           []reactive.Object
+	runtime          []reactive.Object
+	serverConnection runtime.RuntimeServiceClient
 }
 
 func (cli *client) sendMessage(content string) error {
@@ -25,7 +27,7 @@ func (cli *client) sendMessage(content string) error {
 	}
 
 	// Send a message to the server
-	if err := cli.stream.Send(&runtime.MessageRequest{Uuid: "1234"}); err != nil {
+	if err := cli.stream.Send(&runtime.MessageRequest{Uuid: cli.pluginName}); err != nil {
 		return fmt.Errorf("failed to send message: %v", err)
 	}
 
@@ -49,13 +51,13 @@ func (cli *client) connectWithRetry() (*grpc.ClientConn, error) {
 	return conn, nil
 }
 
-func (cli *client) registerPlugin(conn *grpc.ClientConn) error {
-	c := runtime.NewRuntimeServiceClient(conn)
+func (cli *client) registerPlugin() error {
+	c := cli.serverConnection
 
 	// Register the plugin with a separate context for registration
 	regCtx, regCancel := context.WithTimeout(context.Background(), time.Second)
 	defer regCancel()
-	info := &runtime.PluginInfo{Name: "ExamplePlugin", Uuid: "1234", Pallet: reactive.ConvertObjects(cli.pallet)}
+	info := &runtime.PluginInfo{Name: "ExamplePlugin", Uuid: cli.pluginName, Pallet: reactive.ConvertObjects(cli.pallet)}
 	_, err := c.RegisterPlugin(regCtx, info)
 	if err != nil {
 		return fmt.Errorf("could not register plugin: %v", err)
@@ -75,7 +77,7 @@ func (cli *client) startStreaming(ctx context.Context, conn *grpc.ClientConn) er
 	cli.stream = stream
 
 	// Send a message to the server
-	if err := stream.Send(&runtime.MessageRequest{Uuid: "1234"}); err != nil {
+	if err := stream.Send(&runtime.MessageRequest{Uuid: cli.pluginName}); err != nil {
 		return fmt.Errorf("failed to send message: %v", err)
 	}
 
@@ -92,58 +94,93 @@ func (cli *client) startStreaming(ctx context.Context, conn *grpc.ClientConn) er
 			if err != nil {
 				return fmt.Errorf("failed to receive message: %v", err)
 			}
-			if callback, ok := cli.callbacks[in.Topic]; ok {
+			if callback, ok := cli.callbacks[in.Key]; ok {
 				callback(in)
 			} else {
-				fmt.Printf("Received message from server unknown: %s\n", in.Topic)
+				fmt.Printf("Received message from server unknown: %s\n", in.Key)
 			}
 		}
 	}
 }
 
-func (cli *client) callbackOne(message *runtime.MessageRequest) {
-	// Send a message to the server
-	if err := cli.sendMessage("response for 1"); err != nil {
-		fmt.Printf("failed to send message: %v\n", err)
+func (cli *client) addObject(message *runtime.MessageRequest) {
+	object := message.GetObject()
+	if object == nil {
+		if err := cli.sendMessage("failed to get object"); err != nil {
+			fmt.Printf("failed to send message: %v\n", err)
+		}
+		return
+	}
+	objectID := object.GetInfo().GetObjectID()
+	if objectID == "" {
+		if err := cli.sendMessage("objectID is empty"); err != nil {
+			fmt.Printf("failed to send message: %v\n", err)
+		}
+		return
+	}
+
+	instance := cli.counter(reactive.ConvertObjectConfig(object), cli.outputCallback)
+	if instance != nil {
+		cli.runtime = append(cli.runtime, instance)
+		cli.callbacks[instance.GetMeta().GetObjectUUID()] = instance.Handler
+		if err := cli.sendMessage("response for 1"); err != nil {
+			fmt.Printf("failed to send message: %v\n", err)
+		}
+		return
+	} else {
+		if err := cli.sendMessage("failed to find object in pallet"); err != nil {
+			fmt.Printf("failed to send message: %v\n", err)
+		}
 	}
 }
 
-func (cli *client) callbackTwo(message *runtime.MessageRequest) {
-	// Send a message to the server
-	if err := cli.sendMessage("response for 2"); err != nil {
-		fmt.Printf("failed to send message: %v\n", err)
+func (cli *client) outputCallback(cmd *runtime.Command) {
+	invoke, err := cli.serverConnection.ObjectInvoke(context.Background(), cmd)
+	fmt.Println(invoke, err)
+	if err != nil {
+		return
 	}
 }
 
 func (cli *client) getPallet() {
-	baseObj := reactive.New("counter-2")
-	instance := counter.New()
+	baseObj := reactive.New("add", nil)
+	instance := add.New(nil)
 	obj := instance.New(baseObj)
+	obj.GetInfo().PluginName = cli.pluginName
 	cli.pallet = append(cli.pallet, obj)
 }
 
-func (cli *client) counter() reactive.Object {
-	baseObj := reactive.New("counter-2")
-	instance := counter.New()
-	base := instance.New(baseObj)
+func (cli *client) existsInPallet(objectID string) bool {
+	for _, object := range cli.pallet {
+		if object.GetInfo().GetObjectID() == objectID {
+			return true
+		}
+	}
+	return false
+}
+
+func (cli *client) counter(obj *reactive.BaseObject, outputUpdated func(message *runtime.Command)) reactive.Object {
+	instance := add.New(outputUpdated)
+	base := instance.New(obj)
 	return base
 }
 
+const (
+	createObject = "create-object"
+)
+
 func main() {
 	cli := &client{
-		callbacks: make(map[string]func(message *runtime.MessageRequest)),
-		pallet:    []reactive.Object{},
-		runtime:   []reactive.Object{},
+		pluginName: "plugin-1",
+		callbacks:  make(map[string]func(message *runtime.MessageRequest)),
+		pallet:     []reactive.Object{},
+		runtime:    []reactive.Object{},
 	}
 	cli.getPallet()
 
+	cli.callbacks[createObject] = cli.addObject
+
 	var err error
-
-	instance := cli.counter()
-
-	cli.runtime = append(cli.runtime, instance)
-
-	cli.callbacks["one"] = instance.Handler
 
 	var conn *grpc.ClientConn
 
@@ -153,8 +190,9 @@ func main() {
 			log.Fatalf("could not connect: %v", err)
 		}
 		defer conn.Close()
-
-		if err := cli.registerPlugin(conn); err != nil {
+		c := runtime.NewRuntimeServiceClient(conn)
+		cli.serverConnection = c
+		if err := cli.registerPlugin(); err != nil {
 			log.Fatalf("could not register plugin: %v", err)
 		}
 

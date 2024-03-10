@@ -14,6 +14,26 @@ func ConvertObjects(objects []Object) []*runtime.ObjectConfig {
 	return out
 }
 
+func ConvertObject(object *runtime.ObjectConfig) Object {
+	baseObj := &BaseObject{
+		Inputs:  object.GetInputs(),
+		Outputs: object.GetOutputs(),
+		Info:    object.GetInfo(),
+		Meta:    object.GetMeta(),
+	}
+	return baseObj
+}
+
+func ConvertObjectConfig(object *runtime.ObjectConfig) *BaseObject {
+	baseObj := &BaseObject{
+		Inputs:  object.GetInputs(),
+		Outputs: object.GetOutputs(),
+		Info:    object.GetInfo(),
+		Meta:    object.GetMeta(),
+	}
+	return baseObj
+}
+
 func Convert(object Object) *runtime.ObjectConfig {
 	return &runtime.ObjectConfig{
 		Id:          object.GetInfo().ObjectID,
@@ -39,14 +59,21 @@ type Object interface {
 	GetMeta() *runtime.Meta
 }
 
-func New(id string) Object {
+func New(id string, obj Object) Object {
+	if obj != nil {
+		return obj
+	}
 	baseObj := &BaseObject{
+		id:      id,
 		Inputs:  []*runtime.Port{},
 		Outputs: []*runtime.Port{},
 		Info: &runtime.Info{
 			ObjectID: id,
 		},
-		Meta: &runtime.Meta{},
+		Meta: &runtime.Meta{
+			ObjectUUID: "",
+			ObjectName: id,
+		},
 	}
 	return baseObj
 }
@@ -92,7 +119,9 @@ func (inst *BaseObject) NewInputPort(port *runtime.Port) error {
 }
 
 func (inst *BaseObject) newPort(port *runtime.Port, direction rxlib.PortDirection) error {
-	port.PortUUID = helpers.UUID()
+	if port.PortUUID == "" {
+		port.PortUUID = helpers.UUID()
+	}
 	if port.Direction == string(direction) {
 		inst.Inputs = append(inst.Inputs, port)
 	} else if port.Direction == string(direction) {

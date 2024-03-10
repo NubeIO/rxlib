@@ -26,6 +26,7 @@ const (
 	RuntimeService_ObjectsDeploy_FullMethodName        = "/App.Runtime.RuntimeService/ObjectsDeploy"
 	RuntimeService_Ping_FullMethodName                 = "/App.Runtime.RuntimeService/Ping"
 	RuntimeService_ObjectCommand_FullMethodName        = "/App.Runtime.RuntimeService/ObjectCommand"
+	RuntimeService_ObjectInvoke_FullMethodName         = "/App.Runtime.RuntimeService/ObjectInvoke"
 	RuntimeService_GetObjectsValues_FullMethodName     = "/App.Runtime.RuntimeService/GetObjectsValues"
 	RuntimeService_GetObjectValues_FullMethodName      = "/App.Runtime.RuntimeService/GetObjectValues"
 	RuntimeService_GetPortValue_FullMethodName         = "/App.Runtime.RuntimeService/GetPortValue"
@@ -50,6 +51,7 @@ type RuntimeServiceClient interface {
 	ObjectsDeploy(ctx context.Context, in *ObjectDeploy, opts ...grpc.CallOption) (*ObjectDeploy, error)
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
 	ObjectCommand(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error)
+	ObjectInvoke(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error)
 	GetObjectsValues(ctx context.Context, in *ObjectsValuesRequest, opts ...grpc.CallOption) (*GetObjectsValuesResponse, error)
 	// all port values for an object
 	GetObjectValues(ctx context.Context, in *ObjectsValueRequest, opts ...grpc.CallOption) (*GetObjectValuesResponse, error)
@@ -130,6 +132,15 @@ func (c *runtimeServiceClient) Ping(ctx context.Context, in *PingRequest, opts .
 func (c *runtimeServiceClient) ObjectCommand(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error) {
 	out := new(CommandResponse)
 	err := c.cc.Invoke(ctx, RuntimeService_ObjectCommand_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) ObjectInvoke(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error) {
+	out := new(CommandResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_ObjectInvoke_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -268,6 +279,7 @@ type RuntimeServiceServer interface {
 	ObjectsDeploy(context.Context, *ObjectDeploy) (*ObjectDeploy, error)
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
 	ObjectCommand(context.Context, *Command) (*CommandResponse, error)
+	ObjectInvoke(context.Context, *Command) (*CommandResponse, error)
 	GetObjectsValues(context.Context, *ObjectsValuesRequest) (*GetObjectsValuesResponse, error)
 	// all port values for an object
 	GetObjectValues(context.Context, *ObjectsValueRequest) (*GetObjectValuesResponse, error)
@@ -308,6 +320,9 @@ func (UnimplementedRuntimeServiceServer) Ping(context.Context, *PingRequest) (*P
 }
 func (UnimplementedRuntimeServiceServer) ObjectCommand(context.Context, *Command) (*CommandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ObjectCommand not implemented")
+}
+func (UnimplementedRuntimeServiceServer) ObjectInvoke(context.Context, *Command) (*CommandResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ObjectInvoke not implemented")
 }
 func (UnimplementedRuntimeServiceServer) GetObjectsValues(context.Context, *ObjectsValuesRequest) (*GetObjectsValuesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetObjectsValues not implemented")
@@ -477,6 +492,24 @@ func _RuntimeService_ObjectCommand_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimeServiceServer).ObjectCommand(ctx, req.(*Command))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_ObjectInvoke_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Command)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).ObjectInvoke(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_ObjectInvoke_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).ObjectInvoke(ctx, req.(*Command))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -721,6 +754,10 @@ var RuntimeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ObjectCommand",
 			Handler:    _RuntimeService_ObjectCommand_Handler,
+		},
+		{
+			MethodName: "ObjectInvoke",
+			Handler:    _RuntimeService_ObjectInvoke_Handler,
 		},
 		{
 			MethodName: "GetObjectsValues",
