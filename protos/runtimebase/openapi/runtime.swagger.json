@@ -238,28 +238,6 @@
         ]
       }
     },
-    "/api/plugins/pingall": {
-      "get": {
-        "operationId": "RuntimeService_PingAll",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/RuntimePluginResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "tags": [
-          "RuntimeService"
-        ]
-      }
-    },
     "/api/plugins/register": {
       "post": {
         "operationId": "RuntimeService_RegisterPlugin",
@@ -284,38 +262,6 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/RuntimePluginInfo"
-            }
-          }
-        ],
-        "tags": [
-          "RuntimeService"
-        ]
-      }
-    },
-    "/api/plugins/reportstatus": {
-      "post": {
-        "operationId": "RuntimeService_ReportStatus",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/RuntimePluginResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/RuntimeStatusRequest"
             }
           }
         ],
@@ -1272,17 +1218,6 @@
         "value": {
           "type": "string",
           "format": "byte"
-        }
-      }
-    },
-    "RuntimeStatusRequest": {
-      "type": "object",
-      "properties": {
-        "uuid": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
         }
       }
     },

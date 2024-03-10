@@ -104,6 +104,7 @@ func (inst *Instance) publishOutput() {
 	}
 	if cov || !inst.hasPublished {
 		inst.outputUpdated(&runtime.Command{
+			Key:              "update-outputs",
 			TargetObjectUUID: inst.GetMeta().GetObjectUUID(),
 			PortValues: []*runtime.PortValue{&runtime.PortValue{
 				PortID: "output",

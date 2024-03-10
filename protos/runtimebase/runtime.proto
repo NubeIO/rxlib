@@ -101,12 +101,6 @@ service RuntimeService {
     };
   };
 
-  rpc PingAll (Empty) returns (PluginResponse) {
-    option (google.api.http) = {
-      get: "/api/plugins/pingall"
-    };
-  };
-
   rpc PingPlugin (PluginInfo) returns (PluginResponse) {
     option (google.api.http) = {
       post: "/api/plugins/ping/{uuid}"
@@ -121,12 +115,6 @@ service RuntimeService {
   };
 
 
-  rpc ReportStatus (StatusRequest) returns (PluginResponse) {
-    option (google.api.http) = {
-      post: "/api/plugins/reportstatus"
-      body: "*"
-    };
-  };
 
 
   rpc PluginStreamMessages(stream MessageRequest) returns (stream MessageRequest);
@@ -140,11 +128,6 @@ message MessageRequest {
   repeated ObjectConfig pallet = 4;
   bytes body = 5;
   Command command = 6;
-}
-
-message StatusRequest {
-  string uuid = 1;
-  string status = 2;
 }
 
 

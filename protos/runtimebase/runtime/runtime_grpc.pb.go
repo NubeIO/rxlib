@@ -33,10 +33,8 @@ const (
 	RuntimeService_RegisterPlugin_FullMethodName       = "/App.Runtime.RuntimeService/RegisterPlugin"
 	RuntimeService_DeregisterPlugin_FullMethodName     = "/App.Runtime.RuntimeService/DeregisterPlugin"
 	RuntimeService_ListPlugins_FullMethodName          = "/App.Runtime.RuntimeService/ListPlugins"
-	RuntimeService_PingAll_FullMethodName              = "/App.Runtime.RuntimeService/PingAll"
 	RuntimeService_PingPlugin_FullMethodName           = "/App.Runtime.RuntimeService/PingPlugin"
 	RuntimeService_GetPlugins_FullMethodName           = "/App.Runtime.RuntimeService/GetPlugins"
-	RuntimeService_ReportStatus_FullMethodName         = "/App.Runtime.RuntimeService/ReportStatus"
 	RuntimeService_PluginStreamMessages_FullMethodName = "/App.Runtime.RuntimeService/PluginStreamMessages"
 )
 
@@ -60,10 +58,8 @@ type RuntimeServiceClient interface {
 	RegisterPlugin(ctx context.Context, in *PluginInfo, opts ...grpc.CallOption) (*PluginResponse, error)
 	DeregisterPlugin(ctx context.Context, in *PluginInfo, opts ...grpc.CallOption) (*PluginResponse, error)
 	ListPlugins(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PluginList, error)
-	PingAll(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PluginResponse, error)
 	PingPlugin(ctx context.Context, in *PluginInfo, opts ...grpc.CallOption) (*PluginResponse, error)
 	GetPlugins(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PluginList, error)
-	ReportStatus(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*PluginResponse, error)
 	PluginStreamMessages(ctx context.Context, opts ...grpc.CallOption) (RuntimeService_PluginStreamMessagesClient, error)
 }
 
@@ -201,15 +197,6 @@ func (c *runtimeServiceClient) ListPlugins(ctx context.Context, in *Empty, opts 
 	return out, nil
 }
 
-func (c *runtimeServiceClient) PingAll(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PluginResponse, error) {
-	out := new(PluginResponse)
-	err := c.cc.Invoke(ctx, RuntimeService_PingAll_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *runtimeServiceClient) PingPlugin(ctx context.Context, in *PluginInfo, opts ...grpc.CallOption) (*PluginResponse, error) {
 	out := new(PluginResponse)
 	err := c.cc.Invoke(ctx, RuntimeService_PingPlugin_FullMethodName, in, out, opts...)
@@ -222,15 +209,6 @@ func (c *runtimeServiceClient) PingPlugin(ctx context.Context, in *PluginInfo, o
 func (c *runtimeServiceClient) GetPlugins(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PluginList, error) {
 	out := new(PluginList)
 	err := c.cc.Invoke(ctx, RuntimeService_GetPlugins_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *runtimeServiceClient) ReportStatus(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*PluginResponse, error) {
-	out := new(PluginResponse)
-	err := c.cc.Invoke(ctx, RuntimeService_ReportStatus_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -288,10 +266,8 @@ type RuntimeServiceServer interface {
 	RegisterPlugin(context.Context, *PluginInfo) (*PluginResponse, error)
 	DeregisterPlugin(context.Context, *PluginInfo) (*PluginResponse, error)
 	ListPlugins(context.Context, *Empty) (*PluginList, error)
-	PingAll(context.Context, *Empty) (*PluginResponse, error)
 	PingPlugin(context.Context, *PluginInfo) (*PluginResponse, error)
 	GetPlugins(context.Context, *Empty) (*PluginList, error)
-	ReportStatus(context.Context, *StatusRequest) (*PluginResponse, error)
 	PluginStreamMessages(RuntimeService_PluginStreamMessagesServer) error
 	mustEmbedUnimplementedRuntimeServiceServer()
 }
@@ -342,17 +318,11 @@ func (UnimplementedRuntimeServiceServer) DeregisterPlugin(context.Context, *Plug
 func (UnimplementedRuntimeServiceServer) ListPlugins(context.Context, *Empty) (*PluginList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPlugins not implemented")
 }
-func (UnimplementedRuntimeServiceServer) PingAll(context.Context, *Empty) (*PluginResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PingAll not implemented")
-}
 func (UnimplementedRuntimeServiceServer) PingPlugin(context.Context, *PluginInfo) (*PluginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PingPlugin not implemented")
 }
 func (UnimplementedRuntimeServiceServer) GetPlugins(context.Context, *Empty) (*PluginList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPlugins not implemented")
-}
-func (UnimplementedRuntimeServiceServer) ReportStatus(context.Context, *StatusRequest) (*PluginResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ReportStatus not implemented")
 }
 func (UnimplementedRuntimeServiceServer) PluginStreamMessages(RuntimeService_PluginStreamMessagesServer) error {
 	return status.Errorf(codes.Unimplemented, "method PluginStreamMessages not implemented")
@@ -622,24 +592,6 @@ func _RuntimeService_ListPlugins_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_PingAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RuntimeServiceServer).PingAll(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RuntimeService_PingAll_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).PingAll(ctx, req.(*Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _RuntimeService_PingPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PluginInfo)
 	if err := dec(in); err != nil {
@@ -672,24 +624,6 @@ func _RuntimeService_GetPlugins_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimeServiceServer).GetPlugins(ctx, req.(*Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RuntimeService_ReportStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StatusRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RuntimeServiceServer).ReportStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RuntimeService_ReportStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).ReportStatus(ctx, req.(*StatusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -784,20 +718,12 @@ var RuntimeService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RuntimeService_ListPlugins_Handler,
 		},
 		{
-			MethodName: "PingAll",
-			Handler:    _RuntimeService_PingAll_Handler,
-		},
-		{
 			MethodName: "PingPlugin",
 			Handler:    _RuntimeService_PingPlugin_Handler,
 		},
 		{
 			MethodName: "GetPlugins",
 			Handler:    _RuntimeService_GetPlugins_Handler,
-		},
-		{
-			MethodName: "ReportStatus",
-			Handler:    _RuntimeService_ReportStatus_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

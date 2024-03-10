@@ -4,7 +4,6 @@ import (
 	"github.com/NubeIO/rxlib/libs/nils"
 	"github.com/NubeIO/rxlib/payload"
 	"github.com/NubeIO/rxlib/priority"
-	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/NubeIO/rxlib/unitswrapper"
 	"time"
 )
@@ -15,8 +14,8 @@ type Port struct {
 	UUID     string `json:"uuid,omitempty"`
 	Disabled bool   `json:"disabled,omitempty"`
 
-	PortValue *runtime.PortValue `json:"portValue"`
-	Payload   *payload.Payload   `json:"payload"`
+	//PortValue *runtime.PortValue `json:"portValue"`
+	Payload *payload.Payload `json:"payload"`
 
 	// Input/Output port values
 	//Values              *priority.Value        `json:"-"`              // value should be used for anything
