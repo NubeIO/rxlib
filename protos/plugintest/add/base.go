@@ -102,6 +102,7 @@ func (inst *Instance) publishOutput() {
 	if v != inst.lastValue {
 		cov = true
 	}
+	//fmt.Println("ADD", v, inst.GetMeta().ObjectUUID)
 	if cov || !inst.hasPublished {
 		inst.outputUpdated(&runtime.Command{
 			Key:              "update-outputs",

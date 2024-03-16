@@ -94,6 +94,7 @@ func (cli *client) startStreaming(ctx context.Context, conn *grpc.ClientConn) er
 			if err != nil {
 				return fmt.Errorf("failed to receive message: %v", err)
 			}
+			//pprint.PrintJSON(in)
 			if callback, ok := cli.callbacks[in.Key]; ok {
 				callback(in)
 			} else {
@@ -126,6 +127,8 @@ func (cli *client) addObject(message *runtime.MessageRequest) {
 		if err := cli.sendMessage("response for 1"); err != nil {
 			fmt.Printf("failed to send message: %v\n", err)
 		}
+		fmt.Printf("objects count: %d\n", len(cli.runtime))
+
 		return
 	} else {
 		if err := cli.sendMessage("failed to find object in pallet"); err != nil {
@@ -135,11 +138,7 @@ func (cli *client) addObject(message *runtime.MessageRequest) {
 }
 
 func (cli *client) outputCallback(cmd *runtime.Command) {
-	invoke, err := cli.serverConnection.ObjectInvoke(context.Background(), cmd)
-	fmt.Println(invoke, err)
-	if err != nil {
-		return
-	}
+	cli.serverConnection.ObjectInvoke(context.Background(), cmd)
 }
 
 func (cli *client) getPallet() {

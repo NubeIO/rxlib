@@ -27,6 +27,7 @@ type Object interface {
 	Unlock()
 	IsLocked() bool
 	IsUnlocked() bool
+	InvokePayload(p *payload.Payload) error
 	Invoke(command *runtime.Command) (*runtime.CommandResponse, error)
 	CommandObject(command *ExtendedCommand) *CommandResponse   // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
 	Command(command *ExtendedCommand) *runtime.CommandResponse // normally used for objectA to invoke objectB (a way for objects to talk rather than using the eventbus)
