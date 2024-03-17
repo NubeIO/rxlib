@@ -138,7 +138,15 @@ func (cli *client) addObject(message *runtime.MessageRequest) {
 }
 
 func (cli *client) outputCallback(cmd *runtime.Command) {
-	cli.serverConnection.ObjectInvoke(context.Background(), cmd)
+	//cli.serverConnection.ObjectInvoke(context.Background(), cmd)
+
+	if err := cli.stream.Send(&runtime.MessageRequest{
+		Key:     "invoke",
+		Uuid:    cli.pluginName,
+		Command: cmd,
+	}); err != nil {
+
+	}
 }
 
 func (cli *client) getPallet() {

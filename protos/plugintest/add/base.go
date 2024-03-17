@@ -3,6 +3,7 @@ package add
 import (
 	"fmt"
 	"github.com/NubeIO/rxlib"
+	"github.com/NubeIO/rxlib/helpers/pprint"
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"time"
@@ -82,6 +83,7 @@ func (inst *Instance) Handler(p *runtime.MessageRequest) {
 		return
 	}
 
+	pprint.PrintJSON(cmd.GetPortValues())
 	for _, value := range cmd.GetPortValues() {
 		for _, d := range value.PortIDs {
 			if d == "input-1" {
@@ -102,8 +104,8 @@ func (inst *Instance) publishOutput() {
 	if v != inst.lastValue {
 		cov = true
 	}
-	//fmt.Println("ADD", v, inst.GetMeta().ObjectUUID)
 	if cov || !inst.hasPublished {
+		//fmt.Println("ADD", v, inst.GetMeta().ObjectUUID)
 		inst.outputUpdated(&runtime.Command{
 			Key:              "update-outputs",
 			TargetObjectUUID: inst.GetMeta().GetObjectUUID(),
@@ -113,6 +115,9 @@ func (inst *Instance) publishOutput() {
 			}},
 		})
 		inst.hasPublished = true // this is for to make sure we publish the first value
+	} else {
+		//fmt.Println("ADD SKIP", v, inst.GetMeta().ObjectUUID)
+
 	}
 	inst.lastValue = v
 
