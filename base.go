@@ -3,6 +3,7 @@ package rxlib
 import (
 	"github.com/NubeIO/rxlib/libs/bus"
 	"github.com/NubeIO/rxlib/libs/history"
+	"github.com/NubeIO/rxlib/libs/streams"
 	"github.com/NubeIO/rxlib/payload"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/NubeIO/schema"
@@ -12,6 +13,8 @@ import (
 
 type Object interface {
 	New(object Object, opts ...any) Object
+
+	PortStream(ports *streams.PortStream)
 
 	Init() error
 	Start() error

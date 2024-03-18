@@ -5,31 +5,30 @@ go 1.21.5
 require (
 	github.com/NubeIO/engineering-units v0.0.2
 	github.com/NubeIO/mqttwrapper v0.0.1
+	github.com/NubeIO/scheduler v0.0.1
 	github.com/NubeIO/schema v0.0.1
-	github.com/eclipse/paho.mqtt.golang v1.4.3
-	github.com/go-co-op/gocron v1.37.0
 	github.com/go-resty/resty/v2 v2.11.0
-	github.com/golang/protobuf v1.5.3
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.1
-	github.com/mustafaturan/bus/v3 v3.0.3
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/rs/zerolog v1.32.0
+	github.com/vmihailenco/msgpack/v5 v5.4.1
 	google.golang.org/genproto/googleapis/api v0.0.0-20240221002015-b0ce06bbee7c
 	google.golang.org/grpc v1.62.0
 	google.golang.org/protobuf v1.32.0
 )
 
 require (
-	github.com/NubeIO/scheduler v0.0.1 // indirect
 	github.com/eclipse/paho.golang v0.21.0 // indirect
+	github.com/eclipse/paho.mqtt.golang v1.4.3 // indirect
 	github.com/go-co-op/gocron/v2 v2.2.4 // indirect
+	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
 	github.com/jonboulle/clockwork v0.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
-	go.uber.org/atomic v1.9.0 // indirect
+	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	golang.org/x/exp v0.0.0-20231219180239-dc181d75b848 // indirect
 	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect

@@ -3,7 +3,6 @@ package add
 import (
 	"fmt"
 	"github.com/NubeIO/rxlib"
-	"github.com/NubeIO/rxlib/helpers/pprint"
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"time"
@@ -83,7 +82,7 @@ func (inst *Instance) Handler(p *runtime.MessageRequest) {
 		return
 	}
 
-	pprint.PrintJSON(cmd.GetPortValues())
+	//pprint.PrintJSON(cmd.GetPortValues())
 	for _, value := range cmd.GetPortValues() {
 		for _, d := range value.PortIDs {
 			if d == "input-1" {
@@ -105,7 +104,7 @@ func (inst *Instance) publishOutput() {
 		cov = true
 	}
 	if cov || !inst.hasPublished {
-		//fmt.Println("ADD", v, inst.GetMeta().ObjectUUID)
+		fmt.Println("ADD", v, inst.GetMeta().ObjectUUID)
 		inst.outputUpdated(&runtime.Command{
 			Key:              "update-outputs",
 			TargetObjectUUID: inst.GetMeta().GetObjectUUID(),

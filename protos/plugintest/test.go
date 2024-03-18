@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/NubeIO/rxlib/libs/streams"
 	"github.com/NubeIO/rxlib/protos/plugintest/add"
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"net"
 	"time"
 )
 
@@ -104,6 +106,38 @@ func (cli *client) startStreaming(ctx context.Context, conn *grpc.ClientConn) er
 	}
 }
 
+func (cli *client) startStreamingMessagePack() error {
+	conn, err := net.Dial("tcp", "localhost:12345")
+	if err != nil {
+		log.Fatal(err)
+	}
+	client := streams.NewClient(conn, "plugin-1")
+
+	//defer client.Close()
+
+	// Start listening for incoming messages in a separate goroutine
+	go client.ReceiveMessages(func(port *streams.PortStream) {
+		fmt.Println("MESSAGE", port)
+		cmd := &runtime.Command{
+			Key: port.Key,
+			PortValues: []*runtime.PortValue{&runtime.PortValue{
+				Number:  port.Value,
+				PortIDs: port.Ports,
+			}},
+		}
+		in := &runtime.MessageRequest{
+			Key:     port.Key,
+			Command: cmd,
+		}
+		if callback, ok := cli.callbacks[in.Key]; ok {
+			callback(in)
+		} else {
+			fmt.Printf("Received message from server unknown: %s\n", in.Key)
+		}
+	})
+	return nil
+}
+
 func (cli *client) addObject(message *runtime.MessageRequest) {
 	object := message.GetObject()
 	if object == nil {
@@ -183,6 +217,7 @@ func main() {
 		pallet:     []reactive.Object{},
 		runtime:    []reactive.Object{},
 	}
+	//cli.startStreamingMessagePack()
 	cli.getPallet()
 
 	cli.callbacks[createObject] = cli.addObject
