@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/NubeIO/rxlib/libs/unixbus"
 	"github.com/NubeIO/rxlib/protos/plugintest/add"
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
@@ -94,12 +95,13 @@ func (cli *client) startStreaming(ctx context.Context, conn *grpc.ClientConn) er
 			if err != nil {
 				return fmt.Errorf("failed to receive message: %v", err)
 			}
+			fmt.Println(in.Key)
 			//pprint.PrintJSON(in)
-			if callback, ok := cli.callbacks[in.Key]; ok {
-				callback(in)
-			} else {
-				fmt.Printf("Received message from server unknown: %s\n", in.Key)
-			}
+			//if callback, ok := cli.callbacks[in.Key]; ok {
+			//	callback(in)
+			//} else {
+			//	fmt.Printf("Received message from server unknown: %s\n", in.Key)
+			//}
 		}
 	}
 }
@@ -176,6 +178,25 @@ const (
 	createObject = "create-object"
 )
 
+func (cli *client) bus() {
+	eventBus := unixbus.NewUnixEventBus("user.topic.123")
+	eventBus.Subscribe(func(data interface{}) {
+		//marshal, err := json.Marshal(data)
+		//if err != nil {
+		//	fmt.Println(111, err)
+		//	return
+		//}
+		//var message *runtime.MessageRequest
+		//err = json.Unmarshal(marshal, &message)
+		//if err != nil {
+		//	fmt.Println(222, err)
+		//	return
+		//}
+		//fmt.Println(string(marshal))
+	})
+
+}
+
 func main() {
 	cli := &client{
 		pluginName: "plugin-1",
@@ -184,7 +205,7 @@ func main() {
 		runtime:    []reactive.Object{},
 	}
 	cli.getPallet()
-
+	//cli.bus()
 	cli.callbacks[createObject] = cli.addObject
 
 	var err error
