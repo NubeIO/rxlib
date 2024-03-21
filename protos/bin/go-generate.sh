@@ -13,9 +13,11 @@ combined_dir=runtime
 protos_dir=$root_dir/$name
 combined_dir=$root_dir/$name/$combined_dir
 openapi_dir=$root_dir/$name/openapi
+rust_out=$root_dir/rust
 
 mkdir -p $combined_dir
 mkdir -p $openapi_dir
+mkdir -p $rust_out
 
 echo "generating code"
 
@@ -40,7 +42,11 @@ protoc -I $protos_dir --grpc-gateway_out $combined_dir \
     --grpc-gateway_opt paths=source_relative \
     $protos_dir/*.proto
 
-echo "generating golang code success"
+# rust code
+protoc -I $protos_dir --rust_out $rust_out \
+    $protos_dir/*.proto
+
+echo "generating golang and rust code success"
 
 echo "done!!!!"
 

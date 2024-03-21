@@ -1,7 +1,6 @@
 package reactive
 
 import (
-	"github.com/NubeIO/rxlib"
 	"github.com/NubeIO/rxlib/helpers"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 )
@@ -111,14 +110,14 @@ func (inst *BaseObject) GetMeta() *runtime.Meta {
 func (inst *BaseObject) Handler(payload *runtime.MessageRequest) {}
 
 func (inst *BaseObject) NewOutputPort(port *runtime.Port) error {
-	return inst.newPort(port, rxlib.Output)
+	return inst.newPort(port, "output")
 }
 
 func (inst *BaseObject) NewInputPort(port *runtime.Port) error {
-	return inst.newPort(port, rxlib.Output)
+	return inst.newPort(port, "input")
 }
 
-func (inst *BaseObject) newPort(port *runtime.Port, direction rxlib.PortDirection) error {
+func (inst *BaseObject) newPort(port *runtime.Port, direction string) error {
 	if port.PortUUID == "" {
 		port.PortUUID = helpers.UUID()
 	}
