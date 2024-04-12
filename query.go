@@ -394,13 +394,10 @@ type ParsedCommand struct {
 	ReturnAs    string `json:"GetReturnAs"`
 	Query       string `json:"query"`
 	Key         string `json:"key"`
-	//ObjectName     string `json:"objectName,omitempty"`
-	//Category string `json:"objectCategory,omitempty"`
-	//ObjectUUID     string `json:"objectUUID,omitempty"`
-	Childs     bool `json:"childs,omitempty"`
-	Pagination bool `json:"pagination,omitempty"`
-	PageNumber int  `json:"pageNumber,omitempty"`
-	PageSize   int  `json:"pageSize,omitempty"`
+	Childs      bool   `json:"childs,omitempty"`
+	Pagination  bool   `json:"pagination,omitempty"`
+	PageNumber  int    `json:"pageNumber,omitempty"`
+	PageSize    int    `json:"pageSize,omitempty"`
 }
 
 const (

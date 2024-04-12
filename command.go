@@ -52,12 +52,6 @@ func GetObjectByName(value string) *ExtendedCommand {
 	return c
 }
 
-func GetObject111111(value string) *ExtendedCommand {
-	c := NewCommand()
-	c.buildCommand("get", "objects", "name", value, false)
-	return c
-}
-
 // QueryObjectsByField
 // eg; QueryObjectByField("category", "math", 1, false)
 func (c *ExtendedCommand) QueryObjectsByField(field, value string, limit int, asJSON bool) *ExtendedCommand {
@@ -67,6 +61,18 @@ func (c *ExtendedCommand) QueryObjectsByField(field, value string, limit int, as
 		c.Query = fmt.Sprintf("objects:%s == %s", field, value)
 	}
 	c.buildCommand("get", "objects", "type", value, asJSON)
+	return c
+}
+
+func (c *ExtendedCommand) buildCommand(commandType, thing, fieldName, fieldValue string, asJSON bool) *ExtendedCommand {
+	c.Args = append(c.Args, commandType)
+	c.Args = append(c.Args, thing)
+	if fieldName != "" {
+		c.Data[fieldName] = fieldValue
+	}
+	if asJSON {
+		c.Data["as"] = "json"
+	}
 	return c
 }
 
@@ -119,17 +125,6 @@ func (c *ExtendedCommand) GetObjectByUUID(value string, asJSON bool) *ExtendedCo
 	return c
 }
 
-func (c *ExtendedCommand) buildCommand(commandType, thing, fieldName, fieldValue string, asJSON bool) *ExtendedCommand {
-	c.Args = append(c.Args, commandType)
-	c.Args = append(c.Args, thing)
-	if fieldName != "" {
-		c.Data[fieldName] = fieldValue
-	}
-	if asJSON {
-		c.Data["as"] = "json"
-	}
-	return c
-}
 func (c *ExtendedCommand) Parse(cmdSting string) (*ExtendedCommand, error) {
 	argMap := make(map[string]string)
 	var posArgs []string // Initialize as an empty slice

@@ -13,11 +13,11 @@ combined_dir=runtime
 protos_dir=$root_dir/$name
 combined_dir=$root_dir/$name/$combined_dir
 openapi_dir=$root_dir/$name/openapi
-rust_out=$root_dir/rust
+
 
 mkdir -p $combined_dir
 mkdir -p $openapi_dir
-mkdir -p $rust_out
+
 
 echo "generating code"
 
