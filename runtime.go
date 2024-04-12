@@ -12,9 +12,16 @@ type Runtime interface {
 	Get() []Object
 	GetObjectsConfig() []*runtime.ObjectConfig
 	GetObjectConfig(uuid string) *runtime.ObjectConfig
+	GetObjectConfigByID(objectID string) *runtime.ObjectConfig
 
 	GetObjectValues(objectUUID string) []*runtime.PortValue
 	GetObjectsValues() map[string][]*runtime.PortValue
+
+	ObjectsPagination(pageNumber, pageSize int) *ObjectPagination
+	PaginateGetAllByID(objectID string, pageNumber, pageSize int) *ObjectPagination
+	PaginateGetChildObjects(parentUUID string, pageNumber, pageSize int) *ObjectPagination
+	PaginateGetAllByName(name string, pageNumber, pageSize int) *ObjectPagination
+	PaginateGetChildObjectsByWorkingGroup(objectUUID, workingGroup string, pageNumber, pageSize int) *ObjectPagination
 
 	Delete() string
 	GetByUUID(uuid string) Object
@@ -56,6 +63,12 @@ func NewRuntime(objs []Object, opts *RuntimeOpts) Runtime {
 		panic("NewRuntime []Object can not be empty")
 	}
 	return r
+}
+
+func (inst *RuntimeImpl) Get() []Object {
+	inst.mutex.Lock()
+	defer inst.mutex.Unlock()
+	return inst.objects
 }
 
 type RuntimeImpl struct {
@@ -125,23 +138,32 @@ func (inst *RuntimeImpl) GetObjectConfig(uuid string) *runtime.ObjectConfig {
 	return serializeCurrentFlowArray(inst.GetByUUID(uuid))
 }
 
+func (inst *RuntimeImpl) GetObjectConfigByID(objectID string) *runtime.ObjectConfig {
+	object := inst.GetFirstByID(objectID)
+	if object == nil {
+		return nil
+	}
+	return serializeCurrentFlowArray(object)
+}
+
 func NewCommandResponse() *runtime.CommandResponse {
 	return &runtime.CommandResponse{}
 }
 
 type CommandResponse struct {
-	SenderID         string                  `json:"senderID,omitempty"` // if sent from another ROS instance
-	Count            int                     `json:"count,omitempty"`
-	Objects          []Object                `json:"-,omitempty"`
-	SerializeObjects []*runtime.ObjectConfig `json:"serializeObjects,omitempty"`
-	MapPorts         map[string][]*Port      `json:"mapPorts,omitempty"`
-	MapStrings       map[string]string       `json:"mapStrings,omitempty"`
-	Float            float64                 `json:"number,omitempty"`
-	Bool             bool                    `json:"boolean,omitempty"`
-	Error            string                  `json:"error,omitempty"`
-	ReturnType       string                  `json:"returnType,omitempty"`
-	Any              []byte                  `json:"any,omitempty"`
-	CommandResponse  []*CommandResponse      `json:"response,omitempty"`
+	SenderID         string                    `json:"senderID,omitempty"` // if sent from another ROS instance
+	Count            int                       `json:"count,omitempty"`
+	Objects          []Object                  `json:"-,omitempty"`
+	SerializeObjects []*runtime.ObjectConfig   `json:"serializeObjects,omitempty"`
+	MapPorts         map[string][]*Port        `json:"mapPorts,omitempty"`
+	MapStrings       map[string]string         `json:"mapStrings,omitempty"`
+	Float            float64                   `json:"number,omitempty"`
+	Bool             bool                      `json:"boolean,omitempty"`
+	Error            string                    `json:"error,omitempty"`
+	ReturnType       string                    `json:"returnType,omitempty"`
+	Any              []byte                    `json:"any,omitempty"`
+	CommandResponse  []*CommandResponse        `json:"response,omitempty"`
+	ObjectPagination *runtime.ObjectPagination `json:"objectPagination,omitempty"`
 }
 
 func (inst *RuntimeImpl) GetTreeMapRoot() *runtime.ObjectsRootMap {
@@ -189,12 +211,6 @@ func (inst *RuntimeImpl) GetAllByID(objectID string) []Object {
 		}
 	}
 	return out
-}
-
-func (inst *RuntimeImpl) Get() []Object {
-	inst.mutex.Lock()
-	defer inst.mutex.Unlock()
-	return inst.objects
 }
 
 func (inst *RuntimeImpl) GetByUUID(uuid string) Object {

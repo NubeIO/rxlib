@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -48,6 +49,12 @@ func GetSerializeObjectByName(value string) *ExtendedCommand {
 func GetObjectByName(value string) *ExtendedCommand {
 	c := NewCommand()
 	c.buildCommand("get", "object", "name", value, false)
+	return c
+}
+
+func GetObject111111(value string) *ExtendedCommand {
+	c := NewCommand()
+	c.buildCommand("get", "objects", "name", value, false)
 	return c
 }
 
@@ -337,14 +344,6 @@ func (p *ParsedCommand) GetCategory() string {
 	return p.Category
 }
 
-func (p *ParsedCommand) GetType() string {
-	return p.Type
-}
-
-func (p *ParsedCommand) GetObjectID() string {
-	return p.ObjectID
-}
-
 func (p *ParsedCommand) GetObjectCategory() string {
 	return p.ObjectCategory
 }
@@ -365,6 +364,22 @@ func (p *ParsedCommand) GetReturnAs() string {
 	return p.ReturnAs
 }
 
+func (p *ParsedCommand) GetChilds() bool {
+	return p.Childs
+}
+
+func (p *ParsedCommand) GetPagination() bool {
+	return p.Pagination
+}
+
+func (p *ParsedCommand) GetPaginationPageSize() int {
+	return p.PageSize
+}
+
+func (p *ParsedCommand) GetPaginationPageNumber() int {
+	return p.PageNumber
+}
+
 func (p *ParsedCommand) GetName() string {
 	return p.Name
 }
@@ -383,7 +398,7 @@ func splitCamelCase(s string) []string {
 	return words
 }
 
-func (c *ExtendedCommand) CommandReturnType(cmd *ExtendedCommand) (*ParsedCommand, error) {
+func (c *ExtendedCommand) ParseCommandsArgs(cmd *ExtendedCommand) (*ParsedCommand, error) {
 	if cmd == nil {
 		return nil, fmt.Errorf("command can not be empty")
 	}
@@ -419,9 +434,6 @@ func (c *ExtendedCommand) CommandReturnType(cmd *ExtendedCommand) (*ParsedComman
 	if v, ok := cmd.Data["as"]; ok {
 		args.ReturnAs = v
 	}
-	if v, ok := cmd.Data["type"]; ok {
-		args.Type = v
-	}
 	if v, ok := cmd.Data["objectCategory"]; ok {
 		args.ObjectCategory = v
 	}
@@ -431,10 +443,24 @@ func (c *ExtendedCommand) CommandReturnType(cmd *ExtendedCommand) (*ParsedComman
 	if v, ok := cmd.Data["objectUUID"]; ok {
 		args.ObjectUUID = v
 	}
-	if v, ok := cmd.Data["objectID"]; ok {
-		args.ObjectID = v
+	if v, ok := cmd.Data["childs"]; ok {
+		args.Childs = stringToBool(v)
 	}
-
+	// ObjectPagination
+	// pageNumber, pageSize
+	if v, ok := cmd.Data["pagination"]; ok {
+		args.Pagination = stringToBool(v)
+	}
+	if v, ok := cmd.Data["pageNumber"]; ok {
+		if args.Pagination {
+			args.PageNumber = stringToInt(v)
+		}
+	}
+	if v, ok := cmd.Data["pageSize"]; ok {
+		if args.Pagination {
+			args.PageSize = stringToInt(v)
+		}
+	}
 	switch args.GetThing() {
 	case "ping":
 		return args, nil
@@ -500,28 +526,29 @@ func ConvertCommand(c *runtime.Command) *ExtendedCommand {
 	return out
 }
 
-//func convertCommandResponse(c *CommandResponse) *runtime.CommandResponse {
-//	out := &runtime.CommandResponse{
-//		SenderID:   c.SenderID,
-//		Count:      int32(nils.GetInt(c.Count)),
-//		MapStrings: c.MapStrings,
-//		Number:     nils.GetFloat64(c.Float),
-//		Boolean:    nils.GetBool(c.Bool),
-//		Error:      c.Error,
-//		ReturnType: c.ReturnType,
-//		Any:        c.Any,
-//	}
-//	return out
-//}
+func stringToBool(input interface{}) bool {
+	switch v := input.(type) {
+	case string:
+		lowerInput := strings.ToLower(v)
+		return lowerInput == "true"
+	case bool:
+		return v
+	default:
+		return false
+	}
+}
 
-//func ConvertCommandResponse(c *CommandResponse) *runtime.CommandResponse {
-//	cmd := convertCommandResponse(c)
-//	if len(c.CommandResponse) > 0 {
-//		var out []*runtime.CommandResponse
-//		for _, response := range c.CommandResponse {
-//			out = append(out, convertCommandResponse(response))
-//		}
-//		cmd.Response = out
-//	}
-//	return cmd
-//}
+func stringToInt(input interface{}) int {
+	switch v := input.(type) {
+	case string:
+		num, err := strconv.Atoi(v)
+		if err != nil {
+			return 0
+		}
+		return num
+	case int:
+		return v
+	default:
+		return 0
+	}
+}

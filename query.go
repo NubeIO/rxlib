@@ -1,7 +1,6 @@
 package rxlib
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/NubeIO/rxlib/libs/convert"
 	"github.com/NubeIO/rxlib/priority"
@@ -22,6 +21,7 @@ func convertCommand(resp *CommandResponse) *runtime.CommandResponse {
 		Any:              resp.Any,
 		Response:         convertCommands(resp.CommandResponse),
 		SerializeObjects: resp.SerializeObjects,
+		ObjectPagination: resp.ObjectPagination,
 	}
 }
 
@@ -48,7 +48,7 @@ func (inst *RuntimeImpl) CommandObject(command *ExtendedCommand) *CommandRespons
 		return inst.response
 	}
 	inst.command = command
-	parsedArgs, err := inst.command.CommandReturnType(command)
+	parsedArgs, err := inst.command.ParseCommandsArgs(command)
 	if err != nil {
 		inst.response.Error = fmt.Sprintf("%v", err)
 		return inst.response
@@ -59,13 +59,6 @@ func (inst *RuntimeImpl) CommandObject(command *ExtendedCommand) *CommandRespons
 	inst.parsedCommand = parsedArgs
 
 	switch parsedArgs.Thing {
-	case "ping":
-		marshal, err := json.Marshal(map[string]string{"message": "OK"})
-		if err != nil {
-			return nil
-		}
-		inst.response.Any = marshal
-		return inst.response
 	case "objects", "object", "command":
 		return inst.handleObjects(parsedArgs)
 	default:
@@ -76,6 +69,26 @@ func (inst *RuntimeImpl) CommandObject(command *ExtendedCommand) *CommandRespons
 
 func (inst *RuntimeImpl) handleObjects(parsedArgs *ParsedCommand) *CommandResponse {
 	var objects []Object
+	if parsedArgs.GetPagination() {
+		pagination, err := inst.handlePagination(parsedArgs)
+		if err != nil {
+			objectsLen := len(objects)
+			fmt.Printf("type: %s, thing: %s, return type: %s, objects effected: %d \n", parsedArgs.GetCommandType(), parsedArgs.GetThing(), parsedArgs.GetReturnAs(), objectsLen)
+			inst.response.Error = fmt.Sprintf("failed to find any objects")
+			return inst.response
+		}
+		objects = pagination.Objects
+		pagination.Objects = nil
+		inst.response.ObjectPagination = &runtime.ObjectPagination{
+			Count:      int32(pagination.Count),
+			PageNumber: int32(pagination.PageNumber),
+			PageSize:   int32(pagination.PageSize),
+			TotalPages: int32(pagination.TotalPages),
+			TotalCount: int32(pagination.TotalCount),
+		}
+		inst.handleReturnType(parsedArgs, objects)
+		return inst.response
+	}
 	objects = inst.getObjects(parsedArgs)
 	objectsLen := len(objects)
 	if objectsLen == 0 {
@@ -100,14 +113,14 @@ func (inst *RuntimeImpl) getObjects(parsedArgs *ParsedCommand) []Object {
 
 func (inst *RuntimeImpl) handleNoQuery(parsedArgs *ParsedCommand) []Object {
 	switch parsedArgs.GetThing() {
-	case "object":
+	case "object": // get a single object
 		object := inst.handleGetObject(parsedArgs)
 		if object != nil {
 			return []Object{object}
 		}
 		return nil
 	default: // objects, command
-		if !parsedArgs.NameUUID() { // get objects
+		if !parsedArgs.NameUUID() { // get objects eg; getObjects --as:json
 			return inst.Get()
 		}
 		return inst.handleGetObjects(parsedArgs)
@@ -123,7 +136,7 @@ func (inst *RuntimeImpl) handleGetObjects(parsedArgs *ParsedCommand) []Object {
 		if parsedArgs.GetObjectUUID() == object.GetUUID() {
 			objects = append(objects, object)
 		}
-		if parsedArgs.GetObjectID() == object.GetID() {
+		if parsedArgs.GetID() == object.GetID() {
 			objects = append(objects, object)
 		}
 		if parsedArgs.GetObjectCategory() == object.GetCategory() {
@@ -140,8 +153,8 @@ func (inst *RuntimeImpl) handleGetObject(parsedArgs *ParsedCommand) Object {
 		obj = inst.GetByUUID(parsedArgs.GetObjectUUID())
 	case parsedArgs.GetObjectName() != "":
 		obj = inst.GetFirstByName(parsedArgs.GetObjectName())
-	case parsedArgs.GetObjectID() != "":
-		obj = inst.GetFirstByID(parsedArgs.GetObjectID())
+	case parsedArgs.GetID() != "":
+		obj = inst.GetFirstByID(parsedArgs.GetID())
 	case parsedArgs.GetObjectCategory() != "":
 		obj = inst.GetFirstByID(parsedArgs.GetObjectCategory())
 	}
@@ -382,9 +395,12 @@ type ParsedCommand struct {
 	Query          string `json:"query"`
 	Key            string `json:"key"`
 	ObjectName     string `json:"objectName,omitempty"`
-	ObjectID       string `json:"objectID,omitempty"`
 	ObjectCategory string `json:"objectCategory,omitempty"`
 	ObjectUUID     string `json:"objectUUID,omitempty"`
+	Childs         bool   `json:"childs,omitempty"`
+	Pagination     bool   `json:"pagination,omitempty"`
+	PageNumber     int    `json:"pageNumber,omitempty"`
+	PageSize       int    `json:"pageSize,omitempty"`
 }
 
 const (
@@ -487,7 +503,6 @@ func (inst *RuntimeImpl) query(query string) []Object {
 	if limit >= 0 && len(allResults) > limit {
 		allResults = allResults[:limit]
 	}
-
 	return allResults
 }
 

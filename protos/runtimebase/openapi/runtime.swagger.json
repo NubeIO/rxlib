@@ -600,6 +600,9 @@
             "type": "object",
             "$ref": "#/definitions/RuntimeObjectConfig"
           }
+        },
+        "objectPagination": {
+          "$ref": "#/definitions/RuntimeObjectPagination"
         }
       }
     },
@@ -888,6 +891,31 @@
             "type": "object",
             "$ref": "#/definitions/RuntimeObjectExtractedDetails"
           }
+        }
+      }
+    },
+    "RuntimeObjectPagination": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pageNumber": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "totalPages": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "totalCount": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
