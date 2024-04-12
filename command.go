@@ -344,18 +344,6 @@ func (p *ParsedCommand) GetCategory() string {
 	return p.Category
 }
 
-func (p *ParsedCommand) GetObjectCategory() string {
-	return p.ObjectCategory
-}
-
-func (p *ParsedCommand) GetObjectName() string {
-	return p.ObjectName
-}
-
-func (p *ParsedCommand) GetObjectUUID() string {
-	return p.ObjectUUID
-}
-
 func (p *ParsedCommand) GetID() string {
 	return p.ID
 }
@@ -433,15 +421,6 @@ func (c *ExtendedCommand) ParseCommandsArgs(cmd *ExtendedCommand) (*ParsedComman
 	}
 	if v, ok := cmd.Data["as"]; ok {
 		args.ReturnAs = v
-	}
-	if v, ok := cmd.Data["objectCategory"]; ok {
-		args.ObjectCategory = v
-	}
-	if v, ok := cmd.Data["objectName"]; ok {
-		args.ObjectName = v
-	}
-	if v, ok := cmd.Data["objectUUID"]; ok {
-		args.ObjectUUID = v
 	}
 	if v, ok := cmd.Data["childs"]; ok {
 		args.Childs = stringToBool(v)

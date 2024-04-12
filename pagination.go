@@ -75,7 +75,7 @@ func (inst *RuntimeImpl) PaginateGetChildObjectsByWorkingGroup(objectUUID, worki
 
 func (inst *RuntimeImpl) handlePagination(parsedArgs *ParsedCommand) (*ObjectPagination, error) {
 	childs := parsedArgs.GetChilds()
-	objectUUID := parsedArgs.GetObjectUUID()
+	objectUUID := parsedArgs.GetUUID()
 	objectID := parsedArgs.GetID()
 	pageSize := parsedArgs.GetPaginationPageSize()
 	pageNumber := parsedArgs.GetPaginationPageNumber()

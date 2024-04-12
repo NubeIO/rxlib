@@ -130,16 +130,16 @@ func (inst *RuntimeImpl) handleNoQuery(parsedArgs *ParsedCommand) []Object {
 func (inst *RuntimeImpl) handleGetObjects(parsedArgs *ParsedCommand) []Object {
 	var objects []Object
 	for _, object := range inst.Get() {
-		if parsedArgs.GetObjectName() == object.GetName() {
+		if parsedArgs.GetName() == object.GetName() {
 			objects = append(objects, object)
 		}
-		if parsedArgs.GetObjectUUID() == object.GetUUID() {
+		if parsedArgs.GetUUID() == object.GetUUID() {
 			objects = append(objects, object)
 		}
 		if parsedArgs.GetID() == object.GetID() {
 			objects = append(objects, object)
 		}
-		if parsedArgs.GetObjectCategory() == object.GetCategory() {
+		if parsedArgs.GetCategory() == object.GetCategory() {
 			objects = append(objects, object)
 		}
 	}
@@ -149,14 +149,14 @@ func (inst *RuntimeImpl) handleGetObjects(parsedArgs *ParsedCommand) []Object {
 func (inst *RuntimeImpl) handleGetObject(parsedArgs *ParsedCommand) Object {
 	var obj Object
 	switch {
-	case parsedArgs.GetObjectUUID() != "":
-		obj = inst.GetByUUID(parsedArgs.GetObjectUUID())
-	case parsedArgs.GetObjectName() != "":
-		obj = inst.GetFirstByName(parsedArgs.GetObjectName())
+	case parsedArgs.GetUUID() != "":
+		obj = inst.GetByUUID(parsedArgs.GetUUID())
+	case parsedArgs.GetName() != "":
+		obj = inst.GetFirstByName(parsedArgs.GetName())
 	case parsedArgs.GetID() != "":
 		obj = inst.GetFirstByID(parsedArgs.GetID())
-	case parsedArgs.GetObjectCategory() != "":
-		obj = inst.GetFirstByID(parsedArgs.GetObjectCategory())
+	case parsedArgs.GetCategory() != "":
+		obj = inst.GetFirstByID(parsedArgs.GetCategory())
 	}
 	return obj
 }
@@ -381,26 +381,26 @@ func (inst *RuntimeImpl) handlePorts(object Object, parsed *ParsedCommand) ([]*P
 }
 
 type ParsedCommand struct {
-	CommandType    string `json:"commandType"`
-	Thing          string `json:"thing"`
-	ID             string `json:"id,omitempty"`
-	Field          string `json:"field,omitempty"`
-	UUID           string `json:"uuid,omitempty"`
-	Category       string `json:"category,omitempty"`
-	Name           string `json:"name,omitempty"`
-	Type           string `json:"type,omitempty"`
-	Write          string `json:"write,omitempty"`
-	Value          string `json:"value,omitempty"`
-	ReturnAs       string `json:"GetReturnAs"`
-	Query          string `json:"query"`
-	Key            string `json:"key"`
-	ObjectName     string `json:"objectName,omitempty"`
-	ObjectCategory string `json:"objectCategory,omitempty"`
-	ObjectUUID     string `json:"objectUUID,omitempty"`
-	Childs         bool   `json:"childs,omitempty"`
-	Pagination     bool   `json:"pagination,omitempty"`
-	PageNumber     int    `json:"pageNumber,omitempty"`
-	PageSize       int    `json:"pageSize,omitempty"`
+	CommandType string `json:"commandType"`
+	Thing       string `json:"thing"`
+	ID          string `json:"id,omitempty"`
+	Field       string `json:"field,omitempty"`
+	UUID        string `json:"uuid,omitempty"`
+	Category    string `json:"category,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Type        string `json:"type,omitempty"`
+	Write       string `json:"write,omitempty"`
+	Value       string `json:"value,omitempty"`
+	ReturnAs    string `json:"GetReturnAs"`
+	Query       string `json:"query"`
+	Key         string `json:"key"`
+	//ObjectName     string `json:"objectName,omitempty"`
+	//Category string `json:"objectCategory,omitempty"`
+	//ObjectUUID     string `json:"objectUUID,omitempty"`
+	Childs     bool `json:"childs,omitempty"`
+	Pagination bool `json:"pagination,omitempty"`
+	PageNumber int  `json:"pageNumber,omitempty"`
+	PageSize   int  `json:"pageSize,omitempty"`
 }
 
 const (
