@@ -17,6 +17,8 @@ type Manager interface {
 	// AllHistories returns a slice of all available histories. with some stats
 	AllHistories() []*AllHistories
 
+	AllHistoriesByDateRange(startDate, endDate string) []*AllHistories
+
 	AllHistoriesByObjectUUID(objectUUID string) *AllHistories
 
 	// All returns a slice of all available histories.
@@ -102,6 +104,43 @@ func (hm *historyManager) AllHistories() []*AllHistories {
 	return histories
 }
 
+func (hm *historyManager) AllHistoriesByDateRange(startDate, endDate string) []*AllHistories {
+	hm.mu.RLock()
+	defer hm.mu.RUnlock()
+	start, err := time.Parse(time.RFC3339, startDate)
+	if err != nil {
+		// Handle parsing error
+		return nil
+	}
+	end, err := time.Parse(time.RFC3339, endDate)
+	if err != nil {
+		// Handle parsing error
+		return nil
+	}
+
+	histories := make([]*AllHistories, 0)
+
+	for _, history := range hm.histories {
+		filteredRecords := make([]Record, 0)
+		for _, record := range history.GetRecords() {
+			if record.GetTimestamp().After(start) && record.GetTimestamp().Before(end) {
+				filteredRecords = append(filteredRecords, record)
+			}
+		}
+		if len(filteredRecords) > 0 {
+			h := &AllHistories{
+				ObjectUUID:  history.GetObjectUUID(),
+				HistoryUUID: history.GetUUID(),
+				Count:       len(filteredRecords),
+				Histories:   filteredRecords,
+			}
+			histories = append(histories, h)
+		}
+	}
+
+	return histories
+}
+
 func (hm *historyManager) AllHistoriesByObjectUUID(objectUUID string) *AllHistories {
 	hm.mu.RLock()
 	defer hm.mu.RUnlock()
@@ -114,9 +153,7 @@ func (hm *historyManager) AllHistoriesByObjectUUID(objectUUID string) *AllHistor
 				Histories:   history.GetRecords(),
 			}
 			return h
-
 		}
-
 	}
 	return nil
 }

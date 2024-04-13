@@ -1,9 +1,11 @@
 package history
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/NubeIO/rxlib/helpers/pprint"
-
+	"github.com/sashabaranov/go-openai"
 	"testing"
 )
 
@@ -24,7 +26,7 @@ func TestNewHistoryManager(t *testing.T) {
 	// Create another history with a limit of 5 samples
 	history2 := historyManager.NewHistory(5, "aaa")
 
-	uuid2 := history2.GetUUID()
+	//uuid2 := history2.GetUUID()
 
 	// Add some samples to history2
 	for i := 6; i <= 10; i++ {
@@ -60,11 +62,39 @@ func TestNewHistoryManager(t *testing.T) {
 		fmt.Printf("UUID: %s, Records: %v\n", uuid, Records)
 	}
 
-	fmt.Println(historyManager.All())
-	// Drop a specific history by UUID
-	historyManager.Drop(uuid2)
+	client := openai.NewClient("")
+	histString := historyManager.AllHistories()
+	marshal, err := json.Marshal(histString)
+	if err != nil {
+		return
+	}
+	message := "with this data can you give me same stats on it, like min, max avg, count, return it as json"
+	resp, err := client.CreateChatCompletion(
+		context.Background(),
+		openai.ChatCompletionRequest{
+			Model: openai.GPT3Dot5Turbo,
+			Messages: []openai.ChatCompletionMessage{
+				{
+					Role:    openai.ChatMessageRoleUser,
+					Content: fmt.Sprintf("%s  %s", message, string(marshal)),
+				},
+			},
+		},
+	)
 
-	// Drop all histories
-	historyManager.DropAll()
+	if err != nil {
+		fmt.Printf("ChatCompletion error: %v\n", err)
+		return
+	}
+	fmt.Println("###############")
+	fmt.Println(resp.Choices[0].Message.Content)
+
+	//
+	//fmt.Println(historyManager.All())
+	//// Drop a specific history by UUID
+	//historyManager.Drop(uuid2)
+	//
+	//// Drop all histories
+	//historyManager.DropAll()
 
 }
