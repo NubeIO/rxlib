@@ -25,6 +25,11 @@ func (b *SubscribeTopicBuilder) WithClientType(clientType ClientType) *Subscribe
 	return b
 }
 
+func (b *SubscribeTopicBuilder) GlobalID(id string) *SubscribeTopicBuilder {
+	b.parts = append(b.parts, id)
+	return b
+}
+
 func (b *SubscribeTopicBuilder) WithTargetUUID(targetUUID string) *SubscribeTopicBuilder {
 	b.parts = append(b.parts, targetUUID)
 	return b
@@ -54,5 +59,5 @@ func (b *SubscribeTopicBuilder) WithType(t Type) *SubscribeTopicBuilder {
 }
 
 func (b *SubscribeTopicBuilder) Build() string {
-	return fmt.Sprintf("r/resp/%s", strings.Join(b.parts, "/"))
+	return fmt.Sprintf("r/req/%s", strings.Join(b.parts, "/"))
 }
