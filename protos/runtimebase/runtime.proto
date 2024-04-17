@@ -104,7 +104,6 @@ service RuntimeService {
   };
 
 
-
 }
 
 message MessageRequest {
@@ -232,6 +231,7 @@ message CommandResponse {
   repeated CommandResponse response = 9;
   repeated ObjectConfig serializeObjects = 10;
   ObjectPagination objectPagination = 11;
+  PalletTree pallet = 12;
 }
 
 
