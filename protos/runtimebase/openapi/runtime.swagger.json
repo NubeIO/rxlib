@@ -48,38 +48,6 @@
         ]
       }
     },
-    "/api/invoke": {
-      "post": {
-        "operationId": "RuntimeService_ObjectInvoke",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/RuntimeCommandResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/RuntimeCommand"
-            }
-          }
-        ],
-        "tags": [
-          "RuntimeService"
-        ]
-      }
-    },
     "/api/ping": {
       "get": {
         "operationId": "RuntimeService_Ping",
@@ -195,44 +163,6 @@
             }
           }
         },
-        "tags": [
-          "RuntimeService"
-        ]
-      }
-    },
-    "/api/plugins/ping/{uuid}": {
-      "post": {
-        "operationId": "RuntimeService_PingPlugin",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/RuntimePluginResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/RuntimeServicePingPluginBody"
-            }
-          }
-        ],
         "tags": [
           "RuntimeService"
         ]
@@ -739,34 +669,6 @@
         }
       }
     },
-    "RuntimeMessageRequest": {
-      "type": "object",
-      "properties": {
-        "uuid": {
-          "type": "string"
-        },
-        "key": {
-          "type": "string"
-        },
-        "object": {
-          "$ref": "#/definitions/RuntimeObjectConfig"
-        },
-        "pallet": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/RuntimeObjectConfig"
-          }
-        },
-        "body": {
-          "type": "string",
-          "format": "byte"
-        },
-        "command": {
-          "$ref": "#/definitions/RuntimeCommand"
-        }
-      }
-    },
     "RuntimeMeta": {
       "type": "object",
       "properties": {
@@ -1221,21 +1123,6 @@
           "type": "array",
           "items": {
             "type": "string"
-          }
-        }
-      }
-    },
-    "RuntimeServicePingPluginBody": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "pallet": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/RuntimeObjectConfig"
           }
         }
       }

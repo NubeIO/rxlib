@@ -53,12 +53,6 @@ service RuntimeService {
     };
   };
 
-  rpc ObjectInvoke (Command) returns (CommandResponse) {
-    option (google.api.http) = {
-      post: "/api/invoke"
-      body: "*"
-    };
-  };
 
   rpc GetObjectsValues (ObjectsValuesRequest) returns (GetObjectsValuesResponse) {
     option (google.api.http) = {
@@ -101,12 +95,7 @@ service RuntimeService {
     };
   };
 
-  rpc PingPlugin (PluginInfo) returns (PluginResponse) {
-    option (google.api.http) = {
-      post: "/api/plugins/ping/{uuid}"
-      body: "*"
-    };
-  };
+
 
   rpc GetPlugins (Empty) returns (PluginList) {
     option (google.api.http) = {
@@ -115,9 +104,6 @@ service RuntimeService {
   };
 
 
-
-
-  rpc PluginStreamMessages(stream MessageRequest) returns (stream MessageRequest);
 
 }
 

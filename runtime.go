@@ -164,6 +164,7 @@ type CommandResponse struct {
 	Any              []byte                    `json:"any,omitempty"`
 	CommandResponse  []*CommandResponse        `json:"response,omitempty"`
 	ObjectPagination *runtime.ObjectPagination `json:"objectPagination,omitempty"`
+	ObjectTree       *runtime.ObjectsRootMap   `json:"objectTree,omitempty"`
 }
 
 func (inst *RuntimeImpl) GetTreeMapRoot() *runtime.ObjectsRootMap {

@@ -89,6 +89,11 @@ func (inst *RuntimeImpl) handleObjects(parsedArgs *ParsedCommand) *CommandRespon
 		inst.handleReturnType(parsedArgs, objects)
 		return inst.response
 	}
+	if parsedArgs.GetTree() { // handel object tree
+		inst.response.ObjectTree = inst.GetTreeMapRoot()
+		return inst.response
+	}
+
 	objects = inst.getObjects(parsedArgs)
 	objectsLen := len(objects)
 	if objectsLen == 0 {
@@ -395,6 +400,7 @@ type ParsedCommand struct {
 	Query       string `json:"query"`
 	Key         string `json:"key"`
 	Childs      bool   `json:"childs,omitempty"`
+	Tree        bool   `json:"tree,omitempty"`
 	Pagination  bool   `json:"pagination,omitempty"`
 	PageNumber  int    `json:"pageNumber,omitempty"`
 	PageSize    int    `json:"pageSize,omitempty"`

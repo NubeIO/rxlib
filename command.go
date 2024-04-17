@@ -351,6 +351,10 @@ func (p *ParsedCommand) GetChilds() bool {
 	return p.Childs
 }
 
+func (p *ParsedCommand) GetTree() bool {
+	return p.Tree
+}
+
 func (p *ParsedCommand) GetPagination() bool {
 	return p.Pagination
 }
@@ -419,6 +423,9 @@ func (c *ExtendedCommand) ParseCommandsArgs(cmd *ExtendedCommand) (*ParsedComman
 	}
 	if v, ok := cmd.Data["childs"]; ok {
 		args.Childs = stringToBool(v)
+	}
+	if v, ok := cmd.Data["tree"]; ok {
+		args.Tree = stringToBool(v)
 	}
 	// ObjectPagination
 	// pageNumber, pageSize
