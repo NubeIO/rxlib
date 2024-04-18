@@ -22,6 +22,7 @@ func convertCommand(resp *CommandResponse) *runtime.CommandResponse {
 		Response:         convertCommands(resp.CommandResponse),
 		SerializeObjects: resp.SerializeObjects,
 		ObjectPagination: resp.ObjectPagination,
+		ObjectTree:       resp.ObjectTree,
 	}
 }
 

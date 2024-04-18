@@ -155,17 +155,19 @@ message PortRequest {
 }
 
 message PortValue {
-  string portID = 1;
-  string dataType = 2;
-  bool isNil = 3;
-  bool transformationApplied = 4;
-  bytes data = 5;
-  double number = 6;
-  string string = 7;
-  bool boolean = 8;
-  ValueTransformation transformation = 9;
-  repeated string portIDs = 10;
+  string objectUUID = 1;
+  string portID = 2;
+  string dataType = 3;
+  bool isNil = 4;
+  bool transformationApplied = 5;
+  bytes data = 6;
+  double number = 7;
+  string stringValue = 8;
+  bool booleanValue = 9;
+  ValueTransformation transformation = 10;
+  repeated string portIDs = 11;
 }
+
 
 message ValueTransformation {
   string unit = 1;
@@ -208,7 +210,6 @@ message Command {
   bytes body = 10;
   ObjectConfig object = 11;
   repeated PortValue portValues = 12;
-
 }
 
 
@@ -236,6 +237,7 @@ message CommandResponse {
   repeated ObjectConfig serializeObjects = 10;
   ObjectPagination objectPagination = 11;
   PalletTree pallet = 12;
+  ObjectsRootMap objectTree = 13;
 }
 
 

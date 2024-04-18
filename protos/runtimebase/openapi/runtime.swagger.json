@@ -536,6 +536,9 @@
         },
         "pallet": {
           "$ref": "#/definitions/RuntimePalletTree"
+        },
+        "objectTree": {
+          "$ref": "#/definitions/RuntimeObjectsRootMap"
         }
       }
     },
@@ -1055,6 +1058,9 @@
     "RuntimePortValue": {
       "type": "object",
       "properties": {
+        "objectUUID": {
+          "type": "string"
+        },
         "portID": {
           "type": "string"
         },
@@ -1075,10 +1081,10 @@
           "type": "number",
           "format": "double"
         },
-        "string": {
+        "stringValue": {
           "type": "string"
         },
-        "boolean": {
+        "booleanValue": {
           "type": "boolean"
         },
         "transformation": {
