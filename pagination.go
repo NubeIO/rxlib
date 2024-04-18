@@ -1,5 +1,35 @@
 package rxlib
 
+import (
+	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
+)
+
+type ObjectValuesPagination struct {
+	PortValues []*runtime.PortValue
+	Count      int `json:"count"`      // how many per page
+	PageNumber int `json:"pageNumber"` // which page number
+	PageSize   int `json:"pageSize"`
+	TotalPages int `json:"totalPages"`
+	TotalCount int `json:"totalCount"` // all the objects count
+}
+
+func (inst *RuntimeImpl) GetObjectsValuesPaginate(parentUUID string, pageNumber, pageSize int) *ObjectValuesPagination {
+	var out []*runtime.PortValue
+	objects := inst.PaginateGetChildObjects(parentUUID, pageNumber, pageSize)
+	for _, object := range objects.Objects {
+		out = append(out, inst.GetObjectValues(object.GetUUID())...)
+	}
+	return &ObjectValuesPagination{
+		PortValues: out,
+		Count:      objects.Count,
+		PageNumber: objects.PageNumber,
+		PageSize:   objects.PageSize,
+		TotalPages: objects.TotalPages,
+		TotalCount: objects.TotalCount,
+	}
+
+}
+
 type ObjectPagination struct {
 	Objects    []Object `json:"-"`
 	Count      int      `json:"count"`      // how many per page
@@ -64,7 +94,12 @@ func (inst *RuntimeImpl) PaginateGetAllByName(name string, pageNumber, pageSize 
 }
 
 func (inst *RuntimeImpl) PaginateGetChildObjects(parentUUID string, pageNumber, pageSize int) *ObjectPagination {
-	filteredObjects := inst.GetChildObjects(parentUUID)
+	var filteredObjects []Object
+	if parentUUID == "" {
+		filteredObjects = inst.Get()
+	} else {
+		filteredObjects = inst.GetChildObjects(parentUUID)
+	}
 	return inst.PaginateObjects(filteredObjects, pageNumber, pageSize)
 }
 

@@ -821,6 +821,13 @@
         "totalCount": {
           "type": "integer",
           "format": "int32"
+        },
+        "PortValues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimePortValue"
+          }
         }
       }
     },
@@ -1067,6 +1074,12 @@
         "number": {
           "type": "number",
           "format": "double"
+        },
+        "string": {
+          "type": "string"
+        },
+        "boolean": {
+          "type": "boolean"
         },
         "transformation": {
           "$ref": "#/definitions/RuntimeValueTransformation"

@@ -16,6 +16,7 @@ type Runtime interface {
 
 	GetObjectValues(objectUUID string) []*runtime.PortValue
 	GetObjectsValues() map[string][]*runtime.PortValue
+	GetObjectsValuesPaginate(parentUUID string, pageNumber, pageSize int) *ObjectValuesPagination
 
 	ObjectsPagination(pageNumber, pageSize int) *ObjectPagination
 	PaginateGetAllByID(objectID string, pageNumber, pageSize int) *ObjectPagination

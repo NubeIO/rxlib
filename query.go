@@ -70,6 +70,21 @@ func (inst *RuntimeImpl) CommandObject(command *ExtendedCommand) *CommandRespons
 func (inst *RuntimeImpl) handleObjects(parsedArgs *ParsedCommand) *CommandResponse {
 	var objects []Object
 	if parsedArgs.GetPagination() {
+		if parsedArgs.GetPortValues() { // handle port values
+			objectUUID := parsedArgs.GetUUID()
+			pageSize := parsedArgs.GetPaginationPageSize()
+			pageNumber := parsedArgs.GetPaginationPageNumber()
+			pagination := inst.GetObjectsValuesPaginate(objectUUID, pageNumber, pageSize)
+			inst.response.ObjectPagination = &runtime.ObjectPagination{
+				Count:      int32(pagination.Count),
+				PageNumber: int32(pagination.PageNumber),
+				PageSize:   int32(pagination.PageSize),
+				TotalPages: int32(pagination.TotalPages),
+				TotalCount: int32(pagination.TotalCount),
+				PortValues: pagination.PortValues,
+			}
+			return inst.response
+		}
 		pagination, err := inst.handlePagination(parsedArgs)
 		if err != nil {
 			objectsLen := len(objects)
@@ -401,6 +416,7 @@ type ParsedCommand struct {
 	Key         string `json:"key"`
 	Childs      bool   `json:"childs,omitempty"`
 	Tree        bool   `json:"tree,omitempty"`
+	PortValues  bool   `json:"portValues,omitempty"`
 	Pagination  bool   `json:"pagination,omitempty"`
 	PageNumber  int    `json:"pageNumber,omitempty"`
 	PageSize    int    `json:"pageSize,omitempty"`

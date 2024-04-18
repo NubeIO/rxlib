@@ -161,15 +161,16 @@ message PortValue {
   bool transformationApplied = 4;
   bytes data = 5;
   double number = 6;
-  ValueTransformation transformation = 7;
-  repeated string portIDs = 8;
+  string string = 7;
+  bool boolean = 8;
+  ValueTransformation transformation = 9;
+  repeated string portIDs = 10;
 }
 
 message ValueTransformation {
   string unit = 1;
   bytes rawData = 2;
 }
-
 
 
 message ObjectsRequest {
@@ -217,7 +218,10 @@ message ObjectPagination {
   int32 pageSize = 3;
   int32 totalPages = 4;
   int32 totalCount = 5;
+  repeated PortValue PortValues = 6;
+
 }
+
 
 message CommandResponse {
   string senderID = 1;

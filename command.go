@@ -355,6 +355,10 @@ func (p *ParsedCommand) GetTree() bool {
 	return p.Tree
 }
 
+func (p *ParsedCommand) GetPortValues() bool {
+	return p.PortValues
+}
+
 func (p *ParsedCommand) GetPagination() bool {
 	return p.Pagination
 }
@@ -426,6 +430,9 @@ func (c *ExtendedCommand) ParseCommandsArgs(cmd *ExtendedCommand) (*ParsedComman
 	}
 	if v, ok := cmd.Data["tree"]; ok {
 		args.Tree = stringToBool(v)
+	}
+	if v, ok := cmd.Data["portValues"]; ok {
+		args.PortValues = stringToBool(v)
 	}
 	// ObjectPagination
 	// pageNumber, pageSize
