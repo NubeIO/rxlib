@@ -162,10 +162,11 @@ type CommandResponse struct {
 	Bool             bool                      `json:"boolean,omitempty"`
 	Error            string                    `json:"error,omitempty"`
 	ReturnType       string                    `json:"returnType,omitempty"`
-	Any              []byte                    `json:"any,omitempty"`
+	Byte             []byte                    `json:"byte,omitempty"`
 	CommandResponse  []*CommandResponse        `json:"response,omitempty"`
 	ObjectPagination *runtime.ObjectPagination `json:"objectPagination,omitempty"`
 	ObjectTree       *runtime.ObjectsRootMap   `json:"objectTree,omitempty"`
+	Data             any                       `json:"data"`
 }
 
 func (inst *RuntimeImpl) GetTreeMapRoot() *runtime.ObjectsRootMap {

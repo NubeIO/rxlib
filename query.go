@@ -18,7 +18,7 @@ func convertCommand(resp *CommandResponse) *runtime.CommandResponse {
 		Boolean:          resp.Bool,
 		Error:            resp.Error,
 		ReturnType:       resp.ReturnType,
-		Any:              resp.Any,
+		Any:              resp.Byte,
 		Response:         convertCommands(resp.CommandResponse),
 		SerializeObjects: resp.SerializeObjects,
 		ObjectPagination: resp.ObjectPagination,
