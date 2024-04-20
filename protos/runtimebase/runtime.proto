@@ -4,6 +4,7 @@ option go_package = "./;runtime";
 
 package App.Runtime;
 import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
 
 
 service RuntimeService {
@@ -164,8 +165,9 @@ message PortValue {
   double number = 7;
   string stringValue = 8;
   bool booleanValue = 9;
-  ValueTransformation transformation = 10;
-  repeated string portIDs = 11;
+  google.protobuf.Any any = 10;
+  ValueTransformation transformation = 11;
+  repeated string portIDs = 12;
 }
 
 
@@ -300,8 +302,9 @@ message Info {
   repeated string workingGroupObjects = 8;
   repeated string workingGroupChildObjects = 9;
   repeated string objectTags = 10;
-  Permissions permissions = 11;
-  Requirements requirements = 12;
+  map<string, string> objectMetaTags = 11;
+  Permissions permissions = 12;
+  Requirements requirements = 13;
 }
 
 message Permissions {

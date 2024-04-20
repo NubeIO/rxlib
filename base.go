@@ -184,8 +184,12 @@ type Object interface {
 	GetRequirements() *runtime.Requirements
 
 	// tags
-	AddObjectTags(objectTypeTag ...string)
-	GetObjectTags() []string
+	AddTags(objectTypeTag ...string)
+	GetTag(key string) string
+	GetTags() []string
+	AddMetaTags(key, value string)
+	GetMetaTag(key string) string
+	GetMetaTags() map[string]string
 
 	SetCache(key string, data any, expiration time.Duration, overwriteExisting bool) error
 	GetCache(key string) (data any, found bool)

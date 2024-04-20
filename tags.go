@@ -1,6 +1,7 @@
 package rxlib
 
 const (
+	RQLTag            string = "rql"
 	DriversTag        string = "drivers"
 	BACnetTag         string = "bacnet"
 	ModbusTag         string = "modbus"

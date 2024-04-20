@@ -2,6 +2,7 @@ package rxlib
 
 import (
 	"fmt"
+	systeminfo "github.com/NubeIO/rxlib/libs/system"
 	"github.com/NubeIO/rxlib/plugins"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/NubeIO/scheduler"
@@ -48,6 +49,12 @@ type Runtime interface {
 	GetObjectsPallet() *PalletTree
 
 	Scheduler() scheduler.Scheduler
+
+	QueryObjectsConfig(query string) ([]*runtime.ObjectConfig, error)
+	QueryObjects(query string) ([]Object, error)
+
+	// System os/host system info
+	System() systeminfo.System
 }
 
 type RuntimeOpts struct {
@@ -86,6 +93,10 @@ type RuntimeImpl struct {
 	tree            *tree
 	addedObject     bool
 	scheduler       scheduler.Scheduler
+}
+
+func (inst *RuntimeImpl) System() systeminfo.System {
+	return systeminfo.NewSystem()
 }
 
 func (inst *RuntimeImpl) Scheduler() scheduler.Scheduler {
