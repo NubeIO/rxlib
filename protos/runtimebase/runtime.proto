@@ -301,8 +301,8 @@ message Info {
   string workingGroupParent = 7;
   repeated string workingGroupObjects = 8;
   repeated string workingGroupChildObjects = 9;
-  repeated string objectTags = 10;
-  map<string, string> objectMetaTags = 11;
+  repeated string tags = 10;
+  map<string, string> metaTags = 11;
   Permissions permissions = 12;
   Requirements requirements = 13;
 }

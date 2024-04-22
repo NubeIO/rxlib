@@ -2,6 +2,7 @@ package rxlib
 
 import (
 	"fmt"
+	"github.com/NubeIO/rxlib/libs/history"
 	systeminfo "github.com/NubeIO/rxlib/libs/system"
 	"github.com/NubeIO/rxlib/plugins"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
@@ -11,6 +12,9 @@ import (
 
 type Runtime interface {
 	Get() []Object
+	AddObjects([]Object)
+	ToObjectsConfig(objects []Object) []*runtime.ObjectConfig
+	GetObjectsUUIDs(objects []Object) []string
 	GetObjectsConfig() []*runtime.ObjectConfig
 	GetObjectConfig(uuid string) *runtime.ObjectConfig
 	GetObjectConfigByID(objectID string) *runtime.ObjectConfig
@@ -50,11 +54,15 @@ type Runtime interface {
 
 	Scheduler() scheduler.Scheduler
 
-	QueryObjectsConfig(query string) ([]*runtime.ObjectConfig, error)
-	QueryObjects(query string) ([]Object, error)
-
+	ExprWithError(query string) (any, error)
+	Expr(query string) any
 	// System os/host system info
 	System() systeminfo.System
+
+	HistoryManager() history.Manager
+
+	// ToStringArray Conversions
+	ToStringArray(interfaces interface{}) []string
 }
 
 type RuntimeOpts struct {
@@ -67,9 +75,7 @@ func NewRuntime(objs []Object, opts *RuntimeOpts) Runtime {
 	}
 	r.objects = objs
 	r.scheduler = opts.Scheduler
-	if r.objects == nil {
-		panic("NewRuntime []Object can not be empty")
-	}
+	r.hist = history.NewHistoryManager("ros")
 	return r
 }
 
@@ -93,6 +99,15 @@ type RuntimeImpl struct {
 	tree            *tree
 	addedObject     bool
 	scheduler       scheduler.Scheduler
+	hist            history.Manager
+}
+
+func (inst *RuntimeImpl) AddObjects(objects []Object) {
+	inst.objects = objects
+}
+
+func (inst *RuntimeImpl) HistoryManager() history.Manager {
+	return inst.hist
 }
 
 func (inst *RuntimeImpl) System() systeminfo.System {
@@ -144,6 +159,18 @@ func (inst *RuntimeImpl) GetObjectsValues() map[string][]*runtime.PortValue {
 
 func (inst *RuntimeImpl) GetObjectsConfig() []*runtime.ObjectConfig {
 	return SerializeCurrentFlowArray(inst.Get())
+}
+
+func (inst *RuntimeImpl) ToObjectsConfig(objects []Object) []*runtime.ObjectConfig {
+	return SerializeCurrentFlowArray(objects)
+}
+
+func (inst *RuntimeImpl) GetObjectsUUIDs(objects []Object) []string {
+	var out []string
+	for _, object := range objects {
+		out = append(out, object.GetUUID())
+	}
+	return out
 }
 
 func (inst *RuntimeImpl) GetObjectConfig(uuid string) *runtime.ObjectConfig {
@@ -308,88 +335,5 @@ func (inst *RuntimeImpl) objectsFilteredIsNil() bool {
 	if inst.objectsFiltered == nil {
 		return true
 	}
-	return false
-}
-
-// let obj = RQL.AllObjects().Where("histories").Name("uuid").Condition("==", "hist_history").First()
-// let obj = RQL.AllObjects().Where("objects").Name("name").Condition("==", "abc").SerialObjects()
-func (inst *RuntimeImpl) histories() *RuntimeImpl {
-	//var filtered = make(map[string]Object)
-	//for _, obj := range inst.objectsFiltered {
-	//	extension := obj.GetRequiredExtensionByName("history")
-	//	if extension != nil {
-	//		filtered[obj.GetUUID()] = obj
-	//	}
-	//}
-	//inst.objectsFiltered = filtered
-	return inst
-}
-
-const (
-	operatorEqual    = "=="
-	operatorNotEqual = "!="
-)
-
-var operatorValues = []string{operatorEqual, operatorNotEqual}
-
-const (
-	fieldName = "name"
-	fieldUUID = "uuid"
-)
-
-var fieldValues = []string{fieldName, fieldUUID}
-
-func compareObject(object Object, field, operator, value string) bool {
-	var fieldValue string
-	switch field {
-	case "name":
-		fieldValue = object.GetName()
-	case "uuid":
-		fieldValue = object.GetUUID()
-	case "id":
-		fieldValue = object.GetID()
-	case "objectID":
-		fieldValue = object.GetID()
-	}
-	switch operator {
-	case "==":
-		return fieldValue == value
-	case "!=":
-		return fieldValue != value
-	}
-
-	return false
-}
-
-func compareHist(object Object, field, operator, value string) bool {
-	//Obj.GetHistoryManager().AllHistoriesByObjectUUID()
-	//switch operator {
-	//case "==":
-	//	return fieldValue == value
-	//case "!=":
-	//	return fieldValue != value
-	//}
-	//return false
-	return false
-}
-
-func comparePorts(port *Port, field, operator, value string) bool {
-	var fieldValue string
-
-	switch field {
-	case "name":
-		fieldValue = port.GetName()
-	case "uuid":
-		fieldValue = port.GetUUID()
-
-	}
-
-	switch operator {
-	case "==":
-		return fieldValue == value
-	case "!=":
-		return fieldValue != value
-	}
-
 	return false
 }

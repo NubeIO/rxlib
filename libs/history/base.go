@@ -7,6 +7,7 @@ import (
 
 type History interface {
 	AddRecord(record Record)
+	AddRecords(records []Record)
 	GetUUID() string
 	GetObjectUUID() string
 	GetRecords() []Record
@@ -45,6 +46,12 @@ func (h *GenericHistory) AddRecord(sample Record) {
 		// Remove the oldest Records to keep the size within the limit
 		removedCount := len(h.Values) - h.LimitRecordsize
 		h.Values = h.Values[removedCount:]
+	}
+}
+
+func (h *GenericHistory) AddRecords(records []Record) {
+	for _, record := range records {
+		h.AddRecord(record)
 	}
 }
 

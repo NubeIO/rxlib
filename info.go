@@ -261,13 +261,13 @@ func (builder *infoBuilder) SetCanBeUpdated() InfoBuilder {
 }
 
 func (builder *infoBuilder) AddObjectTags(objectTypeTag ...string) InfoBuilder {
-	builder.info.ObjectTags = append(builder.info.ObjectTags, objectTypeTag...)
+	builder.info.Tags = append(builder.info.Tags, objectTypeTag...)
 	return builder
 }
 
 // GetObjectTags returns the ObjectTypeTags associated with the InfoBuilder.
 func (builder *infoBuilder) GetObjectTags() []string {
-	return builder.info.ObjectTags
+	return builder.info.Tags
 }
 
 func (builder *infoBuilder) GetPermissions() *runtime.Permissions {

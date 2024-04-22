@@ -2,7 +2,6 @@ package rxlib
 
 import (
 	"github.com/NubeIO/rxlib/libs/bus"
-	"github.com/NubeIO/rxlib/libs/history"
 	"github.com/NubeIO/rxlib/payload"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/NubeIO/schema"
@@ -50,9 +49,6 @@ type Object interface {
 	RequiredExtensionListCount() (extensionsCount int) // get a count if there are any required extensions or not
 	IsExtensionsAdded(objectID string) (addedCount int)
 	GetRequiredExtensionByName(extensionName string) *Extension
-	//HistoryManager history's
-	GetHistoryManager() history.Manager
-	SetHistoryManager(h history.Manager)
 
 	// ports
 	NewPort(port *Port)
@@ -184,13 +180,16 @@ type Object interface {
 	GetRequirements() *runtime.Requirements
 
 	// tags
-	AddTags(objectTypeTag ...string)
+	AddTag(tag string)
+	AddTags(tags ...string)
 	GetTag(key string) string
+	HasTag(key string) bool
 	GetTags() []string
 	AddMetaTags(key, value string)
 	GetMetaTag(key string) string
 	GetMetaTags() map[string]string
-
+	HasMetaTag(key string) bool
+	HasMetaTagValue(key, value string) bool
 	SetCache(key string, data any, expiration time.Duration, overwriteExisting bool) error
 	GetCache(key string) (data any, found bool)
 	CacheAll() map[string]cache.Item

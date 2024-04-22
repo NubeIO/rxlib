@@ -19,7 +19,11 @@ type Manager interface {
 
 	AllHistoriesByDateRange(startDate, endDate string) []*AllHistories
 
-	AllHistoriesByObjectUUID(objectUUID string) *AllHistories
+	AllHistoriesByObjectUUID(objectUUID string) []*AllHistories
+
+	GetHistoriesByObjectUUIDs(uuids []string) []*AllHistories
+
+	AddBulkHistories(histories []*AllHistories)
 
 	// All returns a slice of all available histories.
 	All() []History
@@ -45,12 +49,18 @@ type Manager interface {
 
 	// DeleteRecords deletes samples from specified histories based on UUIDs for all histories managed by the Manager.
 	DeleteRecords(uuids map[string]string)
+
+	DataFrame(hists []*AllHistories) DataFrameOperations
 }
 
 type historyManager struct {
 	name      string
 	histories map[string]History
 	mu        sync.RWMutex
+}
+
+func (hm *historyManager) DataFrame(hists []*AllHistories) DataFrameOperations {
+	return New(hists)
 }
 
 func (hm *historyManager) GetName() string {
@@ -81,11 +91,45 @@ func (hm *historyManager) Get(uuid string) History {
 	return hm.histories[uuid]
 }
 
+func (hm *historyManager) AddBulkHistories(histories []*AllHistories) {
+	hm.mu.Lock()
+	defer hm.mu.Unlock()
+	for _, history := range histories {
+		h := NewGenericHistory(len(history.Histories), history.ObjectUUID)
+		for _, record := range history.Histories {
+			h.AddRecord(record)
+		}
+		hm.histories[h.GetUUID()] = h
+	}
+}
+
 type AllHistories struct {
 	ObjectUUID  string   `json:"objectUUID"`
 	HistoryUUID string   `json:"historyUUID"`
 	Count       int      `json:"count"`
 	Histories   []Record `json:"histories"`
+}
+
+func (hm *historyManager) GetHistoriesByObjectUUIDs(uuids []string) []*AllHistories {
+	hm.mu.RLock()
+	defer hm.mu.RUnlock()
+
+	var histories []*AllHistories
+	for _, uuid := range uuids {
+		for _, history := range hm.histories {
+			if history.GetObjectUUID() == uuid {
+				h := &AllHistories{
+					ObjectUUID:  history.GetObjectUUID(),
+					HistoryUUID: history.GetUUID(),
+					Count:       len(history.GetRecords()),
+					Histories:   history.GetRecords(),
+				}
+				histories = append(histories, h)
+			}
+		}
+	}
+
+	return histories
 }
 
 func (hm *historyManager) AllHistories() []*AllHistories {
@@ -141,9 +185,10 @@ func (hm *historyManager) AllHistoriesByDateRange(startDate, endDate string) []*
 	return histories
 }
 
-func (hm *historyManager) AllHistoriesByObjectUUID(objectUUID string) *AllHistories {
+func (hm *historyManager) AllHistoriesByObjectUUID(objectUUID string) []*AllHistories {
 	hm.mu.RLock()
 	defer hm.mu.RUnlock()
+	histories := make([]*AllHistories, 0)
 	for _, history := range hm.histories {
 		if history.GetObjectUUID() == objectUUID {
 			h := &AllHistories{
@@ -152,7 +197,8 @@ func (hm *historyManager) AllHistoriesByObjectUUID(objectUUID string) *AllHistor
 				Count:       len(history.GetRecords()),
 				Histories:   history.GetRecords(),
 			}
-			return h
+			histories = append(histories, h)
+			return histories
 		}
 	}
 	return nil
