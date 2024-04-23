@@ -3,6 +3,7 @@ package rxlib
 import (
 	"fmt"
 	"github.com/NubeIO/rxlib/libs/history"
+	"github.com/NubeIO/rxlib/libs/pglib"
 	systeminfo "github.com/NubeIO/rxlib/libs/system"
 	"github.com/NubeIO/rxlib/plugins"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
@@ -63,6 +64,8 @@ type Runtime interface {
 
 	// ToStringArray Conversions
 	ToStringArray(interfaces interface{}) []string
+
+	DB() pglib.PG
 }
 
 type RuntimeOpts struct {
@@ -76,6 +79,12 @@ func NewRuntime(objs []Object, opts *RuntimeOpts) Runtime {
 	r.objects = objs
 	r.scheduler = opts.Scheduler
 	r.hist = history.NewHistoryManager("ros")
+	connString := "postgresql://postgres:postgres@localhost/postgres"
+	db, err := pglib.New(connString)
+	if err != nil {
+		fmt.Println("runtime init DB: ", err)
+	}
+	r.db = db
 	return r
 }
 
@@ -100,6 +109,7 @@ type RuntimeImpl struct {
 	addedObject     bool
 	scheduler       scheduler.Scheduler
 	hist            history.Manager
+	db              pglib.PG
 }
 
 func (inst *RuntimeImpl) AddObjects(objects []Object) {
@@ -108,6 +118,10 @@ func (inst *RuntimeImpl) AddObjects(objects []Object) {
 
 func (inst *RuntimeImpl) HistoryManager() history.Manager {
 	return inst.hist
+}
+
+func (inst *RuntimeImpl) DB() pglib.PG {
+	return inst.db
 }
 
 func (inst *RuntimeImpl) System() systeminfo.System {
