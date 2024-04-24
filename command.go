@@ -88,6 +88,24 @@ func (c *ExtendedCommand) GetArgsByKey(key string) string {
 	return c.Data[key]
 }
 
+// ParseIntByKey parses the value of a specific key in the Args map as an integer.
+func (c *ExtendedCommand) ParseIntByKey(key string) (int, error) {
+	valueStr := c.Data[key]
+	return strconv.Atoi(valueStr)
+}
+
+// ParseBoolByKey parses the value of a specific key in the Args map as a boolean.
+func (c *ExtendedCommand) ParseBoolByKey(key string) (bool, error) {
+	valueStr := c.Data[key]
+	return strconv.ParseBool(valueStr)
+}
+
+// ParseFloat64ByKey parses the value of a specific key in the Args map as a float64.
+func (c *ExtendedCommand) ParseFloat64ByKey(key string) (float64, error) {
+	valueStr := c.Data[key]
+	return strconv.ParseFloat(valueStr, 64)
+}
+
 // GetArgsKeys retrieves all keys and values from the Args map.
 func (c *ExtendedCommand) GetArgsKeys() (keys, values []string) {
 	for k, v := range c.Data {
