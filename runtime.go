@@ -2,8 +2,10 @@ package rxlib
 
 import (
 	"fmt"
+	"github.com/NubeIO/mqttwrapper"
 	"github.com/NubeIO/rxlib/libs/history"
 	"github.com/NubeIO/rxlib/libs/pglib"
+	"github.com/NubeIO/rxlib/libs/restc"
 	systeminfo "github.com/NubeIO/rxlib/libs/system"
 	"github.com/NubeIO/rxlib/plugins"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
@@ -66,15 +68,21 @@ type Runtime interface {
 	ToStringArray(interfaces interface{}) []string
 
 	DB() pglib.PG
+
+	Rest() restc.Rest
+
+	Publish(topic string, body interface{}) (err string)
 }
 
 type RuntimeOpts struct {
-	Scheduler scheduler.Scheduler
+	Scheduler  scheduler.Scheduler
+	MQTTClient mqttwrapper.MQTT
 }
 
 func NewRuntime(objs []Object, opts *RuntimeOpts) Runtime {
 	r := &RuntimeImpl{
-		tree: &tree{},
+		tree:       &tree{},
+		mqttClient: opts.MQTTClient,
 	}
 	r.objects = objs
 	r.scheduler = opts.Scheduler
@@ -85,6 +93,7 @@ func NewRuntime(objs []Object, opts *RuntimeOpts) Runtime {
 		fmt.Println("runtime init DB: ", err)
 	}
 	r.db = db
+	r.rest = restc.New()
 	return r
 }
 
@@ -110,6 +119,19 @@ type RuntimeImpl struct {
 	scheduler       scheduler.Scheduler
 	hist            history.Manager
 	db              pglib.PG
+	rest            restc.Rest
+	mqttClient      mqttwrapper.MQTT
+}
+
+func (inst *RuntimeImpl) Publish(topic string, body interface{}) string {
+	if inst.mqttClient == nil {
+		return "client is empty"
+	}
+	err := inst.mqttClient.Publish(topic, body)
+	if err != nil {
+		return err.Error()
+	}
+	return ""
 }
 
 func (inst *RuntimeImpl) AddObjects(objects []Object) {
@@ -122,6 +144,10 @@ func (inst *RuntimeImpl) HistoryManager() history.Manager {
 
 func (inst *RuntimeImpl) DB() pglib.PG {
 	return inst.db
+}
+
+func (inst *RuntimeImpl) Rest() restc.Rest {
+	return inst.rest
 }
 
 func (inst *RuntimeImpl) System() systeminfo.System {
