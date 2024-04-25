@@ -191,8 +191,9 @@ message PalletTree {
 
 message Plugin {
   map<string, NestedObjectConfigMap> drivers = 1;
-  map<string, NestedObjectConfigMap> logic = 2;
-  map<string, NestedObjectConfigMap> services = 3;
+  map<string, NestedObjectConfigMap> rubixNetwork = 2;
+  map<string, NestedObjectConfigMap> logic = 3;
+  map<string, NestedObjectConfigMap> services = 4;
 }
 
 message NestedObjectConfigMap {

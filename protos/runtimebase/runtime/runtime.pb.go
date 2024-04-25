@@ -844,9 +844,10 @@ type Plugin struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Drivers  map[string]*NestedObjectConfigMap `protobuf:"bytes,1,rep,name=drivers,proto3" json:"drivers,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Logic    map[string]*NestedObjectConfigMap `protobuf:"bytes,2,rep,name=logic,proto3" json:"logic,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Services map[string]*NestedObjectConfigMap `protobuf:"bytes,3,rep,name=services,proto3" json:"services,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Drivers      map[string]*NestedObjectConfigMap `protobuf:"bytes,1,rep,name=drivers,proto3" json:"drivers,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	RubixNetwork map[string]*NestedObjectConfigMap `protobuf:"bytes,2,rep,name=rubixNetwork,proto3" json:"rubixNetwork,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Logic        map[string]*NestedObjectConfigMap `protobuf:"bytes,3,rep,name=logic,proto3" json:"logic,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Services     map[string]*NestedObjectConfigMap `protobuf:"bytes,4,rep,name=services,proto3" json:"services,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (x *Plugin) Reset() {
@@ -884,6 +885,13 @@ func (*Plugin) Descriptor() ([]byte, []int) {
 func (x *Plugin) GetDrivers() map[string]*NestedObjectConfigMap {
 	if x != nil {
 		return x.Drivers
+	}
+	return nil
+}
+
+func (x *Plugin) GetRubixNetwork() map[string]*NestedObjectConfigMap {
+	if x != nil {
+		return x.RubixNetwork
 	}
 	return nil
 }
@@ -2926,19 +2934,30 @@ var file_runtime_proto_rawDesc = []byte{
 	0x79, 0x12, 0x29, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b,
 	0x32, 0x13, 0x2e, 0x41, 0x70, 0x70, 0x2e, 0x52, 0x75, 0x6e, 0x74, 0x69, 0x6d, 0x65, 0x2e, 0x50,
 	0x6c, 0x75, 0x67, 0x69, 0x6e, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01,
-	0x22, 0xd8, 0x03, 0x0a, 0x06, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x12, 0x3a, 0x0a, 0x07, 0x64,
+	0x22, 0x88, 0x05, 0x0a, 0x06, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x12, 0x3a, 0x0a, 0x07, 0x64,
 	0x72, 0x69, 0x76, 0x65, 0x72, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x20, 0x2e, 0x41,
 	0x70, 0x70, 0x2e, 0x52, 0x75, 0x6e, 0x74, 0x69, 0x6d, 0x65, 0x2e, 0x50, 0x6c, 0x75, 0x67, 0x69,
 	0x6e, 0x2e, 0x44, 0x72, 0x69, 0x76, 0x65, 0x72, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x07,
-	0x64, 0x72, 0x69, 0x76, 0x65, 0x72, 0x73, 0x12, 0x34, 0x0a, 0x05, 0x6c, 0x6f, 0x67, 0x69, 0x63,
-	0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1e, 0x2e, 0x41, 0x70, 0x70, 0x2e, 0x52, 0x75, 0x6e,
-	0x74, 0x69, 0x6d, 0x65, 0x2e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x2e, 0x4c, 0x6f, 0x67, 0x69,
-	0x63, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x05, 0x6c, 0x6f, 0x67, 0x69, 0x63, 0x12, 0x3d, 0x0a,
-	0x08, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32,
-	0x21, 0x2e, 0x41, 0x70, 0x70, 0x2e, 0x52, 0x75, 0x6e, 0x74, 0x69, 0x6d, 0x65, 0x2e, 0x50, 0x6c,
-	0x75, 0x67, 0x69, 0x6e, 0x2e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x45, 0x6e, 0x74,
-	0x72, 0x79, 0x52, 0x08, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x1a, 0x5e, 0x0a, 0x0c,
-	0x44, 0x72, 0x69, 0x76, 0x65, 0x72, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03,
+	0x64, 0x72, 0x69, 0x76, 0x65, 0x72, 0x73, 0x12, 0x49, 0x0a, 0x0c, 0x72, 0x75, 0x62, 0x69, 0x78,
+	0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x25, 0x2e,
+	0x41, 0x70, 0x70, 0x2e, 0x52, 0x75, 0x6e, 0x74, 0x69, 0x6d, 0x65, 0x2e, 0x50, 0x6c, 0x75, 0x67,
+	0x69, 0x6e, 0x2e, 0x52, 0x75, 0x62, 0x69, 0x78, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x45,
+	0x6e, 0x74, 0x72, 0x79, 0x52, 0x0c, 0x72, 0x75, 0x62, 0x69, 0x78, 0x4e, 0x65, 0x74, 0x77, 0x6f,
+	0x72, 0x6b, 0x12, 0x34, 0x0a, 0x05, 0x6c, 0x6f, 0x67, 0x69, 0x63, 0x18, 0x03, 0x20, 0x03, 0x28,
+	0x0b, 0x32, 0x1e, 0x2e, 0x41, 0x70, 0x70, 0x2e, 0x52, 0x75, 0x6e, 0x74, 0x69, 0x6d, 0x65, 0x2e,
+	0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x63, 0x45, 0x6e, 0x74, 0x72,
+	0x79, 0x52, 0x05, 0x6c, 0x6f, 0x67, 0x69, 0x63, 0x12, 0x3d, 0x0a, 0x08, 0x73, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x65, 0x73, 0x18, 0x04, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x21, 0x2e, 0x41, 0x70, 0x70,
+	0x2e, 0x52, 0x75, 0x6e, 0x74, 0x69, 0x6d, 0x65, 0x2e, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x2e,
+	0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x08, 0x73,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x1a, 0x5e, 0x0a, 0x0c, 0x44, 0x72, 0x69, 0x76, 0x65,
+	0x72, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x38, 0x0a, 0x05, 0x76, 0x61, 0x6c,
+	0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x22, 0x2e, 0x41, 0x70, 0x70, 0x2e, 0x52,
+	0x75, 0x6e, 0x74, 0x69, 0x6d, 0x65, 0x2e, 0x4e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x4f, 0x62, 0x6a,
+	0x65, 0x63, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x4d, 0x61, 0x70, 0x52, 0x05, 0x76, 0x61,
+	0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x1a, 0x63, 0x0a, 0x11, 0x52, 0x75, 0x62, 0x69, 0x78,
+	0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03,
 	0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x38,
 	0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x22, 0x2e,
 	0x41, 0x70, 0x70, 0x2e, 0x52, 0x75, 0x6e, 0x74, 0x69, 0x6d, 0x65, 0x2e, 0x4e, 0x65, 0x73, 0x74,
@@ -3419,7 +3438,7 @@ func file_runtime_proto_rawDescGZIP() []byte {
 	return file_runtime_proto_rawDescData
 }
 
-var file_runtime_proto_msgTypes = make([]protoimpl.MessageInfo, 47)
+var file_runtime_proto_msgTypes = make([]protoimpl.MessageInfo, 48)
 var file_runtime_proto_goTypes = []interface{}{
 	(*MessageRequest)(nil),           // 0: App.Runtime.MessageRequest
 	(*PluginInfo)(nil),               // 1: App.Runtime.PluginInfo
@@ -3461,14 +3480,15 @@ var file_runtime_proto_goTypes = []interface{}{
 	nil,                              // 37: App.Runtime.GetObjectsValuesResponse.ValuesEntry
 	nil,                              // 38: App.Runtime.PalletTree.PluginsEntry
 	nil,                              // 39: App.Runtime.Plugin.DriversEntry
-	nil,                              // 40: App.Runtime.Plugin.LogicEntry
-	nil,                              // 41: App.Runtime.Plugin.ServicesEntry
-	nil,                              // 42: App.Runtime.NestedObjectConfigMap.EntriesEntry
-	nil,                              // 43: App.Runtime.Command.DataEntry
-	nil,                              // 44: App.Runtime.CommandResponse.MapStringsEntry
-	nil,                              // 45: App.Runtime.Info.MetaTagsEntry
-	nil,                              // 46: App.Runtime.Info.FlagsEntry
-	(*any1.Any)(nil),                 // 47: google.protobuf.Any
+	nil,                              // 40: App.Runtime.Plugin.RubixNetworkEntry
+	nil,                              // 41: App.Runtime.Plugin.LogicEntry
+	nil,                              // 42: App.Runtime.Plugin.ServicesEntry
+	nil,                              // 43: App.Runtime.NestedObjectConfigMap.EntriesEntry
+	nil,                              // 44: App.Runtime.Command.DataEntry
+	nil,                              // 45: App.Runtime.CommandResponse.MapStringsEntry
+	nil,                              // 46: App.Runtime.Info.MetaTagsEntry
+	nil,                              // 47: App.Runtime.Info.FlagsEntry
+	(*any1.Any)(nil),                 // 48: google.protobuf.Any
 }
 var file_runtime_proto_depIdxs = []int32{
 	25, // 0: App.Runtime.MessageRequest.object:type_name -> App.Runtime.ObjectConfig
@@ -3478,82 +3498,84 @@ var file_runtime_proto_depIdxs = []int32{
 	1,  // 4: App.Runtime.PluginList.plugins:type_name -> App.Runtime.PluginInfo
 	37, // 5: App.Runtime.GetObjectsValuesResponse.values:type_name -> App.Runtime.GetObjectsValuesResponse.ValuesEntry
 	9,  // 6: App.Runtime.GetObjectValuesResponse.values:type_name -> App.Runtime.PortValue
-	47, // 7: App.Runtime.PortValue.any:type_name -> google.protobuf.Any
+	48, // 7: App.Runtime.PortValue.any:type_name -> google.protobuf.Any
 	10, // 8: App.Runtime.PortValue.transformation:type_name -> App.Runtime.ValueTransformation
 	38, // 9: App.Runtime.PalletTree.plugins:type_name -> App.Runtime.PalletTree.PluginsEntry
 	39, // 10: App.Runtime.Plugin.drivers:type_name -> App.Runtime.Plugin.DriversEntry
-	40, // 11: App.Runtime.Plugin.logic:type_name -> App.Runtime.Plugin.LogicEntry
-	41, // 12: App.Runtime.Plugin.services:type_name -> App.Runtime.Plugin.ServicesEntry
-	42, // 13: App.Runtime.NestedObjectConfigMap.entries:type_name -> App.Runtime.NestedObjectConfigMap.EntriesEntry
-	43, // 14: App.Runtime.Command.data:type_name -> App.Runtime.Command.DataEntry
-	25, // 15: App.Runtime.Command.object:type_name -> App.Runtime.ObjectConfig
-	9,  // 16: App.Runtime.Command.portValues:type_name -> App.Runtime.PortValue
-	9,  // 17: App.Runtime.ObjectPagination.PortValues:type_name -> App.Runtime.PortValue
-	44, // 18: App.Runtime.CommandResponse.mapStrings:type_name -> App.Runtime.CommandResponse.MapStringsEntry
-	18, // 19: App.Runtime.CommandResponse.response:type_name -> App.Runtime.CommandResponse
-	25, // 20: App.Runtime.CommandResponse.serializeObjects:type_name -> App.Runtime.ObjectConfig
-	17, // 21: App.Runtime.CommandResponse.objectPagination:type_name -> App.Runtime.ObjectPagination
-	13, // 22: App.Runtime.CommandResponse.pallet:type_name -> App.Runtime.PalletTree
-	36, // 23: App.Runtime.CommandResponse.objectTree:type_name -> App.Runtime.ObjectsRootMap
-	25, // 24: App.Runtime.ObjectDeploy.new:type_name -> App.Runtime.ObjectConfig
-	25, // 25: App.Runtime.ObjectDeploy.updated:type_name -> App.Runtime.ObjectConfig
-	25, // 26: App.Runtime.ObjectsResponse.objects:type_name -> App.Runtime.ObjectConfig
-	27, // 27: App.Runtime.ObjectConfig.info:type_name -> App.Runtime.Info
-	31, // 28: App.Runtime.ObjectConfig.inputs:type_name -> App.Runtime.Port
-	31, // 29: App.Runtime.ObjectConfig.outputs:type_name -> App.Runtime.Port
-	32, // 30: App.Runtime.ObjectConfig.meta:type_name -> App.Runtime.Meta
-	30, // 31: App.Runtime.ObjectConfig.stats:type_name -> App.Runtime.ObjectStats
-	34, // 32: App.Runtime.ObjectConfig.connections:type_name -> App.Runtime.Connection
-	26, // 33: App.Runtime.ObjectConfig.settings:type_name -> App.Runtime.Settings
-	45, // 34: App.Runtime.Info.metaTags:type_name -> App.Runtime.Info.MetaTagsEntry
-	46, // 35: App.Runtime.Info.flags:type_name -> App.Runtime.Info.FlagsEntry
-	28, // 36: App.Runtime.Info.permissions:type_name -> App.Runtime.Permissions
-	29, // 37: App.Runtime.Info.requirements:type_name -> App.Runtime.Requirements
-	33, // 38: App.Runtime.Meta.position:type_name -> App.Runtime.Position
-	35, // 39: App.Runtime.ObjectExtractedDetails.children:type_name -> App.Runtime.ObjectExtractedDetails
-	35, // 40: App.Runtime.ObjectsRootMap.rubixNetwork:type_name -> App.Runtime.ObjectExtractedDetails
-	35, // 41: App.Runtime.ObjectsRootMap.drivers:type_name -> App.Runtime.ObjectExtractedDetails
-	35, // 42: App.Runtime.ObjectsRootMap.services:type_name -> App.Runtime.ObjectExtractedDetails
-	35, // 43: App.Runtime.ObjectsRootMap.logic:type_name -> App.Runtime.ObjectExtractedDetails
-	5,  // 44: App.Runtime.GetObjectsValuesResponse.ValuesEntry.value:type_name -> App.Runtime.GetObjectValuesResponse
-	14, // 45: App.Runtime.PalletTree.PluginsEntry.value:type_name -> App.Runtime.Plugin
-	15, // 46: App.Runtime.Plugin.DriversEntry.value:type_name -> App.Runtime.NestedObjectConfigMap
-	15, // 47: App.Runtime.Plugin.LogicEntry.value:type_name -> App.Runtime.NestedObjectConfigMap
-	15, // 48: App.Runtime.Plugin.ServicesEntry.value:type_name -> App.Runtime.NestedObjectConfigMap
-	25, // 49: App.Runtime.NestedObjectConfigMap.EntriesEntry.value:type_name -> App.Runtime.ObjectConfig
-	11, // 50: App.Runtime.RuntimeService.GetObjects:input_type -> App.Runtime.ObjectsRequest
-	24, // 51: App.Runtime.RuntimeService.GetObject:input_type -> App.Runtime.ObjectRequest
-	11, // 52: App.Runtime.RuntimeService.GetTreeMapRoot:input_type -> App.Runtime.ObjectsRequest
-	12, // 53: App.Runtime.RuntimeService.GetPalletTree:input_type -> App.Runtime.PalletRequest
-	21, // 54: App.Runtime.RuntimeService.ObjectsDeploy:input_type -> App.Runtime.ObjectDeploy
-	19, // 55: App.Runtime.RuntimeService.Ping:input_type -> App.Runtime.PingRequest
-	16, // 56: App.Runtime.RuntimeService.ObjectCommand:input_type -> App.Runtime.Command
-	6,  // 57: App.Runtime.RuntimeService.GetObjectsValues:input_type -> App.Runtime.ObjectsValuesRequest
-	7,  // 58: App.Runtime.RuntimeService.GetObjectValues:input_type -> App.Runtime.ObjectsValueRequest
-	8,  // 59: App.Runtime.RuntimeService.GetPortValue:input_type -> App.Runtime.PortRequest
-	1,  // 60: App.Runtime.RuntimeService.RegisterPlugin:input_type -> App.Runtime.PluginInfo
-	1,  // 61: App.Runtime.RuntimeService.DeregisterPlugin:input_type -> App.Runtime.PluginInfo
-	22, // 62: App.Runtime.RuntimeService.ListPlugins:input_type -> App.Runtime.Empty
-	22, // 63: App.Runtime.RuntimeService.GetPlugins:input_type -> App.Runtime.Empty
-	23, // 64: App.Runtime.RuntimeService.GetObjects:output_type -> App.Runtime.ObjectsResponse
-	25, // 65: App.Runtime.RuntimeService.GetObject:output_type -> App.Runtime.ObjectConfig
-	36, // 66: App.Runtime.RuntimeService.GetTreeMapRoot:output_type -> App.Runtime.ObjectsRootMap
-	13, // 67: App.Runtime.RuntimeService.GetPalletTree:output_type -> App.Runtime.PalletTree
-	21, // 68: App.Runtime.RuntimeService.ObjectsDeploy:output_type -> App.Runtime.ObjectDeploy
-	20, // 69: App.Runtime.RuntimeService.Ping:output_type -> App.Runtime.PingResponse
-	18, // 70: App.Runtime.RuntimeService.ObjectCommand:output_type -> App.Runtime.CommandResponse
-	4,  // 71: App.Runtime.RuntimeService.GetObjectsValues:output_type -> App.Runtime.GetObjectsValuesResponse
-	5,  // 72: App.Runtime.RuntimeService.GetObjectValues:output_type -> App.Runtime.GetObjectValuesResponse
-	9,  // 73: App.Runtime.RuntimeService.GetPortValue:output_type -> App.Runtime.PortValue
-	2,  // 74: App.Runtime.RuntimeService.RegisterPlugin:output_type -> App.Runtime.PluginResponse
-	2,  // 75: App.Runtime.RuntimeService.DeregisterPlugin:output_type -> App.Runtime.PluginResponse
-	3,  // 76: App.Runtime.RuntimeService.ListPlugins:output_type -> App.Runtime.PluginList
-	3,  // 77: App.Runtime.RuntimeService.GetPlugins:output_type -> App.Runtime.PluginList
-	64, // [64:78] is the sub-list for method output_type
-	50, // [50:64] is the sub-list for method input_type
-	50, // [50:50] is the sub-list for extension type_name
-	50, // [50:50] is the sub-list for extension extendee
-	0,  // [0:50] is the sub-list for field type_name
+	40, // 11: App.Runtime.Plugin.rubixNetwork:type_name -> App.Runtime.Plugin.RubixNetworkEntry
+	41, // 12: App.Runtime.Plugin.logic:type_name -> App.Runtime.Plugin.LogicEntry
+	42, // 13: App.Runtime.Plugin.services:type_name -> App.Runtime.Plugin.ServicesEntry
+	43, // 14: App.Runtime.NestedObjectConfigMap.entries:type_name -> App.Runtime.NestedObjectConfigMap.EntriesEntry
+	44, // 15: App.Runtime.Command.data:type_name -> App.Runtime.Command.DataEntry
+	25, // 16: App.Runtime.Command.object:type_name -> App.Runtime.ObjectConfig
+	9,  // 17: App.Runtime.Command.portValues:type_name -> App.Runtime.PortValue
+	9,  // 18: App.Runtime.ObjectPagination.PortValues:type_name -> App.Runtime.PortValue
+	45, // 19: App.Runtime.CommandResponse.mapStrings:type_name -> App.Runtime.CommandResponse.MapStringsEntry
+	18, // 20: App.Runtime.CommandResponse.response:type_name -> App.Runtime.CommandResponse
+	25, // 21: App.Runtime.CommandResponse.serializeObjects:type_name -> App.Runtime.ObjectConfig
+	17, // 22: App.Runtime.CommandResponse.objectPagination:type_name -> App.Runtime.ObjectPagination
+	13, // 23: App.Runtime.CommandResponse.pallet:type_name -> App.Runtime.PalletTree
+	36, // 24: App.Runtime.CommandResponse.objectTree:type_name -> App.Runtime.ObjectsRootMap
+	25, // 25: App.Runtime.ObjectDeploy.new:type_name -> App.Runtime.ObjectConfig
+	25, // 26: App.Runtime.ObjectDeploy.updated:type_name -> App.Runtime.ObjectConfig
+	25, // 27: App.Runtime.ObjectsResponse.objects:type_name -> App.Runtime.ObjectConfig
+	27, // 28: App.Runtime.ObjectConfig.info:type_name -> App.Runtime.Info
+	31, // 29: App.Runtime.ObjectConfig.inputs:type_name -> App.Runtime.Port
+	31, // 30: App.Runtime.ObjectConfig.outputs:type_name -> App.Runtime.Port
+	32, // 31: App.Runtime.ObjectConfig.meta:type_name -> App.Runtime.Meta
+	30, // 32: App.Runtime.ObjectConfig.stats:type_name -> App.Runtime.ObjectStats
+	34, // 33: App.Runtime.ObjectConfig.connections:type_name -> App.Runtime.Connection
+	26, // 34: App.Runtime.ObjectConfig.settings:type_name -> App.Runtime.Settings
+	46, // 35: App.Runtime.Info.metaTags:type_name -> App.Runtime.Info.MetaTagsEntry
+	47, // 36: App.Runtime.Info.flags:type_name -> App.Runtime.Info.FlagsEntry
+	28, // 37: App.Runtime.Info.permissions:type_name -> App.Runtime.Permissions
+	29, // 38: App.Runtime.Info.requirements:type_name -> App.Runtime.Requirements
+	33, // 39: App.Runtime.Meta.position:type_name -> App.Runtime.Position
+	35, // 40: App.Runtime.ObjectExtractedDetails.children:type_name -> App.Runtime.ObjectExtractedDetails
+	35, // 41: App.Runtime.ObjectsRootMap.rubixNetwork:type_name -> App.Runtime.ObjectExtractedDetails
+	35, // 42: App.Runtime.ObjectsRootMap.drivers:type_name -> App.Runtime.ObjectExtractedDetails
+	35, // 43: App.Runtime.ObjectsRootMap.services:type_name -> App.Runtime.ObjectExtractedDetails
+	35, // 44: App.Runtime.ObjectsRootMap.logic:type_name -> App.Runtime.ObjectExtractedDetails
+	5,  // 45: App.Runtime.GetObjectsValuesResponse.ValuesEntry.value:type_name -> App.Runtime.GetObjectValuesResponse
+	14, // 46: App.Runtime.PalletTree.PluginsEntry.value:type_name -> App.Runtime.Plugin
+	15, // 47: App.Runtime.Plugin.DriversEntry.value:type_name -> App.Runtime.NestedObjectConfigMap
+	15, // 48: App.Runtime.Plugin.RubixNetworkEntry.value:type_name -> App.Runtime.NestedObjectConfigMap
+	15, // 49: App.Runtime.Plugin.LogicEntry.value:type_name -> App.Runtime.NestedObjectConfigMap
+	15, // 50: App.Runtime.Plugin.ServicesEntry.value:type_name -> App.Runtime.NestedObjectConfigMap
+	25, // 51: App.Runtime.NestedObjectConfigMap.EntriesEntry.value:type_name -> App.Runtime.ObjectConfig
+	11, // 52: App.Runtime.RuntimeService.GetObjects:input_type -> App.Runtime.ObjectsRequest
+	24, // 53: App.Runtime.RuntimeService.GetObject:input_type -> App.Runtime.ObjectRequest
+	11, // 54: App.Runtime.RuntimeService.GetTreeMapRoot:input_type -> App.Runtime.ObjectsRequest
+	12, // 55: App.Runtime.RuntimeService.GetPalletTree:input_type -> App.Runtime.PalletRequest
+	21, // 56: App.Runtime.RuntimeService.ObjectsDeploy:input_type -> App.Runtime.ObjectDeploy
+	19, // 57: App.Runtime.RuntimeService.Ping:input_type -> App.Runtime.PingRequest
+	16, // 58: App.Runtime.RuntimeService.ObjectCommand:input_type -> App.Runtime.Command
+	6,  // 59: App.Runtime.RuntimeService.GetObjectsValues:input_type -> App.Runtime.ObjectsValuesRequest
+	7,  // 60: App.Runtime.RuntimeService.GetObjectValues:input_type -> App.Runtime.ObjectsValueRequest
+	8,  // 61: App.Runtime.RuntimeService.GetPortValue:input_type -> App.Runtime.PortRequest
+	1,  // 62: App.Runtime.RuntimeService.RegisterPlugin:input_type -> App.Runtime.PluginInfo
+	1,  // 63: App.Runtime.RuntimeService.DeregisterPlugin:input_type -> App.Runtime.PluginInfo
+	22, // 64: App.Runtime.RuntimeService.ListPlugins:input_type -> App.Runtime.Empty
+	22, // 65: App.Runtime.RuntimeService.GetPlugins:input_type -> App.Runtime.Empty
+	23, // 66: App.Runtime.RuntimeService.GetObjects:output_type -> App.Runtime.ObjectsResponse
+	25, // 67: App.Runtime.RuntimeService.GetObject:output_type -> App.Runtime.ObjectConfig
+	36, // 68: App.Runtime.RuntimeService.GetTreeMapRoot:output_type -> App.Runtime.ObjectsRootMap
+	13, // 69: App.Runtime.RuntimeService.GetPalletTree:output_type -> App.Runtime.PalletTree
+	21, // 70: App.Runtime.RuntimeService.ObjectsDeploy:output_type -> App.Runtime.ObjectDeploy
+	20, // 71: App.Runtime.RuntimeService.Ping:output_type -> App.Runtime.PingResponse
+	18, // 72: App.Runtime.RuntimeService.ObjectCommand:output_type -> App.Runtime.CommandResponse
+	4,  // 73: App.Runtime.RuntimeService.GetObjectsValues:output_type -> App.Runtime.GetObjectsValuesResponse
+	5,  // 74: App.Runtime.RuntimeService.GetObjectValues:output_type -> App.Runtime.GetObjectValuesResponse
+	9,  // 75: App.Runtime.RuntimeService.GetPortValue:output_type -> App.Runtime.PortValue
+	2,  // 76: App.Runtime.RuntimeService.RegisterPlugin:output_type -> App.Runtime.PluginResponse
+	2,  // 77: App.Runtime.RuntimeService.DeregisterPlugin:output_type -> App.Runtime.PluginResponse
+	3,  // 78: App.Runtime.RuntimeService.ListPlugins:output_type -> App.Runtime.PluginList
+	3,  // 79: App.Runtime.RuntimeService.GetPlugins:output_type -> App.Runtime.PluginList
+	66, // [66:80] is the sub-list for method output_type
+	52, // [52:66] is the sub-list for method input_type
+	52, // [52:52] is the sub-list for extension type_name
+	52, // [52:52] is the sub-list for extension extendee
+	0,  // [0:52] is the sub-list for field type_name
 }
 
 func init() { file_runtime_proto_init() }
@@ -4013,7 +4035,7 @@ func file_runtime_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_runtime_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   47,
+			NumMessages:   48,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

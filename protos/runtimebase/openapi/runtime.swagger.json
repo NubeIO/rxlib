@@ -988,6 +988,12 @@
             "$ref": "#/definitions/RuntimeNestedObjectConfigMap"
           }
         },
+        "rubixNetwork": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/RuntimeNestedObjectConfigMap"
+          }
+        },
         "logic": {
           "type": "object",
           "additionalProperties": {
