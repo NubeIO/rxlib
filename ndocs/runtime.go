@@ -1,11 +1,10 @@
 package ndocs
 
 var RuntimesString = `
-
 [
   {
     "name": "Get",
-    "description": "",
+    "description": "Get get all objects []Object",
     "args": null,
     "return": [
       "[]Object"
@@ -14,14 +13,14 @@ var RuntimesString = `
   },
   {
     "name": "AddObjects",
-    "description": "",
+    "description": "AddObjects add object to runtime",
     "args": null,
     "return": null,
     "help": ""
   },
   {
     "name": "ToObjectsConfig",
-    "description": "",
+    "description": "ToObjectsConfig convert to ObjectConfig, used when needed as JSON",
     "args": [
       "objects []Object"
     ],

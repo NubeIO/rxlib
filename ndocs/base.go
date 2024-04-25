@@ -8,7 +8,7 @@ import (
 )
 
 type Docs struct {
-	docs []docgen.Helper
+	docs []*docgen.Helper
 }
 
 func New(name string) *Docs {
@@ -21,17 +21,17 @@ func (d *Docs) LoadFromString(jsonString string) error {
 	return json.Unmarshal([]byte(jsonString), &d.docs)
 }
 
-func (d *Docs) All() []docgen.Helper {
+func (d *Docs) All() []*docgen.Helper {
 	return d.docs
 }
 
-func (d *Docs) Find(name string) docgen.Helper {
+func (d *Docs) Find(name string) *docgen.Helper {
 	for _, method := range d.docs {
 		if method.Name == name {
 			return method
 		}
 	}
-	return docgen.Helper{} // Return empty helper if not found
+	return nil
 }
 
 func cleanSearchTerm(in string) string {

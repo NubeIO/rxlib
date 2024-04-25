@@ -14,8 +14,11 @@ import (
 )
 
 type Runtime interface {
+	// Get get all objects []Object
 	Get() []Object
+	// AddObjects add object to runtime
 	AddObjects([]Object)
+	// ToObjectsConfig convert to ObjectConfig, used when needed as JSON
 	ToObjectsConfig(objects []Object) []*runtime.ObjectConfig
 	GetObjectsUUIDs(objects []Object) []string
 	GetObjectsConfig() []*runtime.ObjectConfig

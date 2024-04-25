@@ -9,11 +9,11 @@ import (
 )
 
 type Helper struct {
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Args        []string `json:"args"`
-	Return      []string `json:"return"`
-	Help        string   `json:"help"`
+	Name        string   `json:"name,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Args        []string `json:"args,omitempty"`
+	Return      []string `json:"return,omitempty"`
+	Help        string   `json:"help,omitempty"`
 }
 
 // ParseInterfaceMethods reads a Go source file and extracts methods from the specified interface.
