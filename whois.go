@@ -31,7 +31,7 @@ func (inst *RuntimeImpl) Iam(rangeStart, rangeEnd int) Object {
 		return nil
 	}
 	obj.Invoke(nil) // update all the info
-	globalID := obj.GetMetaTag("globalID")
+	globalID := obj.GetFlag("globalID")
 	id, err := helpers.ProcessID(globalID)
 	if err != nil {
 		return nil

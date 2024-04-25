@@ -673,6 +673,12 @@
             "type": "string"
           }
         },
+        "flags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
         "permissions": {
           "$ref": "#/definitions/RuntimePermissions"
         },

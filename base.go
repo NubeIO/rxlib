@@ -190,6 +190,13 @@ type Object interface {
 	GetMetaTags() map[string]string
 	HasMetaTag(key string) bool
 	HasMetaTagValue(key, value string) bool
+
+	AddFlag(key, value string)
+	GetFlag(key string) string
+	GetFlags() map[string]string
+	HasFlag(key string) bool
+	HasFlagValue(key, value string) bool
+
 	SetCache(key string, data any, expiration time.Duration, overwriteExisting bool) error
 	GetCache(key string) (data any, found bool)
 	CacheAll() map[string]cache.Item

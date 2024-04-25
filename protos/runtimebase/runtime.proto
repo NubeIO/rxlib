@@ -303,8 +303,9 @@ message Info {
   repeated string workingGroupChildObjects = 9;
   repeated string tags = 10;
   map<string, string> metaTags = 11;
-  Permissions permissions = 12;
-  Requirements requirements = 13;
+  map<string, string> flags = 12;
+  Permissions permissions = 13;
+  Requirements requirements = 14;
 }
 
 message Permissions {
