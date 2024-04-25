@@ -373,6 +373,10 @@ func (p *ParsedCommand) GetTree() bool {
 	return p.Tree
 }
 
+func (p *ParsedCommand) GetAncestor() bool {
+	return p.Ancestor
+}
+
 func (p *ParsedCommand) GetPortValues() bool {
 	return p.PortValues
 }
@@ -461,6 +465,10 @@ func (c *ExtendedCommand) ParseCommandsArgs(cmd *ExtendedCommand) (*ParsedComman
 	if v, ok := cmd.Data["tree"]; ok {
 		args.Tree = stringToBool(v)
 	}
+	if v, ok := cmd.Data["ancestor"]; ok {
+		args.Ancestor = stringToBool(v)
+	}
+
 	if v, ok := cmd.Data["portValues"]; ok {
 		args.PortValues = stringToBool(v)
 	}

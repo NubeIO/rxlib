@@ -8,8 +8,8 @@ import (
 type Transaction interface {
 	GetAlarmUUID() string
 	GetUUID() string
-	GetStatus() AlarmStatus
-	GetSeverity() AlarmSeverity
+	GetStatus() Status
+	GetSeverity() Severity
 	GetTarget() string
 	GetTitle() string
 	GetBody() string
@@ -17,28 +17,28 @@ type Transaction interface {
 	GetLastUpdated() time.Time
 
 	SetTitle(title string)
-	SetStatus(state AlarmStatus)
-	SetSeverity(s AlarmSeverity)
+	SetStatus(state Status)
+	SetSeverity(s Severity)
 	SetBody(body string)
 }
 
 type TransactionEntry struct {
-	Title       string        `json:"title,omitempty"`
-	Status      AlarmStatus   `json:"status"`   // Active
-	Severity    AlarmSeverity `json:"severity"` // Crucial
-	Target      string        `json:"target,omitempty"`
-	Body        string        `json:"body,omitempty"`
-	UUID        string        `json:"uuid"`
-	AlarmUUID   string        `json:"alarmUUID"`
-	CreatedAt   time.Time     `json:"createdAt,omitempty"`
-	LastUpdated time.Time     `json:"lastUpdated,omitempty"`
+	Title       string    `json:"title,omitempty"`
+	Status      Status    `json:"status"`   // Active
+	Severity    Severity  `json:"severity"` // Crucial
+	Target      string    `json:"target,omitempty"`
+	Body        string    `json:"body,omitempty"`
+	UUID        string    `json:"uuid"`
+	AlarmUUID   string    `json:"alarmUUID"`
+	CreatedAt   time.Time `json:"createdAt,omitempty"`
+	LastUpdated time.Time `json:"lastUpdated,omitempty"`
 }
 
 func (t *TransactionEntry) SetTitle(title string) {
 	t.Title = title
 }
 
-func (t *TransactionEntry) SetSeverity(s AlarmSeverity) {
+func (t *TransactionEntry) SetSeverity(s Severity) {
 	t.Severity = s
 }
 
@@ -61,16 +61,16 @@ func (t *TransactionEntry) createdAt() {
 	t.CreatedAt = time.Now()
 }
 
-func (t *TransactionEntry) SetStatus(status AlarmStatus) {
+func (t *TransactionEntry) SetStatus(status Status) {
 	t.lastUpdated()
 	t.Status = status
 }
 
-func (t *TransactionEntry) GetStatus() AlarmStatus {
+func (t *TransactionEntry) GetStatus() Status {
 	return t.Status
 }
 
-func (t *TransactionEntry) GetSeverity() AlarmSeverity {
+func (t *TransactionEntry) GetSeverity() Severity {
 	return t.Severity
 }
 

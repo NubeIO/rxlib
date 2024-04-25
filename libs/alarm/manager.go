@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type AlarmManager interface {
+type Manager interface {
 	GetTitle() string
 	NewAlarm(limitSize int, alarmBody *AddAlarm) Alarm
 	Get(uuid string) Alarm
@@ -19,7 +19,7 @@ type AlarmManager interface {
 	DeleteTransactions(uuids map[string]string)
 }
 
-func NewAlarmManager(title string) AlarmManager {
+func NewAlarmManager(title string) Manager {
 	return &manager{
 		title:    title,
 		alarmMap: make(map[string]Alarm),

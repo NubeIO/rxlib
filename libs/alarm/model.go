@@ -1,41 +1,41 @@
 package alarm
 
-type AlarmStatus string
-type AlarmEntityType string
-type AlarmType string
-type AlarmSeverity string
-type AlarmTarget string
+type Status string
+type EntityType string
+type Type string
+type Severity string
+type Target string
 
 const (
-	AlarmStatusActive       AlarmStatus = "active"
-	AlarmStatusAcknowledged AlarmStatus = "acknowledged"
-	AlarmStatusClosed       AlarmStatus = "closed"
+	StatusActive       Status = "active"
+	StatusAcknowledged Status = "acknowledged"
+	StatusClosed       Status = "closed"
 )
 
 const (
-	AlarmEntityTypeGateway AlarmEntityType = "gateway"
-	AlarmEntityTypeNetwork AlarmEntityType = "network"
-	AlarmEntityTypeDevice  AlarmEntityType = "device"
-	AlarmEntityTypePoint   AlarmEntityType = "point"
-	AlarmEntityTypeService AlarmEntityType = "service"
+	EntityTypeGateway EntityType = "gateway"
+	EntityTypeNetwork EntityType = "network"
+	EntityTypeDevice  EntityType = "device"
+	EntityTypePoint   EntityType = "point"
+	EntityTypeService EntityType = "service"
 )
 
 const (
-	AlarmTypePing      AlarmType = "ping"
-	AlarmTypeFault     AlarmType = "fault"
-	AlarmTypeThreshold AlarmType = "threshold"
-	AlarmTypeFlatLine  AlarmType = "flat-line"
+	TypePing      Type = "ping"
+	TypeFault     Type = "fault"
+	ThresholdType Type = "threshold"
+	FlatLineType  Type = "flat-line"
 )
 
 const (
-	AlarmSeverityCritical AlarmSeverity = "critical"
-	AlarmSeverityMinor    AlarmSeverity = "minor"
-	AlarmSeverityInfo     AlarmSeverity = "info"
-	AlarmSeverityWarning  AlarmSeverity = "warning"
-	AlarmSeverityError    AlarmSeverity = "error"
+	SeverityCritical Severity = "critical"
+	SeverityMinor    Severity = "minor"
+	SeverityInfo     Severity = "info"
+	SeverityWarning  Severity = "warning"
+	SeverityError    Severity = "error"
 )
 
 const (
-	AlarmTargetMobile AlarmTarget = "mobile"
-	AlarmTargetNone   AlarmTarget = "none"
+	TargetMobile Target = "mobile"
+	TargetNone   Target = "none"
 )

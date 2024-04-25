@@ -6,32 +6,6 @@ type tree struct {
 	objects []Object
 }
 
-//type ObjectExtractedDetails struct {
-//	ID         string                    `json:"objectID,omitempty"`
-//	Name       string                    `json:"name,omitempty"`
-//	UUID       string                    `json:"uuid,omitempty"`
-//	ParentUUID string                    `json:"parentUUID"`
-//	Category   string                    `json:"category,omitempty"`
-//	ObjectType string                    `json:"objectType,omitempty"`
-//	IsParent   bool                      `json:"isParent,omitempty"`
-//	Children   []*ObjectExtractedDetails `json:"children,omitempty"`
-//}
-//
-//type ObjectsRootMap struct {
-//	RubixNetworkName string                    `json:"rubixNetworkName"`
-//	RubixNetworkDesc string                    `json:"RubixNetworkDesc"`
-//	RubixNetwork     []*ObjectExtractedDetails `json:"rubixNetwork"`
-//	DriversName      string                    `json:"driversName"`
-//	DriversDesc      string                    `json:"driversDesc"`
-//	Drivers          []*ObjectExtractedDetails `json:"drivers"`
-//	ServicesName     string                    `json:"servicesName"`
-//	ServicesDesc     string                    `json:"servicesDesc"`
-//	Services         []*ObjectExtractedDetails `json:"services"`
-//	LogicName        string                    `json:"logicName"`
-//	LogicDesc        string                    `json:"logicDesc"`
-//	Logic            []*ObjectExtractedDetails `json:"logic"`
-//}
-
 func (t *tree) addObjects(objects []Object) {
 	t.objects = objects
 }
@@ -95,33 +69,33 @@ func (t *tree) GetTreeMapRoot() *runtime.ObjectsRootMap {
 
 // -------------------Ancestor-----------------------
 
-type AncestorTreeNode struct {
-	UUID       string              `json:"uuid"`
-	Name       string              `json:"name,omitempty"`
-	ID         string              `json:"id,omitempty"`
-	ParentUUID string              `json:"parentUUID,omitempty"`
-	Category   string              `json:"category,omitempty"`
-	Children   []*AncestorTreeNode `json:"children,omitempty"`
-}
+//type AncestorObjectTree struct {
+//	UUID       string              `json:"uuid"`
+//	Name       string              `json:"name,omitempty"`
+//	ID         string              `json:"id,omitempty"`
+//	ParentUUID string              `json:"parentUUID,omitempty"`
+//	Category   string              `json:"category,omitempty"`
+//	Children   []*AncestorObjectTree `json:"children,omitempty"`
+//}
 
-func (t *tree) GetAncestorTreeByUUID(uuid string) *AncestorTreeNode {
+func (t *tree) GetAncestorTreeByUUID(uuid string) *runtime.AncestorObjectTree {
 	return t.buildAncestorTree(uuid)
 }
 
-func (t *tree) GetChilds(uuid string) *AncestorTreeNode {
+func (t *tree) GetChilds(uuid string) *runtime.AncestorObjectTree {
 	return t.buildChildTree(uuid)
 }
 
-func (t *tree) buildChildTree(parentUUID string) *AncestorTreeNode {
+func (t *tree) buildChildTree(parentUUID string) *runtime.AncestorObjectTree {
 	for _, obj := range t.objects {
 		if obj.GetParentUUID() == parentUUID {
-			node := &AncestorTreeNode{
-				UUID:       obj.GetUUID(),
+			node := &runtime.AncestorObjectTree{
+				Uuid:       obj.GetUUID(),
 				Name:       obj.GetName(),
-				ID:         obj.GetID(),
-				ParentUUID: obj.GetUUID(),
+				Id:         obj.GetID(),
+				ParentUuid: obj.GetUUID(),
 				Category:   obj.GetCategory(),
-				Children:   []*AncestorTreeNode{},
+				Children:   []*runtime.AncestorObjectTree{},
 			}
 			childNode := t.buildChildTree(obj.GetUUID())
 			if childNode != nil {
@@ -133,14 +107,14 @@ func (t *tree) buildChildTree(parentUUID string) *AncestorTreeNode {
 	return nil
 }
 
-func (t *tree) buildAncestorTree(childUUID string) *AncestorTreeNode {
+func (t *tree) buildAncestorTree(childUUID string) *runtime.AncestorObjectTree {
 	for _, obj := range t.objects {
 		if obj.GetUUID() == childUUID {
-			node := &AncestorTreeNode{
-				UUID:       obj.GetUUID(),
+			node := &runtime.AncestorObjectTree{
+				Uuid:       obj.GetUUID(),
 				Name:       obj.GetName(),
-				ID:         obj.GetID(),
-				ParentUUID: obj.GetUUID(),
+				Id:         obj.GetID(),
+				ParentUuid: obj.GetUUID(),
 				Category:   obj.GetCategory(),
 			}
 			if obj.GetParentUUID() != "" {

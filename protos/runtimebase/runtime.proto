@@ -241,6 +241,7 @@ message CommandResponse {
   ObjectPagination objectPagination = 11;
   PalletTree pallet = 12;
   ObjectsRootMap objectTree = 13;
+  AncestorObjectTree ancestorObjectTree = 14;
 }
 
 
@@ -411,3 +412,12 @@ message ObjectsRootMap {
   repeated ObjectExtractedDetails logic = 12;
 }
 
+
+message AncestorObjectTree {
+  string uuid = 1;
+  string name = 2;
+  string id = 3;
+  string parent_uuid = 4;
+  string category = 5;
+  repeated AncestorObjectTree children = 6;
+}

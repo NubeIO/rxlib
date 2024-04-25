@@ -432,6 +432,33 @@
     }
   },
   "definitions": {
+    "RuntimeAncestorObjectTree": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "parent_uuid": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeAncestorObjectTree"
+          }
+        }
+      }
+    },
     "RuntimeCommand": {
       "type": "object",
       "properties": {
@@ -539,6 +566,9 @@
         },
         "objectTree": {
           "$ref": "#/definitions/RuntimeObjectsRootMap"
+        },
+        "ancestorObjectTree": {
+          "$ref": "#/definitions/RuntimeAncestorObjectTree"
         }
       }
     },

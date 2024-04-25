@@ -6,23 +6,6 @@ import (
 	"strings"
 )
 
-func convertCommand(resp *CommandResponse) *runtime.CommandResponse {
-	return &runtime.CommandResponse{
-		SenderID:         resp.SenderID,
-		Count:            int32(resp.Count),
-		MapStrings:       resp.MapStrings,
-		Number:           resp.Float,
-		Boolean:          resp.Bool,
-		Error:            resp.Error,
-		ReturnType:       resp.ReturnType,
-		Any:              resp.Byte,
-		Response:         convertCommands(resp.CommandResponse),
-		SerializeObjects: resp.SerializeObjects,
-		ObjectPagination: resp.ObjectPagination,
-		ObjectTree:       resp.ObjectTree,
-	}
-}
-
 func convertCommands(resp []*CommandResponse) []*runtime.CommandResponse {
 	var out []*runtime.CommandResponse
 	for _, response := range resp {
@@ -72,48 +55,74 @@ func (inst *RuntimeImpl) CommandObject(command *ExtendedCommand) *CommandRespons
 }
 
 func (inst *RuntimeImpl) handleObjects(parsedArgs *ParsedCommand) *CommandResponse {
-	var objects []Object
 	if parsedArgs.GetPagination() {
-		if parsedArgs.GetPortValues() { // handle port values
-			objectUUID := parsedArgs.GetUUID()
-			pageSize := parsedArgs.GetPaginationPageSize()
-			pageNumber := parsedArgs.GetPaginationPageNumber()
-			pagination := inst.GetObjectsValuesPaginate(objectUUID, pageNumber, pageSize)
-			inst.response.ObjectPagination = &runtime.ObjectPagination{
-				Count:      int32(pagination.Count),
-				PageNumber: int32(pagination.PageNumber),
-				PageSize:   int32(pagination.PageSize),
-				TotalPages: int32(pagination.TotalPages),
-				TotalCount: int32(pagination.TotalCount),
-				PortValues: pagination.PortValues,
-			}
-			return inst.response
-		}
-		pagination, err := inst.handlePagination(parsedArgs)
-		if err != nil {
-			objectsLen := len(objects)
-			fmt.Printf("type: %s, thing: %s, return type: %s, objects effected: %d \n", parsedArgs.GetCommandType(), parsedArgs.GetThing(), parsedArgs.GetReturnAs(), objectsLen)
-			inst.response.Error = fmt.Sprintf("failed to find any objects")
-			return inst.response
-		}
-		objects = pagination.Objects
-		pagination.Objects = nil
-		inst.response.ObjectPagination = &runtime.ObjectPagination{
-			Count:      int32(pagination.Count),
-			PageNumber: int32(pagination.PageNumber),
-			PageSize:   int32(pagination.PageSize),
-			TotalPages: int32(pagination.TotalPages),
-			TotalCount: int32(pagination.TotalCount),
-		}
-		inst.handleReturnType(parsedArgs, objects)
-		return inst.response
+		return inst.handlePaginationObjects(parsedArgs)
 	}
-	if parsedArgs.GetTree() { // handel object tree
-		inst.response.ObjectTree = inst.GetTreeMapRoot()
-		return inst.response
+	if parsedArgs.GetTree() {
+		return inst.handleTreeObjects(parsedArgs)
 	}
+	return inst.handleRegularObjects(parsedArgs)
+}
 
-	objects = inst.getObjects(parsedArgs)
+func (inst *RuntimeImpl) handlePaginationObjects(parsedArgs *ParsedCommand) *CommandResponse {
+	if parsedArgs.GetPortValues() {
+		return inst.handlePortValues(parsedArgs)
+	}
+	pagination, err := inst.handlePagination(parsedArgs)
+	if err != nil {
+		return inst.handlePaginationError(parsedArgs)
+	}
+	inst.response.ObjectPagination = &runtime.ObjectPagination{
+		Count:      int32(pagination.Count),
+		PageNumber: int32(pagination.PageNumber),
+		PageSize:   int32(pagination.PageSize),
+		TotalPages: int32(pagination.TotalPages),
+		TotalCount: int32(pagination.TotalCount),
+	}
+	objects := pagination.Objects
+	pagination.Objects = nil
+	inst.handleReturnType(parsedArgs, objects)
+	return inst.response
+}
+
+func (inst *RuntimeImpl) handlePortValues(parsedArgs *ParsedCommand) *CommandResponse {
+	objectUUID := parsedArgs.GetUUID()
+	pageSize := parsedArgs.GetPaginationPageSize()
+	pageNumber := parsedArgs.GetPaginationPageNumber()
+	pagination := inst.GetObjectsValuesPaginate(objectUUID, pageNumber, pageSize)
+	inst.response.ObjectPagination = &runtime.ObjectPagination{
+		Count:      int32(pagination.Count),
+		PageNumber: int32(pagination.PageNumber),
+		PageSize:   int32(pagination.PageSize),
+		TotalPages: int32(pagination.TotalPages),
+		TotalCount: int32(pagination.TotalCount),
+		PortValues: pagination.PortValues,
+	}
+	return inst.response
+}
+
+func (inst *RuntimeImpl) handlePaginationError(parsedArgs *ParsedCommand) *CommandResponse {
+	objectsLen := len(inst.objects)
+	fmt.Printf("type: %s, thing: %s, return type: %s, objects effected: %d \n", parsedArgs.GetCommandType(), parsedArgs.GetThing(), parsedArgs.GetReturnAs(), objectsLen)
+	inst.response.Error = fmt.Sprintf("failed to find any objects")
+	return inst.response
+}
+
+func (inst *RuntimeImpl) handleTreeObjects(parsedArgs *ParsedCommand) *CommandResponse {
+	if parsedArgs.GetAncestor() {
+		if parsedArgs.GetChilds() {
+			inst.response.AncestorObjectTree = inst.GetTreeChilds(parsedArgs.GetUUID())
+			return inst.response
+		}
+		inst.response.AncestorObjectTree = inst.GetAncestorTreeByUUID(parsedArgs.GetUUID())
+		return inst.response
+	}
+	inst.response.ObjectTree = inst.GetTreeMapRoot()
+	return inst.response
+}
+
+func (inst *RuntimeImpl) handleRegularObjects(parsedArgs *ParsedCommand) *CommandResponse {
+	objects := inst.getObjects(parsedArgs)
 	objectsLen := len(objects)
 	if objectsLen == 0 {
 		fmt.Printf("type: %s, thing: %s, return type: %s, objects effected: %d \n", parsedArgs.GetCommandType(), parsedArgs.GetThing(), parsedArgs.GetReturnAs(), objectsLen)
@@ -128,7 +137,6 @@ func (inst *RuntimeImpl) handleObjects(parsedArgs *ParsedCommand) *CommandRespon
 
 func (inst *RuntimeImpl) getObjects(parsedArgs *ParsedCommand) []Object {
 	return inst.handleNoQuery(parsedArgs)
-
 }
 
 func (inst *RuntimeImpl) handleNoQuery(parsedArgs *ParsedCommand) []Object {
@@ -301,6 +309,7 @@ type ParsedCommand struct {
 	Key         string `json:"key"`
 	Childs      bool   `json:"childs,omitempty"`
 	Tree        bool   `json:"tree,omitempty"`
+	Ancestor    bool   `json:"ancestor,omitempty"`
 	PortValues  bool   `json:"portValues,omitempty"`
 	Pagination  bool   `json:"pagination,omitempty"`
 	PageNumber  int    `json:"pageNumber,omitempty"`
@@ -326,3 +335,21 @@ const (
 	commandInput   = "input"
 	commandInputs  = "inputs"
 )
+
+func convertCommand(resp *CommandResponse) *runtime.CommandResponse {
+	return &runtime.CommandResponse{
+		SenderID:           resp.SenderID,
+		Count:              int32(resp.Count),
+		MapStrings:         resp.MapStrings,
+		Number:             resp.Float,
+		Boolean:            resp.Bool,
+		Error:              resp.Error,
+		ReturnType:         resp.ReturnType,
+		Any:                resp.Byte,
+		Response:           convertCommands(resp.CommandResponse),
+		SerializeObjects:   resp.SerializeObjects,
+		ObjectPagination:   resp.ObjectPagination,
+		ObjectTree:         resp.ObjectTree,
+		AncestorObjectTree: resp.AncestorObjectTree,
+	}
+}

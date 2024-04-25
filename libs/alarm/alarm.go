@@ -7,7 +7,7 @@ import (
 
 type Alarm interface {
 	AddTransaction(body *AddTransaction, t Transaction)
-	SetStatus(status AlarmStatus)
+	SetStatus(status Status)
 	GetTitle() string
 	GetUUID() string
 	GetObjectUUID() string
@@ -58,8 +58,8 @@ type AlarmEntry struct {
 	UUID                  string              `json:"uuid"`
 	ObjectType            string              `json:"objectType"`           // Device
 	ObjectUUID            string              `json:"objectUUID,omitempty"` // dev_abc123
-	AlarmType             AlarmType           `json:"alarmType"`            // Ping
-	Status                AlarmStatus         `json:"status"`               // Active
+	AlarmType             Type                `json:"alarmType"`            // Ping
+	Status                Status              `json:"status"`               // Active
 	Notified              bool                `json:"notified,omitempty"`
 	NotifiedAt            time.Time           `json:"notified_at,omitempty"`
 	CreatedAt             time.Time           `json:"created_at,omitempty"`
@@ -77,13 +77,13 @@ func (a *AlarmEntry) GetObjectUUID() string {
 }
 
 type AddTransaction struct {
-	Status   AlarmStatus   `json:"status"`   // Active
-	Severity AlarmSeverity `json:"severity"` // Crucial
-	Title    string        `json:"title,omitempty"`
-	Body     string        `json:"body,omitempty"`
+	Status   Status   `json:"status"`   // Active
+	Severity Severity `json:"severity"` // Crucial
+	Title    string   `json:"title,omitempty"`
+	Body     string   `json:"body,omitempty"`
 }
 
-func NewTransactionBody(status AlarmStatus, severity AlarmSeverity, title, body string) *AddTransaction {
+func NewTransactionBody(status Status, severity Severity, title, body string) *AddTransaction {
 	return &AddTransaction{
 		Status:   status,
 		Severity: severity,
@@ -126,15 +126,15 @@ func checksAddTransaction(body *AddTransaction) {
 	}
 }
 
-func (a *AlarmEntry) calculateAlarmStatus() AlarmStatus {
+func (a *AlarmEntry) calculateAlarmStatus() Status {
 
 	for _, t := range a.Transactions {
-		if t.Status == AlarmStatusClosed {
-			return AlarmStatusClosed
+		if t.Status == StatusClosed {
+			return StatusClosed
 		}
 	}
 
-	return AlarmStatusActive
+	return StatusActive
 }
 
 func transactionToTransactionEntry(alarmUUID string, t Transaction) *TransactionEntry {
@@ -165,7 +165,7 @@ func (a *AlarmEntry) lastUpdated() {
 	a.LastUpdated = time.Now()
 }
 
-func (a *AlarmEntry) SetStatus(status AlarmStatus) {
+func (a *AlarmEntry) SetStatus(status Status) {
 	a.lastUpdated()
 	a.Status = status
 }

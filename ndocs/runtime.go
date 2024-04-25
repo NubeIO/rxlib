@@ -317,7 +317,7 @@ var RuntimesString = `
     "help": ""
   },
   {
-    "name": "GetChilds",
+    "name": "GetTreeChilds",
     "description": "",
     "args": [
       "objectUUID string"

@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewAlarmManager(t *testing.T) {
-	// Create a new AlarmManager
+	// Create a new Manager
 	alarmManager := NewAlarmManager("abc 123")
 	alarmBody := &AddAlarm{
 		Title:      "t",
@@ -24,16 +24,16 @@ func TestNewAlarmManager(t *testing.T) {
 	transaction2 := NewTransaction()
 	transaction3 := NewTransaction()
 
-	alarm1.AddTransaction(NewTransactionBody(AlarmStatusActive, AlarmSeverityCritical, "Transaction 1", "Transaction Body 1"), transaction1)
-	alarm1.AddTransaction(NewTransactionBody(AlarmStatusActive, AlarmSeverityWarning, "Transaction 2", "Transaction Body 2"), transaction2)
-	alarm1.AddTransaction(NewTransactionBody(AlarmStatusClosed, AlarmSeverityInfo, "Transaction 3", "Transaction Body 3"), transaction3)
+	alarm1.AddTransaction(NewTransactionBody(StatusActive, SeverityCritical, "Transaction 1", "Transaction Body 1"), transaction1)
+	alarm1.AddTransaction(NewTransactionBody(StatusActive, SeverityWarning, "Transaction 2", "Transaction Body 2"), transaction2)
+	alarm1.AddTransaction(NewTransactionBody(StatusClosed, SeverityInfo, "Transaction 3", "Transaction Body 3"), transaction3)
 
 	// Add transactions to alarm2
 	transaction4 := NewTransaction()
 	transaction5 := NewTransaction()
 
-	alarm2.AddTransaction(NewTransactionBody(AlarmStatusActive, AlarmSeverityCritical, "Transaction 4", "Transaction Body 4"), transaction4)
-	alarm2.AddTransaction(NewTransactionBody(AlarmStatusAcknowledged, AlarmSeverityError, "Transaction 5", "Transaction Body 5"), transaction5)
+	alarm2.AddTransaction(NewTransactionBody(StatusActive, SeverityCritical, "Transaction 4", "Transaction Body 4"), transaction4)
+	alarm2.AddTransaction(NewTransactionBody(StatusAcknowledged, SeverityError, "Transaction 5", "Transaction Body 5"), transaction5)
 
 	// Print all transactions as TransactionEntry
 	transactionsEntries := alarmManager.GetAllTransactionsEntries()

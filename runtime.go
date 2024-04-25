@@ -76,9 +76,9 @@ type Runtime interface {
 	// GetTreeMapRoot gets the root of the object tree map
 	GetTreeMapRoot() *runtime.ObjectsRootMap
 	// GetAncestorTreeByUUID gets ancestor tree by UUID
-	GetAncestorTreeByUUID(objectUUID string) *AncestorTreeNode
-	// GetChilds gets child nodes of an object
-	GetChilds(objectUUID string) *AncestorTreeNode
+	GetAncestorTreeByUUID(objectUUID string) *runtime.AncestorObjectTree
+	// GetTreeChilds gets child nodes of an object
+	GetTreeChilds(objectUUID string) *runtime.AncestorObjectTree
 
 	// AllPlugins returns all plugins
 	AllPlugins() []*plugins.Export
@@ -285,40 +285,34 @@ func NewCommandResponse() *runtime.CommandResponse {
 }
 
 type CommandResponse struct {
-	SenderID         string                    `json:"senderID,omitempty"` // if sent from another ROS instance
-	Count            int                       `json:"count,omitempty"`
-	Objects          []Object                  `json:"-,omitempty"`
-	SerializeObjects []*runtime.ObjectConfig   `json:"serializeObjects,omitempty"`
-	MapPorts         map[string][]*Port        `json:"mapPorts,omitempty"`
-	MapStrings       map[string]string         `json:"mapStrings,omitempty"`
-	Float            float64                   `json:"number,omitempty"`
-	Bool             bool                      `json:"boolean,omitempty"`
-	Error            string                    `json:"error,omitempty"`
-	ReturnType       string                    `json:"returnType,omitempty"`
-	Byte             []byte                    `json:"byte,omitempty"`
-	CommandResponse  []*CommandResponse        `json:"response,omitempty"`
-	ObjectPagination *runtime.ObjectPagination `json:"objectPagination,omitempty"`
-	ObjectTree       *runtime.ObjectsRootMap   `json:"objectTree,omitempty"`
-	Data             any                       `json:"data"`
+	SenderID           string                      `json:"senderID,omitempty"` // if sent from another ROS instance
+	Count              int                         `json:"count,omitempty"`
+	Objects            []Object                    `json:"-,omitempty"`
+	SerializeObjects   []*runtime.ObjectConfig     `json:"serializeObjects,omitempty"`
+	MapPorts           map[string][]*Port          `json:"mapPorts,omitempty"`
+	MapStrings         map[string]string           `json:"mapStrings,omitempty"`
+	Float              float64                     `json:"number,omitempty"`
+	Bool               bool                        `json:"boolean,omitempty"`
+	Error              string                      `json:"error,omitempty"`
+	ReturnType         string                      `json:"returnType,omitempty"`
+	Byte               []byte                      `json:"byte,omitempty"`
+	CommandResponse    []*CommandResponse          `json:"response,omitempty"`
+	ObjectPagination   *runtime.ObjectPagination   `json:"objectPagination,omitempty"`
+	ObjectTree         *runtime.ObjectsRootMap     `json:"objectTree,omitempty"`
+	AncestorObjectTree *runtime.AncestorObjectTree `json:"ancestorObjectTree,omitempty"`
+	Data               any                         `json:"data"`
 }
 
 func (inst *RuntimeImpl) GetTreeMapRoot() *runtime.ObjectsRootMap {
-	if !inst.addedObject {
-		inst.tree.addObjects(inst.objects)
-	}
-	inst.addedObject = true
+	inst.tree.addObjects(inst.objects)
 	return inst.tree.GetTreeMapRoot()
 }
 
-func (inst *RuntimeImpl) GetAncestorTreeByUUID(objectUUID string) *AncestorTreeNode {
-	if !inst.addedObject {
-		inst.tree.addObjects(inst.objects)
-	}
-	inst.addedObject = true
+func (inst *RuntimeImpl) GetAncestorTreeByUUID(objectUUID string) *runtime.AncestorObjectTree {
 	return inst.tree.GetAncestorTreeByUUID(objectUUID)
 }
 
-func (inst *RuntimeImpl) GetChilds(objectUUID string) *AncestorTreeNode {
+func (inst *RuntimeImpl) GetTreeChilds(objectUUID string) *runtime.AncestorObjectTree {
 	return inst.tree.GetChilds(objectUUID)
 }
 
