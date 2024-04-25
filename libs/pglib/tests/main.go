@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/NubeIO/rxlib/libs/pglib"
-	"log"
 	"math/rand"
 	"time"
 )
@@ -17,12 +16,12 @@ func main() {
 		return
 	}
 
-	data := createTemperatureSamples()
-	fmt.Println(data)
-	err = db.InsertBulk("temperature_data", data)
-	if err != nil {
-		log.Fatalf("Error inserting data: %v", err)
-	}
+	//data := createTemperatureSamples()
+	//fmt.Println(data)
+	//err = db.InsertBulk("temperature_data", data)
+	//if err != nil {
+	//	log.Fatalf("Error inserting data: %v", err)
+	//}
 
 	// Query the data from the table
 	query := "SELECT * FROM temperature_data limit 2"
