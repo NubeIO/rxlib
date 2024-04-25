@@ -389,6 +389,18 @@ func (p *ParsedCommand) GetPaginationPageNumber() int {
 	return p.PageNumber
 }
 
+func (p *ParsedCommand) GetGlobal() bool {
+	return p.Global
+}
+
+func (p *ParsedCommand) GetStart() int {
+	return p.Start
+}
+
+func (p *ParsedCommand) GetFinish() int {
+	return p.Finish
+}
+
 func (p *ParsedCommand) GetName() string {
 	return p.Name
 }
@@ -467,7 +479,18 @@ func (c *ExtendedCommand) ParseCommandsArgs(cmd *ExtendedCommand) (*ParsedComman
 			args.PageSize = stringToInt(v)
 		}
 	}
+	if v, ok := cmd.Data["start"]; ok {
+		args.Start = stringToInt(v)
+	}
+	if v, ok := cmd.Data["finish"]; ok {
+		args.Finish = stringToInt(v)
+	}
+	if v, ok := cmd.Data["global"]; ok {
+		args.Global = stringToBool(v)
+	}
 	switch args.GetThing() {
+	case "whois":
+		return args, nil
 	case "ping":
 		return args, nil
 	case commandCommand:

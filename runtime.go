@@ -61,6 +61,7 @@ type Runtime interface {
 	Expr(query string) any
 	// System os/host system info
 	System() systeminfo.System
+	SystemInfo() *systeminfo.Info
 
 	HistoryManager() history.Manager
 
@@ -72,6 +73,8 @@ type Runtime interface {
 	Rest() restc.Rest
 
 	Publish(topic string, body interface{}) (err string)
+
+	Iam(rangeStart, finish int) Object
 }
 
 type RuntimeOpts struct {
@@ -152,6 +155,10 @@ func (inst *RuntimeImpl) Rest() restc.Rest {
 
 func (inst *RuntimeImpl) System() systeminfo.System {
 	return systeminfo.NewSystem()
+}
+
+func (inst *RuntimeImpl) SystemInfo() *systeminfo.Info {
+	return inst.System().Info()
 }
 
 func (inst *RuntimeImpl) Scheduler() scheduler.Scheduler {

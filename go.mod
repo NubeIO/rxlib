@@ -21,6 +21,7 @@ require (
 	github.com/rs/zerolog v1.32.0
 	github.com/sashabaranov/go-openai v1.21.0
 	github.com/shirou/gopsutil v3.21.11+incompatible
+	github.com/texttheater/golang-levenshtein/levenshtein v0.0.0-20200805054039-cae8b0eaed6c
 	github.com/thlib/go-timezone-local v0.0.0-20210907160436-ef149e42d28e
 	google.golang.org/genproto/googleapis/api v0.0.0-20240221002015-b0ce06bbee7c
 	google.golang.org/grpc v1.62.0

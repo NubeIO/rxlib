@@ -14,7 +14,8 @@ type Object interface {
 
 	Init() error
 	Start() error
-	SetLoaded() // used normally for the Start() to set it that it has booted
+	// used normally for the Start() to set it that it has booted
+	SetLoaded()
 	IsNotLoaded() bool
 	IsLoaded() bool // where the Obj Start() method has been called
 	CommandList() []*Invoke
@@ -105,7 +106,6 @@ type Object interface {
 	PrintObjectTree(objects map[string]Object)
 	GetCompleteChain(objects map[string]Object, uuid string) Chain
 
-	// RunValidation -------------------VALIDATION INFO------------------
 	// ValidationBuilder validation for example, you want to add a new network so lets run some checks eg; is network interface available
 	RunValidation()
 	AddValidation(key string)
