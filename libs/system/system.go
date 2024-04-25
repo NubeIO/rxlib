@@ -23,7 +23,7 @@ type System interface {
 	GetUptime() string
 	GetGateway() string
 	GetInternetIP() (*PublicIP, error)
-	GetSystemTime() *systemTime
+	GetSystemTime() *SystemTime
 	TimezoneInfo() zone.Zone
 	GetCurrentCPUUsage() string
 	GetCurrentMemoryUsage() string
@@ -31,9 +31,27 @@ type System interface {
 	GetTopProcessesByCPUUsage(count int) ([]*topProcess, error)
 	GetTopProcessesByMemory(count int) ([]*topProcess, error)
 	GetHostUniqueID() (string, error) // try mac or system uuid
+	Info() *Info
+}
+
+type Info struct {
+	GlobalUUID string      `json:"globalUUID"`
+	IP         string      `json:"ip"`
+	Uptime     string      `json:"uptime"`
+	SystemTime *SystemTime `json:"systemTime"`
 }
 
 type unixSystem struct{}
+
+func (s *unixSystem) Info() *Info {
+	u, _ := s.GetHostUniqueID()
+	return &Info{
+		GlobalUUID: u,
+		IP:         s.GetIP(),
+		SystemTime: s.GetSystemTime(),
+		Uptime:     s.GetUptime(),
+	}
+}
 
 func NewSystem() System {
 	return &unixSystem{}
@@ -79,18 +97,20 @@ func (s *unixSystem) GetInternetIP() (*PublicIP, error) {
 	return getPublicIP()
 }
 
-type systemTime struct {
-	LocalTime string
-	UTCTime   string
+type SystemTime struct {
+	LocalTime string `json:"localTime"`
+	UTCTime   string `json:"utcTime"`
+	Timezone  string `json:"timezone"`
 }
 
-func (s *unixSystem) GetSystemTime() *systemTime {
+func (s *unixSystem) GetSystemTime() *SystemTime {
 	localTime := time.Now().Format(time.RFC3339)
 	utcTime := time.Now().UTC().Format(time.RFC3339)
 
-	return &systemTime{
+	return &SystemTime{
 		LocalTime: localTime,
 		UTCTime:   utcTime,
+		Timezone:  s.TimezoneInfo().Timezone(),
 	}
 }
 

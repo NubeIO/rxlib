@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-type networkInterface struct {
+type NetworkInterface struct {
 	InterfaceName  string `json:"interfaceName,omitempty"`
 	IpAddress      string `json:"ipAddress,omitempty"`
 	NetMask        string `json:"netMask,omitempty"`
@@ -22,8 +22,8 @@ type networkInterface struct {
 	Error          string `json:"error,omitempty"`
 }
 
-func getNetworkInterface(getGateway bool) ([]networkInterface, error) {
-	var netInfo []networkInterface
+func getNetworkInterface(getGateway bool) ([]NetworkInterface, error) {
+	var netInfo []NetworkInterface
 
 	// Get a list of all network interfaces
 	interfaces, err := net.Interfaces()
@@ -32,7 +32,7 @@ func getNetworkInterface(getGateway bool) ([]networkInterface, error) {
 	}
 
 	for _, iface := range interfaces {
-		ifaceStatus := networkInterface{
+		ifaceStatus := NetworkInterface{
 			InterfaceName: iface.Name,
 			MacAddress:    iface.HardwareAddr.String(),
 			IsActive:      iface.Flags&net.FlagUp != 0,
