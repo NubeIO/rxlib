@@ -42,7 +42,7 @@ func (inst *RuntimeImpl) CommandObject(command *ExtendedCommand) *CommandRespons
 	case "whois":
 		obj := inst.whois(parsedArgs)
 		if obj != nil {
-			inst.response.SerializeObjects = SerializeCurrentFlowArray([]Object{obj})
+			inst.response.SerializeObjects = inst.SerializeObjects(false, []Object{obj})
 			inst.response.Count = len(inst.response.SerializeObjects)
 		}
 		return inst.response
@@ -65,9 +65,6 @@ func (inst *RuntimeImpl) handleObjects(parsedArgs *ParsedCommand) *CommandRespon
 }
 
 func (inst *RuntimeImpl) handlePaginationObjects(parsedArgs *ParsedCommand) *CommandResponse {
-	if parsedArgs.GetPortValues() {
-		return inst.handlePortValues(parsedArgs)
-	}
 	pagination, err := inst.handlePagination(parsedArgs)
 	if err != nil {
 		return inst.handlePaginationError(parsedArgs)
@@ -218,7 +215,7 @@ func (inst *RuntimeImpl) handleReturnType(parsedArgs *ParsedCommand, objects []O
 			inst.response.Objects = nil
 		}
 	case commandJSON:
-		inst.response.SerializeObjects = SerializeCurrentFlowArray(objects)
+		inst.response.SerializeObjects = inst.SerializeObjects(parsedArgs.GetPortValues(), objects)
 		inst.response.Count = len(inst.response.SerializeObjects)
 	case commandCommand:
 		inst.response.Count = len(inst.response.CommandResponse)

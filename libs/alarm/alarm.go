@@ -6,7 +6,8 @@ import (
 )
 
 type Alarm interface {
-	AddTransaction(body *AddTransaction, t Transaction)
+	AddTransaction(body *AddTransaction)
+	NewTransactionCritical(title, body string)
 	SetStatus(status Status)
 	GetTitle() string
 	GetUUID() string
@@ -35,7 +36,7 @@ type AddAlarm struct {
 
 func NewAlarm(limitSampleSize int, alarmBody *AddAlarm) Alarm {
 	checksAddAlarm(alarmBody)
-	return &AlarmEntry{UUID: helpers.UUID(), Title: alarmBody.Title, ObjectType: alarmBody.ObjectType, ObjectUUID: alarmBody.ObjectUUID, LimitTransactionCount: limitSampleSize}
+	return &Entry{UUID: helpers.UUID(), Title: alarmBody.Title, ObjectType: alarmBody.ObjectType, ObjectUUID: alarmBody.ObjectUUID, LimitTransactionCount: limitSampleSize}
 }
 
 func checksAddAlarm(alarmBody *AddAlarm) {
@@ -53,7 +54,7 @@ func checksAddAlarm(alarmBody *AddAlarm) {
 	}
 }
 
-type AlarmEntry struct {
+type Entry struct {
 	Title                 string              `json:"title"`
 	UUID                  string              `json:"uuid"`
 	ObjectType            string              `json:"objectType"`           // Device
@@ -68,11 +69,11 @@ type AlarmEntry struct {
 	LimitTransactionCount int                 `json:"limitTransactionCount"`
 }
 
-func (a *AlarmEntry) GetTitle() string {
+func (a *Entry) GetTitle() string {
 	return a.Title
 }
 
-func (a *AlarmEntry) GetObjectUUID() string {
+func (a *Entry) GetObjectUUID() string {
 	return a.ObjectUUID
 }
 
@@ -92,20 +93,31 @@ func NewTransactionBody(status Status, severity Severity, title, body string) *A
 	}
 }
 
-func (a *AlarmEntry) AddTransaction(body *AddTransaction, t Transaction) {
-	checksAddTransaction(body)
-	if te, ok := t.(*TransactionEntry); ok {
-		te.AlarmUUID = a.GetUUID() // Set the AlarmUUID to the UUID of the AlarmEntry
-		te.SetStatus(body.Status)
-		te.SetBody(body.Body)
-		te.SetTitle(body.Title)
-		te.SetSeverity(body.Severity)
-		te.lastUpdated()
-		te.createdAt()
-		a.Transactions = append(a.Transactions, te)
-		a.Status = a.calculateAlarmStatus()
-		a.LastUpdated = time.Now()
+func (a *Entry) NewTransactionCritical(title, body string) {
+	trans := &AddTransaction{
+		Status:   StatusActive,
+		Severity: SeverityCritical,
+		Title:    title,
+		Body:     body,
 	}
+
+	a.AddTransaction(trans)
+
+}
+
+func (a *Entry) AddTransaction(body *AddTransaction) {
+	checksAddTransaction(body)
+	te := &TransactionEntry{} // Create a new TransactionEntry
+	te.AlarmUUID = a.GetUUID()
+	te.SetStatus(body.Status)
+	te.SetBody(body.Body)
+	te.SetTitle(body.Title)
+	te.SetSeverity(body.Severity)
+	te.lastUpdated()
+	te.createdAt()
+	a.Transactions = append(a.Transactions, te)
+	a.Status = a.calculateAlarmStatus()
+	a.LastUpdated = time.Now()
 }
 
 func checksAddTransaction(body *AddTransaction) {
@@ -126,7 +138,7 @@ func checksAddTransaction(body *AddTransaction) {
 	}
 }
 
-func (a *AlarmEntry) calculateAlarmStatus() Status {
+func (a *Entry) calculateAlarmStatus() Status {
 
 	for _, t := range a.Transactions {
 		if t.Status == StatusClosed {
@@ -151,7 +163,7 @@ func transactionToTransactionEntry(alarmUUID string, t Transaction) *Transaction
 	}
 }
 
-func (a *AlarmEntry) GetAllTransactionsEntries() map[string][]*TransactionEntry {
+func (a *Entry) GetAllTransactionsEntries() map[string][]*TransactionEntry {
 	transactions := make(map[string][]*TransactionEntry)
 	for _, t := range a.Transactions {
 		transactionEntry := transactionToTransactionEntry(a.GetUUID(), t)
@@ -161,20 +173,20 @@ func (a *AlarmEntry) GetAllTransactionsEntries() map[string][]*TransactionEntry 
 	return transactions
 }
 
-func (a *AlarmEntry) lastUpdated() {
+func (a *Entry) lastUpdated() {
 	a.LastUpdated = time.Now()
 }
 
-func (a *AlarmEntry) SetStatus(status Status) {
+func (a *Entry) SetStatus(status Status) {
 	a.lastUpdated()
 	a.Status = status
 }
 
-func (a *AlarmEntry) GetUUID() string {
+func (a *Entry) GetUUID() string {
 	return a.UUID
 }
 
-func (a *AlarmEntry) GetTransactions() []Transaction {
+func (a *Entry) GetTransactions() []Transaction {
 	transactions := make([]Transaction, len(a.Transactions))
 	for i, t := range a.Transactions {
 		transactions[i] = t
@@ -182,21 +194,21 @@ func (a *AlarmEntry) GetTransactions() []Transaction {
 	return transactions
 }
 
-func (a *AlarmEntry) GetLast() Transaction {
+func (a *Entry) GetLast() Transaction {
 	if len(a.Transactions) > 0 {
 		return a.Transactions[len(a.Transactions)-1]
 	}
 	return nil
 }
 
-func (a *AlarmEntry) GetFirst() Transaction {
+func (a *Entry) GetFirst() Transaction {
 	if len(a.Transactions) > 0 {
 		return a.Transactions[0]
 	}
 	return nil
 }
 
-func (a *AlarmEntry) GetPagination(pageNumber, pageSize int) []Transaction {
+func (a *Entry) GetPagination(pageNumber, pageSize int) []Transaction {
 	startIndex := (pageNumber - 1) * pageSize
 	endIndex := startIndex + pageSize
 	if startIndex < 0 {
@@ -215,7 +227,7 @@ func (a *AlarmEntry) GetPagination(pageNumber, pageSize int) []Transaction {
 	return paginatedTransactions
 }
 
-func (a *AlarmEntry) GetByDateRange(startDate, endDate time.Time) []Transaction {
+func (a *Entry) GetByDateRange(startDate, endDate time.Time) []Transaction {
 	var result []Transaction
 	for _, t := range a.Transactions {
 		if t.GetCreatedAt().After(startDate) && t.GetCreatedAt().Before(endDate) {
@@ -225,7 +237,7 @@ func (a *AlarmEntry) GetByDateRange(startDate, endDate time.Time) []Transaction 
 	return result
 }
 
-func (a *AlarmEntry) GetByTime(startDate time.Time, duration string) ([]Transaction, error) {
+func (a *Entry) GetByTime(startDate time.Time, duration string) ([]Transaction, error) {
 	durationValue, err := time.ParseDuration(duration)
 	if err != nil {
 		return nil, err
@@ -241,7 +253,7 @@ func (a *AlarmEntry) GetByTime(startDate time.Time, duration string) ([]Transact
 	return result, nil
 }
 
-func (a *AlarmEntry) DeleteTransaction(uuid string) {
+func (a *Entry) DeleteTransaction(uuid string) {
 	var newTransactions []*TransactionEntry
 	for _, t := range a.Transactions {
 		if t.GetUUID() != uuid {
@@ -251,13 +263,13 @@ func (a *AlarmEntry) DeleteTransaction(uuid string) {
 	a.Transactions = newTransactions
 }
 
-func (a *AlarmEntry) DeleteTransactions(uuids []string) {
+func (a *Entry) DeleteTransactions(uuids []string) {
 	for _, uuid := range uuids {
 		a.DeleteTransaction(uuid)
 	}
 }
 
-func (a *AlarmEntry) DeleteFirst(count int) int {
+func (a *Entry) DeleteFirst(count int) int {
 	if count <= 0 {
 		return 0
 	}
@@ -268,7 +280,7 @@ func (a *AlarmEntry) DeleteFirst(count int) int {
 	return count
 }
 
-func (a *AlarmEntry) DeleteLast(count int) int {
+func (a *Entry) DeleteLast(count int) int {
 	if count <= 0 {
 		return 0
 	}
@@ -279,7 +291,7 @@ func (a *AlarmEntry) DeleteLast(count int) int {
 	return count
 }
 
-func (a *AlarmEntry) DeleteByDateRange(startDate, endDate time.Time) int {
+func (a *Entry) DeleteByDateRange(startDate, endDate time.Time) int {
 	var deletedCount int
 	var newTransactions []*TransactionEntry
 	for _, t := range a.Transactions {
@@ -293,7 +305,7 @@ func (a *AlarmEntry) DeleteByDateRange(startDate, endDate time.Time) int {
 	return deletedCount
 }
 
-func (a *AlarmEntry) DeleteByTime(startDate time.Time, duration string) int {
+func (a *Entry) DeleteByTime(startDate time.Time, duration string) int {
 	durationValue, err := time.ParseDuration(duration)
 	if err != nil {
 		return 0
@@ -315,6 +327,6 @@ func (a *AlarmEntry) DeleteByTime(startDate time.Time, duration string) int {
 	return deletedCount
 }
 
-func (a *AlarmEntry) TransactionCount() int {
+func (a *Entry) TransactionCount() int {
 	return len(a.Transactions)
 }

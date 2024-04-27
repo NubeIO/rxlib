@@ -3,6 +3,7 @@ package rxlib
 import (
 	"fmt"
 	"github.com/NubeIO/mqttwrapper"
+	"github.com/NubeIO/rxlib/libs/alarm"
 	"github.com/NubeIO/rxlib/libs/history"
 	"github.com/NubeIO/rxlib/libs/pglib"
 	"github.com/NubeIO/rxlib/libs/restc"
@@ -18,6 +19,10 @@ type Runtime interface {
 	Get() []Object
 	// AddObjects adds objects to runtime
 	AddObjects([]Object)
+	// AddObject adds an object
+	AddObject(object Object)
+	// Deploy deploy a flow
+	Deploy(body *Deploy) *DeployResponse
 	// ToObjectsConfig converts to ObjectConfig, used when needed as JSON
 	ToObjectsConfig(objects []Object) []*runtime.ObjectConfig
 	// GetObjectsUUIDs returns UUIDs of objects
@@ -66,8 +71,6 @@ type Runtime interface {
 	GetChildObjects(parentUUID string) []Object
 	// GetAllObjectValues gets all object values
 	GetAllObjectValues() []*ObjectValue
-	// AddObject adds an object
-	AddObject(object Object)
 	// Command executes a command
 	Command(cmd *ExtendedCommand) *runtime.CommandResponse
 	// CommandObject executes a command for an object
@@ -86,8 +89,8 @@ type Runtime interface {
 	// GetObjectsPallet returns objects pallet tree
 	GetObjectsPallet() *PalletTree
 
-	// Scheduler gets scheduler
-	Scheduler() scheduler.Scheduler
+	// Cron gets cron/job scheduler  Cron().All()
+	Cron() scheduler.Scheduler
 
 	// ExprWithError run a system query and returns an error. eg; Expr("filter(objects, .GetID() == "rubix-manager""))  see docs https://github.com/expr-lang/expr
 	ExprWithError(query string) (any, error)
@@ -123,6 +126,15 @@ type Runtime interface {
 	ObjectSync(forceSync bool, opts *SyncOptions) error
 	// HistorySync sync all the histories to the postgres db;
 	HistorySync(forceSync bool, opts *SyncOptions) error
+
+	// NewUUID generates a UUID
+	NewUUID() string
+
+	// ObjectBuilder is used for build an object. Use case if for building an object using RQL and then deploying. eg; ObjectBuilder({"objectID: trigger"}).ToObject()
+	ObjectBuilder(body *Builder) *Builder
+
+	// AlarmManager usage is through the alarm-manager object
+	AlarmManager() alarm.Manager
 }
 
 type RuntimeOpts struct {
@@ -145,6 +157,7 @@ func NewRuntime(objs []Object, opts *RuntimeOpts) Runtime {
 	}
 	r.db = db
 	r.rest = restc.New()
+	r.alarmManager = alarm.NewAlarmManager("runtime")
 	return r
 }
 
@@ -172,6 +185,11 @@ type RuntimeImpl struct {
 	db              pglib.PG
 	rest            restc.Rest
 	mqttClient      mqttwrapper.MQTT
+	alarmManager    alarm.Manager
+}
+
+func (inst *RuntimeImpl) AlarmManager() alarm.Manager {
+	return inst.alarmManager
 }
 
 func (inst *RuntimeImpl) Publish(topic string, body interface{}) string {
@@ -209,111 +227,8 @@ func (inst *RuntimeImpl) SystemInfo() *systeminfo.Info {
 	return inst.System().Info()
 }
 
-func (inst *RuntimeImpl) Scheduler() scheduler.Scheduler {
+func (inst *RuntimeImpl) Cron() scheduler.Scheduler {
 	return inst.scheduler
-}
-
-// GetChildObjectsByWorkingGroup
-// for example get all the childs object for working group "rubix"
-func (inst *RuntimeImpl) GetChildObjectsByWorkingGroup(objectUUID, workingGroup string) []Object {
-	var out []Object
-	for _, object := range inst.Get() {
-		if object.GetUUID() == objectUUID {
-			if object.GetWorkingGroup() == workingGroup {
-				out = append(out, object)
-			}
-		}
-	}
-	return out
-}
-
-func (inst *RuntimeImpl) GetObjectValues(objectUUID string) []*runtime.PortValue {
-	obj := inst.GetByUUID(objectUUID)
-	if obj == nil {
-		return nil
-	}
-	var out []*runtime.PortValue
-	inputs := obj.GetInputs()
-	for _, port := range inputs {
-		out = append(out, obj.GetPortValue(port.GetID()))
-	}
-	outputs := obj.GetOutputs()
-	for _, port := range outputs {
-		out = append(out, obj.GetPortValue(port.GetID()))
-	}
-	return out
-}
-
-func (inst *RuntimeImpl) GetObjectsValues() map[string][]*runtime.PortValue {
-	out := make(map[string][]*runtime.PortValue)
-	for _, object := range inst.Get() {
-		out[object.GetUUID()] = inst.GetObjectValues(object.GetUUID())
-	}
-	return out
-}
-
-func (inst *RuntimeImpl) GetObjectsConfig() []*runtime.ObjectConfig {
-	return SerializeCurrentFlowArray(inst.Get())
-}
-
-func (inst *RuntimeImpl) ToObjectsConfig(objects []Object) []*runtime.ObjectConfig {
-	return SerializeCurrentFlowArray(objects)
-}
-
-func (inst *RuntimeImpl) GetObjectsUUIDs(objects []Object) []string {
-	var out []string
-	for _, object := range objects {
-		out = append(out, object.GetUUID())
-	}
-	return out
-}
-
-func (inst *RuntimeImpl) GetObjectConfig(uuid string) *runtime.ObjectConfig {
-	return serializeCurrentFlowArray(inst.GetByUUID(uuid))
-}
-
-func (inst *RuntimeImpl) GetObjectConfigByID(objectID string) *runtime.ObjectConfig {
-	object := inst.GetFirstByID(objectID)
-	if object == nil {
-		return nil
-	}
-	return serializeCurrentFlowArray(object)
-}
-
-func NewCommandResponse() *runtime.CommandResponse {
-	return &runtime.CommandResponse{}
-}
-
-type CommandResponse struct {
-	SenderID           string                      `json:"senderID,omitempty"` // if sent from another ROS instance
-	Count              int                         `json:"count,omitempty"`
-	Objects            []Object                    `json:"-,omitempty"`
-	SerializeObjects   []*runtime.ObjectConfig     `json:"serializeObjects,omitempty"`
-	MapPorts           map[string][]*Port          `json:"mapPorts,omitempty"`
-	MapStrings         map[string]string           `json:"mapStrings,omitempty"`
-	Float              float64                     `json:"number,omitempty"`
-	Bool               bool                        `json:"boolean,omitempty"`
-	Error              string                      `json:"error,omitempty"`
-	ReturnType         string                      `json:"returnType,omitempty"`
-	Byte               []byte                      `json:"byte,omitempty"`
-	CommandResponse    []*CommandResponse          `json:"response,omitempty"`
-	ObjectPagination   *runtime.ObjectPagination   `json:"objectPagination,omitempty"`
-	ObjectTree         *runtime.ObjectsRootMap     `json:"objectTree,omitempty"`
-	AncestorObjectTree *runtime.AncestorObjectTree `json:"ancestorObjectTree,omitempty"`
-	Data               any                         `json:"data"`
-}
-
-func (inst *RuntimeImpl) GetTreeMapRoot() *runtime.ObjectsRootMap {
-	inst.tree.addObjects(inst.objects)
-	return inst.tree.GetTreeMapRoot()
-}
-
-func (inst *RuntimeImpl) GetAncestorTreeByUUID(objectUUID string) *runtime.AncestorObjectTree {
-	return inst.tree.GetAncestorTreeByUUID(objectUUID)
-}
-
-func (inst *RuntimeImpl) GetTreeChilds(objectUUID string) *runtime.AncestorObjectTree {
-	return inst.tree.GetChilds(objectUUID)
 }
 
 func (inst *RuntimeImpl) Delete() string {
@@ -323,106 +238,4 @@ func (inst *RuntimeImpl) Delete() string {
 	inst.objects = nil
 	d := len(inst.objects)
 	return fmt.Sprintf("count deleted: %d current: %d", c, d)
-}
-
-func (inst *RuntimeImpl) AddObject(object Object) {
-	inst.mutex.Lock()
-	defer inst.mutex.Unlock()
-	inst.objects = append(inst.objects, object)
-}
-
-func (inst *RuntimeImpl) GetAllByID(objectID string) []Object {
-	inst.mutex.Lock()
-	defer inst.mutex.Unlock()
-	var out []Object
-	for _, obj := range inst.objects {
-		if obj.GetID() == objectID {
-			out = append(out, obj)
-		}
-	}
-	return out
-}
-
-func (inst *RuntimeImpl) GetByUUID(uuid string) Object {
-	inst.mutex.Lock()
-	defer inst.mutex.Unlock()
-	for _, object := range inst.objects {
-		if object.GetUUID() == uuid {
-			return object
-		}
-	}
-	return nil
-}
-
-func (inst *RuntimeImpl) GetAllByName(name string) []Object {
-	inst.mutex.Lock()
-	defer inst.mutex.Unlock()
-	var out []Object
-	for _, obj := range inst.objects {
-		if obj.GetName() == name {
-			out = append(out, obj)
-		}
-	}
-	return out
-}
-
-func (inst *RuntimeImpl) GetChildObjects(parentUUID string) []Object {
-	inst.mutex.Lock()
-	defer inst.mutex.Unlock()
-	var out []Object
-	for _, obj := range inst.objects {
-		if obj.GetParentUUID() == parentUUID {
-			out = append(out, obj)
-		}
-	}
-	return out
-}
-
-func (inst *RuntimeImpl) GetFirstByID(objectID string) Object {
-	inst.mutex.Lock()
-	defer inst.mutex.Unlock()
-	for _, obj := range inst.objects {
-		if obj.GetID() == objectID {
-			return obj
-		}
-	}
-	return nil
-}
-
-func (inst *RuntimeImpl) GetFirstByName(name string) Object {
-	inst.mutex.Lock()
-	defer inst.mutex.Unlock()
-	for _, obj := range inst.objects {
-		if obj.GetName() == name {
-			return obj
-		}
-	}
-	return nil
-}
-
-func (inst *RuntimeImpl) GetAllObjectValues() []*ObjectValue {
-	inst.mutex.Lock()
-	defer inst.mutex.Unlock()
-	allObjects := inst.Get()
-	nodeValues := make([]*ObjectValue, len(allObjects))
-	for _, node := range allObjects {
-		nv := node.GetAllPorts()
-		if nv == nil {
-			continue
-		}
-		portValue := &ObjectValue{
-			ObjectId:   node.GetID(),
-			ObjectUUID: node.GetUUID(),
-			Ports:      nv,
-		}
-		nodeValues = append(nodeValues, portValue)
-	}
-	return nodeValues
-}
-
-func (inst *RuntimeImpl) objectsFilteredIsNil() bool {
-	if inst.objectsFiltered == nil {
-		return true
-	}
-	return false
 }

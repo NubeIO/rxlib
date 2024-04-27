@@ -7,12 +7,12 @@ import (
 
 type Manager interface {
 	GetTitle() string
-	NewAlarm(limitSize int, alarmBody *AddAlarm) Alarm
+	NewAlarm(limitTransactionSize int, alarmBody *AddAlarm) Alarm
 	Get(uuid string) Alarm
 	All() map[string]Alarm
 	Drop(uuid string)
 	DropAll()
-	GetAllTransactionsEntries() map[string][]*TransactionEntry
+	Entries() map[string][]*TransactionEntry
 	AllTransactions() map[string][]Transaction
 	GetTransactionByDateRange(startDate, endDate time.Time) map[string][]Transaction
 	GetTransactionByTime(startDate time.Time, duration string) (map[string][]Transaction, error)
@@ -36,11 +36,17 @@ func (m *manager) GetTitle() string {
 	return m.title
 }
 
-func (m *manager) NewAlarm(limitSize int, alarmBody *AddAlarm) Alarm {
-	alarm := NewAlarm(limitSize, alarmBody)
+func (m *manager) NewAlarm(limitTransactionSize int, alarmBody *AddAlarm) Alarm {
+	alarm := NewAlarm(limitTransactionSize, alarmBody)
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.alarmMap[alarm.GetUUID()] = alarm
+	if limitTransactionSize <= 0 {
+		limitTransactionSize = 100
+	}
+	if limitTransactionSize >= 100000 {
+		limitTransactionSize = 100000
+	}
 	return alarm
 }
 
@@ -68,7 +74,7 @@ func (m *manager) DropAll() {
 	m.alarmMap = make(map[string]Alarm)
 }
 
-func (m *manager) GetAllTransactionsEntries() map[string][]*TransactionEntry {
+func (m *manager) Entries() map[string][]*TransactionEntry {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 	transactionsEntries := make(map[string][]*TransactionEntry)

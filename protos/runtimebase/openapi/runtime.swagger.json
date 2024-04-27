@@ -679,6 +679,9 @@
         "workingGroupParent": {
           "type": "string"
         },
+        "icon": {
+          "type": "string"
+        },
         "workingGroupObjects": {
           "type": "array",
           "items": {
@@ -783,6 +786,13 @@
         },
         "settings": {
           "$ref": "#/definitions/RuntimeSettings"
+        },
+        "portValues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimePortValue"
+          }
         }
       }
     },
@@ -1097,9 +1107,6 @@
         "defaultPosition": {
           "type": "integer",
           "format": "int32"
-        },
-        "value": {
-          "type": "string"
         }
       }
     },

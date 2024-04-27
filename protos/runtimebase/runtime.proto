@@ -287,6 +287,8 @@ message ObjectConfig {
   ObjectStats stats = 6;
   repeated Connection connections = 7;
   Settings settings = 8;
+  repeated PortValue portValues = 9;
+
 }
 
 message Settings {
@@ -301,14 +303,16 @@ message Info {
   string workingGroup = 5;
   string workingGroupLeader = 6;
   string workingGroupParent = 7;
-  repeated string workingGroupObjects = 8;
-  repeated string workingGroupChildObjects = 9;
-  repeated string tags = 10;
-  map<string, string> metaTags = 11;
-  map<string, string> flags = 12;
-  Permissions permissions = 13;
-  Requirements requirements = 14;
+  string icon = 8;
+  repeated string workingGroupObjects = 9;
+  repeated string workingGroupChildObjects = 10;
+  repeated string tags = 11;
+  map<string, string> metaTags = 12;
+  map<string, string> flags = 13;
+  Permissions permissions = 14;
+  Requirements requirements = 15;
 }
+
 
 message Permissions {
   bool allPermissions = 1;
@@ -348,7 +352,6 @@ message Port {
   string direction = 4;
   string dataType = 5;
   int32 defaultPosition = 6;
-  string value = 7;
 }
 
 

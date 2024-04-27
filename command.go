@@ -9,6 +9,29 @@ import (
 	"strings"
 )
 
+func NewCommandResponse() *runtime.CommandResponse {
+	return &runtime.CommandResponse{}
+}
+
+type CommandResponse struct {
+	SenderID           string                      `json:"senderID,omitempty"` // if sent from another ROS instance
+	Count              int                         `json:"count,omitempty"`
+	Objects            []Object                    `json:"-,omitempty"`
+	SerializeObjects   []*runtime.ObjectConfig     `json:"serializeObjects,omitempty"`
+	MapPorts           map[string][]*Port          `json:"mapPorts,omitempty"`
+	MapStrings         map[string]string           `json:"mapStrings,omitempty"`
+	Float              float64                     `json:"number,omitempty"`
+	Bool               bool                        `json:"boolean,omitempty"`
+	Error              string                      `json:"error,omitempty"`
+	ReturnType         string                      `json:"returnType,omitempty"`
+	Byte               []byte                      `json:"byte,omitempty"`
+	CommandResponse    []*CommandResponse          `json:"response,omitempty"`
+	ObjectPagination   *runtime.ObjectPagination   `json:"objectPagination,omitempty"`
+	ObjectTree         *runtime.ObjectsRootMap     `json:"objectTree,omitempty"`
+	AncestorObjectTree *runtime.AncestorObjectTree `json:"ancestorObjectTree,omitempty"`
+	Data               any                         `json:"data"`
+}
+
 type ExtendedCommand struct {
 	*runtime.Command
 }

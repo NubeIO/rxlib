@@ -77,6 +77,9 @@ type InfoBuilder interface {
 	// tags
 	AddObjectTags(objectTypeTag ...string) InfoBuilder
 	GetObjectTags() []string
+
+	GetIcon() string //https://microsoft.github.io/vscode-codicons/dist/codicon.html
+	SetIcon(icon string) InfoBuilder
 }
 
 func NewObjectInfo() InfoBuilder {
@@ -90,6 +93,20 @@ type infoBuilder struct {
 func (builder *infoBuilder) Build() *runtime.Info {
 	builder.checks()
 	return builder.info
+}
+
+// we can use any icon from //https://microsoft.github.io/vscode-codicons/dist/codicon.html
+
+func (builder *infoBuilder) GetIcon() string {
+	if builder.info.Icon == "" {
+		builder.info.Icon = ""
+	}
+	return builder.info.Icon
+}
+
+func (builder *infoBuilder) SetIcon(icon string) InfoBuilder {
+	builder.info.Icon = icon
+	return builder
 }
 
 func (builder *infoBuilder) SetID(objectID string) InfoBuilder {

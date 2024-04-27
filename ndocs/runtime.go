@@ -346,11 +346,11 @@ var RuntimesString = `
     "help": ""
   },
   {
-    "name": "Scheduler",
+    "name": "Cron",
     "description": "",
     "args": null,
     "return": [
-      "scheduler.Scheduler"
+      "scheduler.Cron"
     ],
     "help": ""
   },
