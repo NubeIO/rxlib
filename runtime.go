@@ -7,6 +7,7 @@ import (
 	"github.com/NubeIO/rxlib/libs/history"
 	"github.com/NubeIO/rxlib/libs/pglib"
 	"github.com/NubeIO/rxlib/libs/restc"
+	"github.com/NubeIO/rxlib/libs/schedules"
 	systeminfo "github.com/NubeIO/rxlib/libs/system"
 	"github.com/NubeIO/rxlib/plugins"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
@@ -89,9 +90,6 @@ type Runtime interface {
 	// GetObjectsPallet returns objects pallet tree
 	GetObjectsPallet() *PalletTree
 
-	// Cron gets cron/job scheduler  Cron().All()
-	Cron() scheduler.Scheduler
-
 	// ExprWithError run a system query and returns an error. eg; Expr("filter(objects, .GetID() == "rubix-manager""))  see docs https://github.com/expr-lang/expr
 	ExprWithError(query string) (any, error)
 
@@ -107,20 +105,26 @@ type Runtime interface {
 	// HistoryManager get ros history manager. eg; HistoryManager().AllHistories()
 	HistoryManager() history.Manager
 
-	// ToStringArray Conversions
-	ToStringArray(interfaces interface{}) []string
+	// Cron gets cron/job scheduler  Cron().All()
+	Cron() scheduler.Scheduler
+
+	// ScheduleManager weekly and exception time scheduler eg; ScheduleManager().All()
+	ScheduleManager() schedules.Manager
 
 	// Rest is a rest client for making HTTP requests, Example Rest().Execute("GET", "http://localhost:8080/api")
 	Rest() restc.Rest
+
+	// DB access the postgres database; eg DG().Select("select *")
+	DB() pglib.PG
+
+	// AlarmManager usage is through the alarm-manager object
+	AlarmManager() alarm.Manager
 
 	// Publish a mqtt message
 	Publish(topic string, body interface{}) (err string)
 
 	// Iam is used for discovery ROS instances that are connected to command MQTT broker. eg; {"key": "command", "args": ["run", "whois"], "data": {"start": "1", "finish": "200", "global": "true"}}
 	Iam(rangeStart, finish int) Object
-
-	// DB access the postgres database; eg DG().Select("select *")
-	DB() pglib.PG
 
 	// ObjectSync sync all the objects to the postgres db;
 	ObjectSync(forceSync bool, opts *SyncOptions) error
@@ -133,8 +137,8 @@ type Runtime interface {
 	// ObjectBuilder is used for build an object. Use case if for building an object using RQL and then deploying. eg; ObjectBuilder({"objectID: trigger"}).ToObject()
 	ObjectBuilder(body *Builder) *Builder
 
-	// AlarmManager usage is through the alarm-manager object
-	AlarmManager() alarm.Manager
+	// ToStringArray Conversions
+	ToStringArray(interfaces interface{}) []string
 }
 
 type RuntimeOpts struct {
@@ -158,6 +162,7 @@ func NewRuntime(objs []Object, opts *RuntimeOpts) Runtime {
 	r.db = db
 	r.rest = restc.New()
 	r.alarmManager = alarm.NewAlarmManager("runtime")
+	r.scheduleManager = schedules.New()
 	return r
 }
 
@@ -186,10 +191,15 @@ type RuntimeImpl struct {
 	rest            restc.Rest
 	mqttClient      mqttwrapper.MQTT
 	alarmManager    alarm.Manager
+	scheduleManager schedules.Manager
 }
 
 func (inst *RuntimeImpl) AlarmManager() alarm.Manager {
 	return inst.alarmManager
+}
+
+func (inst *RuntimeImpl) ScheduleManager() schedules.Manager {
+	return inst.scheduleManager
 }
 
 func (inst *RuntimeImpl) Publish(topic string, body interface{}) string {

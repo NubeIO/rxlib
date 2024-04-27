@@ -11,18 +11,25 @@ type TimeRange struct {
 }
 
 type Schedule struct {
-	Name            string                       `json:"name"`
-	UseUTC          bool                         `json:"useUTC"`
-	SetTimezone     *time.Location               `json:"setTimezone"`
+	Name            string `json:"name"`
+	UseUTC          bool   `json:"useUTC"`
+	SetTimezone     string `json:"setTimezone"`
+	setTimezone     *time.Location
 	DayToTimeRanges map[time.Weekday][]TimeRange `json:"dayToTimeRanges"`
 	Exceptions      map[time.Time]TimeRange      `json:"exceptions"`
 }
 
 // NewSchedule creates a new WeeklySchedule.
-func NewSchedule(useUTC bool, loc *time.Location) *Schedule {
+func NewSchedule(name string, useUTC bool, timezone string) *Schedule {
+	var loc *time.Location
+	if timezone != "" {
+		loc, _ = time.LoadLocation(timezone)
+	}
 	return &Schedule{
+		Name:            name,
 		UseUTC:          useUTC,
-		SetTimezone:     loc,
+		SetTimezone:     timezone,
+		setTimezone:     loc,
 		DayToTimeRanges: make(map[time.Weekday][]TimeRange),
 		Exceptions:      make(map[time.Time]TimeRange),
 	}
@@ -33,8 +40,8 @@ func (ws *Schedule) AddTimeRange(day time.Weekday, start, stop string) error {
 	currentTime := time.Now()
 	if ws.UseUTC {
 		currentTime = currentTime.UTC()
-	} else if ws.SetTimezone != nil {
-		currentTime = currentTime.In(ws.SetTimezone)
+	} else if ws.setTimezone != nil {
+		currentTime = currentTime.In(ws.setTimezone)
 	}
 
 	startTime, err := time.Parse(layout, start)
@@ -47,8 +54,8 @@ func (ws *Schedule) AddTimeRange(day time.Weekday, start, stop string) error {
 	}
 
 	// Set the date components for start and stop times
-	startTime = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), startTime.Hour(), startTime.Minute(), 0, 0, ws.SetTimezone)
-	stopTime = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), stopTime.Hour(), stopTime.Minute(), 0, 0, ws.SetTimezone)
+	startTime = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), startTime.Hour(), startTime.Minute(), 0, 0, ws.setTimezone)
+	stopTime = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), stopTime.Hour(), stopTime.Minute(), 0, 0, ws.setTimezone)
 
 	ws.DayToTimeRanges[day] = append(ws.DayToTimeRanges[day], TimeRange{Start: startTime, Stop: stopTime})
 	return nil
@@ -100,8 +107,8 @@ func (ws *Schedule) checkWeekly() []*ScheduleStatus {
 
 	if ws.UseUTC {
 		currentTime = currentTime.UTC()
-	} else if ws.SetTimezone != nil {
-		currentTime = currentTime.In(ws.SetTimezone)
+	} else if ws.setTimezone != nil {
+		currentTime = currentTime.In(ws.setTimezone)
 	}
 
 	var weeklyStatuses []*ScheduleStatus
@@ -139,8 +146,8 @@ func (ws *Schedule) getExceptionStatus(ex TimeRange) *ScheduleStatus {
 
 	if ws.UseUTC {
 		now = now.UTC()
-	} else if ws.SetTimezone != nil {
-		now = now.In(ws.SetTimezone)
+	} else if ws.setTimezone != nil {
+		now = now.In(ws.setTimezone)
 	}
 
 	isActive := now.After(ex.Start) && now.Before(ex.Stop)

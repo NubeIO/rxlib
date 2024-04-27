@@ -1,34 +1,70 @@
 package schedules
 
-import "sync"
+import (
+	"encoding/json"
+	"sync"
+	"time"
+)
 
-// ScheduleManager is an interface for managing schedules schedules.
-type ScheduleManager interface {
-	Add(name string, sch *Schedule)
+// Manager is an interface for managing schedules.
+type Manager interface {
+	Add(sch *Schedule)
+	Parse(body any) *Schedule
+	ParseFromString(body string) *Schedule
 	Get(name string) *Schedule
 	Edit(name string, sch *Schedule)
 	All() map[string]*Schedule
 	Delete(name string)
 }
 
-// scheduleManager is an implementation of the ScheduleManager interface.
+// scheduleManager is an implementation of the Manager interface.
 type scheduleManager struct {
 	schedules map[string]*Schedule
 	mu        sync.Mutex
 }
 
-// New creates a new instance of scheduleManager and returns it as a ScheduleManager interface.
-func New() ScheduleManager {
+// Parse a schedule from json
+func (sm *scheduleManager) Parse(body any) *Schedule {
+	var sc *Schedule
+	marshal, err := json.Marshal(body)
+	if err != nil {
+		return nil
+	}
+	err = json.Unmarshal(marshal, &sc)
+	if err != nil {
+		return nil
+	}
+	return sc
+}
+
+// ParseFromString a schedule from json
+func (sm *scheduleManager) ParseFromString(body string) *Schedule {
+	var sc *Schedule
+	err := json.Unmarshal([]byte(body), &sc)
+	if err != nil {
+		return nil
+	}
+	return sc
+}
+
+// New creates a new instance of scheduleManager and returns it as a Manager interface.
+func New() Manager {
 	return &scheduleManager{
 		schedules: make(map[string]*Schedule),
 	}
 }
 
 // Add adds a new schedule with the given name.
-func (sm *scheduleManager) Add(name string, sch *Schedule) {
+func (sm *scheduleManager) Add(sch *Schedule) {
 	sm.mu.Lock()
 	defer sm.mu.Unlock()
-	sm.schedules[name] = sch
+	if sch.Exceptions == nil {
+		sch.Exceptions = make(map[time.Time]TimeRange)
+	}
+	if sch.DayToTimeRanges == nil {
+		sch.DayToTimeRanges = make(map[time.Weekday][]TimeRange)
+	}
+	sm.schedules[sch.Name] = sch
 }
 
 // Get retrieves a schedule by name.
