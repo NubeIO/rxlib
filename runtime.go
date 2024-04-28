@@ -55,6 +55,8 @@ type Runtime interface {
 
 	// Delete deletes runtime
 	Delete() string
+	// DeleteByUUID deletes runtime by UUID
+	DeleteByUUID(uuid string) error
 	// GetByUUID gets object by UUID; eg GetByUUID("abc").GetName(), GetByUUID("abc").GetInputs()
 	GetByUUID(uuid string) Object
 	// GetFirstByID gets first object by ID eg GetFirstByID("abc").GetID(), GetFirstByID("abc").GetTags()
@@ -248,4 +250,21 @@ func (inst *RuntimeImpl) Delete() string {
 	inst.objects = nil
 	d := len(inst.objects)
 	return fmt.Sprintf("count deleted: %d current: %d", c, d)
+}
+
+func (inst *RuntimeImpl) DeleteByUUID(uuid string) error {
+	inst.mutex.Lock()
+	defer inst.mutex.Unlock()
+	deleted := false
+	for i, o := range inst.objects {
+		if o.GetUUID() == uuid {
+			inst.objects = append(inst.objects[:i], inst.objects[i+1:]...)
+			deleted = true
+			break
+		}
+	}
+	if !deleted {
+		return fmt.Errorf("not found object with uuid: %s", uuid)
+	}
+	return nil
 }
