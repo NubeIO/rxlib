@@ -4,8 +4,8 @@ import (
 	"time"
 )
 
-// TimeRange represents a start and stop time.
-type TimeRange struct {
+// Entry represents a start and stop time.
+type Entry struct {
 	Start time.Time
 	Stop  time.Time
 }
@@ -15,8 +15,8 @@ type Schedule struct {
 	UseUTC          bool   `json:"useUTC"`
 	SetTimezone     string `json:"setTimezone"`
 	setTimezone     *time.Location
-	DayToTimeRanges map[time.Weekday][]TimeRange `json:"dayToTimeRanges"`
-	Exceptions      map[time.Time]TimeRange      `json:"exceptions"`
+	DayToTimeRanges map[time.Weekday][]Entry `json:"dayToTimeRanges"`
+	Exceptions      map[time.Time]Entry      `json:"exceptions"`
 }
 
 // NewSchedule creates a new WeeklySchedule.
@@ -30,8 +30,8 @@ func NewSchedule(name string, useUTC bool, timezone string) *Schedule {
 		UseUTC:          useUTC,
 		SetTimezone:     timezone,
 		setTimezone:     loc,
-		DayToTimeRanges: make(map[time.Weekday][]TimeRange),
-		Exceptions:      make(map[time.Time]TimeRange),
+		DayToTimeRanges: make(map[time.Weekday][]Entry),
+		Exceptions:      make(map[time.Time]Entry),
 	}
 }
 
@@ -57,7 +57,7 @@ func (ws *Schedule) AddTimeRange(day time.Weekday, start, stop string) error {
 	startTime = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), startTime.Hour(), startTime.Minute(), 0, 0, ws.setTimezone)
 	stopTime = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), stopTime.Hour(), stopTime.Minute(), 0, 0, ws.setTimezone)
 
-	ws.DayToTimeRanges[day] = append(ws.DayToTimeRanges[day], TimeRange{Start: startTime, Stop: stopTime})
+	ws.DayToTimeRanges[day] = append(ws.DayToTimeRanges[day], Entry{Start: startTime, Stop: stopTime})
 	return nil
 }
 
@@ -141,7 +141,7 @@ func (ws *Schedule) getAdjustedTime(t time.Time, day time.Weekday, reference tim
 }
 
 // getExceptionStatus returns the status of a specific exception.
-func (ws *Schedule) getExceptionStatus(ex TimeRange) *ScheduleStatus {
+func (ws *Schedule) getExceptionStatus(ex Entry) *ScheduleStatus {
 	now := time.Now()
 
 	if ws.UseUTC {
@@ -181,6 +181,6 @@ func (ws *Schedule) AddException(start, stop string) error {
 	if err != nil {
 		return err
 	}
-	ws.Exceptions[startTime] = TimeRange{Start: startTime, Stop: stopTime}
+	ws.Exceptions[startTime] = Entry{Start: startTime, Stop: stopTime}
 	return nil
 }

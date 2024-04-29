@@ -232,21 +232,25 @@ message ObjectPagination {
 message CommandResponse {
   string senderID = 1;
   int32 count = 2;
-  map<string, string> mapStrings = 3;
-  double number = 4;
-  bool boolean = 5;
-  string error = 6;
-  string str = 7;
-  string returnType = 8;
-  bytes any = 9;
-  repeated CommandResponse response = 10;
-  repeated ObjectConfig serializeObjects = 11;
-  ObjectPagination objectPagination = 12;
-  PalletTree pallet = 13;
-  ObjectsRootMap objectTree = 14;
-  AncestorObjectTree ancestorObjectTree = 15;
-  repeated PortValue PortValues = 16;
+  double typeFloat = 3;
+  int32 typeInt = 4;
+  bool typeBool = 5;
+  string typeString = 7;
+  string typeJson = 8;
+  bytes typeByte = 9;
+  string typeError = 6;
+  string returnType = 10;
+  map<string, string> mapStrings = 11;
+  repeated CommandResponse response = 12;
+  repeated ObjectConfig serializeObjects = 13;
+  ObjectPagination objectPagination = 14;
+  PalletTree pallet = 15;
+  ObjectsRootMap objectTree = 16;
+  AncestorObjectTree ancestorObjectTree = 17;
+  repeated PortValue PortValues = 18;
 }
+
+
 
 
 
@@ -428,3 +432,4 @@ message AncestorObjectTree {
   string category = 5;
   repeated AncestorObjectTree children = 6;
 }
+

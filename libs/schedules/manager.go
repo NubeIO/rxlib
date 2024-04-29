@@ -59,10 +59,10 @@ func (sm *scheduleManager) Add(sch *Schedule) {
 	sm.mu.Lock()
 	defer sm.mu.Unlock()
 	if sch.Exceptions == nil {
-		sch.Exceptions = make(map[time.Time]TimeRange)
+		sch.Exceptions = make(map[time.Time]Entry)
 	}
 	if sch.DayToTimeRanges == nil {
-		sch.DayToTimeRanges = make(map[time.Weekday][]TimeRange)
+		sch.DayToTimeRanges = make(map[time.Weekday][]Entry)
 	}
 	sm.schedules[sch.Name] = sch
 }

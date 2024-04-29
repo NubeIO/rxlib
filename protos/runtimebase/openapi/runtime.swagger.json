@@ -521,31 +521,38 @@
           "type": "integer",
           "format": "int32"
         },
-        "mapStrings": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "number": {
+        "typeFloat": {
           "type": "number",
           "format": "double"
         },
-        "boolean": {
+        "typeInt": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "typeBool": {
           "type": "boolean"
         },
-        "error": {
+        "typeString": {
           "type": "string"
         },
-        "str": {
+        "typeJson": {
+          "type": "string"
+        },
+        "typeByte": {
+          "type": "string",
+          "format": "byte"
+        },
+        "typeError": {
           "type": "string"
         },
         "returnType": {
           "type": "string"
         },
-        "any": {
-          "type": "string",
-          "format": "byte"
+        "mapStrings": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "response": {
           "type": "array",

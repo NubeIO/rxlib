@@ -32,13 +32,13 @@ func (inst *rosClient) executeCommand(timeout int, targetGlobalID, requestUUID s
 		err := json.Unmarshal(resp.Body, &out)
 		if err != nil {
 			return &runtime.CommandResponse{
-				Error: fmt.Sprintf("Error unmarshalling response: %s", err),
+				TypeError: fmt.Sprintf("Error unmarshalling response: %s", err),
 			}
 		}
 		return out
 	}
 	return &runtime.CommandResponse{
-		Error: "failed to get any response",
+		TypeError: "failed to get any response",
 	}
 }
 
