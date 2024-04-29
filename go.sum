@@ -5,8 +5,8 @@ github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym
 github.com/Masterminds/semver/v3 v3.1.1/go.mod h1:VPu/7SZ7ePZ3QOrcuXROw5FAcLl4a0cBrbBpGY/8hQs=
 github.com/NubeIO/engineering-units v0.0.2 h1:ETNIrWSWXZiVbSz/4l4YQqDbsnmfXGxzno9SgBECgDE=
 github.com/NubeIO/engineering-units v0.0.2/go.mod h1:IlG5huFOVTGRHA2ZAaMjwWYQSxJumRQmHzxbKhYF+Lk=
-github.com/NubeIO/mqttwrapper v0.0.6 h1:ucEKWFa9AJYFMv47E9vgBIkj5ZgZ8zt6g/gCtsU7RLU=
-github.com/NubeIO/mqttwrapper v0.0.6/go.mod h1:nXkQ6vsMBsQl7wfkHi111my/xILNFbgANG7xONFIBDw=
+github.com/NubeIO/mqttwrapper v0.0.8 h1:ypFGxMimZPiFNVSbRTpSh2CvyVHe1XsRxYPNGZDAPTk=
+github.com/NubeIO/mqttwrapper v0.0.8/go.mod h1:nXkQ6vsMBsQl7wfkHi111my/xILNFbgANG7xONFIBDw=
 github.com/NubeIO/scheduler v0.0.1 h1:Y+TS3HVxHKBJtd2LzpeVFV+XnfI39JLffR8QXO3cNjo=
 github.com/NubeIO/scheduler v0.0.1/go.mod h1:weYug4thYT722DCEd+1Pp/iXcu4dbEIpA3sQjOLulAc=
 github.com/NubeIO/schema v0.0.1 h1:/H3g7Qex1nA6RpwrzxsyP0+qblbljmnRZaAzfXbAYXU=

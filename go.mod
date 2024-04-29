@@ -4,11 +4,11 @@ go 1.21.6
 
 toolchain go1.21.9
 
-replace github.com/NubeIO/mqttwrapper => /home/aidan/code/go/mqttwrapper
+//replace github.com/NubeIO/mqttwrapper => /home/aidan/code/go/mqttwrapper
 
 require (
 	github.com/NubeIO/engineering-units v0.0.2
-	github.com/NubeIO/mqttwrapper v0.0.6
+	github.com/NubeIO/mqttwrapper v0.0.8
 	github.com/NubeIO/scheduler v0.0.1
 	github.com/NubeIO/schema v0.0.1
 	github.com/expr-lang/expr v1.16.5
