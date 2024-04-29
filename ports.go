@@ -58,7 +58,7 @@ func (p *Port) SetHasConnection(state bool) {
 }
 
 func (p *Port) SetValueFloat(v float64) {
-	p.Payload.Number = v
+	p.Payload.FloatValue = v
 }
 
 func (p *Port) GetHasConnection() bool {

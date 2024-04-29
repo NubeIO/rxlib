@@ -9,17 +9,13 @@ func TestNewPublishTopicBuilder(t *testing.T) {
 	pubBuilder := NewPublishTopicBuilder().
 		WithVersion("v1").
 		WithClientType(Cloud).
+		WithSenderUUID("R-1").
 		WithTargetUUID("target-123").
-		WithSenderUUID("sender-456").
 		WithRequestUUID("request-789").
 		WithDataType(Proto).
 		WithType(Object)
 	fmt.Println(pubBuilder.Build())
 
-	subBuilder := NewSubscribeTopicBuilder().
-		WithVersion("v1").
-		WithClientType(Cloud).
-		GlobalID("target-123").
-		WithDataType(Proto)
-	fmt.Println(subBuilder.Build())
+	// r/req/v1/cloud/R-1/plain/command/RX-2/req-uuid
+
 }

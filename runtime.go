@@ -5,6 +5,7 @@ import (
 	"github.com/NubeIO/mqttwrapper"
 	"github.com/NubeIO/rxlib/libs/alarm"
 	"github.com/NubeIO/rxlib/libs/history"
+	"github.com/NubeIO/rxlib/libs/jsonutils"
 	"github.com/NubeIO/rxlib/libs/pglib"
 	"github.com/NubeIO/rxlib/libs/restc"
 	"github.com/NubeIO/rxlib/libs/schedules"
@@ -12,6 +13,7 @@ import (
 	"github.com/NubeIO/rxlib/plugins"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/NubeIO/scheduler"
+	"log"
 	"sync"
 )
 
@@ -37,8 +39,8 @@ type Runtime interface {
 
 	// GetObjectValues returns values of an object by UUID
 	GetObjectValues(objectUUID string) []*runtime.PortValue
-	// GetObjectsValues returns values of all objects
-	GetObjectsValues() map[string][]*runtime.PortValue
+	// GetObjectsValues returns values of all objects, if the parentUUID is passed in it will return all the child object port values. FYI will not return the parent value
+	GetObjectsValues(parentUUID string) []*runtime.PortValue
 	// GetObjectsValuesPaginate returns paginated values of objects
 	GetObjectsValuesPaginate(parentUUID string, pageNumber, pageSize int) *ObjectValuesPagination
 
@@ -124,8 +126,11 @@ type Runtime interface {
 
 	// Publish a mqtt message
 	Publish(topic string, body interface{}) (err string)
+	// RequestResponse a mqtt message want wait for a repose
+	RequestResponse(timeoutSeconds int, publishTopic, responseTopic, requestUUID string, body interface{}) *mqttwrapper.Response
+	// Client
+	Client() ROSClient
 
-	// Iam is used for discovery ROS instances that are connected to command MQTT broker. eg; {"key": "command", "args": ["run", "whois"], "data": {"start": "1", "finish": "200", "global": "true"}}
 	Iam(rangeStart, finish int) Object
 
 	// ObjectSync sync all the objects to the postgres db;
@@ -133,19 +138,29 @@ type Runtime interface {
 	// HistorySync sync all the histories to the postgres db;
 	HistorySync(forceSync bool, opts *SyncOptions) error
 
-	// NewUUID generates a UUID
-	NewUUID() string
+	// UUID generates a UUID
+	UUID() string
 
 	// ObjectBuilder is used for build an object. Use case if for building an object using RQL and then deploying. eg; ObjectBuilder({"objectID: trigger"}).ToObject()
 	ObjectBuilder(body *Builder) *Builder
 
 	// ToStringArray Conversions
 	ToStringArray(interfaces interface{}) []string
+
+	// JSON helper functions to work with JSON, you can also use gjson see docs; https://github.com/tidwall/gjson
+	JSON() *jsonutils.JSONUtils
+}
+
+type RuntimeSettings struct {
+	GlobalUUID string
+	GlobalID   string
+	RootDir    string
 }
 
 type RuntimeOpts struct {
-	Scheduler  scheduler.Scheduler
-	MQTTClient mqttwrapper.MQTT
+	Scheduler       scheduler.Scheduler
+	MQTTClient      mqttwrapper.MQTT
+	RuntimeSettings *RuntimeSettings
 }
 
 func NewRuntime(objs []Object, opts *RuntimeOpts) Runtime {
@@ -165,6 +180,12 @@ func NewRuntime(objs []Object, opts *RuntimeOpts) Runtime {
 	r.rest = restc.New()
 	r.alarmManager = alarm.NewAlarmManager("runtime")
 	r.scheduleManager = schedules.New()
+	r.jsonUtils = &jsonutils.JSONUtils{}
+	r.runtimeSettings = opts.RuntimeSettings
+	if r.mqttClient == nil {
+		log.Fatal("Runtime() mqtt client can not be empty")
+	}
+	r.client = NewRosClient(opts.MQTTClient, r.runtimeSettings)
 	return r
 }
 
@@ -194,6 +215,13 @@ type RuntimeImpl struct {
 	mqttClient      mqttwrapper.MQTT
 	alarmManager    alarm.Manager
 	scheduleManager schedules.Manager
+	jsonUtils       *jsonutils.JSONUtils
+	runtimeSettings *RuntimeSettings
+	client          ROSClient
+}
+
+func (inst *RuntimeImpl) JSON() *jsonutils.JSONUtils {
+	return inst.jsonUtils
 }
 
 func (inst *RuntimeImpl) AlarmManager() alarm.Manager {
@@ -202,6 +230,10 @@ func (inst *RuntimeImpl) AlarmManager() alarm.Manager {
 
 func (inst *RuntimeImpl) ScheduleManager() schedules.Manager {
 	return inst.scheduleManager
+}
+
+func (inst *RuntimeImpl) Client() ROSClient {
+	return inst.client
 }
 
 func (inst *RuntimeImpl) Publish(topic string, body interface{}) string {
@@ -213,6 +245,15 @@ func (inst *RuntimeImpl) Publish(topic string, body interface{}) string {
 		return err.Error()
 	}
 	return ""
+}
+
+func (inst *RuntimeImpl) RequestResponse(timeoutSeconds int, publishTopic, responseTopic, requestUUID string, body interface{}) *mqttwrapper.Response {
+	if inst.mqttClient == nil {
+		return &mqttwrapper.Response{
+			Error: "client is empty",
+		}
+	}
+	return inst.mqttClient.RequestResponse(timeoutSeconds, publishTopic, responseTopic, requestUUID, body)
 }
 
 func (inst *RuntimeImpl) AddObjects(objects []Object) {

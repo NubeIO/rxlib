@@ -162,12 +162,14 @@ message PortValue {
   bool isNil = 4;
   bool transformationApplied = 5;
   bytes data = 6;
-  double number = 7;
+  double floatValue = 7;
   string stringValue = 8;
-  bool booleanValue = 9;
-  google.protobuf.Any any = 10;
-  ValueTransformation transformation = 11;
-  repeated string portIDs = 12;
+  bool boolValue = 9;
+  int32 intValue = 10;
+  string jsonValue = 12;
+  google.protobuf.Any any = 13;
+  ValueTransformation transformation = 14;
+  repeated string portIDs = 15;
 }
 
 
@@ -242,6 +244,7 @@ message CommandResponse {
   PalletTree pallet = 12;
   ObjectsRootMap objectTree = 13;
   AncestorObjectTree ancestorObjectTree = 14;
+  repeated PortValue PortValues = 15;
 }
 
 

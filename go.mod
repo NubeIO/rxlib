@@ -6,7 +6,7 @@ toolchain go1.21.9
 
 require (
 	github.com/NubeIO/engineering-units v0.0.2
-	github.com/NubeIO/mqttwrapper v0.0.1
+	github.com/NubeIO/mqttwrapper v0.0.6
 	github.com/NubeIO/scheduler v0.0.1
 	github.com/NubeIO/schema v0.0.1
 	github.com/expr-lang/expr v1.16.5
@@ -23,6 +23,7 @@ require (
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/texttheater/golang-levenshtein/levenshtein v0.0.0-20200805054039-cae8b0eaed6c
 	github.com/thlib/go-timezone-local v0.0.0-20210907160436-ef149e42d28e
+	github.com/tidwall/gjson v1.17.1
 	google.golang.org/genproto/googleapis/api v0.0.0-20240221002015-b0ce06bbee7c
 	google.golang.org/grpc v1.62.0
 	google.golang.org/protobuf v1.32.0
@@ -52,6 +53,8 @@ require (
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
+	github.com/tidwall/match v1.1.1 // indirect
+	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.13 // indirect
 	github.com/tklauser/numcpus v0.7.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
