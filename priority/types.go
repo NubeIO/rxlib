@@ -32,6 +32,7 @@ const TypeFloat = "float"
 const TypeAny = "any"
 const TypeDate = "date"
 const TypeString = "string"
+const TypeJSON = "json"
 
 type Priority struct {
 	PriorityType Type            `json:"priorityType"`

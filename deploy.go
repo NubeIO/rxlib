@@ -67,7 +67,7 @@ func newBuilderObject(body *Builder) *runtime.ObjectConfig {
 	return objectConfig
 }
 
-func (inst *RuntimeImpl) NewUUID() string {
+func (inst *RuntimeImpl) UUID() string {
 	return helpers.UUID()
 }
 

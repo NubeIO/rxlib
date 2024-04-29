@@ -46,12 +46,21 @@ func (inst *RuntimeImpl) CommandObject(command *ExtendedCommand) *CommandRespons
 			inst.response.Count = len(inst.response.SerializeObjects)
 		}
 		return inst.response
+	case "values":
+		return inst.handleValues(parsedArgs)
 	case "objects", "object", "command":
 		return inst.handleObjects(parsedArgs)
 	default:
 		inst.response.Error = fmt.Sprintf("unknown command type: %s", parsedArgs.Thing)
 		return inst.response
 	}
+}
+
+func (inst *RuntimeImpl) handleValues(parsedArgs *ParsedCommand) *CommandResponse {
+	if parsedArgs.GetPortValues() && !parsedArgs.GetPagination() {
+		return inst.handlePortValues(parsedArgs)
+	}
+	return nil
 }
 
 func (inst *RuntimeImpl) handleObjects(parsedArgs *ParsedCommand) *CommandResponse {
@@ -83,6 +92,12 @@ func (inst *RuntimeImpl) handlePaginationObjects(parsedArgs *ParsedCommand) *Com
 }
 
 func (inst *RuntimeImpl) handlePortValues(parsedArgs *ParsedCommand) *CommandResponse {
+	parentUUID := parsedArgs.GetUUID()
+	inst.response.PortValues = inst.GetObjectsValues(parentUUID)
+	return inst.response
+}
+
+func (inst *RuntimeImpl) handlePortValuesPaginate(parsedArgs *ParsedCommand) *CommandResponse {
 	objectUUID := parsedArgs.GetUUID()
 	pageSize := parsedArgs.GetPaginationPageSize()
 	pageNumber := parsedArgs.GetPaginationPageNumber()
@@ -348,5 +363,6 @@ func convertCommand(resp *CommandResponse) *runtime.CommandResponse {
 		ObjectPagination:   resp.ObjectPagination,
 		ObjectTree:         resp.ObjectTree,
 		AncestorObjectTree: resp.AncestorObjectTree,
+		PortValues:         resp.PortValues,
 	}
 }

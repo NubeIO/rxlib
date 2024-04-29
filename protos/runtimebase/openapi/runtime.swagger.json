@@ -569,6 +569,13 @@
         },
         "ancestorObjectTree": {
           "$ref": "#/definitions/RuntimeAncestorObjectTree"
+        },
+        "PortValues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimePortValue"
+          }
         }
       }
     },
@@ -1132,15 +1139,22 @@
           "type": "string",
           "format": "byte"
         },
-        "number": {
+        "floatValue": {
           "type": "number",
           "format": "double"
         },
         "stringValue": {
           "type": "string"
         },
-        "booleanValue": {
+        "boolValue": {
           "type": "boolean"
+        },
+        "intValue": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "jsonValue": {
+          "type": "string"
         },
         "any": {
           "$ref": "#/definitions/protobufAny"

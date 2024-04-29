@@ -65,7 +65,10 @@ func (inst *RuntimeImpl) ObjectsPagination(pageNumber, pageSize int) *ObjectPagi
 
 func (inst *RuntimeImpl) PaginateObjects(objects []Object, pageNumber, pageSize int) *ObjectPagination {
 	totalCount := len(objects)
-	totalPages := (totalCount + pageSize - 1) / pageSize // Ceiling division
+	totalPages := 0
+	if pageSize > 0 {
+		totalPages = (totalCount + pageSize - 1) / pageSize // Ceiling division
+	}
 	start := (pageNumber - 1) * pageSize
 	end := start + pageSize
 	if end > len(objects) {

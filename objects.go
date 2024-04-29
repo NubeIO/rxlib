@@ -1,6 +1,8 @@
 package rxlib
 
-import "github.com/NubeIO/rxlib/protos/runtimebase/runtime"
+import (
+	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
+)
 
 func (inst *RuntimeImpl) AddObject(object Object) {
 	inst.mutex.Lock()
@@ -135,10 +137,16 @@ func (inst *RuntimeImpl) GetObjectValues(objectUUID string) []*runtime.PortValue
 	return out
 }
 
-func (inst *RuntimeImpl) GetObjectsValues() map[string][]*runtime.PortValue {
-	out := make(map[string][]*runtime.PortValue)
-	for _, object := range inst.Get() {
-		out[object.GetUUID()] = inst.GetObjectValues(object.GetUUID())
+func (inst *RuntimeImpl) GetObjectsValues(parentUUID string) []*runtime.PortValue {
+	var out []*runtime.PortValue
+	if parentUUID == "" {
+		for _, object := range inst.Get() {
+			out = append(out, inst.GetObjectValues(object.GetUUID())...)
+		}
+	} else {
+		for _, object := range inst.GetChildObjects(parentUUID) {
+			out = append(out, inst.GetObjectValues(object.GetUUID())...)
+		}
 	}
 	return out
 }

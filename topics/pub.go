@@ -23,6 +23,7 @@ const (
 type Type string
 
 const (
+	Command Type = "command"
 	Object  Type = "object"
 	Objects Type = "objects"
 	Runtime Type = "runtime"

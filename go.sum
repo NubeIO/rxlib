@@ -5,8 +5,8 @@ github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym
 github.com/Masterminds/semver/v3 v3.1.1/go.mod h1:VPu/7SZ7ePZ3QOrcuXROw5FAcLl4a0cBrbBpGY/8hQs=
 github.com/NubeIO/engineering-units v0.0.2 h1:ETNIrWSWXZiVbSz/4l4YQqDbsnmfXGxzno9SgBECgDE=
 github.com/NubeIO/engineering-units v0.0.2/go.mod h1:IlG5huFOVTGRHA2ZAaMjwWYQSxJumRQmHzxbKhYF+Lk=
-github.com/NubeIO/mqttwrapper v0.0.1 h1:/v140CTxjXCNLztRkYsneA0BHDhwsgW5Y1UlpAJRfQs=
-github.com/NubeIO/mqttwrapper v0.0.1/go.mod h1:nXkQ6vsMBsQl7wfkHi111my/xILNFbgANG7xONFIBDw=
+github.com/NubeIO/mqttwrapper v0.0.6 h1:ucEKWFa9AJYFMv47E9vgBIkj5ZgZ8zt6g/gCtsU7RLU=
+github.com/NubeIO/mqttwrapper v0.0.6/go.mod h1:nXkQ6vsMBsQl7wfkHi111my/xILNFbgANG7xONFIBDw=
 github.com/NubeIO/scheduler v0.0.1 h1:Y+TS3HVxHKBJtd2LzpeVFV+XnfI39JLffR8QXO3cNjo=
 github.com/NubeIO/scheduler v0.0.1/go.mod h1:weYug4thYT722DCEd+1Pp/iXcu4dbEIpA3sQjOLulAc=
 github.com/NubeIO/schema v0.0.1 h1:/H3g7Qex1nA6RpwrzxsyP0+qblbljmnRZaAzfXbAYXU=
@@ -196,6 +196,12 @@ github.com/texttheater/golang-levenshtein/levenshtein v0.0.0-20200805054039-cae8
 github.com/texttheater/golang-levenshtein/levenshtein v0.0.0-20200805054039-cae8b0eaed6c/go.mod h1:JlzghshsemAMDGZLytTFY8C1JQxQPhnatWqNwUXjggo=
 github.com/thlib/go-timezone-local v0.0.0-20210907160436-ef149e42d28e h1:BuzhfgfWQbX0dWzYzT1zsORLnHRv3bcRcsaUk0VmXA8=
 github.com/thlib/go-timezone-local v0.0.0-20210907160436-ef149e42d28e/go.mod h1:/Tnicc6m/lsJE0irFMA0LfIwTBo4QP7A8IfyIv4zZKI=
+github.com/tidwall/gjson v1.17.1 h1:wlYEnwqAHgzmhNUFfw7Xalt2JzQvsMx2Se4PcoFCT/U=
+github.com/tidwall/gjson v1.17.1/go.mod h1:/wbyibRr2FHMks5tjHJ5F8dMZh3AcwJEMf5vlfC0lxk=
+github.com/tidwall/match v1.1.1 h1:+Ho715JplO36QYgwN9PGYNhgZvoUSc9X2c80KVTi+GA=
+github.com/tidwall/match v1.1.1/go.mod h1:eRSPERbgtNPcGhD8UCthc6PmLEQXEWd3PRB5JTxsfmM=
+github.com/tidwall/pretty v1.2.0 h1:RWIZEg2iJ8/g6fDDYzMpobmaoGh5OLl4AXtGUGPcqCs=
+github.com/tidwall/pretty v1.2.0/go.mod h1:ITEVvHYasfjBbM0u2Pg8T2nJnzm8xPwvNhhsoaGGjNU=
 github.com/tklauser/go-sysconf v0.3.13 h1:GBUpcahXSpR2xN01jhkNAbTLRk2Yzgggk8IM08lq3r4=
 github.com/tklauser/go-sysconf v0.3.13/go.mod h1:zwleP4Q4OehZHGn4CYZDipCgg9usW5IJePewFCGVEa0=
 github.com/tklauser/numcpus v0.7.0 h1:yjuerZP127QG9m5Zh/mSO4wqurYil27tHrqwRoRjpr4=

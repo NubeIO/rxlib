@@ -30,6 +30,7 @@ type CommandResponse struct {
 	ObjectTree         *runtime.ObjectsRootMap     `json:"objectTree,omitempty"`
 	AncestorObjectTree *runtime.AncestorObjectTree `json:"ancestorObjectTree,omitempty"`
 	Data               any                         `json:"data"`
+	PortValues         []*runtime.PortValue        `json:"portValues,omitempty"`
 }
 
 type ExtendedCommand struct {
@@ -520,6 +521,8 @@ func (c *ExtendedCommand) ParseCommandsArgs(cmd *ExtendedCommand) (*ParsedComman
 		args.Global = stringToBool(v)
 	}
 	switch args.GetThing() {
+	case "values":
+		return args, nil
 	case "whois":
 		return args, nil
 	case "ping":
