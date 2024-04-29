@@ -537,6 +537,9 @@
         "error": {
           "type": "string"
         },
+        "str": {
+          "type": "string"
+        },
         "returnType": {
           "type": "string"
         },

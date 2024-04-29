@@ -236,15 +236,16 @@ message CommandResponse {
   double number = 4;
   bool boolean = 5;
   string error = 6;
-  string returnType = 7;
-  bytes any = 8;
-  repeated CommandResponse response = 9;
-  repeated ObjectConfig serializeObjects = 10;
-  ObjectPagination objectPagination = 11;
-  PalletTree pallet = 12;
-  ObjectsRootMap objectTree = 13;
-  AncestorObjectTree ancestorObjectTree = 14;
-  repeated PortValue PortValues = 15;
+  string str = 7;
+  string returnType = 8;
+  bytes any = 9;
+  repeated CommandResponse response = 10;
+  repeated ObjectConfig serializeObjects = 11;
+  ObjectPagination objectPagination = 12;
+  PalletTree pallet = 13;
+  ObjectsRootMap objectTree = 14;
+  AncestorObjectTree ancestorObjectTree = 15;
+  repeated PortValue PortValues = 16;
 }
 
 

@@ -8,7 +8,7 @@ toolchain go1.21.9
 
 require (
 	github.com/NubeIO/engineering-units v0.0.2
-	github.com/NubeIO/mqttwrapper v0.0.8
+	github.com/NubeIO/mqttwrapper v0.0.9
 	github.com/NubeIO/scheduler v0.0.1
 	github.com/NubeIO/schema v0.0.1
 	github.com/expr-lang/expr v1.16.5
