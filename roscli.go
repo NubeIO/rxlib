@@ -38,13 +38,17 @@ func (inst *rosClient) BulkRQL(timeout int, requestUUID, script string, targetGl
 // executeCommandBulk sends a command to multiple targets and collects responses.
 func (inst *rosClient) executeCommandBulk(timeout int, targetGlobalIDs []string, requestUUID string, c ExtendedCommand) *runtime.CommandResponse {
 	var wg sync.WaitGroup
+	var mu sync.Mutex // Mutex for synchronization
 	responses := make([]*runtime.CommandResponse, len(targetGlobalIDs))
 	wg.Add(len(targetGlobalIDs))
 
 	for i, targetID := range targetGlobalIDs {
 		go func(index int, targetGlobalID string) {
 			defer wg.Done()
-			responses[index] = inst.executeCommand(timeout, targetGlobalID, requestUUID, c)
+			resp := inst.executeCommand(timeout, targetGlobalID, requestUUID, c)
+			mu.Lock()
+			responses[index] = resp
+			mu.Unlock()
 		}(i, targetID)
 	}
 
@@ -62,9 +66,18 @@ func (inst *rosClient) executeCommand(timeout int, targetGlobalID, requestUUID s
 		var out *runtime.CommandResponse
 		err := json.Unmarshal(resp.Body, &out)
 		if err != nil {
-			return &runtime.CommandResponse{
-				TypeError: fmt.Sprintf("Error unmarshalling response: %s", err),
+			if resp.Error != "" {
+				return &runtime.CommandResponse{
+					SenderID:  targetGlobalID,
+					TypeError: fmt.Sprintf(fmt.Sprintf("err: %s", resp.Error)),
+				}
+			} else {
+				return &runtime.CommandResponse{
+					SenderID:  targetGlobalID,
+					TypeError: fmt.Sprintf(fmt.Sprintf("err: %s", err)),
+				}
 			}
+
 		}
 		return out
 	}
@@ -121,9 +134,11 @@ func (inst *rosClient) GlobalRQL(bufferDuration int, requestUUID, script string)
 			var parsed *runtime.CommandResponse
 			err := json.Unmarshal(response.Body, &parsed)
 			if err == nil {
+
 				out.Response = append(out.Response, parsed)
 			}
 		}
+		out.Count = int32(len(out.Response))
 		return out
 	}
 	return nil

@@ -144,7 +144,7 @@ func (jc *JSONUtils) FlattenJSON(jsonStr string) string {
 	return j
 }
 
-// GetValue returns the value for a given JSON path.
+// Get returns the value for a given JSON path.
 func (jc *JSONUtils) Get(jsonStr, path string) gjson.Result {
 	return gjson.Get(jsonStr, path)
 }
