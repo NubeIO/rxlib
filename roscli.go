@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"github.com/NubeIO/mqttwrapper"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
+	"sync"
 )
 
 type ROSClient interface {
 	WhoIs(timeout int, targetGlobalID, requestUUID, start, finish, global string) *runtime.CommandResponse
 	GetObjects(timeout int, targetGlobalID, requestUUID string) *runtime.CommandResponse
 	RQL(timeout int, targetGlobalID, requestUUID, script string) *runtime.CommandResponse
+	BulkRQL(timeout int, requestUUID, script string, targetGlobalID ...string) *runtime.CommandResponse
 	GlobalRQL(bufferDuration int, requestUUID, script string) *runtime.CommandResponse
 }
 
@@ -21,6 +23,35 @@ type rosClient struct {
 
 func NewRosClient(mqtt mqttwrapper.MQTT, settings *RuntimeSettings) ROSClient {
 	return &rosClient{mqtt, settings}
+}
+
+func (inst *rosClient) BulkRQL(timeout int, requestUUID, script string, targetGlobalID ...string) *runtime.CommandResponse {
+	c := ExtendedCommand{
+		Command: &runtime.Command{
+			Key:  "rql",
+			Data: map[string]string{"script": script},
+		},
+	}
+	return inst.executeCommandBulk(timeout, targetGlobalID, requestUUID, c)
+}
+
+// executeCommandBulk sends a command to multiple targets and collects responses.
+func (inst *rosClient) executeCommandBulk(timeout int, targetGlobalIDs []string, requestUUID string, c ExtendedCommand) *runtime.CommandResponse {
+	var wg sync.WaitGroup
+	responses := make([]*runtime.CommandResponse, len(targetGlobalIDs))
+	wg.Add(len(targetGlobalIDs))
+
+	for i, targetID := range targetGlobalIDs {
+		go func(index int, targetGlobalID string) {
+			defer wg.Done()
+			responses[index] = inst.executeCommand(timeout, targetGlobalID, requestUUID, c)
+		}(i, targetID)
+	}
+
+	wg.Wait()
+	return &runtime.CommandResponse{
+		Response: responses,
+	}
 }
 
 func (inst *rosClient) executeCommand(timeout int, targetGlobalID, requestUUID string, c ExtendedCommand) *runtime.CommandResponse {
