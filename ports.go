@@ -37,7 +37,7 @@ type Port struct {
 	LastFail    *time.Time `json:"LastFail,omitempty"`
 	FailMessage string     `json:"failMessage,omitempty"`
 
-	OnMessage func(msg *payload.Payload) `json:"-"` // used for the evntbus
+	OnMessage func(portID string, msg *payload.Payload) `json:"-"` // used for the evntbus
 
 }
 
@@ -55,6 +55,10 @@ func (p *Port) GetName() string {
 
 func (p *Port) SetHasConnection(state bool) {
 	p.HasConnection = state
+}
+
+func (p *Port) SetValueInt(v int32) {
+	p.Payload.IntValue = v
 }
 
 func (p *Port) SetValueFloat(v float64) {
@@ -83,9 +87,9 @@ func (p *Port) SetLastFail(message string) string {
 }
 
 func (p *Port) initPriority(dataType priority.Type, decimal int) {
-	//if p.dataPriority == nil {
+	// if p.dataPriority == nil {
 	//	p.dataPriority = priority.NewValuePriority(dataType, nil, nil, decimal)
-	//}
+	// }
 }
 
 func (p *Port) InitPriority(dataType priority.Type, decimal int) {
@@ -93,30 +97,30 @@ func (p *Port) InitPriority(dataType priority.Type, decimal int) {
 }
 
 func (p *Port) AddTransformation(v *priority.Transformations) error {
-	//if p.dataPriority == nil {
+	// if p.dataPriority == nil {
 	//	return fmt.Errorf("data priority is empty")
-	//}
-	//p.dataPriority.AddTransformation(v)
+	// }
+	// p.dataPriority.AddTransformation(v)
 	return nil
 
 }
 
 func (p *Port) AddUnits(v *unitswrapper.EngineeringUnits) error {
-	//if p.dataPriority == nil {
+	// if p.dataPriority == nil {
 	//	return fmt.Errorf("data priority is empty")
-	//}
-	//p.dataPriority.AddUnits(v)
+	// }
+	// p.dataPriority.AddUnits(v)
 	return nil
 }
 
 func (p *Port) AddEnums(v []*priority.Enums) error {
-	//if p.dataPriority == nil {
+	// if p.dataPriority == nil {
 	//	return fmt.Errorf("data priority is empty")
-	//}
-	//if p.Transformation == nil {
+	// }
+	// if p.Transformation == nil {
 	//	return fmt.Errorf("transformation is empty")
-	//}
-	//p.Transformation.Enums = v
+	// }
+	// p.Transformation.Enums = v
 	return nil
 }
 
@@ -193,7 +197,7 @@ func portOpts(opts ...*PortOpts) *PortOpts {
 	return p
 }
 
-func NewPortFloatCallBack(id string, f func(message *payload.Payload), opts ...*PortOpts) *NewPort {
+func NewPortFloatCallBack(id string, f func(portID string, message *payload.Payload), opts ...*PortOpts) *NewPort {
 	p := &NewPort{
 		ID:        id,
 		Name:      id,
@@ -206,7 +210,7 @@ func NewPortFloatCallBack(id string, f func(message *payload.Payload), opts ...*
 	return p
 }
 
-func NewPortAnyCallBack(id string, f func(message *payload.Payload), opts ...*PortOpts) *NewPort {
+func NewPortAnyCallBack(id string, f func(portID string, message *payload.Payload), opts ...*PortOpts) *NewPort {
 	p := &NewPort{
 		ID:        id,
 		Name:      id,
@@ -283,10 +287,10 @@ type NewPort struct {
 	ID                       string
 	Name                     string
 	DataType                 priority.Type
-	AllowMultipleConnections bool                       `json:"allowMultipleConnections,omitempty"`
-	DefaultPosition          int                        `json:"defaultPosition"`
-	HiddenByDefault          bool                       `json:"hiddenByDefault,omitempty"`
-	OnMessage                func(msg *payload.Payload) `json:"-"`
+	AllowMultipleConnections bool                                      `json:"allowMultipleConnections,omitempty"`
+	DefaultPosition          int                                       `json:"defaultPosition"`
+	HiddenByDefault          bool                                      `json:"hiddenByDefault,omitempty"`
+	OnMessage                func(portID string, msg *payload.Payload) `json:"-"`
 }
 
 type Override struct {
