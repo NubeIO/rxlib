@@ -35,10 +35,34 @@ type System interface {
 }
 
 type Info struct {
+	GlobalID   string      `json:"globalID"`
 	GlobalUUID string      `json:"globalUUID"`
 	IP         string      `json:"ip"`
 	Uptime     string      `json:"uptime"`
 	SystemTime *SystemTime `json:"systemTime"`
+}
+
+func (i *Info) GetGlobalID() string {
+	return i.GlobalID
+}
+
+func (i *Info) GetGlobalUUID() string {
+	return i.GlobalUUID
+}
+
+func (i *Info) GetIP() string {
+	return i.IP
+}
+
+func (i *Info) GetUptime() string {
+	return i.Uptime
+}
+
+func (i *Info) GetSystemTime() *SystemTime {
+	if i.SystemTime != nil {
+		return nil
+	}
+	return i.SystemTime
 }
 
 type unixSystem struct{}
@@ -70,13 +94,13 @@ func (s *unixSystem) GetIP() string {
 			}
 		}
 	}
-	return "No IP found"
+	return "no IP found"
 }
 
 func (s *unixSystem) GetUptime() string {
 	t, err := uptime()
 	if err != nil {
-		return fmt.Sprintf("Error getting uptime: %v", err)
+		return fmt.Sprintf("error getting uptime: %v", err)
 	}
 	return t
 }
@@ -101,6 +125,18 @@ type SystemTime struct {
 	LocalTime string `json:"localTime"`
 	UTCTime   string `json:"utcTime"`
 	Timezone  string `json:"timezone"`
+}
+
+func (s *SystemTime) GetLocalTime() string {
+	return s.LocalTime
+}
+
+func (s *SystemTime) GetUTCTime() string {
+	return s.UTCTime
+}
+
+func (s *SystemTime) GetTimezone() string {
+	return s.Timezone
 }
 
 func (s *unixSystem) GetSystemTime() *SystemTime {

@@ -185,6 +185,9 @@ func NewRuntime(objs []Object, opts *RuntimeOpts) Runtime {
 	if r.mqttClient == nil {
 		log.Fatal("Runtime() mqtt client can not be empty")
 	}
+	if r.runtimeSettings == nil {
+		log.Fatal("Runtime() runtimeSettings can not be empty")
+	}
 	r.client = NewRosClient(opts.MQTTClient, r.runtimeSettings)
 	return r
 }
@@ -277,7 +280,12 @@ func (inst *RuntimeImpl) System() systeminfo.System {
 }
 
 func (inst *RuntimeImpl) SystemInfo() *systeminfo.Info {
-	return inst.System().Info()
+	s := inst.System().Info()
+	if s == nil {
+		return nil
+	}
+	s.GlobalID = inst.runtimeSettings.GlobalID
+	return s
 }
 
 func (inst *RuntimeImpl) Cron() scheduler.Scheduler {
