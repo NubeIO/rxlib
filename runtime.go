@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/NubeIO/mqttwrapper"
 	"github.com/NubeIO/rxlib/libs/alarm"
+	"github.com/NubeIO/rxlib/libs/chat"
 	"github.com/NubeIO/rxlib/libs/history"
 	"github.com/NubeIO/rxlib/libs/jsonutils"
 	"github.com/NubeIO/rxlib/libs/pglib"
@@ -148,7 +149,10 @@ type Runtime interface {
 	ToStringArray(interfaces interface{}) []string
 
 	// JSON helper functions to work with JSON, you can also use gjson see docs; https://github.com/tidwall/gjson
-	JSON() *jsonutils.JSONUtils
+	JSON() jsonutils.JSON
+
+	// ChatGPT Send a message to chatGPT, if the model is empty it will use 3.5
+	ChatGPT(token, body string, model ...string) *chat.Response
 }
 
 type RuntimeSettings struct {
@@ -180,7 +184,7 @@ func NewRuntime(objs []Object, opts *RuntimeOpts) Runtime {
 	r.rest = restc.New()
 	r.alarmManager = alarm.NewAlarmManager("runtime")
 	r.scheduleManager = schedules.New()
-	r.jsonUtils = &jsonutils.JSONUtils{}
+	r.jsonUtils = jsonutils.New()
 	r.runtimeSettings = opts.RuntimeSettings
 	if r.mqttClient == nil {
 		log.Fatal("Runtime() mqtt client can not be empty")
@@ -218,12 +222,12 @@ type RuntimeImpl struct {
 	mqttClient      mqttwrapper.MQTT
 	alarmManager    alarm.Manager
 	scheduleManager schedules.Manager
-	jsonUtils       *jsonutils.JSONUtils
+	jsonUtils       jsonutils.JSON
 	runtimeSettings *RuntimeSettings
 	client          ROSClient
 }
 
-func (inst *RuntimeImpl) JSON() *jsonutils.JSONUtils {
+func (inst *RuntimeImpl) JSON() jsonutils.JSON {
 	return inst.jsonUtils
 }
 
@@ -316,4 +320,16 @@ func (inst *RuntimeImpl) DeleteByUUID(uuid string) error {
 		return fmt.Errorf("not found object with uuid: %s", uuid)
 	}
 	return nil
+}
+
+func (inst *RuntimeImpl) ChatGPT(token, body string, model ...string) *chat.Response {
+	var m string
+	if len(model) > 0 {
+		m = model[0]
+	}
+	return chat.NewMessage(&chat.Chat{
+		Token:   token,
+		Content: body,
+		Model:   m,
+	})
 }

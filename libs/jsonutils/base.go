@@ -1,8 +1,34 @@
 package jsonutils
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/tidwall/gjson"
 )
+
+// JSON interface defines methods for working with JSON.
+type JSON interface {
+	// Compare compares two JSON strings based on the provided fields and options.
+	Compare(j1, j2 string, fields []string, fieldsAsException []string, returnMatching, returnNonMatching bool) *Response
+	// Parse parses the provided JSON string.
+	Parse(parse string) gjson.Result
+	// Valid checks if the provided JSON string is valid.
+	Valid(parse string) bool
+	// ToJSON converts the provided object to JSON.
+	ToJSON(obj interface{}) string
+	// FlattenJSON flattens the provided JSON.
+	FlattenJSON(jsonStr string) string
+	// Get returns the value for a given JSON path.
+	Get(jsonStr, path string) gjson.Result
+	// GetArrayElements returns all elements of a JSON array given by the path.
+	GetArrayElements(jsonStr, path string) []string
+	// GetMapKeyValuePairs returns all key-value pairs from a JSON object at the specified path.
+	GetMapKeyValuePairs(jsonStr, path string) map[string]string
+}
+
+func New() JSON {
+	return &JSONUtils{}
+}
 
 // JSONUtils struct contains no fields.
 type JSONUtils struct{}
@@ -90,4 +116,162 @@ func (jc *JSONUtils) Compare(j1, j2 string, fields []string, fieldsAsException [
 	}
 
 	return result
+}
+
+func (jc *JSONUtils) Parse(parse string) gjson.Result {
+	return gjson.Parse(parse)
+}
+
+func (jc *JSONUtils) Valid(parse string) bool {
+	p := gjson.Valid(parse)
+	return p
+}
+
+func (jc *JSONUtils) ToJSON(obj interface{}) string {
+	jsonBytes, err := json.Marshal(obj)
+	if err != nil {
+		return ""
+	}
+	return string(jsonBytes)
+}
+
+// FlattenJSON flattens the provided JSON
+func (jc *JSONUtils) FlattenJSON(jsonStr string) string {
+	j, err := FlattenJSON(jsonStr, DotSeparator)
+	if err != nil {
+		return ""
+	}
+	return j
+}
+
+// GetValue returns the value for a given JSON path.
+func (jc *JSONUtils) Get(jsonStr, path string) gjson.Result {
+	return gjson.Get(jsonStr, path)
+}
+
+// GetArrayElements returns all elements of a JSON array given by the path.
+func (jc *JSONUtils) GetArrayElements(jsonStr, path string) []string {
+	results := gjson.Get(jsonStr, path).Array()
+	elements := make([]string, len(results))
+	for i, result := range results {
+		elements[i] = result.String()
+	}
+	return elements
+}
+
+// GetMapKeyValuePairs returns all key-value pairs from a JSON object at the specified path.
+func (jc *JSONUtils) GetMapKeyValuePairs(jsonStr, path string) map[string]string {
+	result := gjson.Get(jsonStr, path).Map()
+	keyValuePairs := make(map[string]string)
+	for key, value := range result {
+		keyValuePairs[key] = value.String()
+	}
+	return keyValuePairs
+}
+
+// ------------flattener-----------
+
+// Separator ...
+type Separator string
+
+func (s Separator) String() string {
+	return string(s)
+}
+
+// DotSeparator Separators ...
+const (
+	DotSeparator Separator = "."
+)
+
+type flattenerConfig struct {
+	ignoreArray bool
+	depth       *int
+	prefixes    map[string]bool
+}
+
+// Option ...
+type Option func(f *flattenerConfig)
+
+// IgnoreArray option, if enabled, ignores arrays while flattening
+func IgnoreArray() Option {
+	return func(f *flattenerConfig) {
+		f.ignoreArray = true
+	}
+}
+
+// WithDepth option, if provided, limits the flattening to the specified depth
+func WithDepth(depth int) Option {
+	return func(f *flattenerConfig) {
+		f.depth = &depth
+	}
+}
+
+// FlattenJSON flattens the provided JSON
+// The flattening can be customised by providing flattening Options
+func FlattenJSON(JSONStr string, separator Separator, options ...Option) (string, error) {
+	data := make(map[string]interface{})
+	finalMap := make(map[string]interface{})
+	if err := json.Unmarshal([]byte(JSONStr), &data); err != nil {
+		return "", err
+	}
+
+	config := &flattenerConfig{}
+	for _, option := range options {
+		option(config)
+	}
+
+	if err := flatten(data, "", separator, config, finalMap, 0); err != nil {
+		return "", err
+	}
+
+	return mustToJSONStr(finalMap), nil
+}
+
+// flatten ....
+func flatten(data interface{}, prefix string, separator Separator, config *flattenerConfig, finalMap map[string]interface{}, depth int) error {
+
+	if config.depth != nil && depth == *config.depth {
+		finalMap[prefix] = data
+		return nil
+	}
+
+	switch data.(type) {
+	case map[string]interface{}:
+		for key, val := range data.(map[string]interface{}) {
+			if err := flatten(val, appendToPrefix(prefix, key, separator), separator, config, finalMap, depth+1); err != nil {
+				return err
+			}
+		}
+	case []interface{}:
+		if config.ignoreArray {
+			finalMap[prefix] = data
+			return nil
+		}
+		for index, val := range data.([]interface{}) {
+			if err := flatten(val, appendToPrefix(prefix, fmt.Sprintf("%v", index), separator), separator, config, finalMap, depth+1); err != nil {
+				return err
+			}
+		}
+
+	default:
+		finalMap[prefix] = data
+	}
+
+	return nil
+}
+
+func appendToPrefix(prefix string, key string, separator Separator) string {
+	if prefix == "" {
+		return key
+	}
+	return fmt.Sprintf("%v%v%v", prefix, separator.String(), key)
+}
+
+func mustToJSONStr(data interface{}) string {
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(jsonData)
 }
