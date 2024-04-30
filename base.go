@@ -60,7 +60,7 @@ type Object interface {
 	NewOutputPorts(port []*NewPort) error
 	GetAllPorts() []*Port
 	GetPortPayload(portID string) (*payload.Payload, error)
-	//SetPortPayload(portID string, data *payload.Payload) error
+	// SetPortPayload(portID string, data *payload.Payload) error
 	GetPortValue(portID string) *runtime.PortValue
 	EnablePort(portID string) error
 	DisablePort(portID string) error
@@ -88,7 +88,7 @@ type Object interface {
 	GetInputs() []*Port
 	GetInputByConnection(sourceObjectUUID, outputPortID string) *Port
 	GetInputByConnections(sourceObjectUUID, outputPortID string) []*Port
-	UpdateInputsValues(payload *payload.Payload) []error
+	UpdateInputsValues(portID string, payload *payload.Payload) []error
 
 	GetOutputs() []*Port
 	GetOutput(id string) *Port
@@ -155,7 +155,7 @@ type Object interface {
 	// plugin
 	GetPluginName() string
 
-	//GetMustLiveInObjectType these are needed to know where a know will site in the sidebar in the UI
+	// GetMustLiveInObjectType these are needed to know where a know will site in the sidebar in the UI
 	GetMustLiveInObjectType() bool
 	GetMustLiveParent() bool
 	GetRequiresLogger() bool
