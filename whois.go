@@ -3,6 +3,7 @@ package rxlib
 import (
 	"github.com/NubeIO/rxlib/helpers"
 	systeminfo "github.com/NubeIO/rxlib/libs/system"
+	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 )
 
 type Iam struct {
@@ -23,6 +24,26 @@ func (inst *RuntimeImpl) whois(parsedArgs *ParsedCommand) Object {
 	finish = parsedArgs.GetFinish()
 	iam := inst.Iam(start, finish)
 	return iam
+}
+
+func (inst *RuntimeImpl) IamConfig(rangeStart, rangeEnd int) *runtime.ObjectConfig {
+	obj := inst.GetFirstByID("rubix-manager")
+	if obj == nil {
+		return nil
+	}
+	obj.Invoke(nil) // update all the info
+	globalID := obj.GetFlag("globalID")
+	id, err := helpers.ProcessID(globalID)
+	if err != nil {
+		return nil
+	}
+	if rangeStart == 0 && rangeEnd == 0 {
+		return inst.serializeObject(false, obj)
+	}
+	if isBetween(id, rangeStart, rangeEnd) {
+		return inst.serializeObject(false, obj)
+	}
+	return nil
 }
 
 func (inst *RuntimeImpl) Iam(rangeStart, rangeEnd int) Object {

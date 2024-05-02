@@ -132,9 +132,10 @@ func (inst *rosClient) GlobalRQL(bufferDuration int, requestUUID, script string)
 		var out = &runtime.CommandResponse{Response: []*runtime.CommandResponse{}}
 		for _, response := range resp {
 			var parsed *runtime.CommandResponse
+			//parsed.GetSerializeObjects()[0].GetMeta().GetObjectUUID()
+			//parsed.GetSerializeObjects()
 			err := json.Unmarshal(response.Body, &parsed)
 			if err == nil {
-
 				out.Response = append(out.Response, parsed)
 			}
 		}

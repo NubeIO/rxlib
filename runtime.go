@@ -129,10 +129,11 @@ type Runtime interface {
 	Publish(topic string, body interface{}) (err string)
 	// RequestResponse a mqtt message want wait for a repose
 	RequestResponse(timeoutSeconds int, publishTopic, responseTopic, requestUUID string, body interface{}) *mqttwrapper.Response
-	// Client
+	// Client rubix-os mqtt client; eg Client.RQL()
 	Client() ROSClient
 
 	Iam(rangeStart, finish int) Object
+	IamConfig(rangeStart, rangeEnd int) *runtime.ObjectConfig
 
 	// ObjectSync sync all the objects to the postgres db;
 	ObjectSync(forceSync bool, opts *SyncOptions) error
@@ -159,6 +160,7 @@ type RuntimeSettings struct {
 	GlobalUUID string
 	GlobalID   string
 	RootDir    string
+	Version    string
 }
 
 type RuntimeOpts struct {
@@ -289,6 +291,7 @@ func (inst *RuntimeImpl) SystemInfo() *systeminfo.Info {
 		return nil
 	}
 	s.GlobalID = inst.runtimeSettings.GlobalID
+	s.Version = inst.runtimeSettings.Version
 	return s
 }
 

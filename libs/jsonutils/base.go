@@ -3,6 +3,7 @@ package jsonutils
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/tidwall/gjson"
 )
 
@@ -24,6 +25,8 @@ type JSON interface {
 	GetArrayElements(jsonStr, path string) []string
 	// GetMapKeyValuePairs returns all key-value pairs from a JSON object at the specified path.
 	GetMapKeyValuePairs(jsonStr, path string) map[string]string
+
+	ParseCommandResponse(parse interface{}) *runtime.CommandResponse
 }
 
 func New() JSON {
@@ -125,6 +128,25 @@ func (jc *JSONUtils) Parse(parse string) gjson.Result {
 func (jc *JSONUtils) Valid(parse string) bool {
 	p := gjson.Valid(parse)
 	return p
+}
+
+func (jc *JSONUtils) ParseCommandResponse(parse interface{}) *runtime.CommandResponse {
+	p := &runtime.CommandResponse{}
+	if str, ok := parse.(string); ok {
+		err := json.Unmarshal([]byte(str), &p)
+		if err != nil {
+			return nil
+		}
+		return p
+	}
+	if bytesData, ok := parse.([]byte); ok {
+		err := json.Unmarshal(bytesData, &p)
+		if err != nil {
+			return nil
+		}
+		return p
+	}
+	return nil
 }
 
 func (jc *JSONUtils) ToJSON(obj interface{}) string {

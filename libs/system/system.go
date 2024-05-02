@@ -19,18 +19,43 @@ import (
 
 // System provides methods to retrieve various system-level information
 type System interface {
+	// GetIP returns the IP address of the system.
 	GetIP() string
+
+	// GetUptime returns the system uptime.
 	GetUptime() string
+
+	// GetGateway returns the gateway of the system.
 	GetGateway() string
+
+	// GetInternetIP retrieves the public IP address of the system.
 	GetInternetIP() (*PublicIP, error)
+
+	// GetSystemTime returns the current system time.
 	GetSystemTime() *SystemTime
+
+	// TimezoneInfo returns information about the system's timezone.
 	TimezoneInfo() zone.Zone
+
+	// GetCurrentCPUUsage returns the current CPU usage of the system.
 	GetCurrentCPUUsage() string
+
+	// GetCurrentMemoryUsage returns the current memory usage of the system.
 	GetCurrentMemoryUsage() string
+
+	// GetMemoryFree returns the amount of free memory in the system.
 	GetMemoryFree() string
+
+	// GetTopProcessesByCPUUsage retrieves the top processes by CPU usage.
 	GetTopProcessesByCPUUsage(count int) ([]*topProcess, error)
+
+	// GetTopProcessesByMemory retrieves the top processes by memory usage.
 	GetTopProcessesByMemory(count int) ([]*topProcess, error)
-	GetHostUniqueID() (string, error) // try mac or system uuid
+
+	// GetHostUniqueID tries to retrieve the unique identifier of the host, such as MAC address or system UUID.
+	GetHostUniqueID() (string, error)
+
+	// Info returns general system information. eg BootTime(), GlobalID(), GlobalUUID()
 	Info() *Info
 }
 
@@ -39,6 +64,8 @@ type Info struct {
 	GlobalUUID string      `json:"globalUUID"`
 	IP         string      `json:"ip"`
 	Uptime     string      `json:"uptime"`
+	BootTime   string      `json:"bootTime"`
+	Version    string      `json:"version"`
 	SystemTime *SystemTime `json:"systemTime"`
 }
 
@@ -54,8 +81,16 @@ func (i *Info) GetIP() string {
 	return i.IP
 }
 
+func (i *Info) GetBootTime() string {
+	return i.BootTime
+}
+
 func (i *Info) GetUptime() string {
 	return i.Uptime
+}
+
+func (i *Info) GetVersion() string {
+	return i.Version
 }
 
 func (i *Info) GetSystemTime() *SystemTime {
@@ -65,7 +100,9 @@ func (i *Info) GetSystemTime() *SystemTime {
 	return i.SystemTime
 }
 
-type unixSystem struct{}
+type unixSystem struct {
+	bootTime time.Time
+}
 
 func (s *unixSystem) Info() *Info {
 	u, _ := s.GetHostUniqueID()
@@ -74,11 +111,14 @@ func (s *unixSystem) Info() *Info {
 		IP:         s.GetIP(),
 		SystemTime: s.GetSystemTime(),
 		Uptime:     s.GetUptime(),
+		BootTime:   s.bootTime.Format("2006-01-02 15:04:05"),
 	}
 }
 
 func NewSystem() System {
-	return &unixSystem{}
+	return &unixSystem{
+		bootTime: time.Now(),
+	}
 }
 
 func (s *unixSystem) GetIP() string {
