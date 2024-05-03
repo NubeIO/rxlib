@@ -3,6 +3,7 @@ package rxlib
 import (
 	"fmt"
 	"github.com/NubeIO/mqttwrapper"
+	"github.com/NubeIO/rxlib/config"
 	"github.com/NubeIO/rxlib/libs/alarm"
 	"github.com/NubeIO/rxlib/libs/chat"
 	"github.com/NubeIO/rxlib/libs/history"
@@ -152,8 +153,10 @@ type Runtime interface {
 	// JSON helper functions to work with JSON, you can also use gjson see docs; https://github.com/tidwall/gjson
 	JSON() jsonutils.JSON
 
-	// ChatGPT Send a message to chatGPT, if the model is empty it will use 3.5
-	ChatGPT(token, body string, model ...string) *chat.Response
+	// ChatGPT Send a message to chatGPT, if the model is empty it will use 3.5. The preloaded data help if you want to explain to chatGPT some extra info to help with the users query
+	ChatGPT(token, body, preloaded string, model ...string) *chat.Response
+	ChatBot(token, body string, model ...string) *chat.Response
+	Config() *config.Configuration
 }
 
 type RuntimeSettings struct {
@@ -194,6 +197,7 @@ func NewRuntime(objs []Object, opts *RuntimeOpts) Runtime {
 	if r.runtimeSettings == nil {
 		log.Fatal("Runtime() runtimeSettings can not be empty")
 	}
+	r.config = config.Get()
 	r.client = NewRosClient(opts.MQTTClient, r.runtimeSettings)
 	return r
 }
@@ -227,10 +231,15 @@ type RuntimeImpl struct {
 	jsonUtils       jsonutils.JSON
 	runtimeSettings *RuntimeSettings
 	client          ROSClient
+	config          *config.Configuration
 }
 
 func (inst *RuntimeImpl) JSON() jsonutils.JSON {
 	return inst.jsonUtils
+}
+
+func (inst *RuntimeImpl) Config() *config.Configuration {
+	return inst.config
 }
 
 func (inst *RuntimeImpl) AlarmManager() alarm.Manager {
@@ -325,7 +334,7 @@ func (inst *RuntimeImpl) DeleteByUUID(uuid string) error {
 	return nil
 }
 
-func (inst *RuntimeImpl) ChatGPT(token, body string, model ...string) *chat.Response {
+func (inst *RuntimeImpl) ChatBot(token, body string, model ...string) *chat.Response {
 	var m string
 	if len(model) > 0 {
 		m = model[0]
@@ -333,6 +342,20 @@ func (inst *RuntimeImpl) ChatGPT(token, body string, model ...string) *chat.Resp
 	return chat.NewMessage(&chat.Chat{
 		Token:   token,
 		Content: body,
+		PreLoad: pglib.ChatGPTInfo(),
+		Model:   m,
+	})
+}
+
+func (inst *RuntimeImpl) ChatGPT(token, body, preloaded string, model ...string) *chat.Response {
+	var m string
+	if len(model) > 0 {
+		m = model[0]
+	}
+	return chat.NewMessage(&chat.Chat{
+		Token:   token,
+		Content: body,
+		PreLoad: preloaded,
 		Model:   m,
 	})
 }

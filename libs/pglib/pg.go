@@ -170,3 +170,28 @@ func (db *PGImpl) Print(data []map[string]interface{}) {
 		fmt.Println(strings.Join(values, ", "))
 	}
 }
+
+func ChatGPTInfo() string {
+	s := `
+	we are using postgres and timescale DB
+	see the schema;
+	Table: temperature_data
+	
+	fields:
+	time  TIMESTAMPTZ       NOT NULL,
+	value DOUBLE PRECISION NOT NULL,
+	tags        TEXT[]            NOT NULL,
+	sensor_name TEXT
+
+	please not the table name is temperature_data not "temperature"
+
+	
+	the "tags" are and array of strings
+	the tags are to help the user with querying the DB
+	see example query; 
+	SELECT time_bucket('1 hour', time) AS time_range, COUNT(*) AS alert_count FROM temperature_data WHERE (tags @> ARRAY['status', 'bool'] OR tags @> ARRAY['zone', 'temp']) AND (tags @> ARRAY['status', 'bool'] AND value = 1 OR tags @> ARRAY['zone', 'temp'] AND value > 28.5) GROUP BY time_range ORDER BY time_range
+	lets make sure we taken advantage of timescale DB pre made functions like "time_bucket"
+	and what i want you to do is return me the raw sql query with no explanation; so i can use this query directly from your response. This is important to keep it raw> It must be RAW SQL query!  
+`
+	return s
+}

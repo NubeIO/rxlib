@@ -9,6 +9,7 @@ import (
 type Chat struct {
 	Token   string
 	Content string
+	PreLoad string
 	Model   string
 }
 
@@ -41,6 +42,9 @@ func NewMessage(body *Chat) *Response {
 		model = body.Model
 	}
 	client := openai.NewClient(body.Token)
+	if body.PreLoad != "" {
+		body.Content = fmt.Sprintf("the user input is by the user and the proloaded info is to help chat gpt understand what the user wants. preloaded info: %s user input: %s", body.PreLoad, body.Content)
+	}
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
@@ -48,7 +52,7 @@ func NewMessage(body *Chat) *Response {
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleUser,
-					Content: "Hello!",
+					Content: body.Content,
 				},
 			},
 		},

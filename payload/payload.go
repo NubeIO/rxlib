@@ -21,6 +21,8 @@ type Body struct {
 type Payload struct {
 	FromPortID     string
 	FromObjectUUID string
+	ApplyOverride  bool
+	OverrideFloat  float64
 	*runtime.PortValue
 	body *Body
 }

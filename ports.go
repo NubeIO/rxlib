@@ -62,7 +62,20 @@ func (p *Port) SetValueInt(v int32) {
 }
 
 func (p *Port) SetValueFloat(v float64) {
-	p.Payload.FloatValue = v
+	if p.Payload.ApplyOverride {
+		p.Payload.FloatValue = p.Payload.OverrideFloat
+	} else {
+		p.Payload.FloatValue = v
+	}
+}
+
+func (p *Port) Release() {
+	p.Payload.ApplyOverride = false
+}
+
+func (p *Port) SetOverrideFloat(v float64) {
+	p.Payload.OverrideFloat = v
+	p.Payload.ApplyOverride = true
 }
 
 func (p *Port) GetHasConnection() bool {
