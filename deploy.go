@@ -39,6 +39,7 @@ func newBuilderObject(body *Builder) *runtime.ObjectConfig {
 	if body == nil {
 		return nil
 	}
+
 	meta := body.ObjectConfig.GetMeta()
 	if meta == nil {
 		objectUUID := body.UUID
@@ -47,6 +48,7 @@ func newBuilderObject(body *Builder) *runtime.ObjectConfig {
 		}
 		meta = &runtime.Meta{
 			ObjectUUID: objectUUID,
+			ParentUUID: body.ParentUUID,
 			Position: &runtime.Position{
 				PositionY: 0,
 				PositionX: 0,

@@ -251,10 +251,6 @@ message CommandResponse {
 }
 
 
-
-
-
-
 // New message for the Ping request
 message PingRequest {
 }

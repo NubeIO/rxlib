@@ -157,6 +157,9 @@ type Runtime interface {
 	ChatGPT(token, body, preloaded string, model ...string) *chat.Response
 	ChatBot(token, body string, model ...string) *chat.Response
 	Config() *config.Configuration
+
+	// Manager get the rubix manager
+	Manager() Object
 }
 
 type RuntimeSettings struct {
@@ -244,6 +247,10 @@ func (inst *RuntimeImpl) Config() *config.Configuration {
 
 func (inst *RuntimeImpl) AlarmManager() alarm.Manager {
 	return inst.alarmManager
+}
+
+func (inst *RuntimeImpl) Manager() Object {
+	return inst.GetFirstByID("rubix-manager")
 }
 
 func (inst *RuntimeImpl) ScheduleManager() schedules.Manager {
