@@ -72,6 +72,10 @@ func (conf *Configuration) GetArgOne() string {
 	return rootCmd.PersistentFlags().Lookup("arg1").Value.String()
 }
 
+func (conf *Configuration) GetBrokerIP() string {
+	return rootCmd.PersistentFlags().Lookup("broker").Value.String()
+}
+
 func (conf *Configuration) GetAbsPluginsDir() string {
 	return path.Join(conf.GetAbsDataDir(), conf.getPluginsDir())
 }
