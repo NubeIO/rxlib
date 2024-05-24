@@ -57,6 +57,10 @@ func (p *Port) SetHasConnection(state bool) {
 	p.HasConnection = state
 }
 
+func (p *Port) SetValueBool(v bool) {
+	p.Payload.BoolValue = v
+}
+
 func (p *Port) SetValueInt(v int32) {
 	p.Payload.IntValue = v
 }
@@ -220,6 +224,19 @@ func NewPortFloatCallBack(id string, f func(portID string, message *payload.Payl
 	p.DefaultPosition = portOpts(opts...).DefaultPosition
 	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
 	p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
+	return p
+}
+
+func NewPortBoolCallBack(id string, f func(portID string, message *payload.Payload), opts ...*PortOpts) *NewPort {
+	p := &NewPort{
+		ID:        id,
+		Name:      id,
+		DataType:  priority.TypeBool,
+		OnMessage: f,
+	}
+	p.DefaultPosition = portOpts(opts...).DefaultPosition
+	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
+	p.AllowMultipleConnections = false
 	return p
 }
 
