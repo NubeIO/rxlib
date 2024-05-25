@@ -87,10 +87,10 @@ func (inst *Instance) Handler(p *runtime.MessageRequest) {
 	for _, value := range cmd.GetPortValues() {
 		for _, d := range value.PortIDs {
 			if d == "input-1" {
-				inst.portOne = value.Number
+				inst.portOne = value.FloatValue
 			}
 			if d == "input-2" {
-				inst.portTwo = value.Number
+				inst.portTwo = value.FloatValue
 			}
 		}
 	}
@@ -110,8 +110,8 @@ func (inst *Instance) publishOutput() {
 			Key:              "update-outputs",
 			TargetObjectUUID: inst.GetMeta().GetObjectUUID(),
 			PortValues: []*runtime.PortValue{&runtime.PortValue{
-				PortID: "output",
-				Number: v,
+				PortID:     "output",
+				FloatValue: v,
 			}},
 		})
 		inst.hasPublished = true // this is for to make sure we publish the first value

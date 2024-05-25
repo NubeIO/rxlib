@@ -54,6 +54,14 @@ service RuntimeService {
     };
   };
 
+  rpc RQL (Command) returns (CommandResponse) {
+    option (google.api.http) = {
+      post: "/api/rql"
+      body: "*"
+    };
+  };
+
+
 
   rpc GetObjectsValues (ObjectsValuesRequest) returns (GetObjectsValuesResponse) {
     option (google.api.http) = {
@@ -105,7 +113,93 @@ service RuntimeService {
   };
 
 
+  rpc GetHost (HostId) returns (Host) {
+    option (google.api.http) = {
+      get: "/api/hosts/get/{uuid}"
+    };
+  }
+
+  rpc AllHosts (Empty) returns (HostList) {
+    option (google.api.http) = {
+      get: "/api/hosts/all"
+    };
+  }
+
+  rpc DeleteHost (HostId) returns (Empty) {
+    option (google.api.http) = {
+      delete: "/api/hosts/delete/{uuid}"
+    };
+  }
+
+  rpc EnableHost (HostId) returns (Empty) {
+    option (google.api.http) = {
+      post: "/api/hosts/enable/{uuid}"
+    };
+  }
+
+  rpc DisableHost (HostId) returns (Empty) {
+    option (google.api.http) = {
+      post: "/api/hosts/disable/{uuid}"
+    };
+  }
+
+  rpc UpdateHost (Host) returns (Host) {
+    option (google.api.http) = {
+      put: "/api/hosts/update"
+    };
+  }
+
+  rpc AddHost (Host) returns (Host) {
+    option (google.api.http) = {
+      post: "/api/hosts/add"
+    };
+  }
+
+
+  rpc AddExtension (Extension) returns (Extension) {
+    option (google.api.http) = {
+      post: "/api/extensions/add"
+    };
+  }
+
+  rpc DeleteExtension (ExtensionId) returns (Empty) {
+    option (google.api.http) = {
+      delete: "/api/extensions/delete/{uuid}"
+    };
+  }
+
+  rpc AllExtension (Empty) returns (ExtensionList) {
+    option (google.api.http) = {
+      get: "/api/extensions/all"
+    };
+  }
+
+  rpc StartExtension (ExtensionId) returns (Empty) {
+    option (google.api.http) = {
+      post: "/api/extensions/start/{uuid}"
+    };
+  }
+
+  rpc StopExtension (ExtensionId) returns (Empty) {
+    option (google.api.http) = {
+      post: "/api/extensions/start/{uuid}"
+    };
+  }
+
+  rpc PluginStreamMessages(stream MessageRequest) returns (stream MessageRequest);
+
+
 }
+
+message HostId {
+  string uuid = 1;
+}
+
+
+message HostList {
+  repeated Host hosts = 1;
+}
+
 
 message MessageRequest {
   string uuid = 1;
@@ -424,8 +518,44 @@ message AncestorObjectTree {
   string uuid = 1;
   string name = 2;
   string id = 3;
-  string parent_uuid = 4;
+  string parentUUID = 4;
   string category = 5;
   repeated AncestorObjectTree children = 6;
 }
 
+message Extension {
+  string uuid = 1;
+  string name = 2;
+  string pid = 3;
+  string status = 4;
+  string fileName = 5;
+  int32 port = 7;
+}
+
+message ExtensionId {
+  string uuid = 1;
+}
+
+message ExtensionList {
+  repeated Extension extensions = 1;
+}
+
+
+message Host {
+  string uuid = 1;
+  string name = 2;
+  string type = 3;
+  string displayName = 4;
+  string description = 5;
+  bool enable = 6;
+  string ip = 7;
+  int32 port = 8;
+  bool https = 9;
+  string externalToken = 10;
+  string imageName = 11;
+  string displayColour = 12;
+  bool star = 13;
+  string folderName = 14;
+  string lon = 15;
+  string lat = 16;
+}
