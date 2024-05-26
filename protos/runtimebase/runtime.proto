@@ -84,34 +84,6 @@ service RuntimeService {
   };
 
 
-  rpc RegisterPlugin (PluginInfo) returns (PluginResponse) {
-    option (google.api.http) = {
-      post: "/api/plugins/register"
-      body: "*"
-    };
-  };
-
-  rpc DeregisterPlugin (PluginInfo) returns (PluginResponse) {
-    option (google.api.http) = {
-      post: "/api/plugins/deregister"
-      body: "*"
-    };
-  };
-
-  rpc ListPlugins (Empty) returns (PluginList) {
-    option (google.api.http) = {
-      get: "/api/plugins/list"
-    };
-  };
-
-
-
-  rpc GetPlugins (Empty) returns (PluginList) {
-    option (google.api.http) = {
-      get: "/api/plugins/get"
-    };
-  };
-
 
   rpc GetHost (HostId) returns (Host) {
     option (google.api.http) = {
@@ -155,6 +127,11 @@ service RuntimeService {
     };
   }
 
+  rpc RegisterExtension (Extension) returns (Extension) {
+    option (google.api.http) = {
+      post: "/api/extensions/register"
+    };
+  }
 
   rpc AddExtension (Extension) returns (Extension) {
     option (google.api.http) = {
@@ -182,11 +159,21 @@ service RuntimeService {
 
   rpc StopExtension (ExtensionId) returns (Empty) {
     option (google.api.http) = {
-      post: "/api/extensions/start/{uuid}"
+      post: "/api/extensions/stop/{uuid}"
     };
   }
 
-  rpc PluginStreamMessages(stream MessageRequest) returns (stream MessageRequest);
+  rpc UploadZipFile (UploadZipRequest) returns (UploadZipResponse) {
+    option (google.api.http) = {
+      post: "/api/runtime/upload"
+      body: "*"
+    };
+  }
+
+//  rpc PluginStreamMessages(stream MessageRequest) returns (stream MessageRequest);
+
+  // stream messages from the server to the plugin
+  rpc ExtensionStream(stream MessageRequest) returns (stream MessageRequest);
 
 
 }
@@ -409,6 +396,7 @@ message Info {
   map<string, string> flags = 13;
   Permissions permissions = 14;
   Requirements requirements = 15;
+  bool isVirtualObject = 16;
 }
 
 
@@ -530,6 +518,8 @@ message Extension {
   string status = 4;
   string fileName = 5;
   int32 port = 7;
+  repeated ObjectConfig pallet = 8;
+  int32 objectsCount = 9;
 }
 
 message ExtensionId {
@@ -558,4 +548,13 @@ message Host {
   string folderName = 14;
   string lon = 15;
   string lat = 16;
+}
+
+message UploadZipRequest {
+  bytes zipFile = 1;
+   string destinationDir = 2;
+}
+
+message UploadZipResponse {
+  string message = 1;
 }

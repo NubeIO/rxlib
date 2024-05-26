@@ -102,6 +102,13 @@
             "required": false,
             "type": "integer",
             "format": "int32"
+          },
+          {
+            "name": "objectsCount",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
           }
         ],
         "tags": [
@@ -161,9 +168,77 @@
         ]
       }
     },
-    "/api/extensions/start/{uuid_1}": {
+    "/api/extensions/register": {
       "post": {
-        "operationId": "RuntimeService_StopExtension",
+        "operationId": "RuntimeService_RegisterExtension",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeExtension"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "pid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "fileName",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "port",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "objectsCount",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/extensions/start/{uuid}": {
+      "post": {
+        "operationId": "RuntimeService_StartExtension",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -180,7 +255,7 @@
         },
         "parameters": [
           {
-            "name": "uuid_1",
+            "name": "uuid",
             "in": "path",
             "required": true,
             "type": "string"
@@ -191,9 +266,9 @@
         ]
       }
     },
-    "/api/extensions/start/{uuid}": {
+    "/api/extensions/stop/{uuid}": {
       "post": {
-        "operationId": "RuntimeService_StartExtension",
+        "operationId": "RuntimeService_StopExtension",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -627,82 +702,6 @@
         ]
       }
     },
-    "/api/plugins/deregister": {
-      "post": {
-        "operationId": "RuntimeService_DeregisterPlugin",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/RuntimePluginResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/RuntimePluginInfo"
-            }
-          }
-        ],
-        "tags": [
-          "RuntimeService"
-        ]
-      }
-    },
-    "/api/plugins/get": {
-      "get": {
-        "operationId": "RuntimeService_GetPlugins",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/RuntimePluginList"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "tags": [
-          "RuntimeService"
-        ]
-      }
-    },
-    "/api/plugins/list": {
-      "get": {
-        "operationId": "RuntimeService_ListPlugins",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/RuntimePluginList"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "tags": [
-          "RuntimeService"
-        ]
-      }
-    },
     "/api/plugins/pallet": {
       "get": {
         "operationId": "RuntimeService_GetPalletTree",
@@ -720,38 +719,6 @@
             }
           }
         },
-        "tags": [
-          "RuntimeService"
-        ]
-      }
-    },
-    "/api/plugins/register": {
-      "post": {
-        "operationId": "RuntimeService_RegisterPlugin",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/RuntimePluginResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/RuntimePluginInfo"
-            }
-          }
-        ],
         "tags": [
           "RuntimeService"
         ]
@@ -1018,6 +985,38 @@
           "RuntimeService"
         ]
       }
+    },
+    "/api/runtime/upload": {
+      "post": {
+        "operationId": "RuntimeService_UploadZipFile",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeUploadZipResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeUploadZipRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
     }
   },
   "definitions": {
@@ -1262,6 +1261,17 @@
         "port": {
           "type": "integer",
           "format": "int32"
+        },
+        "pallet": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeObjectConfig"
+          }
+        },
+        "objectsCount": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -1428,6 +1438,9 @@
         },
         "requirements": {
           "$ref": "#/definitions/RuntimeRequirements"
+        },
+        "isVirtualObject": {
+          "type": "boolean"
         }
       }
     },
@@ -1787,44 +1800,6 @@
         }
       }
     },
-    "RuntimePluginInfo": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "uuid": {
-          "type": "string"
-        },
-        "pallet": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/RuntimeObjectConfig"
-          }
-        }
-      }
-    },
-    "RuntimePluginList": {
-      "type": "object",
-      "properties": {
-        "plugins": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/RuntimePluginInfo"
-          }
-        }
-      }
-    },
-    "RuntimePluginResponse": {
-      "type": "object",
-      "properties": {
-        "message": {
-          "type": "string"
-        }
-      }
-    },
     "RuntimePort": {
       "type": "object",
       "properties": {
@@ -1959,6 +1934,26 @@
         "value": {
           "type": "string",
           "format": "byte"
+        }
+      }
+    },
+    "RuntimeUploadZipRequest": {
+      "type": "object",
+      "properties": {
+        "zipFile": {
+          "type": "string",
+          "format": "byte"
+        },
+        "destinationDir": {
+          "type": "string"
+        }
+      }
+    },
+    "RuntimeUploadZipResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
         }
       }
     },
