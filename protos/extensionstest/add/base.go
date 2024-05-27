@@ -1,9 +1,11 @@
 package add
 
+// https://riad-news-api.vercel.app/api/news
+
 import (
-	"fmt"
 	"github.com/NubeIO/rxlib"
 	"github.com/NubeIO/rxlib/helpers/pprint"
+	"github.com/NubeIO/rxlib/priority"
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"time"
@@ -31,7 +33,7 @@ func New(outputUpdated func(message *runtime.Command)) *Instance {
 func (inst *Instance) New(object reactive.Object, opts ...any) reactive.Object {
 	info := rxlib.NewObjectInfo().
 		SetID("add").
-		SetPluginName("plugin-1").
+		SetPluginName("ext-math").
 		SetCategory("math").
 		SetCallResetOnDeploy().
 		SetObjectType(rxlib.Logic).
@@ -39,27 +41,23 @@ func (inst *Instance) New(object reactive.Object, opts ...any) reactive.Object {
 		Build()
 
 	object.SetInfo(info)
-	err := object.NewOutputPort(&runtime.Port{
+	object.NewOutputPort(&runtime.Port{
 		Id:        "output",
 		Name:      "output",
 		Direction: string(rxlib.Output),
-		DataType:  "float",
+		DataType:  priority.TypeFloat,
 	})
-	if err != nil {
-		fmt.Println(err)
-		return nil
-	}
 	object.NewInputPort(&runtime.Port{
 		Id:        "input-1",
 		Name:      "input-1",
 		Direction: string(rxlib.Input),
-		DataType:  "float",
+		DataType:  priority.TypeFloat,
 	})
 	object.NewInputPort(&runtime.Port{
 		Id:        "input-2",
 		Name:      "input-2",
 		Direction: string(rxlib.Input),
-		DataType:  "float",
+		DataType:  priority.TypeFloat,
 	})
 	inst.Object = object
 	return inst

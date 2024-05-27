@@ -93,7 +93,7 @@ func (t *tree) buildChildTree(parentUUID string) *runtime.AncestorObjectTree {
 				Uuid:       obj.GetUUID(),
 				Name:       obj.GetName(),
 				Id:         obj.GetID(),
-				ParentUuid: obj.GetUUID(),
+				ParentUUID: obj.GetUUID(),
 				Category:   obj.GetCategory(),
 				Children:   []*runtime.AncestorObjectTree{},
 			}
@@ -114,7 +114,7 @@ func (t *tree) buildAncestorTree(childUUID string) *runtime.AncestorObjectTree {
 				Uuid:       obj.GetUUID(),
 				Name:       obj.GetName(),
 				Id:         obj.GetID(),
-				ParentUuid: obj.GetUUID(),
+				ParentUUID: obj.GetUUID(),
 				Category:   obj.GetCategory(),
 			}
 			if obj.GetParentUUID() != "" {

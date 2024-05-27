@@ -19,20 +19,32 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	RuntimeService_GetObjects_FullMethodName       = "/App.Runtime.RuntimeService/GetObjects"
-	RuntimeService_GetObject_FullMethodName        = "/App.Runtime.RuntimeService/GetObject"
-	RuntimeService_GetTreeMapRoot_FullMethodName   = "/App.Runtime.RuntimeService/GetTreeMapRoot"
-	RuntimeService_GetPalletTree_FullMethodName    = "/App.Runtime.RuntimeService/GetPalletTree"
-	RuntimeService_ObjectsDeploy_FullMethodName    = "/App.Runtime.RuntimeService/ObjectsDeploy"
-	RuntimeService_Ping_FullMethodName             = "/App.Runtime.RuntimeService/Ping"
-	RuntimeService_ObjectCommand_FullMethodName    = "/App.Runtime.RuntimeService/ObjectCommand"
-	RuntimeService_GetObjectsValues_FullMethodName = "/App.Runtime.RuntimeService/GetObjectsValues"
-	RuntimeService_GetObjectValues_FullMethodName  = "/App.Runtime.RuntimeService/GetObjectValues"
-	RuntimeService_GetPortValue_FullMethodName     = "/App.Runtime.RuntimeService/GetPortValue"
-	RuntimeService_RegisterPlugin_FullMethodName   = "/App.Runtime.RuntimeService/RegisterPlugin"
-	RuntimeService_DeregisterPlugin_FullMethodName = "/App.Runtime.RuntimeService/DeregisterPlugin"
-	RuntimeService_ListPlugins_FullMethodName      = "/App.Runtime.RuntimeService/ListPlugins"
-	RuntimeService_GetPlugins_FullMethodName       = "/App.Runtime.RuntimeService/GetPlugins"
+	RuntimeService_GetObjects_FullMethodName        = "/App.Runtime.RuntimeService/GetObjects"
+	RuntimeService_GetObject_FullMethodName         = "/App.Runtime.RuntimeService/GetObject"
+	RuntimeService_GetTreeMapRoot_FullMethodName    = "/App.Runtime.RuntimeService/GetTreeMapRoot"
+	RuntimeService_GetPalletTree_FullMethodName     = "/App.Runtime.RuntimeService/GetPalletTree"
+	RuntimeService_ObjectsDeploy_FullMethodName     = "/App.Runtime.RuntimeService/ObjectsDeploy"
+	RuntimeService_Ping_FullMethodName              = "/App.Runtime.RuntimeService/Ping"
+	RuntimeService_ObjectCommand_FullMethodName     = "/App.Runtime.RuntimeService/ObjectCommand"
+	RuntimeService_RQL_FullMethodName               = "/App.Runtime.RuntimeService/RQL"
+	RuntimeService_GetObjectsValues_FullMethodName  = "/App.Runtime.RuntimeService/GetObjectsValues"
+	RuntimeService_GetObjectValues_FullMethodName   = "/App.Runtime.RuntimeService/GetObjectValues"
+	RuntimeService_GetPortValue_FullMethodName      = "/App.Runtime.RuntimeService/GetPortValue"
+	RuntimeService_GetHost_FullMethodName           = "/App.Runtime.RuntimeService/GetHost"
+	RuntimeService_AllHosts_FullMethodName          = "/App.Runtime.RuntimeService/AllHosts"
+	RuntimeService_DeleteHost_FullMethodName        = "/App.Runtime.RuntimeService/DeleteHost"
+	RuntimeService_EnableHost_FullMethodName        = "/App.Runtime.RuntimeService/EnableHost"
+	RuntimeService_DisableHost_FullMethodName       = "/App.Runtime.RuntimeService/DisableHost"
+	RuntimeService_UpdateHost_FullMethodName        = "/App.Runtime.RuntimeService/UpdateHost"
+	RuntimeService_AddHost_FullMethodName           = "/App.Runtime.RuntimeService/AddHost"
+	RuntimeService_RegisterExtension_FullMethodName = "/App.Runtime.RuntimeService/RegisterExtension"
+	RuntimeService_AddExtension_FullMethodName      = "/App.Runtime.RuntimeService/AddExtension"
+	RuntimeService_DeleteExtension_FullMethodName   = "/App.Runtime.RuntimeService/DeleteExtension"
+	RuntimeService_AllExtension_FullMethodName      = "/App.Runtime.RuntimeService/AllExtension"
+	RuntimeService_StartExtension_FullMethodName    = "/App.Runtime.RuntimeService/StartExtension"
+	RuntimeService_StopExtension_FullMethodName     = "/App.Runtime.RuntimeService/StopExtension"
+	RuntimeService_UploadZipFile_FullMethodName     = "/App.Runtime.RuntimeService/UploadZipFile"
+	RuntimeService_ExtensionStream_FullMethodName   = "/App.Runtime.RuntimeService/ExtensionStream"
 )
 
 // RuntimeServiceClient is the client API for RuntimeService service.
@@ -46,15 +58,28 @@ type RuntimeServiceClient interface {
 	ObjectsDeploy(ctx context.Context, in *ObjectDeploy, opts ...grpc.CallOption) (*ObjectDeploy, error)
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
 	ObjectCommand(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error)
+	RQL(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error)
 	GetObjectsValues(ctx context.Context, in *ObjectsValuesRequest, opts ...grpc.CallOption) (*GetObjectsValuesResponse, error)
 	// all port values for an object
 	GetObjectValues(ctx context.Context, in *ObjectsValueRequest, opts ...grpc.CallOption) (*GetObjectValuesResponse, error)
 	// single port value for an object
 	GetPortValue(ctx context.Context, in *PortRequest, opts ...grpc.CallOption) (*PortValue, error)
-	RegisterPlugin(ctx context.Context, in *PluginInfo, opts ...grpc.CallOption) (*PluginResponse, error)
-	DeregisterPlugin(ctx context.Context, in *PluginInfo, opts ...grpc.CallOption) (*PluginResponse, error)
-	ListPlugins(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PluginList, error)
-	GetPlugins(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PluginList, error)
+	GetHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Host, error)
+	AllHosts(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*HostList, error)
+	DeleteHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Empty, error)
+	EnableHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Empty, error)
+	DisableHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Empty, error)
+	UpdateHost(ctx context.Context, in *Host, opts ...grpc.CallOption) (*Host, error)
+	AddHost(ctx context.Context, in *Host, opts ...grpc.CallOption) (*Host, error)
+	RegisterExtension(ctx context.Context, in *Extension, opts ...grpc.CallOption) (*Extension, error)
+	AddExtension(ctx context.Context, in *Extension, opts ...grpc.CallOption) (*Extension, error)
+	DeleteExtension(ctx context.Context, in *ExtensionId, opts ...grpc.CallOption) (*Empty, error)
+	AllExtension(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ExtensionList, error)
+	StartExtension(ctx context.Context, in *ExtensionId, opts ...grpc.CallOption) (*Empty, error)
+	StopExtension(ctx context.Context, in *ExtensionId, opts ...grpc.CallOption) (*Empty, error)
+	UploadZipFile(ctx context.Context, in *UploadZipRequest, opts ...grpc.CallOption) (*UploadZipResponse, error)
+	// stream messages from the server to the plugin
+	ExtensionStream(ctx context.Context, opts ...grpc.CallOption) (RuntimeService_ExtensionStreamClient, error)
 }
 
 type runtimeServiceClient struct {
@@ -128,6 +153,15 @@ func (c *runtimeServiceClient) ObjectCommand(ctx context.Context, in *Command, o
 	return out, nil
 }
 
+func (c *runtimeServiceClient) RQL(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error) {
+	out := new(CommandResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_RQL_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *runtimeServiceClient) GetObjectsValues(ctx context.Context, in *ObjectsValuesRequest, opts ...grpc.CallOption) (*GetObjectsValuesResponse, error) {
 	out := new(GetObjectsValuesResponse)
 	err := c.cc.Invoke(ctx, RuntimeService_GetObjectsValues_FullMethodName, in, out, opts...)
@@ -155,40 +189,161 @@ func (c *runtimeServiceClient) GetPortValue(ctx context.Context, in *PortRequest
 	return out, nil
 }
 
-func (c *runtimeServiceClient) RegisterPlugin(ctx context.Context, in *PluginInfo, opts ...grpc.CallOption) (*PluginResponse, error) {
-	out := new(PluginResponse)
-	err := c.cc.Invoke(ctx, RuntimeService_RegisterPlugin_FullMethodName, in, out, opts...)
+func (c *runtimeServiceClient) GetHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Host, error) {
+	out := new(Host)
+	err := c.cc.Invoke(ctx, RuntimeService_GetHost_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *runtimeServiceClient) DeregisterPlugin(ctx context.Context, in *PluginInfo, opts ...grpc.CallOption) (*PluginResponse, error) {
-	out := new(PluginResponse)
-	err := c.cc.Invoke(ctx, RuntimeService_DeregisterPlugin_FullMethodName, in, out, opts...)
+func (c *runtimeServiceClient) AllHosts(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*HostList, error) {
+	out := new(HostList)
+	err := c.cc.Invoke(ctx, RuntimeService_AllHosts_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *runtimeServiceClient) ListPlugins(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PluginList, error) {
-	out := new(PluginList)
-	err := c.cc.Invoke(ctx, RuntimeService_ListPlugins_FullMethodName, in, out, opts...)
+func (c *runtimeServiceClient) DeleteHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, RuntimeService_DeleteHost_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *runtimeServiceClient) GetPlugins(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PluginList, error) {
-	out := new(PluginList)
-	err := c.cc.Invoke(ctx, RuntimeService_GetPlugins_FullMethodName, in, out, opts...)
+func (c *runtimeServiceClient) EnableHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, RuntimeService_EnableHost_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
+}
+
+func (c *runtimeServiceClient) DisableHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, RuntimeService_DisableHost_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) UpdateHost(ctx context.Context, in *Host, opts ...grpc.CallOption) (*Host, error) {
+	out := new(Host)
+	err := c.cc.Invoke(ctx, RuntimeService_UpdateHost_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) AddHost(ctx context.Context, in *Host, opts ...grpc.CallOption) (*Host, error) {
+	out := new(Host)
+	err := c.cc.Invoke(ctx, RuntimeService_AddHost_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) RegisterExtension(ctx context.Context, in *Extension, opts ...grpc.CallOption) (*Extension, error) {
+	out := new(Extension)
+	err := c.cc.Invoke(ctx, RuntimeService_RegisterExtension_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) AddExtension(ctx context.Context, in *Extension, opts ...grpc.CallOption) (*Extension, error) {
+	out := new(Extension)
+	err := c.cc.Invoke(ctx, RuntimeService_AddExtension_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) DeleteExtension(ctx context.Context, in *ExtensionId, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, RuntimeService_DeleteExtension_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) AllExtension(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ExtensionList, error) {
+	out := new(ExtensionList)
+	err := c.cc.Invoke(ctx, RuntimeService_AllExtension_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) StartExtension(ctx context.Context, in *ExtensionId, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, RuntimeService_StartExtension_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) StopExtension(ctx context.Context, in *ExtensionId, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, RuntimeService_StopExtension_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) UploadZipFile(ctx context.Context, in *UploadZipRequest, opts ...grpc.CallOption) (*UploadZipResponse, error) {
+	out := new(UploadZipResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_UploadZipFile_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) ExtensionStream(ctx context.Context, opts ...grpc.CallOption) (RuntimeService_ExtensionStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &RuntimeService_ServiceDesc.Streams[0], RuntimeService_ExtensionStream_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &runtimeServiceExtensionStreamClient{stream}
+	return x, nil
+}
+
+type RuntimeService_ExtensionStreamClient interface {
+	Send(*MessageRequest) error
+	Recv() (*MessageRequest, error)
+	grpc.ClientStream
+}
+
+type runtimeServiceExtensionStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *runtimeServiceExtensionStreamClient) Send(m *MessageRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *runtimeServiceExtensionStreamClient) Recv() (*MessageRequest, error) {
+	m := new(MessageRequest)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // RuntimeServiceServer is the server API for RuntimeService service.
@@ -202,15 +357,28 @@ type RuntimeServiceServer interface {
 	ObjectsDeploy(context.Context, *ObjectDeploy) (*ObjectDeploy, error)
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
 	ObjectCommand(context.Context, *Command) (*CommandResponse, error)
+	RQL(context.Context, *Command) (*CommandResponse, error)
 	GetObjectsValues(context.Context, *ObjectsValuesRequest) (*GetObjectsValuesResponse, error)
 	// all port values for an object
 	GetObjectValues(context.Context, *ObjectsValueRequest) (*GetObjectValuesResponse, error)
 	// single port value for an object
 	GetPortValue(context.Context, *PortRequest) (*PortValue, error)
-	RegisterPlugin(context.Context, *PluginInfo) (*PluginResponse, error)
-	DeregisterPlugin(context.Context, *PluginInfo) (*PluginResponse, error)
-	ListPlugins(context.Context, *Empty) (*PluginList, error)
-	GetPlugins(context.Context, *Empty) (*PluginList, error)
+	GetHost(context.Context, *HostId) (*Host, error)
+	AllHosts(context.Context, *Empty) (*HostList, error)
+	DeleteHost(context.Context, *HostId) (*Empty, error)
+	EnableHost(context.Context, *HostId) (*Empty, error)
+	DisableHost(context.Context, *HostId) (*Empty, error)
+	UpdateHost(context.Context, *Host) (*Host, error)
+	AddHost(context.Context, *Host) (*Host, error)
+	RegisterExtension(context.Context, *Extension) (*Extension, error)
+	AddExtension(context.Context, *Extension) (*Extension, error)
+	DeleteExtension(context.Context, *ExtensionId) (*Empty, error)
+	AllExtension(context.Context, *Empty) (*ExtensionList, error)
+	StartExtension(context.Context, *ExtensionId) (*Empty, error)
+	StopExtension(context.Context, *ExtensionId) (*Empty, error)
+	UploadZipFile(context.Context, *UploadZipRequest) (*UploadZipResponse, error)
+	// stream messages from the server to the plugin
+	ExtensionStream(RuntimeService_ExtensionStreamServer) error
 	mustEmbedUnimplementedRuntimeServiceServer()
 }
 
@@ -239,6 +407,9 @@ func (UnimplementedRuntimeServiceServer) Ping(context.Context, *PingRequest) (*P
 func (UnimplementedRuntimeServiceServer) ObjectCommand(context.Context, *Command) (*CommandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ObjectCommand not implemented")
 }
+func (UnimplementedRuntimeServiceServer) RQL(context.Context, *Command) (*CommandResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RQL not implemented")
+}
 func (UnimplementedRuntimeServiceServer) GetObjectsValues(context.Context, *ObjectsValuesRequest) (*GetObjectsValuesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetObjectsValues not implemented")
 }
@@ -248,17 +419,50 @@ func (UnimplementedRuntimeServiceServer) GetObjectValues(context.Context, *Objec
 func (UnimplementedRuntimeServiceServer) GetPortValue(context.Context, *PortRequest) (*PortValue, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPortValue not implemented")
 }
-func (UnimplementedRuntimeServiceServer) RegisterPlugin(context.Context, *PluginInfo) (*PluginResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RegisterPlugin not implemented")
+func (UnimplementedRuntimeServiceServer) GetHost(context.Context, *HostId) (*Host, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetHost not implemented")
 }
-func (UnimplementedRuntimeServiceServer) DeregisterPlugin(context.Context, *PluginInfo) (*PluginResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeregisterPlugin not implemented")
+func (UnimplementedRuntimeServiceServer) AllHosts(context.Context, *Empty) (*HostList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AllHosts not implemented")
 }
-func (UnimplementedRuntimeServiceServer) ListPlugins(context.Context, *Empty) (*PluginList, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListPlugins not implemented")
+func (UnimplementedRuntimeServiceServer) DeleteHost(context.Context, *HostId) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteHost not implemented")
 }
-func (UnimplementedRuntimeServiceServer) GetPlugins(context.Context, *Empty) (*PluginList, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPlugins not implemented")
+func (UnimplementedRuntimeServiceServer) EnableHost(context.Context, *HostId) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EnableHost not implemented")
+}
+func (UnimplementedRuntimeServiceServer) DisableHost(context.Context, *HostId) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DisableHost not implemented")
+}
+func (UnimplementedRuntimeServiceServer) UpdateHost(context.Context, *Host) (*Host, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateHost not implemented")
+}
+func (UnimplementedRuntimeServiceServer) AddHost(context.Context, *Host) (*Host, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddHost not implemented")
+}
+func (UnimplementedRuntimeServiceServer) RegisterExtension(context.Context, *Extension) (*Extension, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterExtension not implemented")
+}
+func (UnimplementedRuntimeServiceServer) AddExtension(context.Context, *Extension) (*Extension, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddExtension not implemented")
+}
+func (UnimplementedRuntimeServiceServer) DeleteExtension(context.Context, *ExtensionId) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteExtension not implemented")
+}
+func (UnimplementedRuntimeServiceServer) AllExtension(context.Context, *Empty) (*ExtensionList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AllExtension not implemented")
+}
+func (UnimplementedRuntimeServiceServer) StartExtension(context.Context, *ExtensionId) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StartExtension not implemented")
+}
+func (UnimplementedRuntimeServiceServer) StopExtension(context.Context, *ExtensionId) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StopExtension not implemented")
+}
+func (UnimplementedRuntimeServiceServer) UploadZipFile(context.Context, *UploadZipRequest) (*UploadZipResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadZipFile not implemented")
+}
+func (UnimplementedRuntimeServiceServer) ExtensionStream(RuntimeService_ExtensionStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method ExtensionStream not implemented")
 }
 func (UnimplementedRuntimeServiceServer) mustEmbedUnimplementedRuntimeServiceServer() {}
 
@@ -399,6 +603,24 @@ func _RuntimeService_ObjectCommand_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RuntimeService_RQL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Command)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).RQL(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_RQL_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).RQL(ctx, req.(*Command))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RuntimeService_GetObjectsValues_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ObjectsValuesRequest)
 	if err := dec(in); err != nil {
@@ -453,76 +675,282 @@ func _RuntimeService_GetPortValue_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_RegisterPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PluginInfo)
+func _RuntimeService_GetHost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HostId)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RuntimeServiceServer).RegisterPlugin(ctx, in)
+		return srv.(RuntimeServiceServer).GetHost(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RuntimeService_RegisterPlugin_FullMethodName,
+		FullMethod: RuntimeService_GetHost_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).RegisterPlugin(ctx, req.(*PluginInfo))
+		return srv.(RuntimeServiceServer).GetHost(ctx, req.(*HostId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_DeregisterPlugin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PluginInfo)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RuntimeServiceServer).DeregisterPlugin(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RuntimeService_DeregisterPlugin_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).DeregisterPlugin(ctx, req.(*PluginInfo))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RuntimeService_ListPlugins_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_AllHosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RuntimeServiceServer).ListPlugins(ctx, in)
+		return srv.(RuntimeServiceServer).AllHosts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RuntimeService_ListPlugins_FullMethodName,
+		FullMethod: RuntimeService_AllHosts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).ListPlugins(ctx, req.(*Empty))
+		return srv.(RuntimeServiceServer).AllHosts(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_GetPlugins_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_DeleteHost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HostId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).DeleteHost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_DeleteHost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).DeleteHost(ctx, req.(*HostId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_EnableHost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HostId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).EnableHost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_EnableHost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).EnableHost(ctx, req.(*HostId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_DisableHost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HostId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).DisableHost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_DisableHost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).DisableHost(ctx, req.(*HostId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_UpdateHost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Host)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).UpdateHost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_UpdateHost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).UpdateHost(ctx, req.(*Host))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_AddHost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Host)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).AddHost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_AddHost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).AddHost(ctx, req.(*Host))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_RegisterExtension_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Extension)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).RegisterExtension(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_RegisterExtension_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).RegisterExtension(ctx, req.(*Extension))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_AddExtension_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Extension)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).AddExtension(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_AddExtension_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).AddExtension(ctx, req.(*Extension))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_DeleteExtension_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExtensionId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).DeleteExtension(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_DeleteExtension_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).DeleteExtension(ctx, req.(*ExtensionId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_AllExtension_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RuntimeServiceServer).GetPlugins(ctx, in)
+		return srv.(RuntimeServiceServer).AllExtension(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RuntimeService_GetPlugins_FullMethodName,
+		FullMethod: RuntimeService_AllExtension_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).GetPlugins(ctx, req.(*Empty))
+		return srv.(RuntimeServiceServer).AllExtension(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_StartExtension_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExtensionId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).StartExtension(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_StartExtension_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).StartExtension(ctx, req.(*ExtensionId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_StopExtension_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExtensionId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).StopExtension(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_StopExtension_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).StopExtension(ctx, req.(*ExtensionId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_UploadZipFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadZipRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).UploadZipFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_UploadZipFile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).UploadZipFile(ctx, req.(*UploadZipRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_ExtensionStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(RuntimeServiceServer).ExtensionStream(&runtimeServiceExtensionStreamServer{stream})
+}
+
+type RuntimeService_ExtensionStreamServer interface {
+	Send(*MessageRequest) error
+	Recv() (*MessageRequest, error)
+	grpc.ServerStream
+}
+
+type runtimeServiceExtensionStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *runtimeServiceExtensionStreamServer) Send(m *MessageRequest) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *runtimeServiceExtensionStreamServer) Recv() (*MessageRequest, error) {
+	m := new(MessageRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // RuntimeService_ServiceDesc is the grpc.ServiceDesc for RuntimeService service.
@@ -561,6 +989,10 @@ var RuntimeService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RuntimeService_ObjectCommand_Handler,
 		},
 		{
+			MethodName: "RQL",
+			Handler:    _RuntimeService_RQL_Handler,
+		},
+		{
 			MethodName: "GetObjectsValues",
 			Handler:    _RuntimeService_GetObjectsValues_Handler,
 		},
@@ -573,22 +1005,69 @@ var RuntimeService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RuntimeService_GetPortValue_Handler,
 		},
 		{
-			MethodName: "RegisterPlugin",
-			Handler:    _RuntimeService_RegisterPlugin_Handler,
+			MethodName: "GetHost",
+			Handler:    _RuntimeService_GetHost_Handler,
 		},
 		{
-			MethodName: "DeregisterPlugin",
-			Handler:    _RuntimeService_DeregisterPlugin_Handler,
+			MethodName: "AllHosts",
+			Handler:    _RuntimeService_AllHosts_Handler,
 		},
 		{
-			MethodName: "ListPlugins",
-			Handler:    _RuntimeService_ListPlugins_Handler,
+			MethodName: "DeleteHost",
+			Handler:    _RuntimeService_DeleteHost_Handler,
 		},
 		{
-			MethodName: "GetPlugins",
-			Handler:    _RuntimeService_GetPlugins_Handler,
+			MethodName: "EnableHost",
+			Handler:    _RuntimeService_EnableHost_Handler,
+		},
+		{
+			MethodName: "DisableHost",
+			Handler:    _RuntimeService_DisableHost_Handler,
+		},
+		{
+			MethodName: "UpdateHost",
+			Handler:    _RuntimeService_UpdateHost_Handler,
+		},
+		{
+			MethodName: "AddHost",
+			Handler:    _RuntimeService_AddHost_Handler,
+		},
+		{
+			MethodName: "RegisterExtension",
+			Handler:    _RuntimeService_RegisterExtension_Handler,
+		},
+		{
+			MethodName: "AddExtension",
+			Handler:    _RuntimeService_AddExtension_Handler,
+		},
+		{
+			MethodName: "DeleteExtension",
+			Handler:    _RuntimeService_DeleteExtension_Handler,
+		},
+		{
+			MethodName: "AllExtension",
+			Handler:    _RuntimeService_AllExtension_Handler,
+		},
+		{
+			MethodName: "StartExtension",
+			Handler:    _RuntimeService_StartExtension_Handler,
+		},
+		{
+			MethodName: "StopExtension",
+			Handler:    _RuntimeService_StopExtension_Handler,
+		},
+		{
+			MethodName: "UploadZipFile",
+			Handler:    _RuntimeService_UploadZipFile_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "ExtensionStream",
+			Handler:       _RuntimeService_ExtensionStream_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "runtime.proto",
 }

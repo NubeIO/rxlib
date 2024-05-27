@@ -1,6 +1,7 @@
 package reactive
 
 import (
+	"github.com/NubeIO/rxlib"
 	"github.com/NubeIO/rxlib/helpers"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 )
@@ -97,7 +98,7 @@ func (inst *BaseObject) GetOutputs() []*runtime.Port {
 }
 
 func (inst *BaseObject) GetInputs() []*runtime.Port {
-	return inst.Outputs
+	return inst.Inputs
 }
 
 func (inst *BaseObject) GetInfo() *runtime.Info {
@@ -121,9 +122,9 @@ func (inst *BaseObject) newPort(port *runtime.Port, direction string) error {
 	if port.PortUUID == "" {
 		port.PortUUID = helpers.UUID()
 	}
-	if port.Direction == string(direction) {
+	if direction == string(rxlib.Input) {
 		inst.Inputs = append(inst.Inputs, port)
-	} else if port.Direction == string(direction) {
+	} else if direction == string(rxlib.Output) {
 		inst.Outputs = append(inst.Outputs, port)
 	}
 	return nil

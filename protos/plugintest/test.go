@@ -7,29 +7,28 @@ import (
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"google.golang.org/grpc"
-	"io"
 	"log"
 	"time"
 )
 
 type client struct {
-	pluginName       string
-	callbacks        map[string]func(message *runtime.MessageRequest)
-	stream           runtime.RuntimeService_PluginStreamMessagesClient
+	pluginName string
+	callbacks  map[string]func(message *runtime.MessageRequest)
+	//stream           runtime.RuntimeService_PluginStreamMessagesClient
 	pallet           []reactive.Object
 	runtime          []reactive.Object
 	serverConnection runtime.RuntimeServiceClient
 }
 
 func (cli *client) sendMessage(content string) error {
-	if cli.stream == nil {
-		return fmt.Errorf("stream is not initialized")
-	}
+	//if cli.stream == nil {
+	//	return fmt.Errorf("stream is not initialized")
+	//}
 
 	// Send a message to the server
-	if err := cli.stream.Send(&runtime.MessageRequest{Uuid: cli.pluginName}); err != nil {
-		return fmt.Errorf("failed to send message: %v", err)
-	}
+	//if err := cli.stream.Send(&runtime.MessageRequest{Uuid: cli.pluginName}); err != nil {
+	//	return fmt.Errorf("failed to send message: %v", err)
+	//}
 
 	return nil
 }
@@ -52,56 +51,58 @@ func (cli *client) connectWithRetry() (*grpc.ClientConn, error) {
 }
 
 func (cli *client) registerPlugin() error {
-	c := cli.serverConnection
-
-	// Register the plugin with a separate context for registration
-	regCtx, regCancel := context.WithTimeout(context.Background(), time.Second)
-	defer regCancel()
-	info := &runtime.PluginInfo{Name: "ExamplePlugin", Uuid: cli.pluginName, Pallet: reactive.ConvertObjects(cli.pallet)}
-	_, err := c.RegisterPlugin(regCtx, info)
-	if err != nil {
-		return fmt.Errorf("could not register plugin: %v", err)
-	}
-	fmt.Println("Registered plugin")
+	//c := cli.serverConnection
+	//
+	//// Register the plugin with a separate context for registration
+	//regCtx, regCancel := context.WithTimeout(context.Background(), time.Second)
+	//defer regCancel()
+	//info := &runtime.PluginInfo{Name: "ExamplePlugin", Uuid: cli.pluginName, Pallet: reactive.ConvertObjects(cli.pallet)}
+	//_, err := c.RegisterPlugin(regCtx, info)
+	//if err != nil {
+	//	return fmt.Errorf("could not register plugin: %v", err)
+	//}
+	//fmt.Println("Registered plugin")
 	return nil
 }
 
 func (cli *client) startStreaming(ctx context.Context, conn *grpc.ClientConn) error {
-	c := runtime.NewRuntimeServiceClient(conn)
+	//c := runtime.NewRuntimeServiceClient(conn)
 
 	// Start bidirectional streaming with the given context
-	stream, err := c.PluginStreamMessages(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to start streaming: %v", err)
-	}
-	cli.stream = stream
+	//stream, err := c.PluginStreamMessages(ctx)
+	//if err != nil {
+	//	return fmt.Errorf("failed to start streaming: %v", err)
+	//}
+	//cli.stream = stream
+	//
+	//// Send a message to the server
+	//if err := stream.Send(&runtime.MessageRequest{Uuid: cli.pluginName}); err != nil {
+	//	return fmt.Errorf("failed to send message: %v", err)
+	//}
+	//
+	//// Receive messages from the server
+	//for {
+	//	select {
+	//	case <-ctx.Done():
+	//		return nil // Context canceled, exit the loop
+	//	default:
+	//		in, err := stream.Recv()
+	//		if err == io.EOF {
+	//			return nil // Server closed the stream
+	//		}
+	//		if err != nil {
+	//			return fmt.Errorf("failed to receive message: %v", err)
+	//		}
+	//		//pprint.PrintJSON(in)
+	//		if callback, ok := cli.callbacks[in.Key]; ok {
+	//			callback(in)
+	//		} else {
+	//			fmt.Printf("Received message from server unknown: %s\n", in.Key)
+	//		}
+	//	}
+	//}
 
-	// Send a message to the server
-	if err := stream.Send(&runtime.MessageRequest{Uuid: cli.pluginName}); err != nil {
-		return fmt.Errorf("failed to send message: %v", err)
-	}
-
-	// Receive messages from the server
-	for {
-		select {
-		case <-ctx.Done():
-			return nil // Context canceled, exit the loop
-		default:
-			in, err := stream.Recv()
-			if err == io.EOF {
-				return nil // Server closed the stream
-			}
-			if err != nil {
-				return fmt.Errorf("failed to receive message: %v", err)
-			}
-			//pprint.PrintJSON(in)
-			if callback, ok := cli.callbacks[in.Key]; ok {
-				callback(in)
-			} else {
-				fmt.Printf("Received message from server unknown: %s\n", in.Key)
-			}
-		}
-	}
+	return nil
 }
 
 func (cli *client) addObject(message *runtime.MessageRequest) {
@@ -140,13 +141,19 @@ func (cli *client) addObject(message *runtime.MessageRequest) {
 func (cli *client) outputCallback(cmd *runtime.Command) {
 	//cli.serverConnection.ObjectInvoke(context.Background(), cmd)
 
-	if err := cli.stream.Send(&runtime.MessageRequest{
-		Key:     "invoke",
-		Uuid:    cli.pluginName,
-		Command: cmd,
-	}); err != nil {
+	//if err := cli.stream.Send(&runtime.MessageRequest{
+	//	Key:     "invoke",
+	//	Uuid:    cli.pluginName,
+	//	Command: cmd,
+	//}); err != nil {
+	//
+	//}
+}
 
-	}
+func (cli *client) counter(obj *reactive.BaseObject, outputUpdated func(message *runtime.Command)) reactive.Object {
+	instance := add.New(outputUpdated)
+	base := instance.New(obj)
+	return base
 }
 
 func (cli *client) getPallet() {
@@ -164,12 +171,6 @@ func (cli *client) existsInPallet(objectID string) bool {
 		}
 	}
 	return false
-}
-
-func (cli *client) counter(obj *reactive.BaseObject, outputUpdated func(message *runtime.Command)) reactive.Object {
-	instance := add.New(outputUpdated)
-	base := instance.New(obj)
-	return base
 }
 
 const (
