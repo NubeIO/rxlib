@@ -147,7 +147,7 @@ service RuntimeService {
 
   rpc AllExtension (Empty) returns (ExtensionList) {
     option (google.api.http) = {
-      get: "/api/extensions/all"
+      get: "/api/extensions"
     };
   }
 
@@ -169,8 +169,6 @@ service RuntimeService {
       body: "*"
     };
   }
-
-//  rpc PluginStreamMessages(stream MessageRequest) returns (stream MessageRequest);
 
   // stream messages from the server to the plugin
   rpc ExtensionStream(stream MessageRequest) returns (stream MessageRequest);
@@ -195,6 +193,7 @@ message MessageRequest {
   repeated ObjectConfig pallet = 4;
   bytes body = 5;
   Command command = 6;
+  string stringPayload = 7;
 }
 
 

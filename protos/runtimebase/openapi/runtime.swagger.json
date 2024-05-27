@@ -48,6 +48,28 @@
         ]
       }
     },
+    "/api/extensions": {
+      "get": {
+        "operationId": "RuntimeService_AllExtension",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeExtensionList"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
     "/api/extensions/add": {
       "post": {
         "operationId": "RuntimeService_AddExtension",
@@ -111,28 +133,6 @@
             "format": "int32"
           }
         ],
-        "tags": [
-          "RuntimeService"
-        ]
-      }
-    },
-    "/api/extensions/all": {
-      "get": {
-        "operationId": "RuntimeService_AllExtension",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/RuntimeExtensionList"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
         "tags": [
           "RuntimeService"
         ]
@@ -1469,6 +1469,9 @@
         },
         "command": {
           "$ref": "#/definitions/RuntimeCommand"
+        },
+        "stringPayload": {
+          "type": "string"
         }
       }
     },

@@ -1,4 +1,4 @@
-package news
+package add
 
 // https://riad-news-api.vercel.app/api/news
 
@@ -32,9 +32,9 @@ func New(outputUpdated func(message *runtime.Command)) *Instance {
 
 func (inst *Instance) New(object reactive.Object, opts ...any) reactive.Object {
 	info := rxlib.NewObjectInfo().
-		SetID("news").
-		SetPluginName("news-feed").
-		SetCategory("news").
+		SetID("add").
+		SetPluginName("ext-math").
+		SetCategory("math").
 		SetCallResetOnDeploy().
 		SetObjectType(rxlib.Logic).
 		SetAllPermissions().
@@ -42,22 +42,22 @@ func (inst *Instance) New(object reactive.Object, opts ...any) reactive.Object {
 
 	object.SetInfo(info)
 	object.NewOutputPort(&runtime.Port{
-		Id:        "count",
-		Name:      "count",
+		Id:        "output",
+		Name:      "output",
 		Direction: string(rxlib.Output),
-		DataType:  priority.TypeInt,
-	})
-	object.NewOutputPort(&runtime.Port{
-		Id:        "latest",
-		Name:      "latest",
-		Direction: string(rxlib.Output),
-		DataType:  priority.TypeJSON,
+		DataType:  priority.TypeFloat,
 	})
 	object.NewInputPort(&runtime.Port{
-		Id:        "trigger",
-		Name:      "trigger",
+		Id:        "input-1",
+		Name:      "input-1",
 		Direction: string(rxlib.Input),
-		DataType:  priority.TypeBool,
+		DataType:  priority.TypeFloat,
+	})
+	object.NewInputPort(&runtime.Port{
+		Id:        "input-2",
+		Name:      "input-2",
+		Direction: string(rxlib.Input),
+		DataType:  priority.TypeFloat,
 	})
 	inst.Object = object
 	return inst

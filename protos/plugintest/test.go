@@ -150,6 +150,12 @@ func (cli *client) outputCallback(cmd *runtime.Command) {
 	//}
 }
 
+func (cli *client) counter(obj *reactive.BaseObject, outputUpdated func(message *runtime.Command)) reactive.Object {
+	instance := add.New(outputUpdated)
+	base := instance.New(obj)
+	return base
+}
+
 func (cli *client) getPallet() {
 	baseObj := reactive.New("add", nil)
 	instance := add.New(nil)
@@ -165,12 +171,6 @@ func (cli *client) existsInPallet(objectID string) bool {
 		}
 	}
 	return false
-}
-
-func (cli *client) counter(obj *reactive.BaseObject, outputUpdated func(message *runtime.Command)) reactive.Object {
-	instance := add.New(outputUpdated)
-	base := instance.New(obj)
-	return base
 }
 
 const (
