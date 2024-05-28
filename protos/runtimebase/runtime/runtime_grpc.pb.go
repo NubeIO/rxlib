@@ -37,6 +37,7 @@ const (
 	RuntimeService_DisableHost_FullMethodName       = "/App.Runtime.RuntimeService/DisableHost"
 	RuntimeService_UpdateHost_FullMethodName        = "/App.Runtime.RuntimeService/UpdateHost"
 	RuntimeService_AddHost_FullMethodName           = "/App.Runtime.RuntimeService/AddHost"
+	RuntimeService_SendHostMQTT_FullMethodName      = "/App.Runtime.RuntimeService/SendHostMQTT"
 	RuntimeService_RegisterExtension_FullMethodName = "/App.Runtime.RuntimeService/RegisterExtension"
 	RuntimeService_AddExtension_FullMethodName      = "/App.Runtime.RuntimeService/AddExtension"
 	RuntimeService_DeleteExtension_FullMethodName   = "/App.Runtime.RuntimeService/DeleteExtension"
@@ -71,6 +72,7 @@ type RuntimeServiceClient interface {
 	DisableHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Empty, error)
 	UpdateHost(ctx context.Context, in *Host, opts ...grpc.CallOption) (*Host, error)
 	AddHost(ctx context.Context, in *Host, opts ...grpc.CallOption) (*Host, error)
+	SendHostMQTT(ctx context.Context, in *HostMQTT, opts ...grpc.CallOption) (*HostMQTT, error)
 	RegisterExtension(ctx context.Context, in *Extension, opts ...grpc.CallOption) (*Extension, error)
 	AddExtension(ctx context.Context, in *Extension, opts ...grpc.CallOption) (*Extension, error)
 	DeleteExtension(ctx context.Context, in *ExtensionId, opts ...grpc.CallOption) (*Empty, error)
@@ -252,6 +254,15 @@ func (c *runtimeServiceClient) AddHost(ctx context.Context, in *Host, opts ...gr
 	return out, nil
 }
 
+func (c *runtimeServiceClient) SendHostMQTT(ctx context.Context, in *HostMQTT, opts ...grpc.CallOption) (*HostMQTT, error) {
+	out := new(HostMQTT)
+	err := c.cc.Invoke(ctx, RuntimeService_SendHostMQTT_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *runtimeServiceClient) RegisterExtension(ctx context.Context, in *Extension, opts ...grpc.CallOption) (*Extension, error) {
 	out := new(Extension)
 	err := c.cc.Invoke(ctx, RuntimeService_RegisterExtension_FullMethodName, in, out, opts...)
@@ -370,6 +381,7 @@ type RuntimeServiceServer interface {
 	DisableHost(context.Context, *HostId) (*Empty, error)
 	UpdateHost(context.Context, *Host) (*Host, error)
 	AddHost(context.Context, *Host) (*Host, error)
+	SendHostMQTT(context.Context, *HostMQTT) (*HostMQTT, error)
 	RegisterExtension(context.Context, *Extension) (*Extension, error)
 	AddExtension(context.Context, *Extension) (*Extension, error)
 	DeleteExtension(context.Context, *ExtensionId) (*Empty, error)
@@ -439,6 +451,9 @@ func (UnimplementedRuntimeServiceServer) UpdateHost(context.Context, *Host) (*Ho
 }
 func (UnimplementedRuntimeServiceServer) AddHost(context.Context, *Host) (*Host, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddHost not implemented")
+}
+func (UnimplementedRuntimeServiceServer) SendHostMQTT(context.Context, *HostMQTT) (*HostMQTT, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendHostMQTT not implemented")
 }
 func (UnimplementedRuntimeServiceServer) RegisterExtension(context.Context, *Extension) (*Extension, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterExtension not implemented")
@@ -801,6 +816,24 @@ func _RuntimeService_AddHost_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RuntimeService_SendHostMQTT_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HostMQTT)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).SendHostMQTT(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_SendHostMQTT_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).SendHostMQTT(ctx, req.(*HostMQTT))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RuntimeService_RegisterExtension_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Extension)
 	if err := dec(in); err != nil {
@@ -1031,6 +1064,10 @@ var RuntimeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddHost",
 			Handler:    _RuntimeService_AddHost_Handler,
+		},
+		{
+			MethodName: "SendHostMQTT",
+			Handler:    _RuntimeService_SendHostMQTT_Handler,
 		},
 		{
 			MethodName: "RegisterExtension",

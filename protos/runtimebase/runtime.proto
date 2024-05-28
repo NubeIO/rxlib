@@ -127,6 +127,15 @@ service RuntimeService {
     };
   }
 
+  rpc SendHostMQTT (HostMQTT) returns (HostMQTT) {
+    option (google.api.http) = {
+      post: "/api/hosts/mqtt"
+      body: "*"
+    };
+  }
+
+
+
   rpc RegisterExtension (Extension) returns (Extension) {
     option (google.api.http) = {
       post: "/api/extensions/register"
@@ -179,6 +188,15 @@ service RuntimeService {
 message HostId {
   string uuid = 1;
 }
+
+message HostMQTT {
+  string hostUUID = 1;
+  string topic = 2;
+  string messageUUID = 3;
+  bytes body = 4;
+}
+
+
 
 
 message HostList {
