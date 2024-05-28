@@ -559,6 +559,38 @@
         ]
       }
     },
+    "/api/hosts/mqtt": {
+      "post": {
+        "operationId": "RuntimeService_SendHostMQTT",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeHostMQTT"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeHostMQTT"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
     "/api/hosts/update": {
       "put": {
         "operationId": "RuntimeService_UpdateHost",
@@ -1373,6 +1405,24 @@
             "type": "object",
             "$ref": "#/definitions/RuntimeHost"
           }
+        }
+      }
+    },
+    "RuntimeHostMQTT": {
+      "type": "object",
+      "properties": {
+        "hostUUID": {
+          "type": "string"
+        },
+        "topic": {
+          "type": "string"
+        },
+        "messageUUID": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },
