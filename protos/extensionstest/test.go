@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"github.com/NubeIO/rxlib/ginlib"
 	"github.com/NubeIO/rxlib/helpers"
-	"github.com/NubeIO/rxlib/helpers/pprint"
 	"github.com/NubeIO/rxlib/protos/extensionstest/add"
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"os"
 	"time"
 )
 
@@ -73,7 +73,7 @@ func (inst *extension) sendMessageToServer(content, key string) error {
 		return fmt.Errorf("stream is not initialized")
 	}
 	messages[helpers.UUID()] = fmt.Sprintf("new stream message %s %s", content, key)
-	if err := inst.stream.Send(&runtime.MessageRequest{Uuid: inst.name, Key: key, StringPayload: content}); err != nil {
+	if err := inst.stream.Send(&runtime.MessageRequest{ExtensionUUID: inst.name, Key: key, StringPayload: content}); err != nil {
 		return fmt.Errorf("failed to send message: %v", err)
 	}
 	return nil
@@ -136,15 +136,17 @@ func (inst *extension) newObject(message *runtime.MessageRequest) {
 // outputCallback send a message back to the server when the output value of the object is updated
 func (inst *extension) outputCallback(cmd *runtime.Command) {
 	if err := inst.stream.Send(&runtime.MessageRequest{
-		Key:     "invoke",
-		Uuid:    inst.name,
-		Command: cmd,
+		Key:           "invoke",
+		ExtensionUUID: inst.name,
+		Command:       cmd,
 	}); err != nil {
 
 	}
+	messages[helpers.UUID()] = fmt.Sprintf("outputCallback %s", inst.name)
 }
 
 func main() {
+
 	cli := &extension{
 		name:     "test",
 		bootTime: time.Now().String(),
@@ -202,6 +204,8 @@ func (inst *extension) objectInstance(obj *reactive.BaseObject, outputUpdated fu
 	return base
 }
 
+var infoLog = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+
 // startServerStreaming stream messages from the server
 func (inst *extension) startServerStreaming(ctx context.Context, conn *grpc.ClientConn) error {
 	c := runtime.NewRuntimeServiceClient(conn)
@@ -213,7 +217,7 @@ func (inst *extension) startServerStreaming(ctx context.Context, conn *grpc.Clie
 	}
 	inst.stream = stream
 	// Send a message to the server. initiate the client connection to the server. The server will persist the client
-	if err := stream.Send(&runtime.MessageRequest{Uuid: inst.name, StringPayload: "brith from extension"}); err != nil {
+	if err := stream.Send(&runtime.MessageRequest{ExtensionUUID: inst.name, StringPayload: "brith from extension"}); err != nil {
 		return fmt.Errorf("failed to send message: %v", err)
 	}
 	messages["start"] = time.Now()
@@ -236,8 +240,9 @@ func (inst *extension) startServerStreaming(ctx context.Context, conn *grpc.Clie
 				inst.newObject(in)
 			}
 			if in.Key == "input-updated" {
-				pprint.PrintJSON(in)
-				if callback, ok := inst.callbacks[in.Key]; ok {
+
+				if callback, ok := inst.callbacks[in.GetObjectUUID()]; ok {
+
 					callback(in)
 				} else {
 					fmt.Printf("Received message from server unknown: %s\n", in.Key)

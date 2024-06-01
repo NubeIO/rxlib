@@ -55,7 +55,7 @@ func (inst *extension) palletRoute() {
 // streamRoute Send a message to the server
 func (inst *extension) streamRoute() {
 	inst.server.AddGetRoute("/api/stream", func(c *gin.Context) {
-		if err := inst.stream.Send(&runtime.MessageRequest{Uuid: inst.name}); err != nil {
+		if err := inst.stream.Send(&runtime.MessageRequest{ExtensionUUID: inst.name}); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			return
 		}

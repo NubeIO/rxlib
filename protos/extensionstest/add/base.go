@@ -8,6 +8,8 @@ import (
 	"github.com/NubeIO/rxlib/priority"
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
+	"log"
+	"os"
 	"time"
 )
 
@@ -23,6 +25,8 @@ type Instance struct {
 	lastValue     float64
 	hasPublished  bool
 }
+
+var infoLog = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 func New(outputUpdated func(message *runtime.Command)) *Instance {
 	obj := new(Instance)
@@ -73,6 +77,7 @@ func (inst *Instance) Reset() error {
 }
 
 func (inst *Instance) Handler(p *runtime.MessageRequest) {
+	infoLog.Println("inside Handler")
 	if p == nil {
 		return
 	}

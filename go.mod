@@ -24,6 +24,7 @@ require (
 	github.com/rs/zerolog v1.32.0
 	github.com/sashabaranov/go-openai v1.21.0
 	github.com/shirou/gopsutil v3.21.11+incompatible
+	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
 	github.com/texttheater/golang-levenshtein/levenshtein v0.0.0-20200805054039-cae8b0eaed6c
@@ -66,6 +67,7 @@ require (
 	github.com/jonboulle/clockwork v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
+	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
