@@ -60,7 +60,7 @@ func (inst *extension) bootGRPC() {
 }
 
 func (inst *extension) buildPallet() {
-	baseObj := reactive.New("news", nil)
+	baseObj := reactive.New("add", nil)
 	instance := add.New(nil)
 	obj := instance.New(baseObj)
 	obj.GetInfo().PluginName = inst.name
@@ -140,9 +140,9 @@ func (inst *extension) outputCallback(cmd *runtime.Command) {
 		ExtensionUUID: inst.name,
 		Command:       cmd,
 	}); err != nil {
-
+		messages[helpers.UUID()] = fmt.Sprintf("outputCallback err: %v", err)
 	}
-	messages[helpers.UUID()] = fmt.Sprintf("outputCallback %s", inst.name)
+
 }
 
 func main() {
@@ -240,12 +240,10 @@ func (inst *extension) startServerStreaming(ctx context.Context, conn *grpc.Clie
 				inst.newObject(in)
 			}
 			if in.Key == "input-updated" {
-
 				if callback, ok := inst.callbacks[in.GetObjectUUID()]; ok {
-
 					callback(in)
 				} else {
-					fmt.Printf("Received message from server unknown: %s\n", in.Key)
+					fmt.Printf("Received message from server unknown key: %s\n", in.Key)
 				}
 			}
 

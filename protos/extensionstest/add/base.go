@@ -4,7 +4,6 @@ package add
 
 import (
 	"github.com/NubeIO/rxlib"
-	"github.com/NubeIO/rxlib/helpers/pprint"
 	"github.com/NubeIO/rxlib/priority"
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
@@ -86,7 +85,6 @@ func (inst *Instance) Handler(p *runtime.MessageRequest) {
 		return
 	}
 
-	pprint.PrintJSON(cmd.GetPortValues())
 	for _, value := range cmd.GetPortValues() {
 		for _, d := range value.PortIDs {
 			if d == "input-1" {
