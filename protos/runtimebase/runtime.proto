@@ -205,13 +205,14 @@ message HostList {
 
 
 message MessageRequest {
-  string uuid = 1;
+  string extensionUUID = 1;
   string key = 2;
   ObjectConfig object = 3;
   repeated ObjectConfig pallet = 4;
   bytes body = 5;
   Command command = 6;
   string stringPayload = 7;
+  string objectUUID = 8;
 }
 
 
