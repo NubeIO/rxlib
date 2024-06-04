@@ -72,8 +72,14 @@ func (conf *Configuration) GetArgOne() string {
 	return rootCmd.PersistentFlags().Lookup("arg1").Value.String()
 }
 
-func (conf *Configuration) GetBrokerIP() string {
-	return rootCmd.PersistentFlags().Lookup("broker").Value.String()
+func (conf *Configuration) GetBroker() bool {
+	return rootCmd.PersistentFlags().Lookup("broker").Value.String() == "true"
+}
+
+func (conf *Configuration) GetBrokerPort() int {
+	s := rootCmd.PersistentFlags().Lookup("broker-port").Value.String()
+	i, _ := strconv.Atoi(s)
+	return i
 }
 
 func (conf *Configuration) GetAbsPluginsDir() string {
