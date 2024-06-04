@@ -52,6 +52,10 @@ func (conf *Configuration) Auth() bool {
 	return rootCmd.PersistentFlags().Lookup("auth").Value.String() == "true"
 }
 
+func (conf *Configuration) GetLicense() string {
+	return rootCmd.PersistentFlags().Lookup("license").Value.String()
+}
+
 func (conf *Configuration) GetPort() int {
 	s := rootCmd.PersistentFlags().Lookup("port").Value.String()
 	i, _ := strconv.Atoi(s)
