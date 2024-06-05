@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func (inst *Extensions) Run() error {
+func (inst *Extensions) Register() error {
 	var err error
 
 	var conn *grpc.ClientConn

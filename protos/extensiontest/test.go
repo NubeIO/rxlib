@@ -10,5 +10,5 @@ func main() {
 	factory := extensionlib.New("test")
 	factory.AddPallet("add", add.New(nil))
 	factory.AddPallet("subtract", subtract.New(nil))
-	factory.Run()
+	factory.Register()
 }
