@@ -60,7 +60,7 @@ type RuntimeServiceClient interface {
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
 	ObjectCommand(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error)
 	RQL(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error)
-	GetObjectsValues(ctx context.Context, in *ObjectsValuesRequest, opts ...grpc.CallOption) (*GetObjectsValuesResponse, error)
+	GetObjectsValues(ctx context.Context, in *ObjectsValuesRequest, opts ...grpc.CallOption) (*GetObjectValuesResponse, error)
 	// all port values for an object
 	GetObjectValues(ctx context.Context, in *ObjectsValueRequest, opts ...grpc.CallOption) (*GetObjectValuesResponse, error)
 	// single port value for an object
@@ -164,8 +164,8 @@ func (c *runtimeServiceClient) RQL(ctx context.Context, in *Command, opts ...grp
 	return out, nil
 }
 
-func (c *runtimeServiceClient) GetObjectsValues(ctx context.Context, in *ObjectsValuesRequest, opts ...grpc.CallOption) (*GetObjectsValuesResponse, error) {
-	out := new(GetObjectsValuesResponse)
+func (c *runtimeServiceClient) GetObjectsValues(ctx context.Context, in *ObjectsValuesRequest, opts ...grpc.CallOption) (*GetObjectValuesResponse, error) {
+	out := new(GetObjectValuesResponse)
 	err := c.cc.Invoke(ctx, RuntimeService_GetObjectsValues_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -369,7 +369,7 @@ type RuntimeServiceServer interface {
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
 	ObjectCommand(context.Context, *Command) (*CommandResponse, error)
 	RQL(context.Context, *Command) (*CommandResponse, error)
-	GetObjectsValues(context.Context, *ObjectsValuesRequest) (*GetObjectsValuesResponse, error)
+	GetObjectsValues(context.Context, *ObjectsValuesRequest) (*GetObjectValuesResponse, error)
 	// all port values for an object
 	GetObjectValues(context.Context, *ObjectsValueRequest) (*GetObjectValuesResponse, error)
 	// single port value for an object
@@ -422,7 +422,7 @@ func (UnimplementedRuntimeServiceServer) ObjectCommand(context.Context, *Command
 func (UnimplementedRuntimeServiceServer) RQL(context.Context, *Command) (*CommandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RQL not implemented")
 }
-func (UnimplementedRuntimeServiceServer) GetObjectsValues(context.Context, *ObjectsValuesRequest) (*GetObjectsValuesResponse, error) {
+func (UnimplementedRuntimeServiceServer) GetObjectsValues(context.Context, *ObjectsValuesRequest) (*GetObjectValuesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetObjectsValues not implemented")
 }
 func (UnimplementedRuntimeServiceServer) GetObjectValues(context.Context, *ObjectsValueRequest) (*GetObjectValuesResponse, error) {

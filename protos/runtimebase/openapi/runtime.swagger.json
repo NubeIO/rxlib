@@ -855,7 +855,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/RuntimeGetObjectsValuesResponse"
+              "$ref": "#/definitions/RuntimeGetObjectValuesResponse"
             }
           },
           "default": {
@@ -1327,17 +1327,6 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/RuntimePortValue"
-          }
-        }
-      }
-    },
-    "RuntimeGetObjectsValuesResponse": {
-      "type": "object",
-      "properties": {
-        "values": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/RuntimeGetObjectValuesResponse"
           }
         }
       }

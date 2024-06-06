@@ -63,7 +63,7 @@ service RuntimeService {
 
 
 
-  rpc GetObjectsValues (ObjectsValuesRequest) returns (GetObjectsValuesResponse) {
+  rpc GetObjectsValues (ObjectsValuesRequest) returns (GetObjectValuesResponse) {
     option (google.api.http) = {
       get: "/api/runtime/objects/values"
     };
@@ -230,10 +230,6 @@ message PluginList {
   repeated PluginInfo plugins = 1;
 }
 
-
-message GetObjectsValuesResponse {
-  map<string, GetObjectValuesResponse> values = 1;
-}
 
 
 message GetObjectValuesResponse {
