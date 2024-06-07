@@ -80,6 +80,9 @@ type InfoBuilder interface {
 
 	GetIcon() string //https://microsoft.github.io/vscode-codicons/dist/codicon.html
 	SetIcon(icon string) InfoBuilder
+
+	GetHelp() string //https://microsoft.github.io/vscode-codicons/dist/codicon.html
+	SetHelp(icon string) InfoBuilder
 }
 
 func NewObjectInfo() InfoBuilder {
@@ -102,6 +105,18 @@ func (builder *infoBuilder) GetIcon() string {
 		builder.info.Icon = ""
 	}
 	return builder.info.Icon
+}
+
+func (builder *infoBuilder) SetHelp(help string) InfoBuilder {
+	builder.info.Help = help
+	return builder
+}
+
+func (builder *infoBuilder) GetHelp() string {
+	if builder.info.Help == "" {
+		builder.info.Help = ""
+	}
+	return builder.info.Help
 }
 
 func (builder *infoBuilder) SetIcon(icon string) InfoBuilder {

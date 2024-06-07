@@ -89,48 +89,12 @@
         },
         "parameters": [
           {
-            "name": "uuid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "pid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "fileName",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "port",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "objectsCount",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeExtension"
+            }
           }
         ],
         "tags": [
@@ -187,48 +151,12 @@
         },
         "parameters": [
           {
-            "name": "uuid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "pid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "fileName",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "port",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "objectsCount",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeExtension"
+            }
           }
         ],
         "tags": [
@@ -315,101 +243,12 @@
         },
         "parameters": [
           {
-            "name": "uuid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "type",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "displayName",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "description",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "enable",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "ip",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "port",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "https",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "externalToken",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "imageName",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "displayColour",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "star",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "folderName",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "lon",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "lat",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeHost"
+            }
           }
         ],
         "tags": [
@@ -592,7 +431,7 @@
       }
     },
     "/api/hosts/update": {
-      "put": {
+      "patch": {
         "operationId": "RuntimeService_UpdateHost",
         "responses": {
           "200": {
@@ -610,101 +449,12 @@
         },
         "parameters": [
           {
-            "name": "uuid",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "type",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "displayName",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "description",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "enable",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "ip",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "port",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "https",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "externalToken",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "imageName",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "displayColour",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "star",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          },
-          {
-            "name": "folderName",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "lon",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "lat",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeHost"
+            }
           }
         ],
         "tags": [
@@ -1480,6 +1230,9 @@
         },
         "isVirtualObject": {
           "type": "boolean"
+        },
+        "help": {
+          "type": "string"
         }
       }
     },

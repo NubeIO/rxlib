@@ -117,13 +117,15 @@ service RuntimeService {
 
   rpc UpdateHost (Host) returns (Host) {
     option (google.api.http) = {
-      put: "/api/hosts/update"
+      patch: "/api/hosts/update"
+      body: "*"
     };
   }
 
   rpc AddHost (Host) returns (Host) {
     option (google.api.http) = {
       post: "/api/hosts/add"
+      body: "*"
     };
   }
 
@@ -139,12 +141,14 @@ service RuntimeService {
   rpc RegisterExtension (Extension) returns (Extension) {
     option (google.api.http) = {
       post: "/api/extensions/register"
+      body: "*"
     };
   }
 
   rpc AddExtension (Extension) returns (Extension) {
     option (google.api.http) = {
       post: "/api/extensions/add"
+      body: "*"
     };
   }
 
@@ -411,6 +415,7 @@ message Info {
   Permissions permissions = 14;
   Requirements requirements = 15;
   bool isVirtualObject = 16;
+  string help = 17;
 }
 
 
