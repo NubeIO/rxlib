@@ -82,7 +82,7 @@ type InfoBuilder interface {
 	SetIcon(icon string) InfoBuilder
 
 	GetHelp() string
-	SetHelp(icon string) InfoBuilder
+	SetHelp(help string) InfoBuilder
 
 	SetDynamicInputsMaxLimit(count int) InfoBuilder
 }

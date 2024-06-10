@@ -598,6 +598,36 @@
         ]
       }
     },
+    "/api/runtime/objects/help/{id}": {
+      "get": {
+        "operationId": "RuntimeService_GetObjectHelp",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeObjectHelp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
     "/api/runtime/objects/values": {
       "get": {
         "operationId": "RuntimeService_GetObjectsValues",
@@ -1412,6 +1442,14 @@
             "type": "object",
             "$ref": "#/definitions/RuntimeObjectExtractedDetails"
           }
+        }
+      }
+    },
+    "RuntimeObjectHelp": {
+      "type": "object",
+      "properties": {
+        "help": {
+          "type": "string"
         }
       }
     },

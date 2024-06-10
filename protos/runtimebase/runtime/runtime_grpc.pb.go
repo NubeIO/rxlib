@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	RuntimeService_GetObjects_FullMethodName        = "/App.Runtime.RuntimeService/GetObjects"
 	RuntimeService_GetObject_FullMethodName         = "/App.Runtime.RuntimeService/GetObject"
+	RuntimeService_GetObjectHelp_FullMethodName     = "/App.Runtime.RuntimeService/GetObjectHelp"
 	RuntimeService_GetTreeMapRoot_FullMethodName    = "/App.Runtime.RuntimeService/GetTreeMapRoot"
 	RuntimeService_GetPalletTree_FullMethodName     = "/App.Runtime.RuntimeService/GetPalletTree"
 	RuntimeService_ObjectsDeploy_FullMethodName     = "/App.Runtime.RuntimeService/ObjectsDeploy"
@@ -54,6 +55,7 @@ const (
 type RuntimeServiceClient interface {
 	GetObjects(ctx context.Context, in *ObjectsRequest, opts ...grpc.CallOption) (*ObjectsResponse, error)
 	GetObject(ctx context.Context, in *ObjectRequest, opts ...grpc.CallOption) (*ObjectConfig, error)
+	GetObjectHelp(ctx context.Context, in *ObjectID, opts ...grpc.CallOption) (*ObjectHelp, error)
 	GetTreeMapRoot(ctx context.Context, in *ObjectsRequest, opts ...grpc.CallOption) (*ObjectsRootMap, error)
 	GetPalletTree(ctx context.Context, in *PalletRequest, opts ...grpc.CallOption) (*PalletTree, error)
 	ObjectsDeploy(ctx context.Context, in *ObjectDeploy, opts ...grpc.CallOption) (*ObjectDeploy, error)
@@ -104,6 +106,15 @@ func (c *runtimeServiceClient) GetObjects(ctx context.Context, in *ObjectsReques
 func (c *runtimeServiceClient) GetObject(ctx context.Context, in *ObjectRequest, opts ...grpc.CallOption) (*ObjectConfig, error) {
 	out := new(ObjectConfig)
 	err := c.cc.Invoke(ctx, RuntimeService_GetObject_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) GetObjectHelp(ctx context.Context, in *ObjectID, opts ...grpc.CallOption) (*ObjectHelp, error) {
+	out := new(ObjectHelp)
+	err := c.cc.Invoke(ctx, RuntimeService_GetObjectHelp_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -363,6 +374,7 @@ func (x *runtimeServiceExtensionStreamClient) Recv() (*MessageRequest, error) {
 type RuntimeServiceServer interface {
 	GetObjects(context.Context, *ObjectsRequest) (*ObjectsResponse, error)
 	GetObject(context.Context, *ObjectRequest) (*ObjectConfig, error)
+	GetObjectHelp(context.Context, *ObjectID) (*ObjectHelp, error)
 	GetTreeMapRoot(context.Context, *ObjectsRequest) (*ObjectsRootMap, error)
 	GetPalletTree(context.Context, *PalletRequest) (*PalletTree, error)
 	ObjectsDeploy(context.Context, *ObjectDeploy) (*ObjectDeploy, error)
@@ -403,6 +415,9 @@ func (UnimplementedRuntimeServiceServer) GetObjects(context.Context, *ObjectsReq
 }
 func (UnimplementedRuntimeServiceServer) GetObject(context.Context, *ObjectRequest) (*ObjectConfig, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetObject not implemented")
+}
+func (UnimplementedRuntimeServiceServer) GetObjectHelp(context.Context, *ObjectID) (*ObjectHelp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetObjectHelp not implemented")
 }
 func (UnimplementedRuntimeServiceServer) GetTreeMapRoot(context.Context, *ObjectsRequest) (*ObjectsRootMap, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTreeMapRoot not implemented")
@@ -524,6 +539,24 @@ func _RuntimeService_GetObject_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimeServiceServer).GetObject(ctx, req.(*ObjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_GetObjectHelp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ObjectID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).GetObjectHelp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_GetObjectHelp_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).GetObjectHelp(ctx, req.(*ObjectID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1000,6 +1033,10 @@ var RuntimeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetObject",
 			Handler:    _RuntimeService_GetObject_Handler,
+		},
+		{
+			MethodName: "GetObjectHelp",
+			Handler:    _RuntimeService_GetObjectHelp_Handler,
 		},
 		{
 			MethodName: "GetTreeMapRoot",

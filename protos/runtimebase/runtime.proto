@@ -21,6 +21,13 @@ service RuntimeService {
     };
   };
 
+  rpc GetObjectHelp (ObjectID) returns (ObjectHelp) {
+    option (google.api.http) = {
+      get: "/api/runtime/objects/help/{id}"
+    };
+  }
+
+
   rpc GetTreeMapRoot (ObjectsRequest) returns (ObjectsRootMap) {
     option (google.api.http) = {
       get: "/api/runtime/tree"
@@ -182,6 +189,7 @@ service RuntimeService {
       body: "*"
     };
   }
+
 
   // stream messages from the server to the plugin
   rpc ExtensionStream(stream MessageRequest) returns (stream MessageRequest);
@@ -371,6 +379,15 @@ message Empty {}
 message ObjectsResponse {
   repeated ObjectConfig objects = 1;
 }
+
+message ObjectHelp {
+  string help= 1;
+}
+
+message ObjectID {
+  string id = 1;
+}
+
 
 message ObjectRequest {
   string uuid = 1;

@@ -204,6 +204,8 @@ type Object interface {
 	SetCache(key string, data any, expiration time.Duration, overwriteExisting bool) error
 	GetCache(key string) (data any, found bool)
 	CacheAll() map[string]cache.Item
+
+	GetHelp() string
 }
 
 const (
