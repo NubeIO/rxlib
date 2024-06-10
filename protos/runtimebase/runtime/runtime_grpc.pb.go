@@ -89,13 +89,13 @@ type RuntimeServiceClient interface {
 	StartExtension(ctx context.Context, in *ExtensionId, opts ...grpc.CallOption) (*Empty, error)
 	StopExtension(ctx context.Context, in *ExtensionId, opts ...grpc.CallOption) (*Empty, error)
 	UploadZipFile(ctx context.Context, in *UploadZipRequest, opts ...grpc.CallOption) (*UploadZipResponse, error)
-	NewTicket(ctx context.Context, in *NewTicketRequest, opts ...grpc.CallOption) (*NewTicketResponse, error)
-	AllTickets(ctx context.Context, in *AllTicketsRequest, opts ...grpc.CallOption) (*AllTicketsResponse, error)
-	AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*AddCommentResponse, error)
-	UpdateTicket(ctx context.Context, in *UpdateTicketRequest, opts ...grpc.CallOption) (*UpdateTicketResponse, error)
-	DeleteTicket(ctx context.Context, in *DeleteTicketRequest, opts ...grpc.CallOption) (*DeleteTicketResponse, error)
-	UpdateComment(ctx context.Context, in *UpdateCommentRequest, opts ...grpc.CallOption) (*UpdateCommentResponse, error)
-	DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*DeleteCommentResponse, error)
+	NewTicket(ctx context.Context, in *Ticket, opts ...grpc.CallOption) (*Ticket, error)
+	AllTickets(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*AllTicketsResponse, error)
+	AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*Ticket, error)
+	UpdateTicket(ctx context.Context, in *UpdateTicketRequest, opts ...grpc.CallOption) (*Ticket, error)
+	DeleteTicket(ctx context.Context, in *DeleteTicketRequest, opts ...grpc.CallOption) (*Message, error)
+	UpdateComment(ctx context.Context, in *UpdateCommentRequest, opts ...grpc.CallOption) (*Ticket, error)
+	DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*Message, error)
 	// stream messages from the server to the plugin
 	ExtensionStream(ctx context.Context, opts ...grpc.CallOption) (RuntimeService_ExtensionStreamClient, error)
 }
@@ -351,8 +351,8 @@ func (c *runtimeServiceClient) UploadZipFile(ctx context.Context, in *UploadZipR
 	return out, nil
 }
 
-func (c *runtimeServiceClient) NewTicket(ctx context.Context, in *NewTicketRequest, opts ...grpc.CallOption) (*NewTicketResponse, error) {
-	out := new(NewTicketResponse)
+func (c *runtimeServiceClient) NewTicket(ctx context.Context, in *Ticket, opts ...grpc.CallOption) (*Ticket, error) {
+	out := new(Ticket)
 	err := c.cc.Invoke(ctx, RuntimeService_NewTicket_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -360,7 +360,7 @@ func (c *runtimeServiceClient) NewTicket(ctx context.Context, in *NewTicketReque
 	return out, nil
 }
 
-func (c *runtimeServiceClient) AllTickets(ctx context.Context, in *AllTicketsRequest, opts ...grpc.CallOption) (*AllTicketsResponse, error) {
+func (c *runtimeServiceClient) AllTickets(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*AllTicketsResponse, error) {
 	out := new(AllTicketsResponse)
 	err := c.cc.Invoke(ctx, RuntimeService_AllTickets_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -369,8 +369,8 @@ func (c *runtimeServiceClient) AllTickets(ctx context.Context, in *AllTicketsReq
 	return out, nil
 }
 
-func (c *runtimeServiceClient) AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*AddCommentResponse, error) {
-	out := new(AddCommentResponse)
+func (c *runtimeServiceClient) AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*Ticket, error) {
+	out := new(Ticket)
 	err := c.cc.Invoke(ctx, RuntimeService_AddComment_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -378,8 +378,8 @@ func (c *runtimeServiceClient) AddComment(ctx context.Context, in *AddCommentReq
 	return out, nil
 }
 
-func (c *runtimeServiceClient) UpdateTicket(ctx context.Context, in *UpdateTicketRequest, opts ...grpc.CallOption) (*UpdateTicketResponse, error) {
-	out := new(UpdateTicketResponse)
+func (c *runtimeServiceClient) UpdateTicket(ctx context.Context, in *UpdateTicketRequest, opts ...grpc.CallOption) (*Ticket, error) {
+	out := new(Ticket)
 	err := c.cc.Invoke(ctx, RuntimeService_UpdateTicket_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -387,8 +387,8 @@ func (c *runtimeServiceClient) UpdateTicket(ctx context.Context, in *UpdateTicke
 	return out, nil
 }
 
-func (c *runtimeServiceClient) DeleteTicket(ctx context.Context, in *DeleteTicketRequest, opts ...grpc.CallOption) (*DeleteTicketResponse, error) {
-	out := new(DeleteTicketResponse)
+func (c *runtimeServiceClient) DeleteTicket(ctx context.Context, in *DeleteTicketRequest, opts ...grpc.CallOption) (*Message, error) {
+	out := new(Message)
 	err := c.cc.Invoke(ctx, RuntimeService_DeleteTicket_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -396,8 +396,8 @@ func (c *runtimeServiceClient) DeleteTicket(ctx context.Context, in *DeleteTicke
 	return out, nil
 }
 
-func (c *runtimeServiceClient) UpdateComment(ctx context.Context, in *UpdateCommentRequest, opts ...grpc.CallOption) (*UpdateCommentResponse, error) {
-	out := new(UpdateCommentResponse)
+func (c *runtimeServiceClient) UpdateComment(ctx context.Context, in *UpdateCommentRequest, opts ...grpc.CallOption) (*Ticket, error) {
+	out := new(Ticket)
 	err := c.cc.Invoke(ctx, RuntimeService_UpdateComment_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -405,8 +405,8 @@ func (c *runtimeServiceClient) UpdateComment(ctx context.Context, in *UpdateComm
 	return out, nil
 }
 
-func (c *runtimeServiceClient) DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*DeleteCommentResponse, error) {
-	out := new(DeleteCommentResponse)
+func (c *runtimeServiceClient) DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*Message, error) {
+	out := new(Message)
 	err := c.cc.Invoke(ctx, RuntimeService_DeleteComment_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -478,13 +478,13 @@ type RuntimeServiceServer interface {
 	StartExtension(context.Context, *ExtensionId) (*Empty, error)
 	StopExtension(context.Context, *ExtensionId) (*Empty, error)
 	UploadZipFile(context.Context, *UploadZipRequest) (*UploadZipResponse, error)
-	NewTicket(context.Context, *NewTicketRequest) (*NewTicketResponse, error)
-	AllTickets(context.Context, *AllTicketsRequest) (*AllTicketsResponse, error)
-	AddComment(context.Context, *AddCommentRequest) (*AddCommentResponse, error)
-	UpdateTicket(context.Context, *UpdateTicketRequest) (*UpdateTicketResponse, error)
-	DeleteTicket(context.Context, *DeleteTicketRequest) (*DeleteTicketResponse, error)
-	UpdateComment(context.Context, *UpdateCommentRequest) (*UpdateCommentResponse, error)
-	DeleteComment(context.Context, *DeleteCommentRequest) (*DeleteCommentResponse, error)
+	NewTicket(context.Context, *Ticket) (*Ticket, error)
+	AllTickets(context.Context, *Empty) (*AllTicketsResponse, error)
+	AddComment(context.Context, *AddCommentRequest) (*Ticket, error)
+	UpdateTicket(context.Context, *UpdateTicketRequest) (*Ticket, error)
+	DeleteTicket(context.Context, *DeleteTicketRequest) (*Message, error)
+	UpdateComment(context.Context, *UpdateCommentRequest) (*Ticket, error)
+	DeleteComment(context.Context, *DeleteCommentRequest) (*Message, error)
 	// stream messages from the server to the plugin
 	ExtensionStream(RuntimeService_ExtensionStreamServer) error
 	mustEmbedUnimplementedRuntimeServiceServer()
@@ -575,25 +575,25 @@ func (UnimplementedRuntimeServiceServer) StopExtension(context.Context, *Extensi
 func (UnimplementedRuntimeServiceServer) UploadZipFile(context.Context, *UploadZipRequest) (*UploadZipResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadZipFile not implemented")
 }
-func (UnimplementedRuntimeServiceServer) NewTicket(context.Context, *NewTicketRequest) (*NewTicketResponse, error) {
+func (UnimplementedRuntimeServiceServer) NewTicket(context.Context, *Ticket) (*Ticket, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NewTicket not implemented")
 }
-func (UnimplementedRuntimeServiceServer) AllTickets(context.Context, *AllTicketsRequest) (*AllTicketsResponse, error) {
+func (UnimplementedRuntimeServiceServer) AllTickets(context.Context, *Empty) (*AllTicketsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AllTickets not implemented")
 }
-func (UnimplementedRuntimeServiceServer) AddComment(context.Context, *AddCommentRequest) (*AddCommentResponse, error) {
+func (UnimplementedRuntimeServiceServer) AddComment(context.Context, *AddCommentRequest) (*Ticket, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddComment not implemented")
 }
-func (UnimplementedRuntimeServiceServer) UpdateTicket(context.Context, *UpdateTicketRequest) (*UpdateTicketResponse, error) {
+func (UnimplementedRuntimeServiceServer) UpdateTicket(context.Context, *UpdateTicketRequest) (*Ticket, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTicket not implemented")
 }
-func (UnimplementedRuntimeServiceServer) DeleteTicket(context.Context, *DeleteTicketRequest) (*DeleteTicketResponse, error) {
+func (UnimplementedRuntimeServiceServer) DeleteTicket(context.Context, *DeleteTicketRequest) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTicket not implemented")
 }
-func (UnimplementedRuntimeServiceServer) UpdateComment(context.Context, *UpdateCommentRequest) (*UpdateCommentResponse, error) {
+func (UnimplementedRuntimeServiceServer) UpdateComment(context.Context, *UpdateCommentRequest) (*Ticket, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateComment not implemented")
 }
-func (UnimplementedRuntimeServiceServer) DeleteComment(context.Context, *DeleteCommentRequest) (*DeleteCommentResponse, error) {
+func (UnimplementedRuntimeServiceServer) DeleteComment(context.Context, *DeleteCommentRequest) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteComment not implemented")
 }
 func (UnimplementedRuntimeServiceServer) ExtensionStream(RuntimeService_ExtensionStreamServer) error {
@@ -1099,7 +1099,7 @@ func _RuntimeService_UploadZipFile_Handler(srv interface{}, ctx context.Context,
 }
 
 func _RuntimeService_NewTicket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewTicketRequest)
+	in := new(Ticket)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1111,13 +1111,13 @@ func _RuntimeService_NewTicket_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: RuntimeService_NewTicket_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).NewTicket(ctx, req.(*NewTicketRequest))
+		return srv.(RuntimeServiceServer).NewTicket(ctx, req.(*Ticket))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _RuntimeService_AllTickets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AllTicketsRequest)
+	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1129,7 +1129,7 @@ func _RuntimeService_AllTickets_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: RuntimeService_AllTickets_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).AllTickets(ctx, req.(*AllTicketsRequest))
+		return srv.(RuntimeServiceServer).AllTickets(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }

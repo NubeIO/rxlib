@@ -859,7 +859,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/RuntimeNewTicketResponse"
+              "$ref": "#/definitions/RuntimeTicket"
             }
           },
           "default": {
@@ -875,7 +875,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/RuntimeNewTicketRequest"
+              "$ref": "#/definitions/RuntimeTicket"
             }
           }
         ],
@@ -891,7 +891,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/RuntimeAddCommentResponse"
+              "$ref": "#/definitions/RuntimeTicket"
             }
           },
           "default": {
@@ -929,7 +929,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/RuntimeDeleteCommentResponse"
+              "$ref": "#/definitions/RuntimeMessage"
             }
           },
           "default": {
@@ -965,7 +965,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/RuntimeUpdateCommentResponse"
+              "$ref": "#/definitions/RuntimeTicket"
             }
           },
           "default": {
@@ -1009,7 +1009,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/RuntimeDeleteTicketResponse"
+              "$ref": "#/definitions/RuntimeMessage"
             }
           },
           "default": {
@@ -1039,7 +1039,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/RuntimeUpdateTicketResponse"
+              "$ref": "#/definitions/RuntimeTicket"
             }
           },
           "default": {
@@ -1072,9 +1072,6 @@
     }
   },
   "definitions": {
-    "RuntimeAddCommentResponse": {
-      "type": "object"
-    },
     "RuntimeAllTicketsResponse": {
       "type": "object",
       "properties": {
@@ -1324,12 +1321,6 @@
         }
       }
     },
-    "RuntimeDeleteCommentResponse": {
-      "type": "object"
-    },
-    "RuntimeDeleteTicketResponse": {
-      "type": "object"
-    },
     "RuntimeEmpty": {
       "type": "object"
     },
@@ -1554,6 +1545,14 @@
         }
       }
     },
+    "RuntimeMessage": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "RuntimeMessageRequest": {
       "type": "object",
       "properties": {
@@ -1617,17 +1616,6 @@
           "additionalProperties": {
             "$ref": "#/definitions/RuntimeObjectConfig"
           }
-        }
-      }
-    },
-    "RuntimeNewTicketRequest": {
-      "type": "object"
-    },
-    "RuntimeNewTicketResponse": {
-      "type": "object",
-      "properties": {
-        "ticket": {
-          "$ref": "#/definitions/RuntimeTicket"
         }
       }
     },
@@ -2086,11 +2074,8 @@
     "RuntimeServiceUpdateTicketBody": {
       "type": "object",
       "properties": {
-        "assignedUserUuids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "ticket": {
+          "$ref": "#/definitions/RuntimeTicket"
         }
       }
     },
@@ -2132,12 +2117,6 @@
           "type": "string"
         }
       }
-    },
-    "RuntimeUpdateCommentResponse": {
-      "type": "object"
-    },
-    "RuntimeUpdateTicketResponse": {
-      "type": "object"
     },
     "RuntimeUploadZipRequest": {
       "type": "object",

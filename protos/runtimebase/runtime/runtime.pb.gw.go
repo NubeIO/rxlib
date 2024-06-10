@@ -1074,7 +1074,7 @@ func local_request_RuntimeService_UploadZipFile_0(ctx context.Context, marshaler
 }
 
 func request_RuntimeService_NewTicket_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq NewTicketRequest
+	var protoReq Ticket
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
@@ -1087,7 +1087,7 @@ func request_RuntimeService_NewTicket_0(ctx context.Context, marshaler runtime.M
 }
 
 func local_request_RuntimeService_NewTicket_0(ctx context.Context, marshaler runtime.Marshaler, server RuntimeServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq NewTicketRequest
+	var protoReq Ticket
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
@@ -1100,7 +1100,7 @@ func local_request_RuntimeService_NewTicket_0(ctx context.Context, marshaler run
 }
 
 func request_RuntimeService_AllTickets_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq AllTicketsRequest
+	var protoReq Empty
 	var metadata runtime.ServerMetadata
 
 	msg, err := client.AllTickets(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1109,7 +1109,7 @@ func request_RuntimeService_AllTickets_0(ctx context.Context, marshaler runtime.
 }
 
 func local_request_RuntimeService_AllTickets_0(ctx context.Context, marshaler runtime.Marshaler, server RuntimeServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq AllTicketsRequest
+	var protoReq Empty
 	var metadata runtime.ServerMetadata
 
 	msg, err := server.AllTickets(ctx, &protoReq)

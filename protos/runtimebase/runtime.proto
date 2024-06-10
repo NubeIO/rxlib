@@ -190,48 +190,47 @@ service RuntimeService {
   }
 
 
-
-  rpc NewTicket (NewTicketRequest) returns (NewTicketResponse) {
+  rpc NewTicket (Ticket) returns (Ticket) {
     option (google.api.http) = {
       post: "/api/tickets/new"
       body: "*"
     };
   }
 
-  rpc AllTickets (AllTicketsRequest) returns (AllTicketsResponse) {
+  rpc AllTickets (Empty) returns (AllTicketsResponse) {
     option (google.api.http) = {
       get: "/api/tickets/all"
     };
   }
 
-  rpc AddComment (AddCommentRequest) returns (AddCommentResponse) {
+  rpc AddComment (AddCommentRequest) returns (Ticket) {
     option (google.api.http) = {
       post: "/api/tickets/{ticketUuid}/comments/add"
       body: "*"
     };
   }
 
-  rpc UpdateTicket (UpdateTicketRequest) returns (UpdateTicketResponse) {
+  rpc UpdateTicket (UpdateTicketRequest) returns (Ticket) {
     option (google.api.http) = {
       post: "/api/tickets/{ticketUuid}/update"
       body: "*"
     };
   }
 
-  rpc DeleteTicket (DeleteTicketRequest) returns (DeleteTicketResponse) {
+  rpc DeleteTicket (DeleteTicketRequest) returns (Message) {
     option (google.api.http) = {
       delete: "/api/tickets/{ticketUuid}/delete"
     };
   }
 
-  rpc UpdateComment (UpdateCommentRequest) returns (UpdateCommentResponse) {
+  rpc UpdateComment (UpdateCommentRequest) returns (Ticket) {
     option (google.api.http) = {
       post: "/api/tickets/{ticketUuid}/comments/{commentUuid}/update"
       body: "*"
     };
   }
 
-  rpc DeleteComment (DeleteCommentRequest) returns (DeleteCommentResponse) {
+  rpc DeleteComment (DeleteCommentRequest) returns (Message) {
     option (google.api.http) = {
       delete: "/api/tickets/{ticketUuid}/comments/{commentUuid}/delete"
     };
@@ -255,6 +254,9 @@ message HostMQTT {
   bytes body = 4;
 }
 
+message Message {
+  string message = 1;
+}
 
 
 
@@ -665,15 +667,6 @@ message Comment {
 }
 
 
-
-message NewTicketRequest {}
-
-message NewTicketResponse {
-  Ticket ticket = 1;
-}
-
-message AllTicketsRequest {}
-
 message AllTicketsResponse {
   repeated Ticket tickets = 1;
 }
@@ -683,20 +676,17 @@ message AddCommentRequest {
   string commentText = 2;
 }
 
-message AddCommentResponse {}
 
 message UpdateTicketRequest {
   string ticketUuid = 1;
-  repeated string assignedUserUuids = 2;
+  Ticket ticket = 2;
 }
 
-message UpdateTicketResponse {}
 
 message DeleteTicketRequest {
   string ticketUuid = 1;
 }
 
-message DeleteTicketResponse {}
 
 message UpdateCommentRequest {
   string ticketUuid = 1;
@@ -704,11 +694,8 @@ message UpdateCommentRequest {
   string newText = 3;
 }
 
-message UpdateCommentResponse {}
 
 message DeleteCommentRequest {
   string ticketUuid = 1;
   string commentUuid = 2;
 }
-
-message DeleteCommentResponse {}
