@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/NubeIO/rxlib"
 	"github.com/NubeIO/rxlib/priority"
+	"github.com/NubeIO/rxlib/protos/extensionlib"
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"log"
@@ -13,6 +14,7 @@ import (
 
 type Instance struct {
 	reactive.Object
+	extensionlib.PluginObject
 	locked        bool
 	lastTrigger   time.Time
 	in1           float64
@@ -26,7 +28,7 @@ type Instance struct {
 
 var infoLog = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
 
-func New(outputUpdated func(message *runtime.Command)) *Instance {
+func New(outputUpdated func(message *runtime.Command)) extensionlib.PluginObject {
 	obj := new(Instance)
 	obj.outputUpdated = outputUpdated
 	return obj
@@ -63,6 +65,10 @@ func (inst *Instance) New(object reactive.Object, opts ...any) reactive.Object {
 	})
 	inst.Object = object
 	return inst
+}
+
+func (inst *Instance) OutputUpdated(message *runtime.Command) {
+	inst.outputUpdated(message)
 }
 
 func (inst *Instance) Start() error {
@@ -106,7 +112,7 @@ func (inst *Instance) publishOutput() {
 	}
 	if cov || !inst.hasPublished {
 		fmt.Println("SUBTRACT", v, inst.GetMeta().ObjectUUID)
-		inst.outputUpdated(&runtime.Command{
+		inst.OutputUpdated(&runtime.Command{
 			Key:              "update-outputs",
 			TargetObjectUUID: inst.GetMeta().GetObjectUUID(),
 			PortValues: []*runtime.PortValue{&runtime.PortValue{

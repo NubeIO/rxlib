@@ -8,7 +8,7 @@ import (
 
 func main() {
 	factory := extensionlib.New("test")
-	factory.AddPallet("add", add.New(nil))
-	factory.AddPallet("subtract", subtract.New(nil))
+	factory.AddPallet("add", add.New)
+	factory.AddPallet("subtract", subtract.New)
 	factory.Register()
 }
