@@ -1233,6 +1233,13 @@
         },
         "help": {
           "type": "string"
+        },
+        "supportDynamicInputs": {
+          "type": "boolean"
+        },
+        "dynamicInputsMaxLimit": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -1284,6 +1291,10 @@
         },
         "position": {
           "$ref": "#/definitions/RuntimePosition"
+        },
+        "dynamicInputsCount": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

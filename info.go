@@ -81,8 +81,10 @@ type InfoBuilder interface {
 	GetIcon() string //https://microsoft.github.io/vscode-codicons/dist/codicon.html
 	SetIcon(icon string) InfoBuilder
 
-	GetHelp() string //https://microsoft.github.io/vscode-codicons/dist/codicon.html
+	GetHelp() string
 	SetHelp(icon string) InfoBuilder
+
+	SetDynamicInputsMaxLimit(count int) InfoBuilder
 }
 
 func NewObjectInfo() InfoBuilder {
@@ -310,6 +312,14 @@ func (builder *infoBuilder) GetRequirements() *runtime.Requirements {
 	return builder.info.Requirements
 }
 
+func (builder *infoBuilder) SetDynamicInputsMaxLimit(count int) InfoBuilder {
+	builder.info.DynamicInputsMaxLimit = int32(count)
+	if count > 0 {
+		builder.info.SupportDynamicInputs = true
+	}
+	return builder
+}
+
 func (builder *infoBuilder) checks() {
 	// checks
 	if builder.info.PluginName == "" {
@@ -342,10 +352,6 @@ func ensureRequirements(info *runtime.Info) {
 func (builder *infoBuilder) String() string {
 	return builder.info.String()
 }
-
-//func (info *Info) String() string {
-//	return fmt.Sprintf("ObjectID: %s\nPluginName: %s\nCategory: %s\nPermissions: %+v", info.ObjectID, info.PluginName, info.Category, info.Permissions)
-//}
 
 func crashMe(name string) {
 	log.Fatalf("rxlib.Checks() %s is empty", name)

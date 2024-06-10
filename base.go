@@ -89,12 +89,16 @@ type Object interface {
 	GetInputByConnection(sourceObjectUUID, outputPortID string) *Port
 	GetInputByConnections(sourceObjectUUID, outputPortID string) []*Port
 	UpdateInputsValues(portID string, payload *payload.Payload) []error
+	SetDynamicInputsCount(count int)
+	GetDynamicInputsCount() int
+	DeleteInput(id string) error
+	BuildDynamicInputs(callback func(portID string, message *payload.Payload)) error
 
 	GetOutputs() []*Port
 	GetOutput(id string) *Port
 	OutputExists(id string) error
 	SetOutput(portID string, value any) error // Set current output value & send over the eventbus
-
+	DeleteOutput(id string) error
 	// PublishValue eventbus
 	PublishValue(portID string) error              // send current port value over the eventbus
 	PublishCommand(command *ExtendedCommand) error // send a command over the eventbus, this is used to send external commands (eg; over mqtt)

@@ -234,8 +234,6 @@ message PluginList {
   repeated PluginInfo plugins = 1;
 }
 
-
-
 message GetObjectValuesResponse {
   repeated  PortValue values = 1;
 }
@@ -416,6 +414,9 @@ message Info {
   Requirements requirements = 15;
   bool isVirtualObject = 16;
   string help = 17;
+  bool supportDynamicInputs = 18;
+  int32 dynamicInputsMaxLimit = 19;
+
 }
 
 
@@ -465,6 +466,7 @@ message Meta {
   string objectName = 2;
   string parentUUID = 3;
   Position position = 4;
+  int32 dynamicInputsCount = 5;
 }
 
 message Position {
