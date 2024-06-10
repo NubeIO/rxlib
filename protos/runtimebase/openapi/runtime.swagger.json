@@ -829,9 +829,264 @@
           "RuntimeService"
         ]
       }
+    },
+    "/api/tickets/all": {
+      "get": {
+        "operationId": "RuntimeService_AllTickets",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeAllTicketsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/tickets/new": {
+      "post": {
+        "operationId": "RuntimeService_NewTicket",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeNewTicketResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeNewTicketRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/tickets/{ticketUuid}/comments/add": {
+      "post": {
+        "operationId": "RuntimeService_AddComment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeAddCommentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ticketUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeServiceAddCommentBody"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/tickets/{ticketUuid}/comments/{commentUuid}/delete": {
+      "delete": {
+        "operationId": "RuntimeService_DeleteComment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeDeleteCommentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ticketUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "commentUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/tickets/{ticketUuid}/comments/{commentUuid}/update": {
+      "post": {
+        "operationId": "RuntimeService_UpdateComment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeUpdateCommentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ticketUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "commentUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeServiceUpdateCommentBody"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/tickets/{ticketUuid}/delete": {
+      "delete": {
+        "operationId": "RuntimeService_DeleteTicket",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeDeleteTicketResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ticketUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/tickets/{ticketUuid}/update": {
+      "post": {
+        "operationId": "RuntimeService_UpdateTicket",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeUpdateTicketResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ticketUuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeServiceUpdateTicketBody"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
     }
   },
   "definitions": {
+    "RuntimeAddCommentResponse": {
+      "type": "object"
+    },
+    "RuntimeAllTicketsResponse": {
+      "type": "object",
+      "properties": {
+        "tickets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeTicket"
+          }
+        }
+      }
+    },
     "RuntimeAncestorObjectTree": {
       "type": "object",
       "properties": {
@@ -989,6 +1244,26 @@
         }
       }
     },
+    "RuntimeComment": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "raisedByUuid": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string"
+        },
+        "lastUpdated": {
+          "type": "string"
+        }
+      }
+    },
     "RuntimeConnection": {
       "type": "object",
       "properties": {
@@ -1048,6 +1323,12 @@
           }
         }
       }
+    },
+    "RuntimeDeleteCommentResponse": {
+      "type": "object"
+    },
+    "RuntimeDeleteTicketResponse": {
+      "type": "object"
     },
     "RuntimeEmpty": {
       "type": "object"
@@ -1336,6 +1617,17 @@
           "additionalProperties": {
             "$ref": "#/definitions/RuntimeObjectConfig"
           }
+        }
+      }
+    },
+    "RuntimeNewTicketRequest": {
+      "type": "object"
+    },
+    "RuntimeNewTicketResponse": {
+      "type": "object",
+      "properties": {
+        "ticket": {
+          "$ref": "#/definitions/RuntimeTicket"
         }
       }
     },
@@ -1775,6 +2067,33 @@
         }
       }
     },
+    "RuntimeServiceAddCommentBody": {
+      "type": "object",
+      "properties": {
+        "commentText": {
+          "type": "string"
+        }
+      }
+    },
+    "RuntimeServiceUpdateCommentBody": {
+      "type": "object",
+      "properties": {
+        "newText": {
+          "type": "string"
+        }
+      }
+    },
+    "RuntimeServiceUpdateTicketBody": {
+      "type": "object",
+      "properties": {
+        "assignedUserUuids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "RuntimeSettings": {
       "type": "object",
       "properties": {
@@ -1783,6 +2102,42 @@
           "format": "byte"
         }
       }
+    },
+    "RuntimeTicket": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "raisedByUuid": {
+          "type": "string"
+        },
+        "assignedUserUuids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeComment"
+          }
+        },
+        "created": {
+          "type": "string"
+        },
+        "lastUpdated": {
+          "type": "string"
+        }
+      }
+    },
+    "RuntimeUpdateCommentResponse": {
+      "type": "object"
+    },
+    "RuntimeUpdateTicketResponse": {
+      "type": "object"
     },
     "RuntimeUploadZipRequest": {
       "type": "object",
