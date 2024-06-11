@@ -634,6 +634,43 @@
         ]
       }
     },
+    "/api/runtime/grandparent/childs/{uuid}": {
+      "get": {
+        "summary": "will get the childs of the parents, parents. So go up the tree two levels",
+        "operationId": "RuntimeService_GetObjectParentsChilds",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeObjectsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "withPoints",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
     "/api/runtime/objects/help/{id}": {
       "get": {
         "operationId": "RuntimeService_GetObjectHelp",
@@ -804,43 +841,6 @@
         ]
       }
     },
-    "/api/runtime/parents/childs/{uuid}": {
-      "get": {
-        "summary": "will get the childs of the parents, parents. So go up the tree two levels",
-        "operationId": "RuntimeService_GetObjectParentsChilds",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/RuntimeObjectsResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "withPoints",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          }
-        ],
-        "tags": [
-          "RuntimeService"
-        ]
-      }
-    },
     "/api/runtime/root": {
       "get": {
         "operationId": "RuntimeService_GetObjectsRoot",
@@ -925,6 +925,153 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/RuntimeUploadZipRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/teams": {
+      "get": {
+        "operationId": "RuntimeService_GetAllTeams",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeTeamsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "RuntimeService"
+        ]
+      },
+      "post": {
+        "summary": "Teams",
+        "operationId": "RuntimeService_AddTeam",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeTeam"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeTeam"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/teams/{uuid}": {
+      "get": {
+        "operationId": "RuntimeService_GetTeam",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeTeam"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      },
+      "delete": {
+        "operationId": "RuntimeService_DeleteTeam",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeMessage"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      },
+      "patch": {
+        "operationId": "RuntimeService_UpdateTeam",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeTeam"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeServiceUpdateTeamBody"
             }
           }
         ],
@@ -1025,43 +1172,7 @@
         ]
       }
     },
-    "/api/tickets/{ticketUuid}/comments/{commentUuid}/delete": {
-      "delete": {
-        "operationId": "RuntimeService_DeleteComment",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/RuntimeMessage"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "ticketUuid",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "commentUuid",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "RuntimeService"
-        ]
-      }
-    },
-    "/api/tickets/{ticketUuid}/comments/{commentUuid}/update": {
+    "/api/tickets/{uuid}/comments/{commentUuid}/update": {
       "post": {
         "operationId": "RuntimeService_UpdateComment",
         "responses": {
@@ -1080,7 +1191,7 @@
         },
         "parameters": [
           {
-            "name": "ticketUuid",
+            "name": "uuid",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1105,7 +1216,43 @@
         ]
       }
     },
-    "/api/tickets/{ticketUuid}/delete": {
+    "/api/tickets/{uuid}/comments/{uuid}/delete": {
+      "delete": {
+        "operationId": "RuntimeService_DeleteComment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeMessage"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/tickets/{uuid}/delete": {
       "delete": {
         "operationId": "RuntimeService_DeleteTicket",
         "responses": {
@@ -1124,7 +1271,7 @@
         },
         "parameters": [
           {
-            "name": "ticketUuid",
+            "name": "uuid",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1135,7 +1282,7 @@
         ]
       }
     },
-    "/api/tickets/{ticketUuid}/update": {
+    "/api/tickets/{uuid}/update": {
       "post": {
         "operationId": "RuntimeService_UpdateTicket",
         "responses": {
@@ -1154,7 +1301,7 @@
         },
         "parameters": [
           {
-            "name": "ticketUuid",
+            "name": "uuid",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1165,6 +1312,153 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/RuntimeServiceUpdateTicketBody"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/users": {
+      "get": {
+        "operationId": "RuntimeService_GetAllUsers",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeUsersResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "RuntimeService"
+        ]
+      },
+      "post": {
+        "summary": "Users",
+        "operationId": "RuntimeService_AddUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeUser"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeUser"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/users/{uuid}": {
+      "get": {
+        "operationId": "RuntimeService_GetUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeUser"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      },
+      "delete": {
+        "operationId": "RuntimeService_DeleteUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeMessage"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      },
+      "patch": {
+        "operationId": "RuntimeService_UpdateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeUser"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeServiceUpdateUserBody"
             }
           }
         ],
@@ -2174,11 +2468,55 @@
         }
       }
     },
+    "RuntimeServiceUpdateTeamBody": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "RuntimeServiceUpdateTicketBody": {
       "type": "object",
       "properties": {
-        "ticket": {
-          "$ref": "#/definitions/RuntimeTicket"
+        "raisedByUuid": {
+          "type": "string"
+        },
+        "assignedUserUuids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeComment"
+          }
+        },
+        "created": {
+          "type": "string"
+        },
+        "lastUpdated": {
+          "type": "string"
+        }
+      }
+    },
+    "RuntimeServiceUpdateUserBody": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "teamUUID": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
         }
       }
     },
@@ -2188,6 +2526,29 @@
         "value": {
           "type": "string",
           "format": "byte"
+        }
+      }
+    },
+    "RuntimeTeam": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "RuntimeTeamsResponse": {
+      "type": "object",
+      "properties": {
+        "teams": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeTeam"
+          }
         }
       }
     },
@@ -2238,6 +2599,38 @@
       "properties": {
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "RuntimeUser": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "teamUUID": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      }
+    },
+    "RuntimeUsersResponse": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RuntimeUser"
+          }
         }
       }
     },

@@ -56,6 +56,16 @@ const (
 	RuntimeService_DeleteTicket_FullMethodName           = "/App.Runtime.RuntimeService/DeleteTicket"
 	RuntimeService_UpdateComment_FullMethodName          = "/App.Runtime.RuntimeService/UpdateComment"
 	RuntimeService_DeleteComment_FullMethodName          = "/App.Runtime.RuntimeService/DeleteComment"
+	RuntimeService_AddTeam_FullMethodName                = "/App.Runtime.RuntimeService/AddTeam"
+	RuntimeService_UpdateTeam_FullMethodName             = "/App.Runtime.RuntimeService/UpdateTeam"
+	RuntimeService_DeleteTeam_FullMethodName             = "/App.Runtime.RuntimeService/DeleteTeam"
+	RuntimeService_GetAllTeams_FullMethodName            = "/App.Runtime.RuntimeService/GetAllTeams"
+	RuntimeService_GetTeam_FullMethodName                = "/App.Runtime.RuntimeService/GetTeam"
+	RuntimeService_AddUser_FullMethodName                = "/App.Runtime.RuntimeService/AddUser"
+	RuntimeService_UpdateUser_FullMethodName             = "/App.Runtime.RuntimeService/UpdateUser"
+	RuntimeService_DeleteUser_FullMethodName             = "/App.Runtime.RuntimeService/DeleteUser"
+	RuntimeService_GetAllUsers_FullMethodName            = "/App.Runtime.RuntimeService/GetAllUsers"
+	RuntimeService_GetUser_FullMethodName                = "/App.Runtime.RuntimeService/GetUser"
 	RuntimeService_ExtensionStream_FullMethodName        = "/App.Runtime.RuntimeService/ExtensionStream"
 )
 
@@ -81,11 +91,11 @@ type RuntimeServiceClient interface {
 	GetObjectValues(ctx context.Context, in *ObjectsValueRequest, opts ...grpc.CallOption) (*GetObjectValuesResponse, error)
 	// single port value for an object
 	GetPortValue(ctx context.Context, in *PortRequest, opts ...grpc.CallOption) (*PortValue, error)
-	GetHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Host, error)
+	GetHost(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Host, error)
 	AllHosts(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*HostList, error)
-	DeleteHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Empty, error)
-	EnableHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Empty, error)
-	DisableHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Empty, error)
+	DeleteHost(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Empty, error)
+	EnableHost(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Empty, error)
+	DisableHost(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Empty, error)
 	UpdateHost(ctx context.Context, in *Host, opts ...grpc.CallOption) (*Host, error)
 	AddHost(ctx context.Context, in *Host, opts ...grpc.CallOption) (*Host, error)
 	SendHostMQTT(ctx context.Context, in *HostMQTT, opts ...grpc.CallOption) (*HostMQTT, error)
@@ -99,10 +109,22 @@ type RuntimeServiceClient interface {
 	NewTicket(ctx context.Context, in *Ticket, opts ...grpc.CallOption) (*Ticket, error)
 	AllTickets(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*AllTicketsResponse, error)
 	AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*Ticket, error)
-	UpdateTicket(ctx context.Context, in *UpdateTicketRequest, opts ...grpc.CallOption) (*Ticket, error)
-	DeleteTicket(ctx context.Context, in *DeleteTicketRequest, opts ...grpc.CallOption) (*Message, error)
+	UpdateTicket(ctx context.Context, in *Ticket, opts ...grpc.CallOption) (*Ticket, error)
+	DeleteTicket(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Message, error)
 	UpdateComment(ctx context.Context, in *UpdateCommentRequest, opts ...grpc.CallOption) (*Ticket, error)
-	DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*Message, error)
+	DeleteComment(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Message, error)
+	// Teams
+	AddTeam(ctx context.Context, in *Team, opts ...grpc.CallOption) (*Team, error)
+	UpdateTeam(ctx context.Context, in *Team, opts ...grpc.CallOption) (*Team, error)
+	DeleteTeam(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Message, error)
+	GetAllTeams(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*TeamsResponse, error)
+	GetTeam(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Team, error)
+	// Users
+	AddUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
+	UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
+	DeleteUser(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Message, error)
+	GetAllUsers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*UsersResponse, error)
+	GetUser(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*User, error)
 	// stream messages from the server to the plugin
 	ExtensionStream(ctx context.Context, opts ...grpc.CallOption) (RuntimeService_ExtensionStreamClient, error)
 }
@@ -250,7 +272,7 @@ func (c *runtimeServiceClient) GetPortValue(ctx context.Context, in *PortRequest
 	return out, nil
 }
 
-func (c *runtimeServiceClient) GetHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Host, error) {
+func (c *runtimeServiceClient) GetHost(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Host, error) {
 	out := new(Host)
 	err := c.cc.Invoke(ctx, RuntimeService_GetHost_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -268,7 +290,7 @@ func (c *runtimeServiceClient) AllHosts(ctx context.Context, in *Empty, opts ...
 	return out, nil
 }
 
-func (c *runtimeServiceClient) DeleteHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Empty, error) {
+func (c *runtimeServiceClient) DeleteHost(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
 	err := c.cc.Invoke(ctx, RuntimeService_DeleteHost_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -277,7 +299,7 @@ func (c *runtimeServiceClient) DeleteHost(ctx context.Context, in *HostId, opts 
 	return out, nil
 }
 
-func (c *runtimeServiceClient) EnableHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Empty, error) {
+func (c *runtimeServiceClient) EnableHost(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
 	err := c.cc.Invoke(ctx, RuntimeService_EnableHost_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -286,7 +308,7 @@ func (c *runtimeServiceClient) EnableHost(ctx context.Context, in *HostId, opts 
 	return out, nil
 }
 
-func (c *runtimeServiceClient) DisableHost(ctx context.Context, in *HostId, opts ...grpc.CallOption) (*Empty, error) {
+func (c *runtimeServiceClient) DisableHost(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
 	err := c.cc.Invoke(ctx, RuntimeService_DisableHost_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -412,7 +434,7 @@ func (c *runtimeServiceClient) AddComment(ctx context.Context, in *AddCommentReq
 	return out, nil
 }
 
-func (c *runtimeServiceClient) UpdateTicket(ctx context.Context, in *UpdateTicketRequest, opts ...grpc.CallOption) (*Ticket, error) {
+func (c *runtimeServiceClient) UpdateTicket(ctx context.Context, in *Ticket, opts ...grpc.CallOption) (*Ticket, error) {
 	out := new(Ticket)
 	err := c.cc.Invoke(ctx, RuntimeService_UpdateTicket_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -421,7 +443,7 @@ func (c *runtimeServiceClient) UpdateTicket(ctx context.Context, in *UpdateTicke
 	return out, nil
 }
 
-func (c *runtimeServiceClient) DeleteTicket(ctx context.Context, in *DeleteTicketRequest, opts ...grpc.CallOption) (*Message, error) {
+func (c *runtimeServiceClient) DeleteTicket(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Message, error) {
 	out := new(Message)
 	err := c.cc.Invoke(ctx, RuntimeService_DeleteTicket_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -439,9 +461,99 @@ func (c *runtimeServiceClient) UpdateComment(ctx context.Context, in *UpdateComm
 	return out, nil
 }
 
-func (c *runtimeServiceClient) DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*Message, error) {
+func (c *runtimeServiceClient) DeleteComment(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Message, error) {
 	out := new(Message)
 	err := c.cc.Invoke(ctx, RuntimeService_DeleteComment_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) AddTeam(ctx context.Context, in *Team, opts ...grpc.CallOption) (*Team, error) {
+	out := new(Team)
+	err := c.cc.Invoke(ctx, RuntimeService_AddTeam_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) UpdateTeam(ctx context.Context, in *Team, opts ...grpc.CallOption) (*Team, error) {
+	out := new(Team)
+	err := c.cc.Invoke(ctx, RuntimeService_UpdateTeam_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) DeleteTeam(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Message, error) {
+	out := new(Message)
+	err := c.cc.Invoke(ctx, RuntimeService_DeleteTeam_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) GetAllTeams(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*TeamsResponse, error) {
+	out := new(TeamsResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_GetAllTeams_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) GetTeam(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Team, error) {
+	out := new(Team)
+	err := c.cc.Invoke(ctx, RuntimeService_GetTeam_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) AddUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
+	err := c.cc.Invoke(ctx, RuntimeService_AddUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
+	err := c.cc.Invoke(ctx, RuntimeService_UpdateUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) DeleteUser(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Message, error) {
+	out := new(Message)
+	err := c.cc.Invoke(ctx, RuntimeService_DeleteUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) GetAllUsers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*UsersResponse, error) {
+	out := new(UsersResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_GetAllUsers_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) GetUser(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
+	err := c.cc.Invoke(ctx, RuntimeService_GetUser_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -501,11 +613,11 @@ type RuntimeServiceServer interface {
 	GetObjectValues(context.Context, *ObjectsValueRequest) (*GetObjectValuesResponse, error)
 	// single port value for an object
 	GetPortValue(context.Context, *PortRequest) (*PortValue, error)
-	GetHost(context.Context, *HostId) (*Host, error)
+	GetHost(context.Context, *UUID) (*Host, error)
 	AllHosts(context.Context, *Empty) (*HostList, error)
-	DeleteHost(context.Context, *HostId) (*Empty, error)
-	EnableHost(context.Context, *HostId) (*Empty, error)
-	DisableHost(context.Context, *HostId) (*Empty, error)
+	DeleteHost(context.Context, *UUID) (*Empty, error)
+	EnableHost(context.Context, *UUID) (*Empty, error)
+	DisableHost(context.Context, *UUID) (*Empty, error)
 	UpdateHost(context.Context, *Host) (*Host, error)
 	AddHost(context.Context, *Host) (*Host, error)
 	SendHostMQTT(context.Context, *HostMQTT) (*HostMQTT, error)
@@ -519,10 +631,22 @@ type RuntimeServiceServer interface {
 	NewTicket(context.Context, *Ticket) (*Ticket, error)
 	AllTickets(context.Context, *Empty) (*AllTicketsResponse, error)
 	AddComment(context.Context, *AddCommentRequest) (*Ticket, error)
-	UpdateTicket(context.Context, *UpdateTicketRequest) (*Ticket, error)
-	DeleteTicket(context.Context, *DeleteTicketRequest) (*Message, error)
+	UpdateTicket(context.Context, *Ticket) (*Ticket, error)
+	DeleteTicket(context.Context, *UUID) (*Message, error)
 	UpdateComment(context.Context, *UpdateCommentRequest) (*Ticket, error)
-	DeleteComment(context.Context, *DeleteCommentRequest) (*Message, error)
+	DeleteComment(context.Context, *UUID) (*Message, error)
+	// Teams
+	AddTeam(context.Context, *Team) (*Team, error)
+	UpdateTeam(context.Context, *Team) (*Team, error)
+	DeleteTeam(context.Context, *UUID) (*Message, error)
+	GetAllTeams(context.Context, *Empty) (*TeamsResponse, error)
+	GetTeam(context.Context, *UUID) (*Team, error)
+	// Users
+	AddUser(context.Context, *User) (*User, error)
+	UpdateUser(context.Context, *User) (*User, error)
+	DeleteUser(context.Context, *UUID) (*Message, error)
+	GetAllUsers(context.Context, *Empty) (*UsersResponse, error)
+	GetUser(context.Context, *UUID) (*User, error)
 	// stream messages from the server to the plugin
 	ExtensionStream(RuntimeService_ExtensionStreamServer) error
 	mustEmbedUnimplementedRuntimeServiceServer()
@@ -577,19 +701,19 @@ func (UnimplementedRuntimeServiceServer) GetObjectValues(context.Context, *Objec
 func (UnimplementedRuntimeServiceServer) GetPortValue(context.Context, *PortRequest) (*PortValue, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPortValue not implemented")
 }
-func (UnimplementedRuntimeServiceServer) GetHost(context.Context, *HostId) (*Host, error) {
+func (UnimplementedRuntimeServiceServer) GetHost(context.Context, *UUID) (*Host, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHost not implemented")
 }
 func (UnimplementedRuntimeServiceServer) AllHosts(context.Context, *Empty) (*HostList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AllHosts not implemented")
 }
-func (UnimplementedRuntimeServiceServer) DeleteHost(context.Context, *HostId) (*Empty, error) {
+func (UnimplementedRuntimeServiceServer) DeleteHost(context.Context, *UUID) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteHost not implemented")
 }
-func (UnimplementedRuntimeServiceServer) EnableHost(context.Context, *HostId) (*Empty, error) {
+func (UnimplementedRuntimeServiceServer) EnableHost(context.Context, *UUID) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EnableHost not implemented")
 }
-func (UnimplementedRuntimeServiceServer) DisableHost(context.Context, *HostId) (*Empty, error) {
+func (UnimplementedRuntimeServiceServer) DisableHost(context.Context, *UUID) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DisableHost not implemented")
 }
 func (UnimplementedRuntimeServiceServer) UpdateHost(context.Context, *Host) (*Host, error) {
@@ -631,17 +755,47 @@ func (UnimplementedRuntimeServiceServer) AllTickets(context.Context, *Empty) (*A
 func (UnimplementedRuntimeServiceServer) AddComment(context.Context, *AddCommentRequest) (*Ticket, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddComment not implemented")
 }
-func (UnimplementedRuntimeServiceServer) UpdateTicket(context.Context, *UpdateTicketRequest) (*Ticket, error) {
+func (UnimplementedRuntimeServiceServer) UpdateTicket(context.Context, *Ticket) (*Ticket, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTicket not implemented")
 }
-func (UnimplementedRuntimeServiceServer) DeleteTicket(context.Context, *DeleteTicketRequest) (*Message, error) {
+func (UnimplementedRuntimeServiceServer) DeleteTicket(context.Context, *UUID) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTicket not implemented")
 }
 func (UnimplementedRuntimeServiceServer) UpdateComment(context.Context, *UpdateCommentRequest) (*Ticket, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateComment not implemented")
 }
-func (UnimplementedRuntimeServiceServer) DeleteComment(context.Context, *DeleteCommentRequest) (*Message, error) {
+func (UnimplementedRuntimeServiceServer) DeleteComment(context.Context, *UUID) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteComment not implemented")
+}
+func (UnimplementedRuntimeServiceServer) AddTeam(context.Context, *Team) (*Team, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddTeam not implemented")
+}
+func (UnimplementedRuntimeServiceServer) UpdateTeam(context.Context, *Team) (*Team, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateTeam not implemented")
+}
+func (UnimplementedRuntimeServiceServer) DeleteTeam(context.Context, *UUID) (*Message, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteTeam not implemented")
+}
+func (UnimplementedRuntimeServiceServer) GetAllTeams(context.Context, *Empty) (*TeamsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllTeams not implemented")
+}
+func (UnimplementedRuntimeServiceServer) GetTeam(context.Context, *UUID) (*Team, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTeam not implemented")
+}
+func (UnimplementedRuntimeServiceServer) AddUser(context.Context, *User) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUser not implemented")
+}
+func (UnimplementedRuntimeServiceServer) UpdateUser(context.Context, *User) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
+}
+func (UnimplementedRuntimeServiceServer) DeleteUser(context.Context, *UUID) (*Message, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+}
+func (UnimplementedRuntimeServiceServer) GetAllUsers(context.Context, *Empty) (*UsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllUsers not implemented")
+}
+func (UnimplementedRuntimeServiceServer) GetUser(context.Context, *UUID) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
 func (UnimplementedRuntimeServiceServer) ExtensionStream(RuntimeService_ExtensionStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method ExtensionStream not implemented")
@@ -930,7 +1084,7 @@ func _RuntimeService_GetPortValue_Handler(srv interface{}, ctx context.Context, 
 }
 
 func _RuntimeService_GetHost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HostId)
+	in := new(UUID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -942,7 +1096,7 @@ func _RuntimeService_GetHost_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: RuntimeService_GetHost_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).GetHost(ctx, req.(*HostId))
+		return srv.(RuntimeServiceServer).GetHost(ctx, req.(*UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -966,7 +1120,7 @@ func _RuntimeService_AllHosts_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _RuntimeService_DeleteHost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HostId)
+	in := new(UUID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -978,13 +1132,13 @@ func _RuntimeService_DeleteHost_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: RuntimeService_DeleteHost_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).DeleteHost(ctx, req.(*HostId))
+		return srv.(RuntimeServiceServer).DeleteHost(ctx, req.(*UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _RuntimeService_EnableHost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HostId)
+	in := new(UUID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -996,13 +1150,13 @@ func _RuntimeService_EnableHost_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: RuntimeService_EnableHost_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).EnableHost(ctx, req.(*HostId))
+		return srv.(RuntimeServiceServer).EnableHost(ctx, req.(*UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _RuntimeService_DisableHost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HostId)
+	in := new(UUID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1014,7 +1168,7 @@ func _RuntimeService_DisableHost_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: RuntimeService_DisableHost_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).DisableHost(ctx, req.(*HostId))
+		return srv.(RuntimeServiceServer).DisableHost(ctx, req.(*UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1254,7 +1408,7 @@ func _RuntimeService_AddComment_Handler(srv interface{}, ctx context.Context, de
 }
 
 func _RuntimeService_UpdateTicket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateTicketRequest)
+	in := new(Ticket)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1266,13 +1420,13 @@ func _RuntimeService_UpdateTicket_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: RuntimeService_UpdateTicket_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).UpdateTicket(ctx, req.(*UpdateTicketRequest))
+		return srv.(RuntimeServiceServer).UpdateTicket(ctx, req.(*Ticket))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _RuntimeService_DeleteTicket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteTicketRequest)
+	in := new(UUID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1284,7 +1438,7 @@ func _RuntimeService_DeleteTicket_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: RuntimeService_DeleteTicket_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).DeleteTicket(ctx, req.(*DeleteTicketRequest))
+		return srv.(RuntimeServiceServer).DeleteTicket(ctx, req.(*UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1308,7 +1462,7 @@ func _RuntimeService_UpdateComment_Handler(srv interface{}, ctx context.Context,
 }
 
 func _RuntimeService_DeleteComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteCommentRequest)
+	in := new(UUID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1320,7 +1474,187 @@ func _RuntimeService_DeleteComment_Handler(srv interface{}, ctx context.Context,
 		FullMethod: RuntimeService_DeleteComment_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuntimeServiceServer).DeleteComment(ctx, req.(*DeleteCommentRequest))
+		return srv.(RuntimeServiceServer).DeleteComment(ctx, req.(*UUID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_AddTeam_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Team)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).AddTeam(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_AddTeam_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).AddTeam(ctx, req.(*Team))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_UpdateTeam_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Team)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).UpdateTeam(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_UpdateTeam_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).UpdateTeam(ctx, req.(*Team))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_DeleteTeam_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UUID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).DeleteTeam(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_DeleteTeam_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).DeleteTeam(ctx, req.(*UUID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_GetAllTeams_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).GetAllTeams(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_GetAllTeams_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).GetAllTeams(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_GetTeam_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UUID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).GetTeam(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_GetTeam_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).GetTeam(ctx, req.(*UUID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_AddUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).AddUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_AddUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).AddUser(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).UpdateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_UpdateUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).UpdateUser(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UUID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).DeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_DeleteUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).DeleteUser(ctx, req.(*UUID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_GetAllUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).GetAllUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_GetAllUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).GetAllUsers(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UUID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).GetUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_GetUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).GetUser(ctx, req.(*UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1505,6 +1839,46 @@ var RuntimeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteComment",
 			Handler:    _RuntimeService_DeleteComment_Handler,
+		},
+		{
+			MethodName: "AddTeam",
+			Handler:    _RuntimeService_AddTeam_Handler,
+		},
+		{
+			MethodName: "UpdateTeam",
+			Handler:    _RuntimeService_UpdateTeam_Handler,
+		},
+		{
+			MethodName: "DeleteTeam",
+			Handler:    _RuntimeService_DeleteTeam_Handler,
+		},
+		{
+			MethodName: "GetAllTeams",
+			Handler:    _RuntimeService_GetAllTeams_Handler,
+		},
+		{
+			MethodName: "GetTeam",
+			Handler:    _RuntimeService_GetTeam_Handler,
+		},
+		{
+			MethodName: "AddUser",
+			Handler:    _RuntimeService_AddUser_Handler,
+		},
+		{
+			MethodName: "UpdateUser",
+			Handler:    _RuntimeService_UpdateUser_Handler,
+		},
+		{
+			MethodName: "DeleteUser",
+			Handler:    _RuntimeService_DeleteUser_Handler,
+		},
+		{
+			MethodName: "GetAllUsers",
+			Handler:    _RuntimeService_GetAllUsers_Handler,
+		},
+		{
+			MethodName: "GetUser",
+			Handler:    _RuntimeService_GetUser_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

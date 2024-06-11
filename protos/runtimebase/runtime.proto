@@ -111,7 +111,7 @@ service RuntimeService {
   };
 
 
-  rpc GetHost (HostId) returns (Host) {
+  rpc GetHost (UUID) returns (Host) {
     option (google.api.http) = {
       get: "/api/hosts/get/{uuid}"
     };
@@ -123,19 +123,19 @@ service RuntimeService {
     };
   }
 
-  rpc DeleteHost (HostId) returns (Empty) {
+  rpc DeleteHost (UUID) returns (Empty) {
     option (google.api.http) = {
       delete: "/api/hosts/delete/{uuid}"
     };
   }
 
-  rpc EnableHost (HostId) returns (Empty) {
+  rpc EnableHost (UUID) returns (Empty) {
     option (google.api.http) = {
       post: "/api/hosts/enable/{uuid}"
     };
   }
 
-  rpc DisableHost (HostId) returns (Empty) {
+  rpc DisableHost (UUID) returns (Empty) {
     option (google.api.http) = {
       post: "/api/hosts/disable/{uuid}"
     };
@@ -230,29 +230,95 @@ service RuntimeService {
     };
   }
 
-  rpc UpdateTicket (UpdateTicketRequest) returns (Ticket) {
+  rpc UpdateTicket (Ticket) returns (Ticket) {
     option (google.api.http) = {
-      post: "/api/tickets/{ticketUuid}/update"
+      post: "/api/tickets/{uuid}/update"
       body: "*"
     };
   }
 
-  rpc DeleteTicket (DeleteTicketRequest) returns (Message) {
+  rpc DeleteTicket (UUID) returns (Message) {
     option (google.api.http) = {
-      delete: "/api/tickets/{ticketUuid}/delete"
+      delete: "/api/tickets/{uuid}/delete"
     };
   }
 
   rpc UpdateComment (UpdateCommentRequest) returns (Ticket) {
     option (google.api.http) = {
-      post: "/api/tickets/{ticketUuid}/comments/{commentUuid}/update"
+      post: "/api/tickets/{uuid}/comments/{commentUuid}/update"
       body: "*"
     };
   }
 
-  rpc DeleteComment (DeleteCommentRequest) returns (Message) {
+  rpc DeleteComment (UUID) returns (Message) {
     option (google.api.http) = {
-      delete: "/api/tickets/{ticketUuid}/comments/{commentUuid}/delete"
+      delete: "/api/tickets/{uuid}/comments/{uuid}/delete"
+    };
+  }
+
+  // Teams
+  rpc AddTeam (Team) returns (Team) {
+    option (google.api.http) = {
+      post: "/api/teams"
+      body: "*"
+    };
+  }
+
+  rpc UpdateTeam (Team) returns (Team) {
+    option (google.api.http) = {
+      patch: "/api/teams/{uuid}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteTeam (UUID) returns (Message) {
+    option (google.api.http) = {
+      delete: "/api/teams/{uuid}"
+    };
+  }
+
+  rpc GetAllTeams (Empty) returns (TeamsResponse) {
+    option (google.api.http) = {
+      get: "/api/teams"
+    };
+  }
+
+  rpc GetTeam (UUID) returns (Team) {
+    option (google.api.http) = {
+      get: "/api/teams/{uuid}"
+    };
+  }
+
+  // Users
+  rpc AddUser (User) returns (User) {
+    option (google.api.http) = {
+      post: "/api/users"
+      body: "*"
+    };
+  }
+
+  rpc UpdateUser (User) returns (User) {
+    option (google.api.http) = {
+      patch: "/api/users/{uuid}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteUser (UUID) returns (Message) {
+    option (google.api.http) = {
+      delete: "/api/users/{uuid}"
+    };
+  }
+
+  rpc GetAllUsers (Empty) returns (UsersResponse) {
+    option (google.api.http) = {
+      get: "/api/users"
+    };
+  }
+
+  rpc GetUser (UUID) returns (User) {
+    option (google.api.http) = {
+      get: "/api/users/{uuid}"
     };
   }
 
@@ -263,7 +329,7 @@ service RuntimeService {
 
 }
 
-message HostId {
+message UUID {
   string uuid = 1;
 }
 
@@ -697,25 +763,34 @@ message AddCommentRequest {
 }
 
 
-message UpdateTicketRequest {
-  string ticketUuid = 1;
-  Ticket ticket = 2;
-}
-
-
-message DeleteTicketRequest {
-  string ticketUuid = 1;
-}
-
-
 message UpdateCommentRequest {
-  string ticketUuid = 1;
+  string uuid = 1;
   string commentUuid = 2;
   string newText = 3;
 }
 
 
-message DeleteCommentRequest {
-  string ticketUuid = 1;
-  string commentUuid = 2;
+// Users/Teams //
+
+message Team {
+  string uuid = 1;
+  string name = 2;
+}
+
+
+message User {
+  string uuid = 1;
+  string username = 2;
+  string password = 3;
+  string teamUUID = 4;
+  string role = 5;
+}
+
+
+message TeamsResponse {
+  repeated Team teams = 1;
+}
+
+message UsersResponse {
+  repeated User users = 1;
 }
