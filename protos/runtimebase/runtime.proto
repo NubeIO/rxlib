@@ -15,6 +15,26 @@ service RuntimeService {
     };
   };
 
+  rpc GetObjectsRoot (ObjectsRequest) returns (ObjectsResponse) {
+    option (google.api.http) = {
+      get: "/api/runtime/root"
+    };
+  };
+
+
+  rpc GetObjectChilds (ObjectRequest) returns (ObjectsResponse) {
+    option (google.api.http) = {
+      get: "/api/runtime/childs/{uuid}"
+    };
+  };
+
+  // will get the childs of the parents, parents. So go up the tree two levels
+  rpc GetObjectParentsChilds (ObjectRequest) returns (ObjectsResponse) {
+    option (google.api.http) = {
+      get: "/api/runtime/parents/childs/{uuid}"
+    };
+  };
+
   rpc GetObject (ObjectRequest) returns (ObjectConfig) {
     option (google.api.http) = {
       get: "/api/runtime/objects/{uuid}"

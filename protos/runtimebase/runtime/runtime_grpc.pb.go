@@ -19,41 +19,44 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	RuntimeService_GetObjects_FullMethodName        = "/App.Runtime.RuntimeService/GetObjects"
-	RuntimeService_GetObject_FullMethodName         = "/App.Runtime.RuntimeService/GetObject"
-	RuntimeService_GetObjectHelp_FullMethodName     = "/App.Runtime.RuntimeService/GetObjectHelp"
-	RuntimeService_GetTreeMapRoot_FullMethodName    = "/App.Runtime.RuntimeService/GetTreeMapRoot"
-	RuntimeService_GetPalletTree_FullMethodName     = "/App.Runtime.RuntimeService/GetPalletTree"
-	RuntimeService_ObjectsDeploy_FullMethodName     = "/App.Runtime.RuntimeService/ObjectsDeploy"
-	RuntimeService_Ping_FullMethodName              = "/App.Runtime.RuntimeService/Ping"
-	RuntimeService_ObjectCommand_FullMethodName     = "/App.Runtime.RuntimeService/ObjectCommand"
-	RuntimeService_RQL_FullMethodName               = "/App.Runtime.RuntimeService/RQL"
-	RuntimeService_GetObjectsValues_FullMethodName  = "/App.Runtime.RuntimeService/GetObjectsValues"
-	RuntimeService_GetObjectValues_FullMethodName   = "/App.Runtime.RuntimeService/GetObjectValues"
-	RuntimeService_GetPortValue_FullMethodName      = "/App.Runtime.RuntimeService/GetPortValue"
-	RuntimeService_GetHost_FullMethodName           = "/App.Runtime.RuntimeService/GetHost"
-	RuntimeService_AllHosts_FullMethodName          = "/App.Runtime.RuntimeService/AllHosts"
-	RuntimeService_DeleteHost_FullMethodName        = "/App.Runtime.RuntimeService/DeleteHost"
-	RuntimeService_EnableHost_FullMethodName        = "/App.Runtime.RuntimeService/EnableHost"
-	RuntimeService_DisableHost_FullMethodName       = "/App.Runtime.RuntimeService/DisableHost"
-	RuntimeService_UpdateHost_FullMethodName        = "/App.Runtime.RuntimeService/UpdateHost"
-	RuntimeService_AddHost_FullMethodName           = "/App.Runtime.RuntimeService/AddHost"
-	RuntimeService_SendHostMQTT_FullMethodName      = "/App.Runtime.RuntimeService/SendHostMQTT"
-	RuntimeService_RegisterExtension_FullMethodName = "/App.Runtime.RuntimeService/RegisterExtension"
-	RuntimeService_AddExtension_FullMethodName      = "/App.Runtime.RuntimeService/AddExtension"
-	RuntimeService_DeleteExtension_FullMethodName   = "/App.Runtime.RuntimeService/DeleteExtension"
-	RuntimeService_AllExtension_FullMethodName      = "/App.Runtime.RuntimeService/AllExtension"
-	RuntimeService_StartExtension_FullMethodName    = "/App.Runtime.RuntimeService/StartExtension"
-	RuntimeService_StopExtension_FullMethodName     = "/App.Runtime.RuntimeService/StopExtension"
-	RuntimeService_UploadZipFile_FullMethodName     = "/App.Runtime.RuntimeService/UploadZipFile"
-	RuntimeService_NewTicket_FullMethodName         = "/App.Runtime.RuntimeService/NewTicket"
-	RuntimeService_AllTickets_FullMethodName        = "/App.Runtime.RuntimeService/AllTickets"
-	RuntimeService_AddComment_FullMethodName        = "/App.Runtime.RuntimeService/AddComment"
-	RuntimeService_UpdateTicket_FullMethodName      = "/App.Runtime.RuntimeService/UpdateTicket"
-	RuntimeService_DeleteTicket_FullMethodName      = "/App.Runtime.RuntimeService/DeleteTicket"
-	RuntimeService_UpdateComment_FullMethodName     = "/App.Runtime.RuntimeService/UpdateComment"
-	RuntimeService_DeleteComment_FullMethodName     = "/App.Runtime.RuntimeService/DeleteComment"
-	RuntimeService_ExtensionStream_FullMethodName   = "/App.Runtime.RuntimeService/ExtensionStream"
+	RuntimeService_GetObjects_FullMethodName             = "/App.Runtime.RuntimeService/GetObjects"
+	RuntimeService_GetObjectsRoot_FullMethodName         = "/App.Runtime.RuntimeService/GetObjectsRoot"
+	RuntimeService_GetObjectChilds_FullMethodName        = "/App.Runtime.RuntimeService/GetObjectChilds"
+	RuntimeService_GetObjectParentsChilds_FullMethodName = "/App.Runtime.RuntimeService/GetObjectParentsChilds"
+	RuntimeService_GetObject_FullMethodName              = "/App.Runtime.RuntimeService/GetObject"
+	RuntimeService_GetObjectHelp_FullMethodName          = "/App.Runtime.RuntimeService/GetObjectHelp"
+	RuntimeService_GetTreeMapRoot_FullMethodName         = "/App.Runtime.RuntimeService/GetTreeMapRoot"
+	RuntimeService_GetPalletTree_FullMethodName          = "/App.Runtime.RuntimeService/GetPalletTree"
+	RuntimeService_ObjectsDeploy_FullMethodName          = "/App.Runtime.RuntimeService/ObjectsDeploy"
+	RuntimeService_Ping_FullMethodName                   = "/App.Runtime.RuntimeService/Ping"
+	RuntimeService_ObjectCommand_FullMethodName          = "/App.Runtime.RuntimeService/ObjectCommand"
+	RuntimeService_RQL_FullMethodName                    = "/App.Runtime.RuntimeService/RQL"
+	RuntimeService_GetObjectsValues_FullMethodName       = "/App.Runtime.RuntimeService/GetObjectsValues"
+	RuntimeService_GetObjectValues_FullMethodName        = "/App.Runtime.RuntimeService/GetObjectValues"
+	RuntimeService_GetPortValue_FullMethodName           = "/App.Runtime.RuntimeService/GetPortValue"
+	RuntimeService_GetHost_FullMethodName                = "/App.Runtime.RuntimeService/GetHost"
+	RuntimeService_AllHosts_FullMethodName               = "/App.Runtime.RuntimeService/AllHosts"
+	RuntimeService_DeleteHost_FullMethodName             = "/App.Runtime.RuntimeService/DeleteHost"
+	RuntimeService_EnableHost_FullMethodName             = "/App.Runtime.RuntimeService/EnableHost"
+	RuntimeService_DisableHost_FullMethodName            = "/App.Runtime.RuntimeService/DisableHost"
+	RuntimeService_UpdateHost_FullMethodName             = "/App.Runtime.RuntimeService/UpdateHost"
+	RuntimeService_AddHost_FullMethodName                = "/App.Runtime.RuntimeService/AddHost"
+	RuntimeService_SendHostMQTT_FullMethodName           = "/App.Runtime.RuntimeService/SendHostMQTT"
+	RuntimeService_RegisterExtension_FullMethodName      = "/App.Runtime.RuntimeService/RegisterExtension"
+	RuntimeService_AddExtension_FullMethodName           = "/App.Runtime.RuntimeService/AddExtension"
+	RuntimeService_DeleteExtension_FullMethodName        = "/App.Runtime.RuntimeService/DeleteExtension"
+	RuntimeService_AllExtension_FullMethodName           = "/App.Runtime.RuntimeService/AllExtension"
+	RuntimeService_StartExtension_FullMethodName         = "/App.Runtime.RuntimeService/StartExtension"
+	RuntimeService_StopExtension_FullMethodName          = "/App.Runtime.RuntimeService/StopExtension"
+	RuntimeService_UploadZipFile_FullMethodName          = "/App.Runtime.RuntimeService/UploadZipFile"
+	RuntimeService_NewTicket_FullMethodName              = "/App.Runtime.RuntimeService/NewTicket"
+	RuntimeService_AllTickets_FullMethodName             = "/App.Runtime.RuntimeService/AllTickets"
+	RuntimeService_AddComment_FullMethodName             = "/App.Runtime.RuntimeService/AddComment"
+	RuntimeService_UpdateTicket_FullMethodName           = "/App.Runtime.RuntimeService/UpdateTicket"
+	RuntimeService_DeleteTicket_FullMethodName           = "/App.Runtime.RuntimeService/DeleteTicket"
+	RuntimeService_UpdateComment_FullMethodName          = "/App.Runtime.RuntimeService/UpdateComment"
+	RuntimeService_DeleteComment_FullMethodName          = "/App.Runtime.RuntimeService/DeleteComment"
+	RuntimeService_ExtensionStream_FullMethodName        = "/App.Runtime.RuntimeService/ExtensionStream"
 )
 
 // RuntimeServiceClient is the client API for RuntimeService service.
@@ -61,6 +64,10 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RuntimeServiceClient interface {
 	GetObjects(ctx context.Context, in *ObjectsRequest, opts ...grpc.CallOption) (*ObjectsResponse, error)
+	GetObjectsRoot(ctx context.Context, in *ObjectsRequest, opts ...grpc.CallOption) (*ObjectsResponse, error)
+	GetObjectChilds(ctx context.Context, in *ObjectRequest, opts ...grpc.CallOption) (*ObjectsResponse, error)
+	// will get the childs of the parents, parents. So go up the tree two levels
+	GetObjectParentsChilds(ctx context.Context, in *ObjectRequest, opts ...grpc.CallOption) (*ObjectsResponse, error)
 	GetObject(ctx context.Context, in *ObjectRequest, opts ...grpc.CallOption) (*ObjectConfig, error)
 	GetObjectHelp(ctx context.Context, in *ObjectID, opts ...grpc.CallOption) (*ObjectHelp, error)
 	GetTreeMapRoot(ctx context.Context, in *ObjectsRequest, opts ...grpc.CallOption) (*ObjectsRootMap, error)
@@ -111,6 +118,33 @@ func NewRuntimeServiceClient(cc grpc.ClientConnInterface) RuntimeServiceClient {
 func (c *runtimeServiceClient) GetObjects(ctx context.Context, in *ObjectsRequest, opts ...grpc.CallOption) (*ObjectsResponse, error) {
 	out := new(ObjectsResponse)
 	err := c.cc.Invoke(ctx, RuntimeService_GetObjects_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) GetObjectsRoot(ctx context.Context, in *ObjectsRequest, opts ...grpc.CallOption) (*ObjectsResponse, error) {
+	out := new(ObjectsResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_GetObjectsRoot_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) GetObjectChilds(ctx context.Context, in *ObjectRequest, opts ...grpc.CallOption) (*ObjectsResponse, error) {
+	out := new(ObjectsResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_GetObjectChilds_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) GetObjectParentsChilds(ctx context.Context, in *ObjectRequest, opts ...grpc.CallOption) (*ObjectsResponse, error) {
+	out := new(ObjectsResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_GetObjectParentsChilds_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -450,6 +484,10 @@ func (x *runtimeServiceExtensionStreamClient) Recv() (*MessageRequest, error) {
 // for forward compatibility
 type RuntimeServiceServer interface {
 	GetObjects(context.Context, *ObjectsRequest) (*ObjectsResponse, error)
+	GetObjectsRoot(context.Context, *ObjectsRequest) (*ObjectsResponse, error)
+	GetObjectChilds(context.Context, *ObjectRequest) (*ObjectsResponse, error)
+	// will get the childs of the parents, parents. So go up the tree two levels
+	GetObjectParentsChilds(context.Context, *ObjectRequest) (*ObjectsResponse, error)
 	GetObject(context.Context, *ObjectRequest) (*ObjectConfig, error)
 	GetObjectHelp(context.Context, *ObjectID) (*ObjectHelp, error)
 	GetTreeMapRoot(context.Context, *ObjectsRequest) (*ObjectsRootMap, error)
@@ -496,6 +534,15 @@ type UnimplementedRuntimeServiceServer struct {
 
 func (UnimplementedRuntimeServiceServer) GetObjects(context.Context, *ObjectsRequest) (*ObjectsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetObjects not implemented")
+}
+func (UnimplementedRuntimeServiceServer) GetObjectsRoot(context.Context, *ObjectsRequest) (*ObjectsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetObjectsRoot not implemented")
+}
+func (UnimplementedRuntimeServiceServer) GetObjectChilds(context.Context, *ObjectRequest) (*ObjectsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetObjectChilds not implemented")
+}
+func (UnimplementedRuntimeServiceServer) GetObjectParentsChilds(context.Context, *ObjectRequest) (*ObjectsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetObjectParentsChilds not implemented")
 }
 func (UnimplementedRuntimeServiceServer) GetObject(context.Context, *ObjectRequest) (*ObjectConfig, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetObject not implemented")
@@ -626,6 +673,60 @@ func _RuntimeService_GetObjects_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimeServiceServer).GetObjects(ctx, req.(*ObjectsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_GetObjectsRoot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ObjectsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).GetObjectsRoot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_GetObjectsRoot_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).GetObjectsRoot(ctx, req.(*ObjectsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_GetObjectChilds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ObjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).GetObjectChilds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_GetObjectChilds_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).GetObjectChilds(ctx, req.(*ObjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_GetObjectParentsChilds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ObjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).GetObjectParentsChilds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_GetObjectParentsChilds_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).GetObjectParentsChilds(ctx, req.(*ObjectRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1260,6 +1361,18 @@ var RuntimeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetObjects",
 			Handler:    _RuntimeService_GetObjects_Handler,
+		},
+		{
+			MethodName: "GetObjectsRoot",
+			Handler:    _RuntimeService_GetObjectsRoot_Handler,
+		},
+		{
+			MethodName: "GetObjectChilds",
+			Handler:    _RuntimeService_GetObjectChilds_Handler,
+		},
+		{
+			MethodName: "GetObjectParentsChilds",
+			Handler:    _RuntimeService_GetObjectParentsChilds_Handler,
 		},
 		{
 			MethodName: "GetObject",
