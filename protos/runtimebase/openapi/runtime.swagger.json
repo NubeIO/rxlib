@@ -2473,6 +2473,11 @@
       "properties": {
         "name": {
           "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "format": "byte",
+          "title": "Each team can have multiple roles"
         }
       }
     },
@@ -2515,8 +2520,8 @@
         "teamUUID": {
           "type": "string"
         },
-        "role": {
-          "type": "string"
+        "isAdmin": {
+          "type": "boolean"
         }
       }
     },
@@ -2537,6 +2542,11 @@
         },
         "name": {
           "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "format": "byte",
+          "title": "Each team can have multiple roles"
         }
       }
     },
@@ -2617,8 +2627,8 @@
         "teamUUID": {
           "type": "string"
         },
-        "role": {
-          "type": "string"
+        "isAdmin": {
+          "type": "boolean"
         }
       }
     },

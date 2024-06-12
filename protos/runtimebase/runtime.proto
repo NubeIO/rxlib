@@ -772,20 +772,24 @@ message UpdateCommentRequest {
 
 // Users/Teams //
 
+message Role {
+  string name = 1;
+  repeated string permissions = 2; // List of permissions like "C", "R", "U", "D"
+}
+
 message Team {
   string uuid = 1;
   string name = 2;
+  bytes role = 3; // Each team can have multiple roles
 }
-
 
 message User {
   string uuid = 1;
   string username = 2;
   string password = 3;
   string teamUUID = 4;
-  string role = 5;
+  bool isAdmin = 6;
 }
-
 
 message TeamsResponse {
   repeated Team teams = 1;
