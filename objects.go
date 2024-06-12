@@ -151,6 +151,16 @@ func (inst *RuntimeImpl) GetObjectsValues(parentUUID string) []*runtime.PortValu
 	return out
 }
 
+func (inst *RuntimeImpl) GetObjectsRootConfig() []*runtime.ObjectConfig {
+	var objects []Object
+	for _, object := range inst.Get() {
+		if object.GetParentUUID() == "" {
+			objects = append(objects, object)
+		}
+	}
+	return inst.SerializeObjects(false, objects)
+}
+
 func (inst *RuntimeImpl) GetObjectsConfig() []*runtime.ObjectConfig {
 	return inst.SerializeObjects(false, inst.Get())
 }

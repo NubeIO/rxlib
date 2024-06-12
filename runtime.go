@@ -32,6 +32,8 @@ type Runtime interface {
 	ToObjectsConfig(objects []Object) []*runtime.ObjectConfig
 	// GetObjectsUUIDs returns UUIDs of objects
 	GetObjectsUUIDs(objects []Object) []string
+	// GetObjectsRootConfig returns config of all objects for the root
+	GetObjectsRootConfig() []*runtime.ObjectConfig
 	// GetObjectsConfig returns config of all objects
 	GetObjectsConfig() []*runtime.ObjectConfig
 	// GetObjectConfig returns config of an object by UUID
