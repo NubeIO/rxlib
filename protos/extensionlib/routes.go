@@ -6,6 +6,7 @@ import (
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/exp/maps"
 	"net/http"
 )
 
@@ -48,7 +49,7 @@ func (inst *Extensions) messagesRoute() {
 
 func (inst *Extensions) palletRoute() {
 	inst.server.AddGetRoute("/api/pallet", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"pallet": reactive.ConvertObjects(inst.pallet)})
+		c.JSON(http.StatusOK, gin.H{"pallet": reactive.ConvertObjects(maps.Values(inst.pallet))})
 	})
 }
 

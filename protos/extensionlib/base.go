@@ -13,12 +13,20 @@ import (
 
 var messages map[string]interface{}
 
+type GeneratePlugin func(outputUpdated func(message *runtime.Command)) PluginObject
+
+type PluginObject interface {
+	New(object reactive.Object, opts ...any) reactive.Object
+	OutputUpdated(message *runtime.Command)
+}
+
 type Extensions struct {
 	name       string
 	server     *ginlib.Server
 	grpcClient runtime.RuntimeServiceClient
 	bootTime   string
-	pallet     []reactive.Object
+	pallet     map[string]reactive.Object
+	registry   map[string]GeneratePlugin
 	runtime    []reactive.Object
 	callbacks  map[string]func(message *runtime.MessageRequest)
 	stream     runtime.RuntimeService_ExtensionStreamClient
@@ -32,17 +40,14 @@ type extensionInfo struct {
 	BootTime string `json:"bootTime"`
 }
 
-type Payload interface {
-	New(object reactive.Object, opts ...any) reactive.Object
-}
-
 func New(name string) *Extensions {
 	cli := &Extensions{
 		name:     name,
 		bootTime: time.Now().String(),
 	}
 	messages = make(map[string]interface{})
-	cli.pallet = []reactive.Object{}
+	cli.pallet = make(map[string]reactive.Object)
+	cli.registry = make(map[string]GeneratePlugin)
 	cli.runtime = []reactive.Object{}
 	cli.callbacks = map[string]func(message *runtime.MessageRequest){}
 

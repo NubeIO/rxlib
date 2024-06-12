@@ -6,10 +6,10 @@ import (
 	"github.com/NubeIO/rxlib/helpers"
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
+	"golang.org/x/exp/maps"
 	"google.golang.org/grpc"
 	"io"
 	"log"
-	"os"
 	"time"
 )
 
@@ -20,20 +20,22 @@ func (inst *Extensions) Register() error {
 	go inst.server.Run()
 	for {
 		conn, err = inst.connectWithRetry()
-		if err != nil {
+		if err == nil {
+			messages[helpers.UUID()] = fmt.Sprintf("connected to server")
+		} else {
 			log.Fatalf("could not connect: %v", err)
 		}
 		defer conn.Close()
-		messages[helpers.UUID()] = fmt.Sprintf("connected to server")
-		c := runtime.NewRuntimeServiceClient(conn)
-		inst.grpcClient = c
+
+		inst.grpcClient = runtime.NewRuntimeServiceClient(conn)
+
 		if err := inst.registerExtension(); err != nil {
 			log.Fatalf("could not register plugin: %v", err)
 		}
 		messages[helpers.UUID()] = fmt.Sprintf("registered ExtensionPayload")
+
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
-
 		if err := inst.startServerStreaming(ctx, conn); err != nil {
 			log.Printf("streaming error: %v, reconnecting...", err)
 			continue
@@ -43,15 +45,18 @@ func (inst *Extensions) Register() error {
 
 // registerExtension register the Extensions with the server
 func (inst *Extensions) registerExtension() error {
-	s := inst.grpcClient
-	regCtx, regCancel := context.WithTimeout(context.Background(), time.Second)
-	defer regCancel()
-	info := &runtime.Extension{Name: "ExampleExtension", Uuid: inst.name, Pallet: reactive.ConvertObjects(inst.pallet)}
-	_, err := s.RegisterExtension(regCtx, info)
+	grpcClient := inst.grpcClient
+	info := &runtime.Extension{Name: "ExampleExtension", Uuid: inst.name, Pallet: reactive.ConvertObjects(maps.Values(inst.pallet))}
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	_, err := grpcClient.RegisterExtension(ctx, info)
 	if err != nil {
-		return fmt.Errorf("could not register ExtensionPayload: %v", err)
+		return fmt.Errorf("could not register Extension: %v", err)
 	}
-	fmt.Println("Registered ExtensionPayload")
+	fmt.Println("Registered Extension")
+
 	return nil
 }
 
@@ -104,21 +109,21 @@ func (inst *Extensions) newObject(message *runtime.MessageRequest) {
 		}
 	}
 
-	//instance := inst.objectInstance(reactive.ConvertObjectConfig(object), inst.outputCallback)
-	//
-	//if instance != nil {
-	//	inst.runtime = append(inst.runtime, instance)
-	//	inst.callbacks[instance.GetMeta().GetObjectUUID()] = instance.Handler
-	//	if err := inst.sendMessageToServer("response for 1", "error"); err != nil {
-	//		fmt.Printf("failed to send message: %v\n", err)
-	//	}
-	//	fmt.Printf("objects count: %d\n", len(inst.runtime))
-	//	return
-	//} else {
-	//	if err := inst.sendMessageToServer("failed to find object in pallet", "error"); err != nil {
-	//		fmt.Printf("failed to send message: %v\n", err)
-	//	}
-	//}
+	instance := inst.objectInstance(reactive.ConvertObjectConfig(object), inst.outputCallback)
+
+	if instance != nil {
+		inst.runtime = append(inst.runtime, instance)
+		inst.callbacks[instance.GetMeta().GetObjectUUID()] = instance.Handler
+		if err := inst.sendMessageToServer("response for 1", "error"); err != nil {
+			fmt.Printf("failed to send message: %v\n", err)
+		}
+		fmt.Printf("objects count: %d\n", len(inst.runtime))
+		return
+	} else {
+		if err := inst.sendMessageToServer("failed to find object in pallet", "error"); err != nil {
+			fmt.Printf("failed to send message: %v\n", err)
+		}
+	}
 }
 
 // outputCallback send a message back to the server when the output value of the object is updated
@@ -133,27 +138,25 @@ func (inst *Extensions) outputCallback(cmd *runtime.Command) {
 
 }
 
-// objectInstance create a new instance
-//func (inst *Extensions) objectInstance(obj *reactive.BaseObject, outputUpdated func(message *runtime.Command)) reactive.Object {
-//	instance := subtract.New(outputUpdated)
-//	base := instance.New(obj)
-//	return base
-//}
-
-var infoLog = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+//objectInstance create a new instance
+func (inst *Extensions) objectInstance(obj *reactive.BaseObject, outputUpdated func(message *runtime.Command)) reactive.Object {
+	palletName := obj.Meta.GetObjectName()
+	generate := inst.registry[palletName]
+	instance := generate(outputUpdated)
+	base := instance.New(obj)
+	return base
+}
 
 // startServerStreaming stream messages from the server
 func (inst *Extensions) startServerStreaming(ctx context.Context, conn *grpc.ClientConn) error {
-	c := runtime.NewRuntimeServiceClient(conn)
-
 	// Start bidirectional streaming with the given context
-	stream, err := c.ExtensionStream(ctx)
+	stream, err := inst.grpcClient.ExtensionStream(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to start streaming: %v", err)
 	}
 	inst.stream = stream
 	// Send a message to the server. initiate the client connection to the server. The server will persist the client
-	if err := stream.Send(&runtime.MessageRequest{ExtensionUUID: inst.name, StringPayload: "brith from ExtensionPayload"}); err != nil {
+	if err := stream.Send(&runtime.MessageRequest{ExtensionUUID: inst.name, StringPayload: "brith from extension"}); err != nil {
 		return fmt.Errorf("failed to send message: %v", err)
 	}
 	messages["start"] = time.Now()
@@ -192,12 +195,13 @@ func (inst *Extensions) connectWithRetry() (*grpc.ClientConn, error) {
 	var err error
 	var count int
 	for {
+		count++
 		target := fmt.Sprintf("localhost:%s", inst.grpcPort)
 		conn, err = grpc.Dial(target, grpc.WithInsecure(), grpc.WithBlock())
 		if err != nil {
 			log.Printf("could not connect: %v", err)
 			messages[helpers.UUID()] = fmt.Sprintf("connectWithRetry count: %d", count)
-			time.Sleep(30 * time.Second) // Retry after 30 seconds
+			time.Sleep(10 * time.Second) // Retry after 30 seconds
 			continue
 		}
 		break

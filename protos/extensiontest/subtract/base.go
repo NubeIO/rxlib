@@ -14,7 +14,6 @@ import (
 
 type Instance struct {
 	reactive.Object
-	extensionlib.PluginObject
 	locked        bool
 	lastTrigger   time.Time
 	in1           float64
@@ -81,7 +80,7 @@ func (inst *Instance) Reset() error {
 }
 
 func (inst *Instance) Handler(p *runtime.MessageRequest) {
-	infoLog.Println("inside Handler")
+	infoLog.Println("subtract Handler")
 	if p == nil {
 		return
 	}

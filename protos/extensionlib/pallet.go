@@ -4,13 +4,11 @@ import (
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 )
 
-func (inst *Extensions) AddPallet(name string, ext interface{}) {
+func (inst *Extensions) AddPallet(name string, generate GeneratePlugin) {
 	baseObj := reactive.New(name, nil)
-	extInstance, ok := ext.(Payload)
-	if !ok {
-		print(ok)
-	}
-	obj := extInstance.New(baseObj)
+	ext := generate(nil)
+	obj := ext.New(baseObj)
 	obj.GetInfo().PluginName = inst.name
-	inst.pallet = append(inst.pallet, obj)
+	inst.pallet[name] = obj
+	inst.registry[name] = generate
 }
