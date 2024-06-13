@@ -1,4 +1,4 @@
-package add
+package jsonpath
 
 import (
 	"github.com/NubeIO/rxlib"
@@ -6,25 +6,17 @@ import (
 	"github.com/NubeIO/rxlib/protos/extensionlib"
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
+	"github.com/tidwall/gjson"
 	"log"
-	"os"
-	"time"
 )
 
 type Instance struct {
 	reactive.Object
-	locked        bool
-	lastTrigger   time.Time
-	in1           float64
-	in2           float64
+	json          string
+	path          string
+	output        string
 	outputUpdated func(message *runtime.Command)
-	portOne       float64
-	portTwo       float64
-	lastValue     float64
-	hasPublished  bool
 }
-
-var infoLog = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 func New(outputUpdated func(message *runtime.Command)) extensionlib.PluginObject {
 	obj := new(Instance)
@@ -34,11 +26,11 @@ func New(outputUpdated func(message *runtime.Command)) extensionlib.PluginObject
 
 func (inst *Instance) New(object reactive.Object, opts ...any) reactive.Object {
 	info := rxlib.NewObjectInfo().
-		SetID("add").
+		SetID("jsonpath").
 		SetPluginName("ext-math").
-		SetCategory("math").
+		SetCategory("util").
 		SetCallResetOnDeploy().
-		SetObjectType(rxlib.Logic).
+		SetObjectType(rxlib.Service).
 		SetAllPermissions().
 		Build()
 
@@ -47,19 +39,19 @@ func (inst *Instance) New(object reactive.Object, opts ...any) reactive.Object {
 		Id:        "output",
 		Name:      "output",
 		Direction: string(rxlib.Output),
-		DataType:  priority.TypeFloat,
+		DataType:  priority.TypeAny,
 	})
 	object.NewInputPort(&runtime.Port{
-		Id:        "input-1",
-		Name:      "input-1",
+		Id:        "json",
+		Name:      "json",
 		Direction: string(rxlib.Input),
-		DataType:  priority.TypeFloat,
+		DataType:  priority.TypeString,
 	})
 	object.NewInputPort(&runtime.Port{
-		Id:        "input-2",
-		Name:      "input-2",
+		Id:        "path",
+		Name:      "path",
 		Direction: string(rxlib.Input),
-		DataType:  priority.TypeFloat,
+		DataType:  priority.TypeString,
 	})
 	inst.Object = object
 	return inst
@@ -71,7 +63,6 @@ func (inst *Instance) OutputUpdated(message *runtime.Command) {
 
 func (inst *Instance) Start() error {
 	return nil
-
 }
 
 func (inst *Instance) Reset() error {
@@ -79,7 +70,7 @@ func (inst *Instance) Reset() error {
 }
 
 func (inst *Instance) Handler(p *runtime.MessageRequest) {
-	infoLog.Println("add Handler")
+	log.Println("jsonpath Handler")
 	if p == nil {
 		return
 	}
@@ -90,40 +81,27 @@ func (inst *Instance) Handler(p *runtime.MessageRequest) {
 
 	for _, value := range cmd.GetPortValues() {
 		for _, d := range value.PortIDs {
-			if d == "input-1" {
-				inst.portOne = value.FloatValue
+			if d == "json" {
+				inst.json = value.StringValue
 			}
-			if d == "input-2" {
-				inst.portTwo = value.FloatValue
+			if d == "path" {
+				inst.path = value.StringValue
 			}
 		}
 	}
-	inst.publishOutput()
 
+	inst.publishOutput()
 }
 
 func (inst *Instance) publishOutput() {
-	v := inst.portOne + inst.portTwo
-	var cov bool
-	if v != inst.lastValue {
-		cov = true
-	}
-	if cov || !inst.hasPublished {
-		//fmt.Println("ADD", v, inst.GetMeta().ObjectUUID)
-		inst.OutputUpdated(&runtime.Command{
-			Key:              "update-outputs",
-			TargetObjectUUID: inst.GetMeta().GetObjectUUID(),
-			PortValues: []*runtime.PortValue{&runtime.PortValue{
-				PortID:     "output",
-				FloatValue: v,
-				DataType:   priority.TypeFloat,
-			}},
-		})
-		inst.hasPublished = true // this is for to make sure we publish the first value
-	} else {
-		//fmt.Println("ADD SKIP", v, inst.GetMeta().ObjectUUID)
-
-	}
-	inst.lastValue = v
-
+	value := gjson.Get(inst.json, inst.path).String()
+	inst.OutputUpdated(&runtime.Command{
+		Key:              "update-outputs",
+		TargetObjectUUID: inst.GetMeta().GetObjectUUID(),
+		PortValues: []*runtime.PortValue{&runtime.PortValue{
+			PortID:      "output",
+			StringValue: value,
+			DataType:    priority.TypeString,
+		}},
+	})
 }

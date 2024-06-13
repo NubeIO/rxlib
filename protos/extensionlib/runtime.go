@@ -144,6 +144,7 @@ func (inst *Extensions) objectInstance(obj *reactive.BaseObject, outputUpdated f
 	generate := inst.registry[palletName]
 	instance := generate(outputUpdated)
 	base := instance.New(obj)
+	instance.Start()
 	return base
 }
 

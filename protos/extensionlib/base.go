@@ -18,6 +18,7 @@ type GeneratePlugin func(outputUpdated func(message *runtime.Command)) PluginObj
 type PluginObject interface {
 	New(object reactive.Object, opts ...any) reactive.Object
 	OutputUpdated(message *runtime.Command)
+	Start() error
 }
 
 type Extensions struct {

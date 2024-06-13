@@ -117,6 +117,7 @@ func (inst *Instance) publishOutput() {
 			PortValues: []*runtime.PortValue{&runtime.PortValue{
 				PortID:     "output",
 				FloatValue: v,
+				DataType:   priority.TypeFloat,
 			}},
 		})
 		inst.hasPublished = true // this is for to make sure we publish the first value
