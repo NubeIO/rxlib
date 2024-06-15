@@ -654,7 +654,7 @@ var ObjectString = `
     "help": ""
   },
   {
-    "name": "UpdateInputsValues",
+    "name": "UpdateInputsValue",
     "description": "",
     "args": [
       "payload *payload.Payload"

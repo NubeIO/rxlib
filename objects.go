@@ -110,11 +110,9 @@ func (inst *RuntimeImpl) objectsFilteredIsNil() bool {
 // for example get all the childs object for working group "rubix"
 func (inst *RuntimeImpl) GetChildObjectsByWorkingGroup(objectUUID, workingGroup string) []Object {
 	var out []Object
-	for _, object := range inst.Get() {
-		if object.GetUUID() == objectUUID {
-			if object.GetWorkingGroup() == workingGroup {
-				out = append(out, object)
-			}
+	for _, object := range inst.GetChildObjects(objectUUID) {
+		if object.GetWorkingGroup() == workingGroup {
+			out = append(out, object)
 		}
 	}
 	return out

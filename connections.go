@@ -5,6 +5,12 @@ import (
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 )
 
+type MultipleConnection struct {
+	InputPortID  string
+	OutputPortID string
+	IsOutput     bool
+}
+
 func NewConnection(sourceUUID, sourcePort, targetUUID, targetPort string) (publisher *runtime.Connection, subscriber *runtime.Connection) {
 	sourceConnectionUUID := helpers.UUID()
 	targetConnectionUUID := helpers.UUID()

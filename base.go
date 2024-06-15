@@ -88,11 +88,13 @@ type Object interface {
 	GetInputs() []*Port
 	GetInputByConnection(sourceObjectUUID, outputPortID string) *Port
 	GetInputByConnections(sourceObjectUUID, outputPortID string) []*Port
-	UpdateInputsValues(portID string, payload *payload.Payload) []error
+	UpdateInputsValue(portID string, payload *payload.Payload) []error
 	SetDynamicInputsCount(count int)
 	GetDynamicInputsCount() int
 	DeleteInput(id string) error
 	BuildDynamicInputs(callback func(portID string, message *payload.Payload)) error
+	//SetHasMultipleInputConnections() // set if an output from an object has multiple connection to this objects input or inputs
+	//GetHasMultipleInputConnections() map[string]MultipleConnection
 
 	GetOutputs() []*Port
 	GetOutput(id string) *Port

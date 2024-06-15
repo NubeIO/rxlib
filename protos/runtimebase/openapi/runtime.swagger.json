@@ -871,6 +871,102 @@
         ]
       }
     },
+    "/api/runtime/settings/schema/{uuid}": {
+      "get": {
+        "operationId": "RuntimeService_GetObjectSettingsSchema",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeObjectSettings"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/runtime/settings/{uuid}": {
+      "get": {
+        "operationId": "RuntimeService_GetObjectSettings",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeObjectSettings"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      },
+      "patch": {
+        "operationId": "RuntimeService_UpdateObjectSettings",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeObjectSettings"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeServiceUpdateObjectSettingsBody"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
     "/api/runtime/tree": {
       "get": {
         "operationId": "RuntimeService_GetTreeMapRoot",
@@ -2162,6 +2258,17 @@
         }
       }
     },
+    "RuntimeObjectSettings": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        }
+      }
+    },
     "RuntimeObjectStats": {
       "type": "object",
       "properties": {
@@ -2464,6 +2571,14 @@
       "type": "object",
       "properties": {
         "newText": {
+          "type": "string"
+        }
+      }
+    },
+    "RuntimeServiceUpdateObjectSettingsBody": {
+      "type": "object",
+      "properties": {
+        "body": {
           "type": "string"
         }
       }
