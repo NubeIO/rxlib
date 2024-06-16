@@ -24,19 +24,19 @@ service RuntimeService {
 
   rpc GetObjectSettingsSchema (UUID) returns (ObjectSettings) {
     option (google.api.http) = {
-      get: "/api/runtime/settings/schema/{uuid}"
+      get: "/api/runtime/objects/settings/schema/{uuid}"
     };
   };
 
   rpc GetObjectSettings (UUID) returns (ObjectSettings) {
     option (google.api.http) = {
-      get: "/api/runtime/settings/{uuid}"
+      get: "/api/runtime/objects/settings/{uuid}"
     };
   };
 
   rpc UpdateObjectSettings (ObjectSettings) returns (ObjectSettings) {
     option (google.api.http) = {
-      patch: "/api/runtime/settings/{uuid}"
+      post: "/api/runtime/objects/settings/{uuid}"
       body: "*"
     };
   };
@@ -545,7 +545,7 @@ message ObjectID {
 
 message ObjectSettings {
   string uuid = 1;
-  string body = 2;
+  string value = 2;
 }
 
 message ObjectRequest {
@@ -569,7 +569,7 @@ message ObjectConfig {
 }
 
 message Settings {
-  bytes value = 1;
+  string value = 1;
 }
 
 message Info {
