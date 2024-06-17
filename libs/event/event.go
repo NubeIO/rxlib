@@ -1,6 +1,7 @@
 package event
 
 import (
+	"fmt"
 	"github.com/NubeIO/rxlib/payload"
 	"sync"
 )
@@ -8,7 +9,7 @@ import (
 type EventBus interface {
 	Subscribe(topic string, callback func(topic string, data *payload.Payload, err error))
 	Publish(topic string, data *payload.Payload) error
-	Unsubscribe(topic string)
+	Unsubscribe(topic string, callback func(topic string, data *payload.Payload, err error))
 }
 
 type eventBus struct {
@@ -34,10 +35,13 @@ func NewEventBus() EventBus {
 func (b *eventBus) Subscribe(topic string, callback func(topic string, data *payload.Payload, err error)) {
 	b.lock.Lock()
 	defer b.lock.Unlock()
+	fmt.Printf("EVENTBUS Subscribe topic: %s \n", topic)
 	b.subscribers[topic] = append(b.subscribers[topic], callback)
+	fmt.Printf("Current Subscribers for topic %s: %v\n", topic, b.subscribers[topic])
 }
 
 func (b *eventBus) Publish(topic string, data *payload.Payload) error {
+	fmt.Printf("EVENTBUS Publish topic: %s\n", topic)
 	b.pubChannel <- &eventMessage{
 		topic: topic,
 		data:  data,
@@ -45,11 +49,24 @@ func (b *eventBus) Publish(topic string, data *payload.Payload) error {
 	return nil
 }
 
-func (b *eventBus) Unsubscribe(topic string) {
+func (b *eventBus) Unsubscribe(topic string, callback func(topic string, data *payload.Payload, err error)) {
 	b.lock.Lock()
 	defer b.lock.Unlock()
-	// Delete all subscribers for the topic
-	delete(b.subscribers, topic)
+	fmt.Printf("EVENTBUS Unsubscribe topic: %s \n", topic)
+	// Find and remove the specific callback
+	if subscribers, ok := b.subscribers[topic]; ok {
+		for i, sub := range subscribers {
+			if fmt.Sprintf("%p", sub) == fmt.Sprintf("%p", callback) {
+				b.subscribers[topic] = append(subscribers[:i], subscribers[i+1:]...)
+				break
+			}
+		}
+		// If there are no more subscribers for the topic, delete the entry
+		if len(b.subscribers[topic]) == 0 {
+			delete(b.subscribers, topic)
+		}
+	}
+	fmt.Printf("Subscribers after Unsubscribe for topic %s: %v\n", topic, b.subscribers[topic])
 }
 
 func (b *eventBus) start() {

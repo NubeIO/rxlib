@@ -93,8 +93,6 @@ type Object interface {
 	GetDynamicInputsCount() int
 	DeleteInput(id string) error
 	BuildDynamicInputs(callback func(portID string, message *payload.Payload)) error
-	//SetHasMultipleInputConnections() // set if an output from an object has multiple connection to this objects input or inputs
-	//GetHasMultipleInputConnections() map[string]MultipleConnection
 
 	GetOutputs() []*Port
 	GetOutput(id string) *Port
@@ -106,6 +104,7 @@ type Object interface {
 	PublishCommand(command *ExtendedCommand) error // send a command over the eventbus, this is used to send external commands (eg; over mqtt)
 	Subscribe(topic, handlerID string, callBack func(topic string, e bus.Event))
 	SubscribePayload(topic, handlerID string, opts *EventbusOpts, callBack func(topic string, p *payload.Payload, err error))
+	UnsubscribeConnection(sourceObjectUUID, sourcePortID string)
 
 	// GetRootObject Obj tree
 	GetRootObject(uuid string) (Object, error)
