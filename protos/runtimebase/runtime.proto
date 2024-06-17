@@ -248,17 +248,16 @@ service RuntimeService {
     };
   }
 
-
-  rpc NewTicket (Ticket) returns (Ticket) {
+  rpc GetTickets (Empty) returns (AllTicketsResponse) {
     option (google.api.http) = {
-      post: "/api/tickets/new"
-      body: "*"
+      get: "/api/tickets"
     };
   }
 
-  rpc AllTickets (Empty) returns (AllTicketsResponse) {
+  rpc PostTicket (Ticket) returns (Ticket) {
     option (google.api.http) = {
-      get: "/api/tickets/all"
+      post: "/api/tickets"
+      body: "*"
     };
   }
 
@@ -781,24 +780,24 @@ message UploadZipResponse {
 
 
 // Ticket System //
-
 message Ticket {
   string uuid = 1;
-  string raisedByUuid = 2;
-  repeated string assignedUserUuids = 3;
-  repeated Comment comments = 4;
-  string created = 5;
-  string lastUpdated = 6;
+  string title = 2;
+  string raisedByUserUUID = 3;
+  repeated User assignedUsers = 4;
+  repeated Comment comments = 5;
+  string created = 6;
+  string updated = 7;
 }
 
 message Comment {
   string uuid = 1;
   string comment = 2;
-  string raisedByUuid = 3;
-  string created = 4;
-  string lastUpdated = 5;
+  string raisedByUserUUID = 3;
+  string ticketId = 4;
+  string created = 5;
+  string updated = 6;
 }
-
 
 message AllTicketsResponse {
   repeated Ticket tickets = 1;
