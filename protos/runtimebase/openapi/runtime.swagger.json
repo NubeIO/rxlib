@@ -1811,6 +1811,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "wiresheetUUID": {
+          "type": "string"
         }
       }
     },

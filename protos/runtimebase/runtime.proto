@@ -669,6 +669,7 @@ message Connection {
   string lastFail = 15;
   int32 failCount = 16;
   repeated string error = 17;
+  string wiresheetUUID = 18;
 }
 
 
