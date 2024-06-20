@@ -27,7 +27,7 @@ func New(outputUpdated func(message *runtime.Command)) extensionlib.PluginObject
 func (inst *Instance) New(object reactive.Object, opts ...any) reactive.Object {
 	info := rxlib.NewObjectInfo().
 		SetID("jsonpath").
-		SetPluginName("ext-math").
+		SetPluginName("test").
 		SetCategory("util").
 		SetCallResetOnDeploy().
 		SetObjectType(rxlib.Service).

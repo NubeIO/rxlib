@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	factory := extensionlib.New("mqtt")
+	factory := extensionlib.New("test")
 	factory.AddPallet("watcher", watcher.New)
 	factory.AddPallet("jsonpath", jsonpath.New)
 	factory.Register()

@@ -128,6 +128,7 @@ func (inst *Extensions) newObject(message *runtime.MessageRequest) {
 
 // outputCallback send a message back to the server when the output value of the object is updated
 func (inst *Extensions) outputCallback(cmd *runtime.Command) {
+	fmt.Println("outputCallback", inst.name)
 	if err := inst.stream.Send(&runtime.MessageRequest{
 		Key:           "invoke",
 		ExtensionUUID: inst.name,
@@ -138,7 +139,7 @@ func (inst *Extensions) outputCallback(cmd *runtime.Command) {
 
 }
 
-//objectInstance create a new instance
+// objectInstance create a new instance
 func (inst *Extensions) objectInstance(obj *reactive.BaseObject, outputUpdated func(message *runtime.Command)) reactive.Object {
 	palletName := obj.Meta.GetObjectName()
 	generate := inst.registry[palletName]

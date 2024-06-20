@@ -11,7 +11,9 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"log"
 	"os"
+	"os/user"
 	"sync"
+	"time"
 )
 
 type Instance struct {
@@ -34,7 +36,7 @@ func New(outputUpdated func(message *runtime.Command)) extensionlib.PluginObject
 func (inst *Instance) New(object reactive.Object, opts ...any) reactive.Object {
 	info := rxlib.NewObjectInfo().
 		SetID("watcher").
-		SetPluginName("ext-math").
+		SetPluginName("test").
 		SetCategory("util").
 		SetCallResetOnDeploy().
 		SetObjectType(rxlib.Service).
@@ -46,7 +48,7 @@ func (inst *Instance) New(object reactive.Object, opts ...any) reactive.Object {
 		Id:        "output",
 		Name:      "output",
 		Direction: string(rxlib.Output),
-		DataType:  priority.TypeJSON,
+		DataType:  priority.TypeString,
 	})
 	object.NewInputPort(&runtime.Port{
 		Id:        "file",
@@ -56,11 +58,50 @@ func (inst *Instance) New(object reactive.Object, opts ...any) reactive.Object {
 	})
 	inst.Object = object
 	inst.stop = make(chan struct{})
+	fmt.Printf("init new file watch: %s \n", inst.GetMeta().GetObjectUUID())
 	return inst
 }
 
 func (inst *Instance) OutputUpdated(message *runtime.Command) {
 	inst.outputUpdated(message)
+}
+
+func (inst *Instance) startWatcher(filePath string) {
+	log.Println("started filewatcher")
+	interval := time.Second // Polling interval
+
+	// Get initial file info
+	fileInfo, err := os.Stat(filePath)
+	if err != nil {
+		log.Fatalf("Failed to get file info: %v", err)
+	}
+	lastModTime := fileInfo.ModTime()
+
+	for {
+		time.Sleep(interval)
+
+		fileInfo, err := os.Stat(filePath)
+		if err != nil {
+			log.Fatalf("Failed to get file info: %v", err)
+		}
+
+		currentModTime := fileInfo.ModTime()
+		if currentModTime != lastModTime {
+			change := fmt.Sprintf("File %s changed at %v", filePath, currentModTime)
+			lastModTime = currentModTime
+			if err == nil {
+				inst.OutputUpdated(&runtime.Command{
+					Key:              "update-outputs",
+					TargetObjectUUID: inst.GetMeta().GetObjectUUID(),
+					PortValues: []*runtime.PortValue{&runtime.PortValue{
+						PortID:      "output",
+						StringValue: change,
+						DataType:    priority.TypeString,
+					}},
+				})
+			}
+		}
+	}
 }
 
 func (inst *Instance) Start() error {
@@ -71,47 +112,13 @@ func (inst *Instance) Start() error {
 		return err
 	}
 	inst.watcher = watcher
-
-	go func() {
-		for {
-			select {
-			case event, ok := <-watcher.Events:
-				if !ok {
-					return
-				}
-
-				// Check if the file was modified
-				if event.Op&fsnotify.Write == fsnotify.Write {
-					fmt.Println("modified file:", event.Name)
-					jsonData, err := json.Marshal(event)
-					if err == nil {
-						json := string(jsonData)
-						inst.OutputUpdated(&runtime.Command{
-							Key:              "update-outputs",
-							TargetObjectUUID: inst.GetMeta().GetObjectUUID(),
-							PortValues: []*runtime.PortValue{&runtime.PortValue{
-								PortID:    "output",
-								JsonValue: json,
-								DataType:  priority.TypeJSON,
-							}},
-						})
-					}
-				}
-
-			case err, ok := <-watcher.Errors:
-				if !ok {
-					return
-				}
-				log.Println("error:", err)
-			}
-		}
-	}()
-
-	inst.filepath = "/home/manny/nebu/rxlib/protos/filewatcher/index.txt"
+	inst.filepath = fmt.Sprintf("%s/test.txt", getHome())
+	log.Printf("file to watch: %s\n", inst.filepath)
 	err = watcher.Add(inst.filepath)
 	if err != nil {
 		log.Println(err)
 	}
+	inst.startWatcher(inst.filepath)
 	return nil
 }
 
@@ -130,7 +137,7 @@ func (inst *Instance) Delete() error {
 }
 
 func (inst *Instance) Handler(p *runtime.MessageRequest) {
-	infoLog.Println("filewatcher Handler")
+	fmt.Println("filewatcher Handler !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
 	if p == nil {
 		return
 	}
@@ -180,7 +187,7 @@ func (inst *Instance) Handler(p *runtime.MessageRequest) {
 							PortValues: []*runtime.PortValue{&runtime.PortValue{
 								PortID:    "output",
 								JsonValue: json,
-								DataType:  priority.TypeJSON,
+								DataType:  priority.TypeString,
 							}},
 						})
 					}
@@ -199,4 +206,12 @@ func (inst *Instance) Handler(p *runtime.MessageRequest) {
 	if err != nil {
 		log.Println(err)
 	}
+}
+
+func getHome() string {
+	usr, err := user.Current()
+	if err != nil {
+		return ""
+	}
+	return usr.HomeDir
 }

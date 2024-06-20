@@ -61,6 +61,10 @@ func (p *Port) SetValueBool(v bool) {
 	p.Payload.BoolValue = v
 }
 
+func (p *Port) SetValueString(v string) {
+	p.Payload.StringValue = v
+}
+
 func (p *Port) SetValueInt(v int32) {
 	p.Payload.IntValue = v
 }
