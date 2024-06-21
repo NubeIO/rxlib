@@ -26,7 +26,7 @@ func (cli *client) sendMessage(content string) error {
 	//}
 
 	// Send a message to the server
-	//if err := cli.stream.Send(&runtime.MessageRequest{Uuid: cli.pluginName}); err != nil {
+	//if err := cli.stream.Send(&runtime.MessageRequest{UUID: cli.pluginName}); err != nil {
 	//	return fmt.Errorf("failed to send message: %v", err)
 	//}
 
@@ -56,7 +56,7 @@ func (cli *client) registerPlugin() error {
 	//// Register the plugin with a separate context for registration
 	//regCtx, regCancel := context.WithTimeout(context.Background(), time.Second)
 	//defer regCancel()
-	//info := &runtime.PluginInfo{Name: "ExamplePlugin", Uuid: cli.pluginName, Pallet: reactive.ConvertObjects(cli.pallet)}
+	//info := &runtime.PluginInfo{Name: "ExamplePlugin", UUID: cli.pluginName, Pallet: reactive.ConvertObjects(cli.pallet)}
 	//_, err := c.RegisterPlugin(regCtx, info)
 	//if err != nil {
 	//	return fmt.Errorf("could not register plugin: %v", err)
@@ -76,7 +76,7 @@ func (cli *client) startStreaming(ctx context.Context, conn *grpc.ClientConn) er
 	//cli.stream = stream
 	//
 	//// Send a message to the server
-	//if err := stream.Send(&runtime.MessageRequest{Uuid: cli.pluginName}); err != nil {
+	//if err := stream.Send(&runtime.MessageRequest{UUID: cli.pluginName}); err != nil {
 	//	return fmt.Errorf("failed to send message: %v", err)
 	//}
 	//
@@ -143,7 +143,7 @@ func (cli *client) outputCallback(cmd *runtime.Command) {
 
 	//if err := cli.stream.Send(&runtime.MessageRequest{
 	//	Key:     "invoke",
-	//	Uuid:    cli.pluginName,
+	//	UUID:    cli.pluginName,
 	//	Command: cmd,
 	//}); err != nil {
 	//

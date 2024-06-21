@@ -151,58 +151,7 @@ service RuntimeService {
     };
   };
 
-
-  rpc GetHost (UUID) returns (Host) {
-    option (google.api.http) = {
-      get: "/api/hosts/get/{uuid}"
-    };
-  }
-
-  rpc AllHosts (Empty) returns (HostList) {
-    option (google.api.http) = {
-      get: "/api/hosts/all"
-    };
-  }
-
-  rpc DeleteHost (UUID) returns (Empty) {
-    option (google.api.http) = {
-      delete: "/api/hosts/delete/{uuid}"
-    };
-  }
-
-  rpc EnableHost (UUID) returns (Empty) {
-    option (google.api.http) = {
-      post: "/api/hosts/enable/{uuid}"
-    };
-  }
-
-  rpc DisableHost (UUID) returns (Empty) {
-    option (google.api.http) = {
-      post: "/api/hosts/disable/{uuid}"
-    };
-  }
-
-  rpc UpdateHost (Host) returns (Host) {
-    option (google.api.http) = {
-      patch: "/api/hosts/update"
-      body: "*"
-    };
-  }
-
-  rpc AddHost (Host) returns (Host) {
-    option (google.api.http) = {
-      post: "/api/hosts/add"
-      body: "*"
-    };
-  }
-
-  rpc SendHostMQTT (HostMQTT) returns (HostMQTT) {
-    option (google.api.http) = {
-      post: "/api/hosts/mqtt"
-      body: "*"
-    };
-  }
-
+  // Extensions
   rpc RegisterExtension (Extension) returns (Extension) {
     option (google.api.http) = {
       post: "/api/extensions/register"
@@ -248,54 +197,135 @@ service RuntimeService {
     };
   }
 
-  rpc GetTickets (Empty) returns (AllTicketsResponse) {
+  // Hosts
+  rpc GetHost (UUID) returns (Host) {
+    option (google.api.http) = {
+      get: "/api/hosts/{uuid}"
+    };
+  }
+
+  rpc GetHosts (Empty) returns (HostsResponse) {
+    option (google.api.http) = {
+      get: "/api/hosts"
+    };
+  }
+
+  rpc CreateHost (Host) returns (Host) {
+    option (google.api.http) = {
+      post: "/api/hosts"
+      body: "*"
+    };
+  }
+
+  rpc UpdateHost (Host) returns (Host) {
+    option (google.api.http) = {
+      patch: "/api/hosts/{uuid}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteHost (UUID) returns (Message) {
+    option (google.api.http) = {
+      delete: "/api/hosts/{uuid}"
+    };
+  }
+
+  rpc EnableHost (UUID) returns (Empty) {
+    option (google.api.http) = {
+      post: "/api/hosts/{uuid}/enable"
+    };
+  }
+
+  rpc DisableHost (UUID) returns (Empty) {
+    option (google.api.http) = {
+      post: "/api/hosts/{uuid}/disable"
+    };
+  }
+
+  rpc SendHostMQTT (HostMQTT) returns (HostMQTT) {
+    option (google.api.http) = {
+      post: "/api/hosts/mqtt"
+      body: "*"
+    };
+  }
+
+
+  // Tickets
+  rpc GetTicket (UUID) returns (Ticket) {
+    option (google.api.http) = {
+      get: "/api/tickets/{uuid}"
+    };
+  }
+
+  rpc GetTickets (Empty) returns (TicketsResponse) {
     option (google.api.http) = {
       get: "/api/tickets"
     };
   }
 
-  rpc PostTicket (Ticket) returns (Ticket) {
+  rpc CreateTicket (Ticket) returns (Ticket) {
     option (google.api.http) = {
       post: "/api/tickets"
       body: "*"
     };
   }
 
-  rpc AddComment (AddCommentRequest) returns (Ticket) {
-    option (google.api.http) = {
-      post: "/api/tickets/{ticketUuid}/comments/add"
-      body: "*"
-    };
-  }
-
   rpc UpdateTicket (Ticket) returns (Ticket) {
     option (google.api.http) = {
-      post: "/api/tickets/{uuid}/update"
+      patch: "/api/tickets/{uuid}"
       body: "*"
     };
   }
 
   rpc DeleteTicket (UUID) returns (Message) {
     option (google.api.http) = {
-      delete: "/api/tickets/{uuid}/delete"
+      delete: "/api/tickets/{uuid}"
     };
   }
 
-  rpc UpdateComment (UpdateCommentRequest) returns (Ticket) {
+  rpc UpdateTicketUsers (TicketUsersRequest) returns (TicketUsersResponse) {
     option (google.api.http) = {
-      post: "/api/tickets/{uuid}/comments/{commentUuid}/update"
+      put: "/api/tickets/{uuid}/users"
       body: "*"
     };
   }
 
-  rpc DeleteComment (UUID) returns (Message) {
+
+  // Ticket Comments
+  rpc CreateTicketComment (TicketComment) returns (TicketComment) {
     option (google.api.http) = {
-      delete: "/api/tickets/{uuid}/comments/{uuid}/delete"
+      post: "/api/tickets/comments"
+      body: "*"
+    };
+  }
+
+  rpc UpdateTicketComment (TicketComment) returns (TicketComment) {
+    option (google.api.http) = {
+      patch: "/api/tickets/comments/{uuid}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteTicketComment (UUID) returns (Message) {
+    option (google.api.http) = {
+      delete: "/api/tickets/comments/{uuid}"
     };
   }
 
   // Teams
-  rpc AddTeam (Team) returns (Team) {
+  rpc GetTeam (UUID) returns (Team) {
+    option (google.api.http) = {
+      get: "/api/teams/{uuid}"
+    };
+  }
+
+  rpc GetTeams (Empty) returns (TeamsResponse) {
+    option (google.api.http) = {
+      get: "/api/teams"
+    };
+  }
+
+  rpc CreateTeam (Team) returns (Team) {
     option (google.api.http) = {
       post: "/api/teams"
       body: "*"
@@ -315,20 +345,28 @@ service RuntimeService {
     };
   }
 
-  rpc GetAllTeams (Empty) returns (TeamsResponse) {
+  rpc UpdateTeamRoles (TeamRolesRequest) returns (TeamRolesResponse) {
     option (google.api.http) = {
-      get: "/api/teams"
+      put: "/api/teams/{uuid}/roles"
+      body: "*"
     };
   }
 
-  rpc GetTeam (UUID) returns (Team) {
-    option (google.api.http) = {
-      get: "/api/teams/{uuid}"
-    };
-  }
 
   // Users
-  rpc AddUser (User) returns (User) {
+  rpc GetUser (UUID) returns (User) {
+    option (google.api.http) = {
+      get: "/api/users/{uuid}"
+    };
+  }
+
+  rpc GetUsers (Empty) returns (UsersResponse) {
+    option (google.api.http) = {
+      get: "/api/users"
+    };
+  }
+
+  rpc CreateUser (User) returns (User) {
     option (google.api.http) = {
       post: "/api/users"
       body: "*"
@@ -348,23 +386,55 @@ service RuntimeService {
     };
   }
 
-  rpc GetAllUsers (Empty) returns (UsersResponse) {
+  rpc UpdateUserTickets (UserTicketsRequest) returns (UserTicketsResponse) {
     option (google.api.http) = {
-      get: "/api/users"
+      put: "/api/users/{uuid}/tickets"
+      body: "*"
     };
   }
 
-  rpc GetUser (UUID) returns (User) {
+  // Roles
+  rpc GetRole (UUID) returns (Role) {
     option (google.api.http) = {
-      get: "/api/users/{uuid}"
+      get: "/api/roles/{uuid}"
     };
   }
 
+  rpc GetRoles (Empty) returns (RolesResponse) {
+    option (google.api.http) = {
+      get: "/api/roles"
+    };
+  }
+
+  rpc CreateRole (Role) returns (Role) {
+    option (google.api.http) = {
+      post: "/api/roles"
+      body: "*"
+    };
+  }
+
+  rpc UpdateRole (Role) returns (Role) {
+    option (google.api.http) = {
+      patch: "/api/roles/{uuid}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteRole (UUID) returns (Message) {
+    option (google.api.http) = {
+      delete: "/api/roles/{uuid}"
+    };
+  }
+
+  rpc UpdateRolePermissions (PermissionsRequest) returns (PermissionsResponse) {
+    option (google.api.http) = {
+      put: "/api/roles/{uuid}/permissions"
+      body: "*"
+    };
+  }
 
   // stream messages from the server to the plugin
   rpc ExtensionStream(stream MessageRequest) returns (stream MessageRequest);
-
-
 }
 
 message UUID {
@@ -380,11 +450,6 @@ message HostMQTT {
 
 message Message {
   string message = 1;
-}
-
-
-message HostList {
-  repeated Host hosts = 1;
 }
 
 message MessageRequest {
@@ -749,7 +814,16 @@ message ExtensionList {
   repeated Extension extensions = 1;
 }
 
+message UploadZipRequest {
+  bytes zipFile = 1;
+  string destinationDir = 2;
+}
 
+message UploadZipResponse {
+  string message = 1;
+}
+
+// Host
 message Host {
   string uuid = 1;
   string name = 2;
@@ -769,78 +843,114 @@ message Host {
   string lat = 16;
 }
 
-message UploadZipRequest {
-  bytes zipFile = 1;
-  string destinationDir = 2;
+message HostsResponse {
+  repeated Host hosts = 1;
 }
 
-message UploadZipResponse {
-  string message = 1;
-}
-
-
-// Ticket System //
+// Ticket
 message Ticket {
   string uuid = 1;
   string title = 2;
-  string raisedByUserUUID = 3;
-  repeated User assignedUsers = 4;
-  repeated Comment comments = 5;
-  string created = 6;
-  string updated = 7;
+  string description = 3;
+  string priority = 4;
+  string status = 5;
+  string raisedByUserUUID = 6;
+  string createdAt = 7;
+  string updatedAt = 8;
+
+  repeated User assignedUsers = 9;
+  repeated TicketComment comments = 10;
 }
 
-message Comment {
-  string uuid = 1;
-  string comment = 2;
-  string raisedByUserUUID = 3;
-  string ticketId = 4;
-  string created = 5;
-  string updated = 6;
-}
-
-message AllTicketsResponse {
+message TicketsResponse {
   repeated Ticket tickets = 1;
 }
 
-message AddCommentRequest {
-  string ticketUuid = 1;
-  string commentText = 2;
-}
-
-
-message UpdateCommentRequest {
+message TicketUsersRequest {
   string uuid = 1;
-  string commentUuid = 2;
-  string newText = 3;
+  repeated string uuids = 2;
 }
 
-
-// Users/Teams //
-
-message Role {
-  string name = 1;
-  repeated string permissions = 2; // List of permissions like "C", "R", "U", "D"
+message TicketUsersResponse {
+  repeated string uuids = 2;
 }
 
+// TicketComment
+message TicketComment {
+  string uuid = 1;
+  string ticketUUID = 2;
+  string comment = 3;
+  string raisedByUserUUID = 4;
+
+  string createdAt = 5;
+  string updatedAt = 6;
+}
+
+// Team
 message Team {
   string uuid = 1;
   string name = 2;
-  bytes role = 3; // Each team can have multiple roles
-}
-
-message User {
-  string uuid = 1;
-  string username = 2;
-  string password = 3;
-  string teamUUID = 4;
-  bool isAdmin = 6;
+  repeated Role roles = 3; // Each team can have multiple roles
 }
 
 message TeamsResponse {
   repeated Team teams = 1;
 }
 
+message TeamRolesRequest {
+  string uuid = 1;
+  repeated string uuids = 2;
+}
+
+message TeamRolesResponse {
+  repeated string uuids = 2;
+}
+
+// User
+message User {
+  string uuid = 1;
+  string username = 2;
+  string password = 3;
+  bool isAdmin = 4;
+  string teamUUID = 5;
+  repeated Ticket assignedTickets = 6;
+
+}
+
 message UsersResponse {
   repeated User users = 1;
+}
+
+message UserTicketsRequest {
+  string uuid = 1;
+  repeated string uuids = 2;
+}
+
+message UserTicketsResponse {
+  repeated string uuids = 2;
+}
+
+// Role
+message Role {
+  string uuid = 1;
+  string name = 2;
+  repeated Permission permissions = 3; // List of permissions like "C", "R", "U", "D"
+}
+
+message RolesResponse {
+  repeated Role roles = 1;
+}
+
+// Permission
+message Permission {
+  string permission = 2;
+}
+
+message PermissionsRequest {
+  string uuid = 1 ;
+  repeated Permission permissions = 2;
+}
+
+message PermissionsResponse {
+  repeated Permission permissions = 2;
 }
