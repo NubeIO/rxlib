@@ -170,7 +170,7 @@ func (inst *Extensions) startServerStreaming(ctx context.Context, conn *grpc.Cli
 			return nil // Context canceled, exit the loop
 		default:
 			in, err := stream.Recv()
-			messages[helpers.UUID()] = fmt.Sprintf("new stream message key: %s", in.Key)
+			fmt.Printf("new stream message key: %s\n", in.Key)
 			if err == io.EOF {
 				return nil // Server closed the stream
 			}

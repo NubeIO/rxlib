@@ -65,6 +65,10 @@ func (p *Port) SetValueString(v string) {
 	p.Payload.StringValue = v
 }
 
+func (p *Port) SetValueJSON(v string) {
+	p.Payload.JsonValue = v
+}
+
 func (p *Port) SetValueInt(v int32) {
 	p.Payload.IntValue = v
 }

@@ -32,6 +32,7 @@ const (
 	RuntimeService_GetPalletTree_FullMethodName           = "/App.Runtime.RuntimeService/GetPalletTree"
 	RuntimeService_ObjectsDeploy_FullMethodName           = "/App.Runtime.RuntimeService/ObjectsDeploy"
 	RuntimeService_Ping_FullMethodName                    = "/App.Runtime.RuntimeService/Ping"
+	RuntimeService_Ping2_FullMethodName                   = "/App.Runtime.RuntimeService/Ping2"
 	RuntimeService_ObjectCommand_FullMethodName           = "/App.Runtime.RuntimeService/ObjectCommand"
 	RuntimeService_RQL_FullMethodName                     = "/App.Runtime.RuntimeService/RQL"
 	RuntimeService_GetObjectsValues_FullMethodName        = "/App.Runtime.RuntimeService/GetObjectsValues"
@@ -90,6 +91,7 @@ type RuntimeServiceClient interface {
 	GetPalletTree(ctx context.Context, in *PalletRequest, opts ...grpc.CallOption) (*PalletTree, error)
 	ObjectsDeploy(ctx context.Context, in *ObjectDeploy, opts ...grpc.CallOption) (*ObjectDeploy, error)
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
+	Ping2(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
 	ObjectCommand(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error)
 	RQL(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error)
 	GetObjectsValues(ctx context.Context, in *ObjectsValuesRequest, opts ...grpc.CallOption) (*GetObjectValuesResponse, error)
@@ -254,6 +256,15 @@ func (c *runtimeServiceClient) ObjectsDeploy(ctx context.Context, in *ObjectDepl
 func (c *runtimeServiceClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error) {
 	out := new(PingResponse)
 	err := c.cc.Invoke(ctx, RuntimeService_Ping_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) Ping2(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error) {
+	out := new(PingResponse)
+	err := c.cc.Invoke(ctx, RuntimeService_Ping2_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -642,6 +653,7 @@ type RuntimeServiceServer interface {
 	GetPalletTree(context.Context, *PalletRequest) (*PalletTree, error)
 	ObjectsDeploy(context.Context, *ObjectDeploy) (*ObjectDeploy, error)
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
+	Ping2(context.Context, *PingRequest) (*PingResponse, error)
 	ObjectCommand(context.Context, *Command) (*CommandResponse, error)
 	RQL(context.Context, *Command) (*CommandResponse, error)
 	GetObjectsValues(context.Context, *ObjectsValuesRequest) (*GetObjectValuesResponse, error)
@@ -730,6 +742,9 @@ func (UnimplementedRuntimeServiceServer) ObjectsDeploy(context.Context, *ObjectD
 }
 func (UnimplementedRuntimeServiceServer) Ping(context.Context, *PingRequest) (*PingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+}
+func (UnimplementedRuntimeServiceServer) Ping2(context.Context, *PingRequest) (*PingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ping2 not implemented")
 }
 func (UnimplementedRuntimeServiceServer) ObjectCommand(context.Context, *Command) (*CommandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ObjectCommand not implemented")
@@ -1088,6 +1103,24 @@ func _RuntimeService_Ping_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimeServiceServer).Ping(ctx, req.(*PingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_Ping2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).Ping2(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_Ping2_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).Ping2(ctx, req.(*PingRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1842,6 +1875,10 @@ var RuntimeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Ping",
 			Handler:    _RuntimeService_Ping_Handler,
+		},
+		{
+			MethodName: "Ping2",
+			Handler:    _RuntimeService_Ping2_Handler,
 		},
 		{
 			MethodName: "ObjectCommand",

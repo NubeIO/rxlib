@@ -94,6 +94,13 @@ service RuntimeService {
     };
   };
 
+
+  rpc Ping2 (PingRequest) returns (PingResponse) {
+    option (google.api.http) = {
+      get: "/api/ping/2"
+    };
+  };
+
   rpc ObjectCommand (Command) returns (CommandResponse) {
     option (google.api.http) = {
       post: "/api/command"

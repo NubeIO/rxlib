@@ -484,6 +484,28 @@
         ]
       }
     },
+    "/api/ping/2": {
+      "get": {
+        "operationId": "RuntimeService_Ping2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimePingResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
     "/api/plugins/pallet": {
       "get": {
         "operationId": "RuntimeService_GetPalletTree",

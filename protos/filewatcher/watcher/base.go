@@ -1,7 +1,6 @@
 package watcher
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/NubeIO/rxlib"
 	"github.com/NubeIO/rxlib/priority"
@@ -69,17 +68,14 @@ func (inst *Instance) OutputUpdated(message *runtime.Command) {
 func (inst *Instance) startWatcher(filePath string) {
 	log.Println("started filewatcher")
 	interval := time.Second // Polling interval
-
 	// Get initial file info
 	fileInfo, err := os.Stat(filePath)
 	if err != nil {
 		log.Fatalf("Failed to get file info: %v", err)
 	}
 	lastModTime := fileInfo.ModTime()
-
 	for {
 		time.Sleep(interval)
-
 		fileInfo, err := os.Stat(filePath)
 		if err != nil {
 			log.Fatalf("Failed to get file info: %v", err)
@@ -87,8 +83,9 @@ func (inst *Instance) startWatcher(filePath string) {
 
 		currentModTime := fileInfo.ModTime()
 		if currentModTime != lastModTime {
-			change := fmt.Sprintf("File %s changed at %v", filePath, currentModTime)
+			change := fmt.Sprintf("File %s changed at %v", filePath, currentModTime.Format(time.DateTime))
 			lastModTime = currentModTime
+			//log.Fatal("crash")
 			if err == nil {
 				inst.OutputUpdated(&runtime.Command{
 					Key:              "update-outputs",
@@ -137,7 +134,7 @@ func (inst *Instance) Delete() error {
 }
 
 func (inst *Instance) Handler(p *runtime.MessageRequest) {
-	fmt.Println("filewatcher Handler !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
+	fmt.Println("filewatcher Handler")
 	if p == nil {
 		return
 	}
@@ -153,59 +150,12 @@ func (inst *Instance) Handler(p *runtime.MessageRequest) {
 				if inst.filepath == file {
 					return
 				}
-				inst.Delete()
 				inst.filepath = file
+				fmt.Println("filewatcher Handler filepath: ", inst.filepath)
 			}
 		}
 	}
 
-	log.Println("started filewatcher")
-	watcher, err := fsnotify.NewWatcher()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	inst.watcher = watcher
-
-	go func() {
-		for {
-			select {
-			case event, ok := <-watcher.Events:
-				if !ok {
-					return
-				}
-
-				// Check if the file was modified
-				if event.Op&fsnotify.Write == fsnotify.Write {
-					fmt.Println("modified file:", event.Name)
-					jsonData, err := json.Marshal(event)
-					if err == nil {
-						json := string(jsonData)
-						inst.OutputUpdated(&runtime.Command{
-							Key:              "update-outputs",
-							TargetObjectUUID: inst.GetMeta().GetObjectUUID(),
-							PortValues: []*runtime.PortValue{&runtime.PortValue{
-								PortID:    "output",
-								JsonValue: json,
-								DataType:  priority.TypeString,
-							}},
-						})
-					}
-				}
-
-			case err, ok := <-watcher.Errors:
-				if !ok {
-					return
-				}
-				log.Println("error:", err)
-			}
-		}
-	}()
-
-	err = watcher.Add(inst.filepath)
-	if err != nil {
-		log.Println(err)
-	}
 }
 
 func getHome() string {
