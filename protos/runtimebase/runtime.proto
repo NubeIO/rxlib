@@ -431,7 +431,7 @@ message PortValue {
   bytes data = 6;
   double floatValue = 7;
   string stringValue = 8;
-  bool boolValue = 9;
+  optional bool boolValue = 9;
   int32 intValue = 10;
   string jsonValue = 12;
   google.protobuf.Any any = 13;

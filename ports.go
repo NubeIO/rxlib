@@ -58,7 +58,7 @@ func (p *Port) SetHasConnection(state bool) {
 }
 
 func (p *Port) SetValueBool(v bool) {
-	p.Payload.BoolValue = v
+	p.Payload.BoolValue = nils.ToBool(v)
 }
 
 func (p *Port) SetValueString(v string) {
