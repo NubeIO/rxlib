@@ -352,11 +352,40 @@ const (
 	OutputErrorName   string = "err"
 )
 
+const (
+	NameNot   string = "not"
+	NameEqual string = "equal"
+	NameGT    string = "gt"
+	NameGTE   string = "gte"
+	NameLT    string = "lt"
+	NameLTE   string = "lte"
+)
+
 // some commonly used input names
 const (
-	InputName string = "input"
-	In1Name   string = "in-1"
-	In2Name   string = "in-2"
+	InputName  string = "input"
+	InName     string = "in"
+	InZeroName string = "in-0"
+	In1Name    string = "in-1"
+	In2Name    string = "in-2"
+	In3Name    string = "in-3"
+	In4Name    string = "in-4"
+	In5Name    string = "in-5"
+	In6Name    string = "in-6"
+	In7Name    string = "in-7"
+	In8Name    string = "in-8"
+	In9Name    string = "in-9"
+	In10Name   string = "in-10"
+	In11Name   string = "in-11"
+	In12Name   string = "in-12"
+	In13Name   string = "in-13"
+	In14Name   string = "in-14"
+	In15Name   string = "in-15"
+	In16Name   string = "in-16"
+	In17Name   string = "in-17"
+	In18Name   string = "in-18"
+	In19Name   string = "in-19"
+	In20Name   string = "in-20"
 )
 
 type FlowDirection string
