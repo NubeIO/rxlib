@@ -62,22 +62,22 @@ func (p *Port) SetValueBool(v bool) {
 }
 
 func (p *Port) SetValueString(v string) {
-	p.Payload.StringValue = v
+	p.Payload.StringValue = nils.ToString(v)
 }
 
 func (p *Port) SetValueJSON(v string) {
 	p.Payload.JsonValue = v
 }
 
-func (p *Port) SetValueInt(v int32) {
-	p.Payload.IntValue = v
+func (p *Port) SetValueInt(v int) {
+	p.Payload.IntValue = nils.ToInt32(int32(v))
 }
 
 func (p *Port) SetValueFloat(v float64) {
 	if p.Payload.ApplyOverride {
-		p.Payload.FloatValue = p.Payload.OverrideFloat
+		p.Payload.FloatValue = nils.ToFloat64(p.Payload.OverrideFloat)
 	} else {
-		p.Payload.FloatValue = v
+		p.Payload.FloatValue = nils.ToFloat64(v)
 	}
 }
 

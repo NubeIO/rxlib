@@ -429,10 +429,10 @@ message PortValue {
   bool isNil = 4;
   bool transformationApplied = 5;
   bytes data = 6;
-  double floatValue = 7;
-  string stringValue = 8;
+  optional double floatValue = 7;
+  optional string stringValue = 8;
   optional bool boolValue = 9;
-  int32 intValue = 10;
+  optional int32 intValue = 10;
   string jsonValue = 12;
   google.protobuf.Any any = 13;
   ValueTransformation transformation = 14;
