@@ -484,28 +484,6 @@
         ]
       }
     },
-    "/api/ping/2": {
-      "get": {
-        "operationId": "RuntimeService_Ping2",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/RuntimePingResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "tags": [
-          "RuntimeService"
-        ]
-      }
-    },
     "/api/plugins/pallet": {
       "get": {
         "operationId": "RuntimeService_GetPalletTree",
@@ -811,6 +789,38 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/RuntimeServiceUpdateObjectSettingsBody"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/runtime/objects/update": {
+      "post": {
+        "operationId": "RuntimeService_SingleObjectsDeploy",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeObjectConfig"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeObjectConfig"
             }
           }
         ],
@@ -2174,7 +2184,7 @@
           }
         },
         "settings": {
-          "$ref": "#/definitions/RuntimeSettings"
+          "$ref": "#/definitions/RuntimeObjectSettings"
         },
         "portValues": {
           "type": "array",
@@ -2662,14 +2672,6 @@
         },
         "isAdmin": {
           "type": "boolean"
-        }
-      }
-    },
-    "RuntimeSettings": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "string"
         }
       }
     },

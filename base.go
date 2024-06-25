@@ -171,8 +171,8 @@ type Object interface {
 	// scheam
 	GetSchema() *schema.Generated
 	// settings
-	GetSettings() *runtime.Settings
-	SetSettings(settings *runtime.Settings) error
+	GetSettings() *runtime.ObjectSettings
+	SetSettings(settings string) error
 
 	// GetMeta  meta will also set the Obj-name at parentUUID
 	GetMeta() *runtime.Meta

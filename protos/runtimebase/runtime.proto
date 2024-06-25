@@ -21,7 +21,6 @@ service RuntimeService {
     };
   };
 
-
   rpc GetObjectSettingsSchema (UUID) returns (ObjectSettings) {
     option (google.api.http) = {
       get: "/api/runtime/objects/settings/schema/{uuid}"
@@ -80,6 +79,13 @@ service RuntimeService {
     };
   };
 
+  rpc SingleObjectsDeploy (ObjectConfig) returns (ObjectConfig) {
+    option (google.api.http) = {
+      post: "/api/runtime/objects/update"
+      body: "*"
+    };
+  };
+
 
   rpc ObjectsDeploy (ObjectDeploy) returns (ObjectDeploy) {
     option (google.api.http) = {
@@ -94,12 +100,6 @@ service RuntimeService {
     };
   };
 
-
-  rpc Ping2 (PingRequest) returns (PingResponse) {
-    option (google.api.http) = {
-      get: "/api/ping/2"
-    };
-  };
 
   rpc ObjectCommand (Command) returns (CommandResponse) {
     option (google.api.http) = {
@@ -560,8 +560,6 @@ message ObjectRequest {
   bool withPoints = 2;
 }
 
-
-
 message ObjectConfig {
   string id = 1;
   Info info = 2;
@@ -570,14 +568,10 @@ message ObjectConfig {
   Meta meta = 5;
   ObjectStats stats = 6;
   repeated Connection connections = 7;
-  Settings settings = 8;
+  ObjectSettings settings = 8;
   repeated PortValue portValues = 9;
-
 }
 
-message Settings {
-  string value = 1;
-}
 
 message Info {
   string objectID = 1;
