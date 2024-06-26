@@ -163,6 +163,10 @@ func (inst *RuntimeImpl) GetObjectsConfig() []*runtime.ObjectConfig {
 	return inst.SerializeObjects(false, inst.Get())
 }
 
+func (inst *RuntimeImpl) ToObjectConfig(objects Object) *runtime.ObjectConfig {
+	return inst.serializeObject(false, objects)
+}
+
 func (inst *RuntimeImpl) ToObjectsConfig(objects []Object) []*runtime.ObjectConfig {
 	return inst.SerializeObjects(false, objects)
 }

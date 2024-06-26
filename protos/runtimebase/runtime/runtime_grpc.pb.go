@@ -19,58 +19,59 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	RuntimeService_GetObjects_FullMethodName              = "/App.Runtime.RuntimeService/GetObjects"
-	RuntimeService_GetObjectsRoot_FullMethodName          = "/App.Runtime.RuntimeService/GetObjectsRoot"
-	RuntimeService_GetObjectSettingsSchema_FullMethodName = "/App.Runtime.RuntimeService/GetObjectSettingsSchema"
-	RuntimeService_GetObjectSettings_FullMethodName       = "/App.Runtime.RuntimeService/GetObjectSettings"
-	RuntimeService_UpdateObjectSettings_FullMethodName    = "/App.Runtime.RuntimeService/UpdateObjectSettings"
-	RuntimeService_GetObjectChilds_FullMethodName         = "/App.Runtime.RuntimeService/GetObjectChilds"
-	RuntimeService_GetObjectParentsChilds_FullMethodName  = "/App.Runtime.RuntimeService/GetObjectParentsChilds"
-	RuntimeService_GetObject_FullMethodName               = "/App.Runtime.RuntimeService/GetObject"
-	RuntimeService_GetObjectHelp_FullMethodName           = "/App.Runtime.RuntimeService/GetObjectHelp"
-	RuntimeService_GetTreeMapRoot_FullMethodName          = "/App.Runtime.RuntimeService/GetTreeMapRoot"
-	RuntimeService_GetPalletTree_FullMethodName           = "/App.Runtime.RuntimeService/GetPalletTree"
-	RuntimeService_SingleObjectsDeploy_FullMethodName     = "/App.Runtime.RuntimeService/SingleObjectsDeploy"
-	RuntimeService_ObjectsDeploy_FullMethodName           = "/App.Runtime.RuntimeService/ObjectsDeploy"
-	RuntimeService_Ping_FullMethodName                    = "/App.Runtime.RuntimeService/Ping"
-	RuntimeService_ObjectCommand_FullMethodName           = "/App.Runtime.RuntimeService/ObjectCommand"
-	RuntimeService_RQL_FullMethodName                     = "/App.Runtime.RuntimeService/RQL"
-	RuntimeService_GetObjectsValues_FullMethodName        = "/App.Runtime.RuntimeService/GetObjectsValues"
-	RuntimeService_GetObjectValues_FullMethodName         = "/App.Runtime.RuntimeService/GetObjectValues"
-	RuntimeService_GetPortValue_FullMethodName            = "/App.Runtime.RuntimeService/GetPortValue"
-	RuntimeService_GetHost_FullMethodName                 = "/App.Runtime.RuntimeService/GetHost"
-	RuntimeService_AllHosts_FullMethodName                = "/App.Runtime.RuntimeService/AllHosts"
-	RuntimeService_DeleteHost_FullMethodName              = "/App.Runtime.RuntimeService/DeleteHost"
-	RuntimeService_EnableHost_FullMethodName              = "/App.Runtime.RuntimeService/EnableHost"
-	RuntimeService_DisableHost_FullMethodName             = "/App.Runtime.RuntimeService/DisableHost"
-	RuntimeService_UpdateHost_FullMethodName              = "/App.Runtime.RuntimeService/UpdateHost"
-	RuntimeService_AddHost_FullMethodName                 = "/App.Runtime.RuntimeService/AddHost"
-	RuntimeService_SendHostMQTT_FullMethodName            = "/App.Runtime.RuntimeService/SendHostMQTT"
-	RuntimeService_RegisterExtension_FullMethodName       = "/App.Runtime.RuntimeService/RegisterExtension"
-	RuntimeService_AddExtension_FullMethodName            = "/App.Runtime.RuntimeService/AddExtension"
-	RuntimeService_DeleteExtension_FullMethodName         = "/App.Runtime.RuntimeService/DeleteExtension"
-	RuntimeService_AllExtension_FullMethodName            = "/App.Runtime.RuntimeService/AllExtension"
-	RuntimeService_StartExtension_FullMethodName          = "/App.Runtime.RuntimeService/StartExtension"
-	RuntimeService_StopExtension_FullMethodName           = "/App.Runtime.RuntimeService/StopExtension"
-	RuntimeService_UploadZipFile_FullMethodName           = "/App.Runtime.RuntimeService/UploadZipFile"
-	RuntimeService_NewTicket_FullMethodName               = "/App.Runtime.RuntimeService/NewTicket"
-	RuntimeService_AllTickets_FullMethodName              = "/App.Runtime.RuntimeService/AllTickets"
-	RuntimeService_AddComment_FullMethodName              = "/App.Runtime.RuntimeService/AddComment"
-	RuntimeService_UpdateTicket_FullMethodName            = "/App.Runtime.RuntimeService/UpdateTicket"
-	RuntimeService_DeleteTicket_FullMethodName            = "/App.Runtime.RuntimeService/DeleteTicket"
-	RuntimeService_UpdateComment_FullMethodName           = "/App.Runtime.RuntimeService/UpdateComment"
-	RuntimeService_DeleteComment_FullMethodName           = "/App.Runtime.RuntimeService/DeleteComment"
-	RuntimeService_AddTeam_FullMethodName                 = "/App.Runtime.RuntimeService/AddTeam"
-	RuntimeService_UpdateTeam_FullMethodName              = "/App.Runtime.RuntimeService/UpdateTeam"
-	RuntimeService_DeleteTeam_FullMethodName              = "/App.Runtime.RuntimeService/DeleteTeam"
-	RuntimeService_GetAllTeams_FullMethodName             = "/App.Runtime.RuntimeService/GetAllTeams"
-	RuntimeService_GetTeam_FullMethodName                 = "/App.Runtime.RuntimeService/GetTeam"
-	RuntimeService_AddUser_FullMethodName                 = "/App.Runtime.RuntimeService/AddUser"
-	RuntimeService_UpdateUser_FullMethodName              = "/App.Runtime.RuntimeService/UpdateUser"
-	RuntimeService_DeleteUser_FullMethodName              = "/App.Runtime.RuntimeService/DeleteUser"
-	RuntimeService_GetAllUsers_FullMethodName             = "/App.Runtime.RuntimeService/GetAllUsers"
-	RuntimeService_GetUser_FullMethodName                 = "/App.Runtime.RuntimeService/GetUser"
-	RuntimeService_ExtensionStream_FullMethodName         = "/App.Runtime.RuntimeService/ExtensionStream"
+	RuntimeService_GetObjects_FullMethodName                  = "/App.Runtime.RuntimeService/GetObjects"
+	RuntimeService_GetObjectsRoot_FullMethodName              = "/App.Runtime.RuntimeService/GetObjectsRoot"
+	RuntimeService_GetObjectSettingsSchema_FullMethodName     = "/App.Runtime.RuntimeService/GetObjectSettingsSchema"
+	RuntimeService_GetObjectSettings_FullMethodName           = "/App.Runtime.RuntimeService/GetObjectSettings"
+	RuntimeService_UpdateObjectTransformations_FullMethodName = "/App.Runtime.RuntimeService/UpdateObjectTransformations"
+	RuntimeService_UpdateObjectSettings_FullMethodName        = "/App.Runtime.RuntimeService/UpdateObjectSettings"
+	RuntimeService_GetObjectChilds_FullMethodName             = "/App.Runtime.RuntimeService/GetObjectChilds"
+	RuntimeService_GetObjectParentsChilds_FullMethodName      = "/App.Runtime.RuntimeService/GetObjectParentsChilds"
+	RuntimeService_GetObject_FullMethodName                   = "/App.Runtime.RuntimeService/GetObject"
+	RuntimeService_GetObjectHelp_FullMethodName               = "/App.Runtime.RuntimeService/GetObjectHelp"
+	RuntimeService_GetTreeMapRoot_FullMethodName              = "/App.Runtime.RuntimeService/GetTreeMapRoot"
+	RuntimeService_GetPalletTree_FullMethodName               = "/App.Runtime.RuntimeService/GetPalletTree"
+	RuntimeService_SingleObjectsDeploy_FullMethodName         = "/App.Runtime.RuntimeService/SingleObjectsDeploy"
+	RuntimeService_ObjectsDeploy_FullMethodName               = "/App.Runtime.RuntimeService/ObjectsDeploy"
+	RuntimeService_Ping_FullMethodName                        = "/App.Runtime.RuntimeService/Ping"
+	RuntimeService_ObjectCommand_FullMethodName               = "/App.Runtime.RuntimeService/ObjectCommand"
+	RuntimeService_RQL_FullMethodName                         = "/App.Runtime.RuntimeService/RQL"
+	RuntimeService_GetObjectsValues_FullMethodName            = "/App.Runtime.RuntimeService/GetObjectsValues"
+	RuntimeService_GetObjectValues_FullMethodName             = "/App.Runtime.RuntimeService/GetObjectValues"
+	RuntimeService_GetPortValue_FullMethodName                = "/App.Runtime.RuntimeService/GetPortValue"
+	RuntimeService_GetHost_FullMethodName                     = "/App.Runtime.RuntimeService/GetHost"
+	RuntimeService_AllHosts_FullMethodName                    = "/App.Runtime.RuntimeService/AllHosts"
+	RuntimeService_DeleteHost_FullMethodName                  = "/App.Runtime.RuntimeService/DeleteHost"
+	RuntimeService_EnableHost_FullMethodName                  = "/App.Runtime.RuntimeService/EnableHost"
+	RuntimeService_DisableHost_FullMethodName                 = "/App.Runtime.RuntimeService/DisableHost"
+	RuntimeService_UpdateHost_FullMethodName                  = "/App.Runtime.RuntimeService/UpdateHost"
+	RuntimeService_AddHost_FullMethodName                     = "/App.Runtime.RuntimeService/AddHost"
+	RuntimeService_SendHostMQTT_FullMethodName                = "/App.Runtime.RuntimeService/SendHostMQTT"
+	RuntimeService_RegisterExtension_FullMethodName           = "/App.Runtime.RuntimeService/RegisterExtension"
+	RuntimeService_AddExtension_FullMethodName                = "/App.Runtime.RuntimeService/AddExtension"
+	RuntimeService_DeleteExtension_FullMethodName             = "/App.Runtime.RuntimeService/DeleteExtension"
+	RuntimeService_AllExtension_FullMethodName                = "/App.Runtime.RuntimeService/AllExtension"
+	RuntimeService_StartExtension_FullMethodName              = "/App.Runtime.RuntimeService/StartExtension"
+	RuntimeService_StopExtension_FullMethodName               = "/App.Runtime.RuntimeService/StopExtension"
+	RuntimeService_UploadZipFile_FullMethodName               = "/App.Runtime.RuntimeService/UploadZipFile"
+	RuntimeService_NewTicket_FullMethodName                   = "/App.Runtime.RuntimeService/NewTicket"
+	RuntimeService_AllTickets_FullMethodName                  = "/App.Runtime.RuntimeService/AllTickets"
+	RuntimeService_AddComment_FullMethodName                  = "/App.Runtime.RuntimeService/AddComment"
+	RuntimeService_UpdateTicket_FullMethodName                = "/App.Runtime.RuntimeService/UpdateTicket"
+	RuntimeService_DeleteTicket_FullMethodName                = "/App.Runtime.RuntimeService/DeleteTicket"
+	RuntimeService_UpdateComment_FullMethodName               = "/App.Runtime.RuntimeService/UpdateComment"
+	RuntimeService_DeleteComment_FullMethodName               = "/App.Runtime.RuntimeService/DeleteComment"
+	RuntimeService_AddTeam_FullMethodName                     = "/App.Runtime.RuntimeService/AddTeam"
+	RuntimeService_UpdateTeam_FullMethodName                  = "/App.Runtime.RuntimeService/UpdateTeam"
+	RuntimeService_DeleteTeam_FullMethodName                  = "/App.Runtime.RuntimeService/DeleteTeam"
+	RuntimeService_GetAllTeams_FullMethodName                 = "/App.Runtime.RuntimeService/GetAllTeams"
+	RuntimeService_GetTeam_FullMethodName                     = "/App.Runtime.RuntimeService/GetTeam"
+	RuntimeService_AddUser_FullMethodName                     = "/App.Runtime.RuntimeService/AddUser"
+	RuntimeService_UpdateUser_FullMethodName                  = "/App.Runtime.RuntimeService/UpdateUser"
+	RuntimeService_DeleteUser_FullMethodName                  = "/App.Runtime.RuntimeService/DeleteUser"
+	RuntimeService_GetAllUsers_FullMethodName                 = "/App.Runtime.RuntimeService/GetAllUsers"
+	RuntimeService_GetUser_FullMethodName                     = "/App.Runtime.RuntimeService/GetUser"
+	RuntimeService_ExtensionStream_FullMethodName             = "/App.Runtime.RuntimeService/ExtensionStream"
 )
 
 // RuntimeServiceClient is the client API for RuntimeService service.
@@ -81,6 +82,7 @@ type RuntimeServiceClient interface {
 	GetObjectsRoot(ctx context.Context, in *ObjectsRequest, opts ...grpc.CallOption) (*ObjectsResponse, error)
 	GetObjectSettingsSchema(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*ObjectSettings, error)
 	GetObjectSettings(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*ObjectSettings, error)
+	UpdateObjectTransformations(ctx context.Context, in *ObjectTransformations, opts ...grpc.CallOption) (*Message, error)
 	UpdateObjectSettings(ctx context.Context, in *ObjectSettings, opts ...grpc.CallOption) (*ObjectSettings, error)
 	GetObjectChilds(ctx context.Context, in *ObjectRequest, opts ...grpc.CallOption) (*ObjectsResponse, error)
 	// will get the childs of the parents, parents. So go up the tree two levels
@@ -175,6 +177,15 @@ func (c *runtimeServiceClient) GetObjectSettingsSchema(ctx context.Context, in *
 func (c *runtimeServiceClient) GetObjectSettings(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*ObjectSettings, error) {
 	out := new(ObjectSettings)
 	err := c.cc.Invoke(ctx, RuntimeService_GetObjectSettings_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) UpdateObjectTransformations(ctx context.Context, in *ObjectTransformations, opts ...grpc.CallOption) (*Message, error) {
+	out := new(Message)
+	err := c.cc.Invoke(ctx, RuntimeService_UpdateObjectTransformations_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -643,6 +654,7 @@ type RuntimeServiceServer interface {
 	GetObjectsRoot(context.Context, *ObjectsRequest) (*ObjectsResponse, error)
 	GetObjectSettingsSchema(context.Context, *UUID) (*ObjectSettings, error)
 	GetObjectSettings(context.Context, *UUID) (*ObjectSettings, error)
+	UpdateObjectTransformations(context.Context, *ObjectTransformations) (*Message, error)
 	UpdateObjectSettings(context.Context, *ObjectSettings) (*ObjectSettings, error)
 	GetObjectChilds(context.Context, *ObjectRequest) (*ObjectsResponse, error)
 	// will get the childs of the parents, parents. So go up the tree two levels
@@ -715,6 +727,9 @@ func (UnimplementedRuntimeServiceServer) GetObjectSettingsSchema(context.Context
 }
 func (UnimplementedRuntimeServiceServer) GetObjectSettings(context.Context, *UUID) (*ObjectSettings, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetObjectSettings not implemented")
+}
+func (UnimplementedRuntimeServiceServer) UpdateObjectTransformations(context.Context, *ObjectTransformations) (*Message, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateObjectTransformations not implemented")
 }
 func (UnimplementedRuntimeServiceServer) UpdateObjectSettings(context.Context, *ObjectSettings) (*ObjectSettings, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateObjectSettings not implemented")
@@ -941,6 +956,24 @@ func _RuntimeService_GetObjectSettings_Handler(srv interface{}, ctx context.Cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimeServiceServer).GetObjectSettings(ctx, req.(*UUID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_UpdateObjectTransformations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ObjectTransformations)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).UpdateObjectTransformations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_UpdateObjectTransformations_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).UpdateObjectTransformations(ctx, req.(*ObjectTransformations))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1839,6 +1872,10 @@ var RuntimeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetObjectSettings",
 			Handler:    _RuntimeService_GetObjectSettings_Handler,
+		},
+		{
+			MethodName: "UpdateObjectTransformations",
+			Handler:    _RuntimeService_UpdateObjectTransformations_Handler,
 		},
 		{
 			MethodName: "UpdateObjectSettings",

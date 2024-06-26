@@ -2,6 +2,7 @@ package unitswrapper
 
 import (
 	"fmt"
+	"github.com/NubeIO/rxlib/helpers/pprint"
 	"testing"
 )
 
@@ -12,7 +13,8 @@ func TestInitUnits(t *testing.T) {
 		Unit:          "C",
 		UnitTo:        "F",
 	})
-	v := 22.5
+	pprint.PrintJSON(u)
+	v := 22.596
 	err := u.New(v)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)

@@ -6,6 +6,7 @@ import (
 	"github.com/NubeIO/rxlib/libs/restc"
 	"github.com/NubeIO/rxlib/priority"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
+	"github.com/mitchellh/mapstructure"
 )
 
 type Deploy struct {
@@ -156,7 +157,6 @@ func (inst *RuntimeImpl) serializeObject(includePortValues bool, object Object) 
 		Settings:    object.GetSettings(),
 		Stats:       object.GetStats(),
 		Meta:        meta,
-		PortValues:  nil,
 	}
 	if includePortValues {
 		objectConfig.PortValues = inst.GetObjectValues(object.GetUUID())
@@ -169,6 +169,7 @@ func ProtosToPort(obj []*runtime.Port) []*Port {
 	for _, port := range obj {
 		out = append(out, ProtoToPort(port))
 	}
+
 	return out
 }
 
@@ -181,7 +182,7 @@ func PortsToProto(obj []*Port) []*runtime.Port {
 }
 
 func PortToProto(obj *Port) *runtime.Port {
-	return &runtime.Port{
+	p := &runtime.Port{
 		Id:              obj.ID,
 		Name:            obj.Name,
 		PortUUID:        obj.UUID,
@@ -189,15 +190,41 @@ func PortToProto(obj *Port) *runtime.Port {
 		DataType:        string(obj.DataType),
 		DefaultPosition: int32(obj.DefaultPosition),
 	}
+	if obj.Transformation != nil {
+		protoStruct, err := priority.ToProtoStruct(obj.Transformation)
+		if err != nil {
+			return p
+		}
+		p.Transformation = protoStruct
+	}
+	return p
 }
 
-func ProtoToPort(obj *runtime.Port) *Port {
-	return &Port{
-		ID:              obj.Id,
-		Name:            obj.Name,
-		UUID:            obj.PortUUID,
-		Direction:       PortDirection(obj.Direction),
-		DataType:        priority.Type(obj.DataType),
-		DefaultPosition: int(obj.DefaultPosition),
+func ProtoToPort(port *runtime.Port) *Port {
+	p := &Port{
+		ID:              port.Id,
+		Name:            port.Name,
+		UUID:            port.PortUUID,
+		Transformation:  nil,
+		Direction:       PortDirection(port.Direction),
+		DataType:        priority.Type(port.DataType),
+		DefaultPosition: int(port.DefaultPosition),
 	}
+	if port.GetTransformation() != nil {
+		t, _ := convertTransformation(port)
+		p.Transformation = t
+	}
+	return p
+}
+
+func ConvertTransformation(transformation *runtime.ObjectTransformations) (*priority.Transformations, error) {
+	var trans *priority.Transformations
+	err := mapstructure.Decode(transformation.GetTransformation().AsMap(), &trans)
+	return trans, err
+}
+
+func convertTransformation(port *runtime.Port) (*priority.Transformations, error) {
+	var trans *priority.Transformations
+	err := mapstructure.Decode(port.GetTransformation().AsMap(), &trans)
+	return trans, err
 }

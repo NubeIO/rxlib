@@ -62,19 +62,10 @@ func NewPrimitive(body *NewPrimitiveValue) (*DataPriorityOld, *Primitives, error
 		fallBackValue:  body.FallBackValue,
 		decimal:        body.Decimal,
 	}
-	var byPassUnits bool
+
 	if body.Transformations != nil {
 		p.addTransformations(body.Transformations)
 		if body.Transformations.Enums == nil {
-			byPassUnits = true
-		}
-	}
-	if body.Units != nil {
-		if body.Units.Unit != "" {
-			if byPassUnits {
-				u := unitswrapper.InitUnits(body.Units)
-				p.addUnits(u)
-			}
 		}
 	}
 	res, err := p.UpdateValueAndGenerateResult(body.InitialValue, body.PriorityToWrite, body.OverrideValue, body.OverrideValuePriority)

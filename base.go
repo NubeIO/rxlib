@@ -3,6 +3,7 @@ package rxlib
 import (
 	"github.com/NubeIO/rxlib/libs/bus"
 	"github.com/NubeIO/rxlib/payload"
+	"github.com/NubeIO/rxlib/priority"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/NubeIO/schema"
 	"github.com/patrickmn/go-cache"
@@ -60,14 +61,12 @@ type Object interface {
 	NewOutputPorts(port []*NewPort) error
 	GetAllPorts() []*Port
 	GetPortPayload(portID string) (*payload.Payload, error)
-	// SetPortPayload(portID string, data *payload.Payload) error
 	GetPortValue(portID string) *runtime.PortValue
 	EnablePort(portID string) error
 	DisablePort(portID string) error
 	IsPortDisable(portID string) (bool, error)
+	AddTransformation(portID string, transformation *priority.Transformations, applyTransformation bool) error
 	AddAllTransformations(inputs, outputs []*Port) []error
-	OverrideValue(value any, portID string) error
-	ReleaseOverride(portID string) error
 
 	CreateConnection(connection *runtime.Connection) // CreateConnection is for just adding a rubix without adding it to the eventbus
 	NewOutputConnection(portID, targetUUID, targetPort string) error

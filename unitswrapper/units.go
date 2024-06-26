@@ -7,6 +7,13 @@ import (
 	"sync"
 )
 
+type Units struct {
+	DecimalPlaces int    `json:"decimalPlaces"` // 2.345 to 2.3
+	UnitCategory  string `json:"unitCategory"`
+	Unit          string `json:"unit"`   // from temp °C, if the user just set this we can apply the unit
+	UnitTo        string `json:"unitTo"` // to temp °F
+}
+
 type EngineeringUnits struct {
 	DecimalPlaces int    `json:"decimalPlaces"` // 2.345 to 2.3
 	UnitCategory  string `json:"unitCategory"`
@@ -19,9 +26,14 @@ type EngineeringUnits struct {
 }
 
 // InitUnits for usage you then need to use the New()
-func InitUnits(eu *EngineeringUnits) *EngineeringUnits {
-	eu.unitsLib = units.New()
-	return eu
+func InitUnits(eu *Units) *EngineeringUnits {
+	return &EngineeringUnits{
+		DecimalPlaces: eu.DecimalPlaces,
+		UnitCategory:  eu.UnitCategory,
+		Unit:          eu.Unit,
+		UnitTo:        eu.UnitTo,
+		unitsLib:      units.New(),
+	}
 }
 
 func (eu *EngineeringUnits) New(input float64) error {

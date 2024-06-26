@@ -28,6 +28,8 @@ type Runtime interface {
 	AddObject(object Object)
 	// Deploy deploy a flow
 	Deploy(body *Deploy) *DeployResponse
+	// ToObjectConfig converts to ObjectConfig, used when needed as JSON
+	ToObjectConfig(objects Object) *runtime.ObjectConfig
 	// ToObjectsConfig converts to ObjectConfig, used when needed as JSON
 	ToObjectsConfig(objects []Object) []*runtime.ObjectConfig
 	// GetObjectsUUIDs returns UUIDs of objects

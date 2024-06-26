@@ -50,6 +50,7 @@ func TestNewAsOutput(t *testing.T) {
 		Transformations:       transformationConfig,
 		Units:                 u,
 	}
+	pprint.PrintJSON(transformationConfig)
 	dataPri, prim, err := NewPrimitive(body)
 	if err != nil {
 		fmt.Println(err)

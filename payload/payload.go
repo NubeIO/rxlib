@@ -21,8 +21,12 @@ type Body struct {
 type Payload struct {
 	FromPortID     string
 	FromObjectUUID string
-	ApplyOverride  bool
-	OverrideFloat  float64
+	OverrideFloat  any
+	// store the original value before the transformation is set
+	TransformationExistingValueFloat  *float64
+	TransformationExistingValueInt    *int
+	TransformationExistingValueString *string
+	TransformationExistingValueBool   *bool
 	*runtime.PortValue
 	body *Body
 }
@@ -171,4 +175,43 @@ func (p *Payload) Unmarshal(target interface{}) error {
 	}
 
 	return nil
+}
+
+func (p *Payload) SetTransformationExistingValueFloat(value *float64) {
+	p.TransformationExistingValueFloat = value
+}
+
+func (p *Payload) UnsetTransformationExistingValueFloat() {
+	p.TransformationExistingValueFloat = nil
+}
+
+func (p *Payload) GetTransformationExistingValueFloat() (value float64, isNil bool) {
+	if p.TransformationExistingValueFloat == nil {
+		return 0, true
+	}
+	return *p.TransformationExistingValueFloat, false
+}
+
+func (p *Payload) SetTransformationExistingValueInt(value *int) {
+	p.TransformationExistingValueInt = value
+}
+
+func (p *Payload) UnsetTransformationExistingValueInt() {
+	p.TransformationExistingValueInt = nil
+}
+
+func (p *Payload) SetTransformationExistingValueString(value *string) {
+	p.TransformationExistingValueString = value
+}
+
+func (p *Payload) UnsetTransformationExistingValueString() {
+	p.TransformationExistingValueString = nil
+}
+
+func (p *Payload) SetTransformationExistingValueBool(value *bool) {
+	p.TransformationExistingValueBool = value
+}
+
+func (p *Payload) UnsetTransformationExistingValueBool() {
+	p.TransformationExistingValueBool = nil
 }

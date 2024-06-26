@@ -3,6 +3,9 @@ package priority
 import (
 	"errors"
 	"fmt"
+	"github.com/NubeIO/rxlib/libs/nils"
+	"github.com/NubeIO/rxlib/unitswrapper"
+	"google.golang.org/protobuf/types/known/structpb"
 	"math"
 )
 
@@ -12,23 +15,46 @@ type Enums struct {
 }
 
 type Transformations struct {
-	Enums         []*Enums
-	FallBackValue *float64 `json:"fallBackValue"`
-	PermitNull    bool     `json:"permitNull"` // if true will set the default value of golang types;
+	EnableTransformation bool     `json:"enableTransformation"`
+	OverridePort         bool     `json:"overridePort"` // simply override the port value
+	OverridePortValue    any      `json:"overridePortValue"`
+	Enums                []*Enums `json:"enums"`
+	ApplyEnum            bool     `json:"applyEnum"`
+	FallBackValue        *float64 `json:"fallBackValue"`
+	PermitNull           bool     `json:"permitNull"` // if true will set the default value of golang types;
 	// return the result value to a decimal place if it's not nil
 	Round *int `json:"round"`
 
 	// limit the result based of the min/max settings
-	ApplyMinMax   bool
+	ApplyMinMax   bool         `json:"applyMinMax"`
 	MinMaxValue   *MinMaxValue `json:"minMaxValue"`
-	ErrorOnMinMax bool
+	ErrorOnMinMax bool         `json:"errorOnMinMax"`
 
 	// throw error if we have a match
 	RestrictNumber *float64 `json:"restrictNumber"` // for example don't allow number 10
 
 	// scale the result value based on the in min/max and the out min/max
-	ApplyScale       bool
+	ApplyScale       bool              `json:"applyScale"`
 	ScaleMinMaxValue *ScaleMinMaxValue `json:"scaleMinMaxValue"`
+
+	ApplyUnits bool                `json:"applyUnits"`
+	Units      *unitswrapper.Units `json:"units"`
+}
+
+func (trans *Transformations) ApplyEngineeringUnits(v float64) (value float64, symbol string, err error) {
+	if !trans.ApplyUnits {
+		return 0, "", nil
+	}
+	u := unitswrapper.InitUnits(trans.Units)
+	err = u.New(v)
+	if err != nil {
+		return 0, "", err
+	}
+	conversion, err := u.Conversion()
+	if err != nil {
+		return 0, "", err
+	}
+	return conversion, u.AsSymbol(), nil
 }
 
 type MinMaxValue struct {
@@ -45,23 +71,13 @@ type ScaleMinMaxValue struct {
 	MaxOutValue *float64 `json:"maxOutValue"`
 }
 
-func EnumValue(v float64, enums []*Enums) (value string, ok bool) {
-	for _, enum := range enums {
-		if int(v) == enum.Key {
-			if enum.Value != "" {
-				return enum.Value, true
-			}
-
-		}
-	}
-	return "", false
-}
-
 func TransformationsBuilder(inputValue *float64, config *Transformations) (*float64, error) {
 	if config == nil {
 		return nil, errors.New("config cannot be empty")
 	}
-
+	if !config.EnableTransformation {
+		return nil, nil
+	}
 	if inputValue == nil {
 		if config.FallBackValue != nil {
 			return config.FallBackValue, nil
@@ -123,6 +139,18 @@ func TransformationsBuilder(inputValue *float64, config *Transformations) (*floa
 	return Float64Ptr(input), nil
 }
 
+func EnumValue(v float64, enums []*Enums) (value string, ok bool) {
+	for _, enum := range enums {
+		if int(v) == enum.Key {
+			if enum.Value != "" {
+				return enum.Value, true
+			}
+
+		}
+	}
+	return "", false
+}
+
 func ApplyMinConstraint(input, minNum float64, errorOnMinMax bool) (float64, error) {
 	if input < minNum {
 		if errorOnMinMax {
@@ -156,13 +184,14 @@ func Scale(value float64, inMin float64, inMax float64, outMin float64, outMax f
 }
 
 func ApplyDecimalPlace(input float64, decimalPlace int) float64 {
-	if decimalPlace != 0 {
+	if decimalPlace > 0 {
 		decimalMultiplier := math.Pow(10, float64(decimalPlace))
 		input = math.Round(input*decimalMultiplier) / decimalMultiplier
+	} else {
+		input = math.Round(input)
 	}
 	return input
 }
-
 func IntPtr(i int) *int {
 	return &i
 }
@@ -183,4 +212,69 @@ func NewFloat64Ptr(f *float64) float64 {
 
 func Float64Ptr(f float64) *float64 {
 	return &f
+}
+
+// ToProtoStruct converts a Transformations instance to a google.protobuf.Struct
+func ToProtoStruct(t *Transformations) (*structpb.Struct, error) {
+	enumsList := make([]interface{}, len(t.Enums))
+	for i, enum := range t.Enums {
+		enumsList[i] = map[string]interface{}{
+			"key":   enum.Key,
+			"value": enum.Value,
+		}
+	}
+	transformMap := map[string]interface{}{
+		"enableTransformation": t.EnableTransformation,
+		"overridePort":         t.OverridePort,
+		"vverridePortValue":    t.OverridePortValue,
+		"enums":                enumsList,
+		"applyEnum":            t.ApplyEnum,
+		"fallBackValue":        nils.GetFloat64(t.FallBackValue),
+		"permitNull":           t.PermitNull,
+		"round":                nils.GetInt(t.Round),
+		"applyMinMax":          t.ApplyMinMax,
+		"minMaxValue":          convertMinMaxValue(t.MinMaxValue),
+		"errorOnMinMax":        t.ErrorOnMinMax,
+		"restrictNumber":       nils.GetFloat64(t.RestrictNumber),
+		"applyScale":           t.ApplyScale,
+		"scaleMinMaxValue":     convertScaleMinMaxValue(t.ScaleMinMaxValue),
+		"applyUnits":           t.ApplyUnits,
+		"units":                convertEngineeringUnits(t.Units),
+	}
+	return structpb.NewStruct(transformMap)
+}
+
+// Helper function to convert MinMaxValue to map
+func convertMinMaxValue(m *MinMaxValue) map[string]interface{} {
+	if m == nil {
+		return nil
+	}
+	return map[string]interface{}{
+		"minValue":    nils.GetFloat64(m.MinValue),
+		"maxValue":    nils.GetFloat64(m.MaxValue),
+		"minOutValue": nils.GetFloat64(m.MinOutValue),
+		"maxOutValue": nils.GetFloat64(m.MaxOutValue),
+	}
+}
+
+// Helper function to convert ScaleMinMaxValue to map
+func convertScaleMinMaxValue(s *ScaleMinMaxValue) map[string]interface{} {
+	if s == nil {
+		return nil
+	}
+	return map[string]interface{}{
+		"minValue":    nils.GetFloat64(s.MinValue),
+		"maxValue":    nils.GetFloat64(s.MaxValue),
+		"minOutValue": nils.GetFloat64(s.MinOutValue),
+		"maxOutValue": nils.GetFloat64(s.MaxOutValue),
+	}
+}
+
+func convertEngineeringUnits(e *unitswrapper.Units) map[string]interface{} {
+	return map[string]interface{}{
+		"decimalPlaces": e.DecimalPlaces,
+		"unitCategory":  e.UnitCategory,
+		"unit":          e.Unit,
+		"unitTo":        e.UnitTo,
+	}
 }

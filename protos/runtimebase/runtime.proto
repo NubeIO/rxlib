@@ -4,8 +4,7 @@ option go_package = "./;runtime";
 
 package App.Runtime;
 import "google/api/annotations.proto";
-import "google/protobuf/any.proto";
-
+import "google/protobuf/struct.proto";
 
 service RuntimeService {
 
@@ -32,6 +31,15 @@ service RuntimeService {
       get: "/api/runtime/objects/settings/{uuid}"
     };
   };
+
+
+  rpc UpdateObjectTransformations (ObjectTransformations) returns (Message) {
+    option (google.api.http) = {
+      post: "/api/runtime/objects/transformations/{uuid}"
+      body: "*"
+    };
+  };
+
 
   rpc UpdateObjectSettings (ObjectSettings) returns (ObjectSettings) {
     option (google.api.http) = {
@@ -188,8 +196,6 @@ service RuntimeService {
       body: "*"
     };
   }
-
-
 
   rpc RegisterExtension (Extension) returns (Extension) {
     option (google.api.http) = {
@@ -372,11 +378,9 @@ message Message {
 }
 
 
-
 message HostList {
   repeated Host hosts = 1;
 }
-
 
 message MessageRequest {
   string extensionUUID = 1;
@@ -433,10 +437,9 @@ message PortValue {
   optional string stringValue = 8;
   optional bool boolValue = 9;
   optional int32 intValue = 10;
-  string jsonValue = 12;
-  google.protobuf.Any any = 13;
-  ValueTransformation transformation = 14;
-  repeated string portIDs = 15;
+  optional string jsonValue = 12;
+  optional string displayValue = 13;
+  repeated string portIDs = 14;
 }
 
 
@@ -553,6 +556,15 @@ message ObjectID {
 message ObjectSettings {
   string uuid = 1;
   string value = 2;
+  bool persist = 4;
+}
+
+message ObjectTransformations {
+  string uuid = 1;
+  string portID = 2;
+  bool applyTransformation = 3;
+  bool persist = 4;
+  google.protobuf.Struct transformation = 5;
 }
 
 message ObjectRequest {
@@ -635,6 +647,7 @@ message Port {
   string direction = 4;
   string dataType = 5;
   int32 defaultPosition = 6;
+  google.protobuf.Struct transformation = 7;
 }
 
 
