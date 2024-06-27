@@ -25,7 +25,6 @@ type Port struct {
 	DataType              priority.Type             `json:"dataType,omitempty"`            // float, bool, string, any, json
 	DisableSubscription   bool                      `json:"disableSubscription,omitempty"` // if set to true we will not set up connection as a subscriber; this would be used when a connection is used to maybe pull the data on an interval
 	OnlyPublishOnCOV      bool                      `json:"onlyPublishOnCOV,omitempty"`
-	PreviousValue         *priority.PreviousValue   `json:"previousValue,omitempty"`
 
 	AllowMultipleConnections bool `json:"allowMultipleConnections,omitempty"`
 	HasConnection            bool `json:"hasConnection"`
@@ -35,12 +34,13 @@ type Port struct {
 	HiddenByDefault   bool `json:"hiddenByDefault,omitempty"`
 	OverPositionValue int  `json:"overPositionValue,omitempty"`
 
-	LastOk      *time.Time `json:"LastOk,omitempty"`
-	OkMessage   string     `json:"okMessage,omitempty"`
-	LastFail    *time.Time `json:"LastFail,omitempty"`
-	FailMessage string     `json:"failMessage,omitempty"`
-
-	OnMessage func(portID string, msg *payload.Payload) `json:"-"` // used for the evntbus
+	LastOk              *time.Time                                `json:"LastOk,omitempty"`
+	OkMessage           string                                    `json:"okMessage,omitempty"`
+	LastFail            *time.Time                                `json:"LastFail,omitempty"`
+	FailMessage         string                                    `json:"failMessage,omitempty"`
+	EnablePersistence   bool                                      `json:"enablePersistence"`
+	MaxPersistenceCount int                                       `json:"maxPersistenceCount"`
+	OnMessage           func(portID string, msg *payload.Payload) `json:"-"` // used for the evntbus
 
 }
 
@@ -290,143 +290,86 @@ func (p *Port) SubscriptionDisabled() bool {
 	return false
 }
 
-func (p *Port) SetPreviousValue(value any) {
-	p.PreviousValue = &priority.PreviousValue{
-		Value:     value,
-		Timestamp: time.Now(),
-	}
-}
-
-func (p *Port) GetPreviousValue() *priority.PreviousValue {
-	return p.PreviousValue
+type PersistenceValue struct {
+	MaxCount int `json:"maxCount"`
 }
 
 type PortOpts struct {
 	DefaultPosition          int  `json:"defaultPosition"`
 	HiddenByDefault          bool `json:"hiddenByDefault,omitempty"`
 	AllowMultipleConnections bool `json:"allowMultipleConnections,omitempty"`
-	PersistToDisk            bool `json:"persistToDisk"` // will save the output value to disc
-	EnableHistory            bool `json:"enableHistory"` // will use this port name to save
+	EnablePersistence        bool `json:"enablePersistence"`
+	MaxPersistenceCount      int  `json:"maxPersistenceCount"`
 }
 
 func portOpts(opts ...*PortOpts) *PortOpts {
-	p := &PortOpts{}
-	if len(opts) > 0 {
-		if opts[0] != nil {
-			p.DefaultPosition = opts[0].DefaultPosition
-			p.HiddenByDefault = opts[0].HiddenByDefault
-			p.AllowMultipleConnections = opts[0].AllowMultipleConnections
-		}
+	if len(opts) > 0 && opts[0] != nil {
+		return opts[0]
+	}
+	return &PortOpts{}
+}
+
+func newPort(id string, dataType priority.Type, f func(portID string, message *payload.Payload), opts ...*PortOpts) *NewPort {
+	pOpts := portOpts(opts...)
+	p := &NewPort{
+		ID:                       id,
+		Name:                     id,
+		DataType:                 dataType,
+		DefaultPosition:          pOpts.DefaultPosition,
+		HiddenByDefault:          pOpts.HiddenByDefault,
+		AllowMultipleConnections: pOpts.AllowMultipleConnections,
+		EnablePersistence:        pOpts.EnablePersistence,
+		MaxPersistenceCount:      pOpts.MaxPersistenceCount,
+		OnMessage:                f,
 	}
 	return p
 }
 
 func NewPortFloatCallBack(id string, f func(portID string, message *payload.Payload), opts ...*PortOpts) *NewPort {
-	p := &NewPort{
-		ID:        id,
-		Name:      id,
-		DataType:  priority.TypeFloat,
-		OnMessage: f,
-	}
-	p.DefaultPosition = portOpts(opts...).DefaultPosition
-	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
-	p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
-	return p
+	return newPort(id, priority.TypeFloat, f, opts...)
 }
 
 func NewPortBoolCallBack(id string, f func(portID string, message *payload.Payload), opts ...*PortOpts) *NewPort {
-	p := &NewPort{
-		ID:        id,
-		Name:      id,
-		DataType:  priority.TypeBool,
-		OnMessage: f,
-	}
-	p.DefaultPosition = portOpts(opts...).DefaultPosition
-	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
-	p.AllowMultipleConnections = false
-	return p
+	return newPort(id, priority.TypeBool, f, opts...)
+}
+
+func NewPortStringCallBack(id string, f func(portID string, message *payload.Payload), opts ...*PortOpts) *NewPort {
+	return newPort(id, priority.TypeString, f, opts...)
+}
+
+func NewPortJSONCallBack(id string, f func(portID string, message *payload.Payload), opts ...*PortOpts) *NewPort {
+	return newPort(id, priority.TypeJSON, f, opts...)
 }
 
 func NewPortAnyCallBack(id string, f func(portID string, message *payload.Payload), opts ...*PortOpts) *NewPort {
-	p := &NewPort{
-		ID:        id,
-		Name:      id,
-		DataType:  priority.TypeAny,
-		OnMessage: f,
-	}
-	p.DefaultPosition = portOpts(opts...).DefaultPosition
-	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
-	p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
-	return p
+	return newPort(id, priority.TypeAny, f, opts...)
 }
 
 func NewPortFloat(id string, opts ...*PortOpts) *NewPort {
-	p := &NewPort{
-		ID:       id,
-		Name:     id,
-		DataType: priority.TypeFloat,
-	}
-	p.DefaultPosition = portOpts(opts...).DefaultPosition
-	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
-	p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
-	return p
-}
-
-func NewPortBool(id string, opts ...*PortOpts) *NewPort {
-	p := &NewPort{
-		ID:       id,
-		Name:     id,
-		DataType: priority.TypeBool,
-	}
-	p.DefaultPosition = portOpts(opts...).DefaultPosition
-	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
-	p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
-	return p
+	return newPort(id, priority.TypeFloat, nil, opts...)
 }
 
 func NewPortAny(id string, opts ...*PortOpts) *NewPort {
-	p := &NewPort{
-		ID:       id,
-		Name:     id,
-		DataType: priority.TypeAny,
-	}
-	p.DefaultPosition = portOpts(opts...).DefaultPosition
-	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
-	p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
-	return p
+	return newPort(id, priority.TypeAny, nil, opts...)
 }
 
-func NewPortDate(id string, opts ...*PortOpts) *NewPort {
-	p := &NewPort{
-		ID:       id,
-		Name:     id,
-		DataType: priority.TypeDate,
-	}
-	p.DefaultPosition = portOpts(opts...).DefaultPosition
-	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
-	p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
-	return p
+func NewPortBool(id string, opts ...*PortOpts) *NewPort {
+	return newPort(id, priority.TypeBool, nil, opts...)
 }
 
 func NewPortString(id string, opts ...*PortOpts) *NewPort {
-	p := &NewPort{
-		ID:       id,
-		Name:     id,
-		DataType: priority.TypeString,
-	}
-	p.DefaultPosition = portOpts(opts...).DefaultPosition
-	p.HiddenByDefault = portOpts(opts...).HiddenByDefault
-	p.AllowMultipleConnections = portOpts(opts...).AllowMultipleConnections
-	return p
+	return newPort(id, priority.TypeString, nil, opts...)
 }
 
 type NewPort struct {
 	ID                       string
 	Name                     string
 	DataType                 priority.Type
-	AllowMultipleConnections bool                                      `json:"allowMultipleConnections,omitempty"`
-	DefaultPosition          int                                       `json:"defaultPosition"`
-	HiddenByDefault          bool                                      `json:"hiddenByDefault,omitempty"`
+	AllowMultipleConnections bool
+	DefaultPosition          int
+	HiddenByDefault          bool
+	EnablePersistence        bool
+	MaxPersistenceCount      int
 	OnMessage                func(portID string, msg *payload.Payload) `json:"-"`
 }
 

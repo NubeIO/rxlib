@@ -546,7 +546,7 @@ message ObjectsResponse {
 }
 
 message ObjectHelp {
-  string help= 1;
+  string help = 1;
 }
 
 message ObjectID {
@@ -648,6 +648,8 @@ message Port {
   string dataType = 5;
   int32 defaultPosition = 6;
   google.protobuf.Struct transformation = 7;
+  bool enablePersistence = 8;
+  int32 xaxPersistenceCount = 9;
 }
 
 
@@ -764,7 +766,7 @@ message Host {
 
 message UploadZipRequest {
   bytes zipFile = 1;
-   string destinationDir = 2;
+  string destinationDir = 2;
 }
 
 message UploadZipResponse {

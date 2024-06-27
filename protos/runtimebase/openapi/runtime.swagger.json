@@ -2531,6 +2531,13 @@
         },
         "transformation": {
           "type": "object"
+        },
+        "enablePersistence": {
+          "type": "boolean"
+        },
+        "xaxPersistenceCount": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
