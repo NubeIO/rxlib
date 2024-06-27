@@ -305,6 +305,8 @@ type PortOpts struct {
 	DefaultPosition          int  `json:"defaultPosition"`
 	HiddenByDefault          bool `json:"hiddenByDefault,omitempty"`
 	AllowMultipleConnections bool `json:"allowMultipleConnections,omitempty"`
+	PersistToDisk            bool `json:"persistToDisk"` // will save the output value to disc
+	EnableHistory            bool `json:"enableHistory"` // will use this port name to save
 }
 
 func portOpts(opts ...*PortOpts) *PortOpts {
