@@ -99,7 +99,8 @@ type Object interface {
 	SetOutput(portID string, value any) error // Set current output value & send over the eventbus
 	DeleteOutput(id string) error
 	// PublishValue eventbus
-	PublishValue(portID string) error              // send current port value over the eventbus
+	PublishValue(portID string) error // send current port value over the eventbus
+	Publish(topic string, data any) error
 	PublishCommand(command *ExtendedCommand) error // send a command over the eventbus, this is used to send external commands (eg; over mqtt)
 	Subscribe(topic, handlerID string, callBack func(topic string, e bus.Event))
 	SubscribePayload(topic, handlerID string, opts *EventbusOpts, callBack func(topic string, p *payload.Payload, err error))
