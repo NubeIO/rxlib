@@ -60,6 +60,8 @@ type Object interface {
 	NewOutputPort(port *NewPort) error
 	NewOutputPorts(port []*NewPort) error
 	GetAllPorts() []*Port
+	RestorePersistedValues(value *ObjectPersistenceValue) error
+	PortsWithPersistenceEnabled() []*Port
 	GetPortPayload(portID string) (*payload.Payload, error)
 	GetPortValue(portID string) *runtime.PortValue
 	EnablePort(portID string) error

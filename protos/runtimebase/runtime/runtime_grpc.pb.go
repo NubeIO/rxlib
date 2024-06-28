@@ -23,6 +23,7 @@ const (
 	RuntimeService_GetObjectsRoot_FullMethodName              = "/App.Runtime.RuntimeService/GetObjectsRoot"
 	RuntimeService_GetObjectSettingsSchema_FullMethodName     = "/App.Runtime.RuntimeService/GetObjectSettingsSchema"
 	RuntimeService_GetObjectSettings_FullMethodName           = "/App.Runtime.RuntimeService/GetObjectSettings"
+	RuntimeService_ObjectRest_FullMethodName                  = "/App.Runtime.RuntimeService/ObjectRest"
 	RuntimeService_UpdateObjectTransformations_FullMethodName = "/App.Runtime.RuntimeService/UpdateObjectTransformations"
 	RuntimeService_UpdateObjectSettings_FullMethodName        = "/App.Runtime.RuntimeService/UpdateObjectSettings"
 	RuntimeService_GetObjectChilds_FullMethodName             = "/App.Runtime.RuntimeService/GetObjectChilds"
@@ -82,6 +83,7 @@ type RuntimeServiceClient interface {
 	GetObjectsRoot(ctx context.Context, in *ObjectsRequest, opts ...grpc.CallOption) (*ObjectsResponse, error)
 	GetObjectSettingsSchema(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*ObjectSettings, error)
 	GetObjectSettings(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*ObjectSettings, error)
+	ObjectRest(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Message, error)
 	UpdateObjectTransformations(ctx context.Context, in *ObjectTransformations, opts ...grpc.CallOption) (*Message, error)
 	UpdateObjectSettings(ctx context.Context, in *ObjectSettings, opts ...grpc.CallOption) (*ObjectSettings, error)
 	GetObjectChilds(ctx context.Context, in *ObjectRequest, opts ...grpc.CallOption) (*ObjectsResponse, error)
@@ -177,6 +179,15 @@ func (c *runtimeServiceClient) GetObjectSettingsSchema(ctx context.Context, in *
 func (c *runtimeServiceClient) GetObjectSettings(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*ObjectSettings, error) {
 	out := new(ObjectSettings)
 	err := c.cc.Invoke(ctx, RuntimeService_GetObjectSettings_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runtimeServiceClient) ObjectRest(ctx context.Context, in *UUID, opts ...grpc.CallOption) (*Message, error) {
+	out := new(Message)
+	err := c.cc.Invoke(ctx, RuntimeService_ObjectRest_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -654,6 +665,7 @@ type RuntimeServiceServer interface {
 	GetObjectsRoot(context.Context, *ObjectsRequest) (*ObjectsResponse, error)
 	GetObjectSettingsSchema(context.Context, *UUID) (*ObjectSettings, error)
 	GetObjectSettings(context.Context, *UUID) (*ObjectSettings, error)
+	ObjectRest(context.Context, *UUID) (*Message, error)
 	UpdateObjectTransformations(context.Context, *ObjectTransformations) (*Message, error)
 	UpdateObjectSettings(context.Context, *ObjectSettings) (*ObjectSettings, error)
 	GetObjectChilds(context.Context, *ObjectRequest) (*ObjectsResponse, error)
@@ -727,6 +739,9 @@ func (UnimplementedRuntimeServiceServer) GetObjectSettingsSchema(context.Context
 }
 func (UnimplementedRuntimeServiceServer) GetObjectSettings(context.Context, *UUID) (*ObjectSettings, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetObjectSettings not implemented")
+}
+func (UnimplementedRuntimeServiceServer) ObjectRest(context.Context, *UUID) (*Message, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ObjectRest not implemented")
 }
 func (UnimplementedRuntimeServiceServer) UpdateObjectTransformations(context.Context, *ObjectTransformations) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateObjectTransformations not implemented")
@@ -956,6 +971,24 @@ func _RuntimeService_GetObjectSettings_Handler(srv interface{}, ctx context.Cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuntimeServiceServer).GetObjectSettings(ctx, req.(*UUID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuntimeService_ObjectRest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UUID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuntimeServiceServer).ObjectRest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuntimeService_ObjectRest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuntimeServiceServer).ObjectRest(ctx, req.(*UUID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1872,6 +1905,10 @@ var RuntimeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetObjectSettings",
 			Handler:    _RuntimeService_GetObjectSettings_Handler,
+		},
+		{
+			MethodName: "ObjectRest",
+			Handler:    _RuntimeService_ObjectRest_Handler,
 		},
 		{
 			MethodName: "UpdateObjectTransformations",

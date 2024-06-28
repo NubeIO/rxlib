@@ -37,11 +37,15 @@ type Transformations struct {
 	ApplyScale       bool              `json:"applyScale"`
 	ScaleMinMaxValue *ScaleMinMaxValue `json:"scaleMinMaxValue"`
 
-	ApplyUnits bool                `json:"applyUnits"`
-	Units      *unitswrapper.Units `json:"units"`
+	ApplyUnits             bool                `json:"applyUnits"`
+	Units                  *unitswrapper.Units `json:"units"`
+	AppliedUnitValue       *float64            `json:"unitValue"`
+	AppliedUnitFrom        *string             `json:"unitFrom"`
+	AppliedUnitTo          *string             `json:"unitTo"`
+	AppliedUnitSymbolValue *string             `json:"unitSymbolValue"`
 }
 
-func (trans *Transformations) ApplyEngineeringUnits(v float64) (value float64, symbol string, err error) {
+func (trans *Transformations) ApplyEngineeringUnits(v float64) (value float64, displayValue string, err error) {
 	if !trans.ApplyUnits {
 		return 0, "", nil
 	}
@@ -54,6 +58,10 @@ func (trans *Transformations) ApplyEngineeringUnits(v float64) (value float64, s
 	if err != nil {
 		return 0, "", err
 	}
+	trans.AppliedUnitValue = nils.ToFloat64(conversion)
+	trans.AppliedUnitSymbolValue = nils.ToString(u.AsSymbol())
+	trans.AppliedUnitFrom = nils.ToString(trans.Units.Unit)
+	trans.AppliedUnitTo = nils.ToString(trans.Units.UnitTo)
 	return conversion, u.AsSymbol(), nil
 }
 

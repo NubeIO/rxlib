@@ -701,6 +701,44 @@
         ]
       }
     },
+    "/api/runtime/objects/reset/{uuid}": {
+      "post": {
+        "operationId": "RuntimeService_ObjectRest",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeMessage"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RuntimeServiceObjectRestBody"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
     "/api/runtime/objects/settings/schema/{uuid}": {
       "get": {
         "operationId": "RuntimeService_GetObjectSettingsSchema",
@@ -2649,6 +2687,9 @@
           "type": "string"
         }
       }
+    },
+    "RuntimeServiceObjectRestBody": {
+      "type": "object"
     },
     "RuntimeServiceUpdateCommentBody": {
       "type": "object",

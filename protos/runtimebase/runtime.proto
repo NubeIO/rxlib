@@ -33,13 +33,19 @@ service RuntimeService {
   };
 
 
+  rpc ObjectRest (UUID) returns (Message) {
+    option (google.api.http) = {
+      post: "/api/runtime/objects/reset/{uuid}"
+      body: "*"
+    };
+  };
+
   rpc UpdateObjectTransformations (ObjectTransformations) returns (Message) {
     option (google.api.http) = {
       post: "/api/runtime/objects/transformations/{uuid}"
       body: "*"
     };
   };
-
 
   rpc UpdateObjectSettings (ObjectSettings) returns (ObjectSettings) {
     option (google.api.http) = {

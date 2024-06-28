@@ -16,6 +16,25 @@ func GetByUUID(objects []Object, uuid string) Object {
 	return nil
 }
 
+const (
+	null                 = "null"
+	uid                  = "uuid"
+	name                 = "name"
+	id                   = "id"
+	objType              = "type"
+	parent               = "parent"
+	inputPort            = "input"
+	outputPort           = "output"
+	propertyID           = "id"
+	propertyName         = "name"
+	propertyValue        = "value"
+	propertyUnitFrom     = "unitFrom"
+	propertyUnitTo       = "unitTo"
+	propertyDisplayValue = "displayValue"
+	propertyRawValue     = "rawValue"
+	propertyType         = "type"
+)
+
 func extractInfo(objects []Object, obj Object, term string) string {
 	parts := strings.Split(term, "|")
 	queryTerm := parts[0]
@@ -29,68 +48,118 @@ func extractInfo(objects []Object, obj Object, term string) string {
 		return fmt.Sprintf("invalid-query: (%s)", queryTerm)
 	}
 
-	var rawValue any
+	rawValue := handleQuery(objects, obj, queryParts)
+	return formatOutput(rawValue, formatString, queryTerm)
+}
+
+func handleQuery(objects []Object, obj Object, queryParts []string) interface{} {
 	switch queryParts[0] {
-	case "uuid":
-		if uuid := obj.GetMeta().GetObjectUUID(); uuid != "" {
-			rawValue = uuid
-		}
-	case "name":
-		if name := obj.GetMeta().GetObjectName(); name != "" {
-			rawValue = name
-		}
-	case "id":
-		if id := obj.GetID(); id != "" {
-			rawValue = id
-		}
-	case "type":
-		if objType := string(obj.GetObjectType()); objType != "" {
-			rawValue = objType
-		}
-	case "parent":
-		parent := GetByUUID(objects, obj.GetMeta().GetParentUUID())
-		if parent != nil {
-			rawValue = extractInfo(objects, parent, strings.Join(queryParts[1:], "."))
-		}
-	case "input", "output":
-		if len(queryParts) < 3 {
-			return fmt.Sprintf("invalid-query: (%s)", queryTerm)
-		}
-		portType := queryParts[0]
-		portID := queryParts[1]
-		property := queryParts[2]
-
-		var port *Port
-		if portType == "input" {
-			port = obj.GetInput(portID)
-		} else {
-			port = obj.GetOutput(portID)
-		}
-
-		if port == nil {
-			return fmt.Sprintf("port-not-found: (%s)", queryTerm)
-		}
-
-		switch property {
-		case "id":
-			rawValue = port.GetID()
-		case "name":
-			rawValue = port.GetName()
-		case "value":
-			value, isNil := port.GetPayloadValue()
-			if isNil {
-				rawValue = "null"
-			} else {
-				rawValue = value
-			}
-		case "type":
-			rawValue = string(port.GetDataType())
-		default:
-			rawValue = fmt.Sprintf("invalid-property: (%s)", queryTerm)
-		}
+	case uid, name, id, objType:
+		return extractMetaData(obj, queryParts[0])
+	case parent:
+		return handleParent(objects, obj, queryParts)
+	case inputPort, outputPort:
+		return handlePorts(obj, queryParts)
 	default:
-		rawValue = fmt.Sprintf("invalid-query: (%s)", queryTerm)
+		return fmt.Sprintf("invalid-query: (%s)", strings.Join(queryParts, "."))
 	}
+}
+
+func extractMetaData(obj Object, property string) interface{} {
+	switch property {
+	case uid:
+		return obj.GetMeta().GetObjectUUID()
+	case name:
+		return obj.GetMeta().GetObjectName()
+	case id:
+		return obj.GetID()
+	case objType:
+		return string(obj.GetObjectType())
+	default:
+		return nil
+	}
+}
+
+func handleParent(objects []Object, obj Object, queryParts []string) interface{} {
+	p := GetByUUID(objects, obj.GetMeta().GetParentUUID())
+	if p != nil {
+		return extractInfo(objects, p, strings.Join(queryParts[1:], "."))
+	}
+	return nil
+}
+
+func handlePorts(obj Object, queryParts []string) interface{} {
+	if len(queryParts) < 3 {
+		return fmt.Sprintf("invalid-query: (%s)", strings.Join(queryParts, "."))
+	}
+
+	portType := queryParts[0]
+	portID := queryParts[1]
+	property := queryParts[2]
+
+	var port *Port
+	if portType == inputPort {
+		port = obj.GetInput(portID)
+	} else {
+		port = obj.GetOutput(portID)
+	}
+
+	if port == nil {
+		return fmt.Sprintf("port-not-found: (%s)", strings.Join(queryParts, "."))
+	}
+
+	return extractPortProperty(port, property)
+}
+
+func extractPortProperty(port *Port, property string) interface{} {
+	switch property {
+	case propertyID:
+		return port.GetID()
+	case propertyName:
+		return port.GetName()
+	case propertyValue:
+		value, isNil := port.GetPayloadValue()
+		if isNil {
+			return null
+		} else {
+			return value
+		}
+	case propertyUnitFrom:
+		value := port.GetTransformationUnitFrom()
+		if value == "" {
+			return null
+		} else {
+			return value
+		}
+	case propertyUnitTo:
+		value := port.GetTransformationUnitTo()
+		if value == "" {
+			return null
+		} else {
+			return value
+		}
+	case propertyDisplayValue:
+		value, isNil := port.GetTransformationDisplayValue()
+		if isNil {
+			return null
+		} else {
+			return value
+		}
+	case propertyRawValue:
+		value, isNil := port.GetTransformationExistingValueFloat()
+		if isNil {
+			return null
+		} else {
+			return value
+		}
+	case propertyType:
+		return string(port.GetDataType())
+	default:
+		return fmt.Sprintf("invalid-property: (%s)", property)
+	}
+}
+
+func formatOutput(rawValue interface{}, formatString string, queryTerm string) string {
 	if formatString != "" {
 		switch v := rawValue.(type) {
 		case string:
@@ -99,9 +168,7 @@ func extractInfo(objects []Object, obj Object, term string) string {
 			} else if boolValue, err := strconv.ParseBool(v); err == nil {
 				return fmt.Sprintf(formatString, boolValue)
 			}
-		case float64, float32:
-			return fmt.Sprintf(formatString, v)
-		case int, int64, int32:
+		case float64, float32, int, int64, int32:
 			return fmt.Sprintf(formatString, v)
 		case bool:
 			return fmt.Sprintf(formatString, v)
@@ -109,7 +176,6 @@ func extractInfo(objects []Object, obj Object, term string) string {
 			return fmt.Sprintf("unsupported-type: (%s)", queryTerm)
 		}
 	}
-
 	return fmt.Sprintf("%v", rawValue)
 }
 

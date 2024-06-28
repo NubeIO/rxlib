@@ -6,42 +6,45 @@ import (
 	"github.com/NubeIO/rxlib/libs/nils"
 	"github.com/NubeIO/rxlib/payload"
 	"github.com/NubeIO/rxlib/priority"
+	"github.com/NubeIO/rxlib/unitswrapper"
 	"time"
 )
 
 type Port struct {
-	ID       string `json:"id,omitempty"`
-	Name     string `json:"name,omitempty"`
-	UUID     string `json:"uuid,omitempty"`
-	Disabled bool   `json:"disabled,omitempty"`
+	ID       string
+	Name     string
+	UUID     string
+	Disabled bool
 
-	Payload *payload.Payload `json:"payload"`
+	Payload *payload.Payload
 
-	Transformation        *priority.Transformations `json:"transformation,omitempty"`
-	UsingTransformation   bool                      `json:"usingTransformation,omitempty"`
-	TransformationApplied bool                      `json:"transformationApplied,omitempty"`
-	OverrideApplied       bool                      `json:"overrideApplied,omitempty"`
-	Direction             PortDirection             `json:"direction,omitempty"`           // input or output
-	DataType              priority.Type             `json:"dataType,omitempty"`            // float, bool, string, any, json
-	DisableSubscription   bool                      `json:"disableSubscription,omitempty"` // if set to true we will not set up connection as a subscriber; this would be used when a connection is used to maybe pull the data on an interval
-	OnlyPublishOnCOV      bool                      `json:"onlyPublishOnCOV,omitempty"`
+	Transformation        *priority.Transformations
+	UsingTransformation   bool
+	TransformationApplied bool
+	OverrideApplied       bool
+	Direction             PortDirection // input or output
+	DataType              priority.Type // float, bool, string, any, json
+	DisableSubscription   bool          // if set to true we will not set up connection as a subscriber; this would be used when a connection is used to maybe pull the data on an interval
+	OnlyPublishOnCOV      bool
 
-	AllowMultipleConnections bool `json:"allowMultipleConnections,omitempty"`
-	HasConnection            bool `json:"hasConnection"`
-	// port position is where to show the order on the Obj and where to hide the port or not
-	DefaultPosition   int  `json:"defaultPosition,omitempty"`
-	Hide              bool `json:"hide,omitempty"`
-	HiddenByDefault   bool `json:"hiddenByDefault,omitempty"`
-	OverPositionValue int  `json:"overPositionValue,omitempty"`
+	AllowMultipleConnections bool
+	HasConnection            bool
+	DefaultPosition          int
+	Hide                     bool
+	HiddenByDefault          bool
+	OverPositionValue        int
 
-	LastOk              *time.Time                                `json:"LastOk,omitempty"`
-	OkMessage           string                                    `json:"okMessage,omitempty"`
-	LastFail            *time.Time                                `json:"LastFail,omitempty"`
-	FailMessage         string                                    `json:"failMessage,omitempty"`
-	EnablePersistence   bool                                      `json:"enablePersistence"`
-	MaxPersistenceCount int                                       `json:"maxPersistenceCount"`
-	OnMessage           func(portID string, msg *payload.Payload) `json:"-"` // used for the evntbus
+	LastOk      *time.Time
+	OkMessage   string
+	LastFail    *time.Time
+	FailMessage string
 
+	// stored in db
+	EnablePersistence      bool
+	MaxPersistenceCount    int
+	RestoredPersistedValue any // is the restored value on boot on the server.
+
+	OnMessage func(portID string, msg *payload.Payload) // used for the evntbus
 }
 
 func (p *Port) GetID() string {
@@ -161,6 +164,60 @@ func (p *Port) GetValueFloatPointer() *float64 {
 	return p.GetPayload().FloatValue
 }
 
+func (p *Port) GetTransformation() *priority.Transformations {
+	return p.Transformation
+}
+
+func (p *Port) GetUnits() *unitswrapper.Units {
+	if p.GetTransformation() == nil {
+		return nil
+	}
+	return p.GetTransformation().Units
+}
+
+func (p *Port) GetTransformationExistingValueFloat() (value float64, isNil bool) {
+	if p.GetPayload() == nil {
+		return 0, true
+	}
+	return p.GetPayload().GetTransformationExistingValueFloat()
+}
+
+func (p *Port) GetTransformationUnitFrom() string {
+	if p.GetTransformation() == nil {
+		return ""
+	}
+	return nils.GetString(p.GetTransformation().AppliedUnitFrom)
+}
+
+func (p *Port) GetTransformationUnitTo() string {
+	if p.GetTransformation() == nil {
+		return ""
+	}
+	return nils.GetString(p.GetTransformation().AppliedUnitTo)
+}
+
+func (p *Port) GetTransformationValue() (value float64, isNil bool) {
+	if p.GetTransformation() == nil {
+		return 0, true
+	}
+	v := p.GetTransformation().AppliedUnitValue
+	if v == nil {
+		return 0, true
+	}
+	return nils.GetFloat64(v), false
+}
+
+func (p *Port) GetTransformationDisplayValue() (value string, isNil bool) {
+	if p.GetTransformation() == nil {
+		return "", true
+	}
+	v := p.GetTransformation().AppliedUnitSymbolValue
+	if v == nil {
+		return "", true
+	}
+	return nils.GetString(v), false
+}
+
 func (p *Port) Release() {
 	v, isNil := p.GetPayload().GetTransformationExistingValueFloat()
 	if isNil {
@@ -225,6 +282,22 @@ func (p *Port) SetOverride(v interface{}) error {
 		}
 	}
 	return errors.New(fmt.Sprintf("unknown data type: %s", dataType))
+}
+
+func (p *Port) HasPersistence() bool {
+	return p.EnablePersistence
+}
+
+func (p *Port) GetRestoredPersistedValue() any {
+	return p.RestoredPersistedValue
+}
+
+func (p *Port) ClearRestoredPersistedValue() {
+	p.RestoredPersistedValue = nil
+}
+
+func (p *Port) SetRestoredPersistedValue(v any) {
+	p.RestoredPersistedValue = v
 }
 
 func (p *Port) GetHasConnection() bool {
@@ -383,6 +456,15 @@ type PortFormatString struct {
 	MaxLengthString  *int     `json:"maxLengthString"`
 	AllowEmptyString bool     `json:"allowEmptyString,omitempty"`
 	RestrictString   *float64 `json:"restrictString"` // for example don't allow # on an mqtt topic
+}
+
+type ObjectPersistenceValue struct {
+	PortID      string
+	ValueType   string // float, int, bool, string
+	ValueFloat  *float64
+	ValueInt    *int
+	ValueBool   *bool
+	ValueString *string
 }
 
 // some commonly used output names
