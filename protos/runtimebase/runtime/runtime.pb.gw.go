@@ -114,14 +114,14 @@ func request_RuntimeService_GetObjectSettingsSchema_0(ctx context.Context, marsh
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.GetObjectSettingsSchema(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -140,14 +140,14 @@ func local_request_RuntimeService_GetObjectSettingsSchema_0(ctx context.Context,
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.GetObjectSettingsSchema(ctx, &protoReq)
@@ -166,14 +166,14 @@ func request_RuntimeService_GetObjectSettings_0(ctx context.Context, marshaler r
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.GetObjectSettings(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -192,14 +192,14 @@ func local_request_RuntimeService_GetObjectSettings_0(ctx context.Context, marsh
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.GetObjectSettings(ctx, &protoReq)
@@ -222,14 +222,14 @@ func request_RuntimeService_ObjectRest_0(ctx context.Context, marshaler runtime.
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.ObjectRest(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -252,14 +252,14 @@ func local_request_RuntimeService_ObjectRest_0(ctx context.Context, marshaler ru
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.ObjectRest(ctx, &protoReq)
@@ -282,14 +282,14 @@ func request_RuntimeService_UpdateObjectTransformations_0(ctx context.Context, m
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.UpdateObjectTransformations(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -312,14 +312,14 @@ func local_request_RuntimeService_UpdateObjectTransformations_0(ctx context.Cont
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.UpdateObjectTransformations(ctx, &protoReq)
@@ -342,14 +342,14 @@ func request_RuntimeService_UpdateObjectSettings_0(ctx context.Context, marshale
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.UpdateObjectSettings(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -372,14 +372,14 @@ func local_request_RuntimeService_UpdateObjectSettings_0(ctx context.Context, ma
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.UpdateObjectSettings(ctx, &protoReq)
@@ -388,7 +388,7 @@ func local_request_RuntimeService_UpdateObjectSettings_0(ctx context.Context, ma
 }
 
 var (
-	filter_RuntimeService_GetObjectChilds_0 = &utilities.DoubleArray{Encoding: map[string]int{"uuid": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+	filter_RuntimeService_GetObjectChilds_0 = &utilities.DoubleArray{Encoding: map[string]int{"UUID": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 )
 
 func request_RuntimeService_GetObjectChilds_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -402,14 +402,14 @@ func request_RuntimeService_GetObjectChilds_0(ctx context.Context, marshaler run
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -435,14 +435,14 @@ func local_request_RuntimeService_GetObjectChilds_0(ctx context.Context, marshal
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -458,7 +458,7 @@ func local_request_RuntimeService_GetObjectChilds_0(ctx context.Context, marshal
 }
 
 var (
-	filter_RuntimeService_GetObjectParentsChilds_0 = &utilities.DoubleArray{Encoding: map[string]int{"uuid": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+	filter_RuntimeService_GetObjectParentsChilds_0 = &utilities.DoubleArray{Encoding: map[string]int{"UUID": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 )
 
 func request_RuntimeService_GetObjectParentsChilds_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -472,14 +472,14 @@ func request_RuntimeService_GetObjectParentsChilds_0(ctx context.Context, marsha
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -505,14 +505,14 @@ func local_request_RuntimeService_GetObjectParentsChilds_0(ctx context.Context, 
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -528,7 +528,7 @@ func local_request_RuntimeService_GetObjectParentsChilds_0(ctx context.Context, 
 }
 
 var (
-	filter_RuntimeService_GetObject_0 = &utilities.DoubleArray{Encoding: map[string]int{"uuid": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+	filter_RuntimeService_GetObject_0 = &utilities.DoubleArray{Encoding: map[string]int{"UUID": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 )
 
 func request_RuntimeService_GetObject_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -542,14 +542,14 @@ func request_RuntimeService_GetObject_0(ctx context.Context, marshaler runtime.M
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -575,14 +575,14 @@ func local_request_RuntimeService_GetObject_0(ctx context.Context, marshaler run
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -862,7 +862,7 @@ func local_request_RuntimeService_GetObjectsValues_0(ctx context.Context, marsha
 }
 
 var (
-	filter_RuntimeService_GetObjectValues_0 = &utilities.DoubleArray{Encoding: map[string]int{"uuid": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+	filter_RuntimeService_GetObjectValues_0 = &utilities.DoubleArray{Encoding: map[string]int{"UUID": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 )
 
 func request_RuntimeService_GetObjectValues_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -876,14 +876,14 @@ func request_RuntimeService_GetObjectValues_0(ctx context.Context, marshaler run
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -909,14 +909,14 @@ func local_request_RuntimeService_GetObjectValues_0(ctx context.Context, marshal
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -1066,14 +1066,14 @@ func request_RuntimeService_DeleteExtension_0(ctx context.Context, marshaler run
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.DeleteExtension(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1092,14 +1092,14 @@ func local_request_RuntimeService_DeleteExtension_0(ctx context.Context, marshal
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.DeleteExtension(ctx, &protoReq)
@@ -1136,14 +1136,14 @@ func request_RuntimeService_StartExtension_0(ctx context.Context, marshaler runt
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.StartExtension(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1162,14 +1162,14 @@ func local_request_RuntimeService_StartExtension_0(ctx context.Context, marshale
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.StartExtension(ctx, &protoReq)
@@ -1188,14 +1188,14 @@ func request_RuntimeService_StopExtension_0(ctx context.Context, marshaler runti
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.StopExtension(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1214,14 +1214,14 @@ func local_request_RuntimeService_StopExtension_0(ctx context.Context, marshaler
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.StopExtension(ctx, &protoReq)
@@ -1266,14 +1266,14 @@ func request_RuntimeService_GetHost_0(ctx context.Context, marshaler runtime.Mar
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.GetHost(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1292,14 +1292,14 @@ func local_request_RuntimeService_GetHost_0(ctx context.Context, marshaler runti
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.GetHost(ctx, &protoReq)
@@ -1366,14 +1366,14 @@ func request_RuntimeService_UpdateHost_0(ctx context.Context, marshaler runtime.
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.UpdateHost(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1396,14 +1396,14 @@ func local_request_RuntimeService_UpdateHost_0(ctx context.Context, marshaler ru
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.UpdateHost(ctx, &protoReq)
@@ -1422,14 +1422,14 @@ func request_RuntimeService_DeleteHost_0(ctx context.Context, marshaler runtime.
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.DeleteHost(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1448,14 +1448,14 @@ func local_request_RuntimeService_DeleteHost_0(ctx context.Context, marshaler ru
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.DeleteHost(ctx, &protoReq)
@@ -1474,14 +1474,14 @@ func request_RuntimeService_EnableHost_0(ctx context.Context, marshaler runtime.
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.EnableHost(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1500,14 +1500,14 @@ func local_request_RuntimeService_EnableHost_0(ctx context.Context, marshaler ru
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.EnableHost(ctx, &protoReq)
@@ -1526,14 +1526,14 @@ func request_RuntimeService_DisableHost_0(ctx context.Context, marshaler runtime
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.DisableHost(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1552,14 +1552,14 @@ func local_request_RuntimeService_DisableHost_0(ctx context.Context, marshaler r
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.DisableHost(ctx, &protoReq)
@@ -1593,8 +1593,12 @@ func local_request_RuntimeService_SendHostMQTT_0(ctx context.Context, marshaler 
 
 }
 
+var (
+	filter_RuntimeService_GetTicket_0 = &utilities.DoubleArray{Encoding: map[string]int{"UUID": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+)
+
 func request_RuntimeService_GetTicket_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UUID
+	var protoReq RequestWithChildren
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -1604,14 +1608,21 @@ func request_RuntimeService_GetTicket_0(ctx context.Context, marshaler runtime.M
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_RuntimeService_GetTicket_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.GetTicket(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1620,7 +1631,7 @@ func request_RuntimeService_GetTicket_0(ctx context.Context, marshaler runtime.M
 }
 
 func local_request_RuntimeService_GetTicket_0(ctx context.Context, marshaler runtime.Marshaler, server RuntimeServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UUID
+	var protoReq RequestWithChildren
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -1630,14 +1641,21 @@ func local_request_RuntimeService_GetTicket_0(ctx context.Context, marshaler run
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_RuntimeService_GetTicket_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := server.GetTicket(ctx, &protoReq)
@@ -1645,9 +1663,20 @@ func local_request_RuntimeService_GetTicket_0(ctx context.Context, marshaler run
 
 }
 
+var (
+	filter_RuntimeService_GetTickets_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
 func request_RuntimeService_GetTickets_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq Empty
+	var protoReq RequestWithChildren
 	var metadata runtime.ServerMetadata
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_RuntimeService_GetTickets_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	msg, err := client.GetTickets(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -1655,8 +1684,15 @@ func request_RuntimeService_GetTickets_0(ctx context.Context, marshaler runtime.
 }
 
 func local_request_RuntimeService_GetTickets_0(ctx context.Context, marshaler runtime.Marshaler, server RuntimeServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq Empty
+	var protoReq RequestWithChildren
 	var metadata runtime.ServerMetadata
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_RuntimeService_GetTickets_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	msg, err := server.GetTickets(ctx, &protoReq)
 	return msg, metadata, err
@@ -1704,14 +1740,14 @@ func request_RuntimeService_UpdateTicket_0(ctx context.Context, marshaler runtim
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.UpdateTicket(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1734,14 +1770,14 @@ func local_request_RuntimeService_UpdateTicket_0(ctx context.Context, marshaler 
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.UpdateTicket(ctx, &protoReq)
@@ -1760,14 +1796,14 @@ func request_RuntimeService_DeleteTicket_0(ctx context.Context, marshaler runtim
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.DeleteTicket(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1786,14 +1822,14 @@ func local_request_RuntimeService_DeleteTicket_0(ctx context.Context, marshaler 
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.DeleteTicket(ctx, &protoReq)
@@ -1816,14 +1852,14 @@ func request_RuntimeService_UpdateTicketUsers_0(ctx context.Context, marshaler r
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.UpdateTicketUsers(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1846,14 +1882,14 @@ func local_request_RuntimeService_UpdateTicketUsers_0(ctx context.Context, marsh
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.UpdateTicketUsers(ctx, &protoReq)
@@ -1902,14 +1938,14 @@ func request_RuntimeService_UpdateTicketComment_0(ctx context.Context, marshaler
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.UpdateTicketComment(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1932,14 +1968,14 @@ func local_request_RuntimeService_UpdateTicketComment_0(ctx context.Context, mar
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.UpdateTicketComment(ctx, &protoReq)
@@ -1958,14 +1994,14 @@ func request_RuntimeService_DeleteTicketComment_0(ctx context.Context, marshaler
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.DeleteTicketComment(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1984,14 +2020,14 @@ func local_request_RuntimeService_DeleteTicketComment_0(ctx context.Context, mar
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.DeleteTicketComment(ctx, &protoReq)
@@ -1999,8 +2035,12 @@ func local_request_RuntimeService_DeleteTicketComment_0(ctx context.Context, mar
 
 }
 
+var (
+	filter_RuntimeService_GetTeam_0 = &utilities.DoubleArray{Encoding: map[string]int{"UUID": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+)
+
 func request_RuntimeService_GetTeam_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UUID
+	var protoReq RequestWithChildren
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -2010,14 +2050,21 @@ func request_RuntimeService_GetTeam_0(ctx context.Context, marshaler runtime.Mar
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_RuntimeService_GetTeam_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.GetTeam(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -2026,7 +2073,7 @@ func request_RuntimeService_GetTeam_0(ctx context.Context, marshaler runtime.Mar
 }
 
 func local_request_RuntimeService_GetTeam_0(ctx context.Context, marshaler runtime.Marshaler, server RuntimeServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UUID
+	var protoReq RequestWithChildren
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -2036,14 +2083,21 @@ func local_request_RuntimeService_GetTeam_0(ctx context.Context, marshaler runti
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_RuntimeService_GetTeam_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := server.GetTeam(ctx, &protoReq)
@@ -2051,9 +2105,20 @@ func local_request_RuntimeService_GetTeam_0(ctx context.Context, marshaler runti
 
 }
 
+var (
+	filter_RuntimeService_GetTeams_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
 func request_RuntimeService_GetTeams_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq Empty
+	var protoReq RequestWithChildren
 	var metadata runtime.ServerMetadata
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_RuntimeService_GetTeams_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	msg, err := client.GetTeams(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -2061,8 +2126,15 @@ func request_RuntimeService_GetTeams_0(ctx context.Context, marshaler runtime.Ma
 }
 
 func local_request_RuntimeService_GetTeams_0(ctx context.Context, marshaler runtime.Marshaler, server RuntimeServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq Empty
+	var protoReq RequestWithChildren
 	var metadata runtime.ServerMetadata
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_RuntimeService_GetTeams_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	msg, err := server.GetTeams(ctx, &protoReq)
 	return msg, metadata, err
@@ -2110,14 +2182,14 @@ func request_RuntimeService_UpdateTeam_0(ctx context.Context, marshaler runtime.
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.UpdateTeam(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -2140,14 +2212,14 @@ func local_request_RuntimeService_UpdateTeam_0(ctx context.Context, marshaler ru
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.UpdateTeam(ctx, &protoReq)
@@ -2166,14 +2238,14 @@ func request_RuntimeService_DeleteTeam_0(ctx context.Context, marshaler runtime.
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.DeleteTeam(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -2192,14 +2264,14 @@ func local_request_RuntimeService_DeleteTeam_0(ctx context.Context, marshaler ru
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.DeleteTeam(ctx, &protoReq)
@@ -2222,14 +2294,14 @@ func request_RuntimeService_UpdateTeamRoles_0(ctx context.Context, marshaler run
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.UpdateTeamRoles(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -2252,14 +2324,14 @@ func local_request_RuntimeService_UpdateTeamRoles_0(ctx context.Context, marshal
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.UpdateTeamRoles(ctx, &protoReq)
@@ -2267,8 +2339,12 @@ func local_request_RuntimeService_UpdateTeamRoles_0(ctx context.Context, marshal
 
 }
 
+var (
+	filter_RuntimeService_GetUser_0 = &utilities.DoubleArray{Encoding: map[string]int{"UUID": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+)
+
 func request_RuntimeService_GetUser_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UUID
+	var protoReq RequestWithChildren
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -2278,14 +2354,21 @@ func request_RuntimeService_GetUser_0(ctx context.Context, marshaler runtime.Mar
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_RuntimeService_GetUser_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.GetUser(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -2294,7 +2377,7 @@ func request_RuntimeService_GetUser_0(ctx context.Context, marshaler runtime.Mar
 }
 
 func local_request_RuntimeService_GetUser_0(ctx context.Context, marshaler runtime.Marshaler, server RuntimeServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UUID
+	var protoReq RequestWithChildren
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -2304,14 +2387,21 @@ func local_request_RuntimeService_GetUser_0(ctx context.Context, marshaler runti
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_RuntimeService_GetUser_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := server.GetUser(ctx, &protoReq)
@@ -2319,9 +2409,20 @@ func local_request_RuntimeService_GetUser_0(ctx context.Context, marshaler runti
 
 }
 
+var (
+	filter_RuntimeService_GetUsers_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
 func request_RuntimeService_GetUsers_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq Empty
+	var protoReq RequestWithChildren
 	var metadata runtime.ServerMetadata
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_RuntimeService_GetUsers_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	msg, err := client.GetUsers(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -2329,8 +2430,15 @@ func request_RuntimeService_GetUsers_0(ctx context.Context, marshaler runtime.Ma
 }
 
 func local_request_RuntimeService_GetUsers_0(ctx context.Context, marshaler runtime.Marshaler, server RuntimeServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq Empty
+	var protoReq RequestWithChildren
 	var metadata runtime.ServerMetadata
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_RuntimeService_GetUsers_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	msg, err := server.GetUsers(ctx, &protoReq)
 	return msg, metadata, err
@@ -2378,14 +2486,14 @@ func request_RuntimeService_UpdateUser_0(ctx context.Context, marshaler runtime.
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.UpdateUser(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -2408,14 +2516,14 @@ func local_request_RuntimeService_UpdateUser_0(ctx context.Context, marshaler ru
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.UpdateUser(ctx, &protoReq)
@@ -2434,14 +2542,14 @@ func request_RuntimeService_DeleteUser_0(ctx context.Context, marshaler runtime.
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.DeleteUser(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -2460,14 +2568,14 @@ func local_request_RuntimeService_DeleteUser_0(ctx context.Context, marshaler ru
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.DeleteUser(ctx, &protoReq)
@@ -2490,14 +2598,14 @@ func request_RuntimeService_UpdateUserTickets_0(ctx context.Context, marshaler r
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.UpdateUserTickets(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -2520,14 +2628,14 @@ func local_request_RuntimeService_UpdateUserTickets_0(ctx context.Context, marsh
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.UpdateUserTickets(ctx, &protoReq)
@@ -2535,8 +2643,12 @@ func local_request_RuntimeService_UpdateUserTickets_0(ctx context.Context, marsh
 
 }
 
+var (
+	filter_RuntimeService_GetRole_0 = &utilities.DoubleArray{Encoding: map[string]int{"UUID": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+)
+
 func request_RuntimeService_GetRole_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UUID
+	var protoReq RequestWithChildren
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -2546,14 +2658,21 @@ func request_RuntimeService_GetRole_0(ctx context.Context, marshaler runtime.Mar
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_RuntimeService_GetRole_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.GetRole(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -2562,7 +2681,7 @@ func request_RuntimeService_GetRole_0(ctx context.Context, marshaler runtime.Mar
 }
 
 func local_request_RuntimeService_GetRole_0(ctx context.Context, marshaler runtime.Marshaler, server RuntimeServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UUID
+	var protoReq RequestWithChildren
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -2572,14 +2691,21 @@ func local_request_RuntimeService_GetRole_0(ctx context.Context, marshaler runti
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_RuntimeService_GetRole_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := server.GetRole(ctx, &protoReq)
@@ -2587,9 +2713,20 @@ func local_request_RuntimeService_GetRole_0(ctx context.Context, marshaler runti
 
 }
 
+var (
+	filter_RuntimeService_GetRoles_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
 func request_RuntimeService_GetRoles_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq Empty
+	var protoReq RequestWithChildren
 	var metadata runtime.ServerMetadata
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_RuntimeService_GetRoles_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	msg, err := client.GetRoles(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -2597,8 +2734,15 @@ func request_RuntimeService_GetRoles_0(ctx context.Context, marshaler runtime.Ma
 }
 
 func local_request_RuntimeService_GetRoles_0(ctx context.Context, marshaler runtime.Marshaler, server RuntimeServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq Empty
+	var protoReq RequestWithChildren
 	var metadata runtime.ServerMetadata
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_RuntimeService_GetRoles_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	msg, err := server.GetRoles(ctx, &protoReq)
 	return msg, metadata, err
@@ -2646,14 +2790,14 @@ func request_RuntimeService_UpdateRole_0(ctx context.Context, marshaler runtime.
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.UpdateRole(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -2676,14 +2820,14 @@ func local_request_RuntimeService_UpdateRole_0(ctx context.Context, marshaler ru
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.UpdateRole(ctx, &protoReq)
@@ -2702,14 +2846,14 @@ func request_RuntimeService_DeleteRole_0(ctx context.Context, marshaler runtime.
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.DeleteRole(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -2728,14 +2872,14 @@ func local_request_RuntimeService_DeleteRole_0(ctx context.Context, marshaler ru
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.DeleteRole(ctx, &protoReq)
@@ -2758,14 +2902,14 @@ func request_RuntimeService_UpdateRolePermissions_0(ctx context.Context, marshal
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := client.UpdateRolePermissions(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -2788,14 +2932,14 @@ func local_request_RuntimeService_UpdateRolePermissions_0(ctx context.Context, m
 		_   = err
 	)
 
-	val, ok = pathParams["uuid"]
+	val, ok = pathParams["UUID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "uuid")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "UUID")
 	}
 
-	protoReq.Uuid, err = runtime.String(val)
+	protoReq.UUID, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "uuid", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "UUID", err)
 	}
 
 	msg, err := server.UpdateRolePermissions(ctx, &protoReq)
@@ -2867,7 +3011,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectSettingsSchema", runtime.WithHTTPPathPattern("/api/runtime/objects/settings/schema/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectSettingsSchema", runtime.WithHTTPPathPattern("/api/runtime/objects/settings/schema/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -2892,7 +3036,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectSettings", runtime.WithHTTPPathPattern("/api/runtime/objects/settings/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectSettings", runtime.WithHTTPPathPattern("/api/runtime/objects/settings/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -2917,7 +3061,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/ObjectRest", runtime.WithHTTPPathPattern("/api/runtime/objects/reset/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/ObjectRest", runtime.WithHTTPPathPattern("/api/runtime/objects/reset/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -2942,7 +3086,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateObjectTransformations", runtime.WithHTTPPathPattern("/api/runtime/objects/transformations/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateObjectTransformations", runtime.WithHTTPPathPattern("/api/runtime/objects/transformations/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -2967,7 +3111,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateObjectSettings", runtime.WithHTTPPathPattern("/api/runtime/objects/settings/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateObjectSettings", runtime.WithHTTPPathPattern("/api/runtime/objects/settings/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -2992,7 +3136,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectChilds", runtime.WithHTTPPathPattern("/api/runtime/childs/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectChilds", runtime.WithHTTPPathPattern("/api/runtime/childs/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3017,7 +3161,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectParentsChilds", runtime.WithHTTPPathPattern("/api/runtime/grandparent/childs/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectParentsChilds", runtime.WithHTTPPathPattern("/api/runtime/grandparent/childs/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3042,7 +3186,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObject", runtime.WithHTTPPathPattern("/api/runtime/objects/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObject", runtime.WithHTTPPathPattern("/api/runtime/objects/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3292,7 +3436,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectValues", runtime.WithHTTPPathPattern("/api/runtime/objects/values/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectValues", runtime.WithHTTPPathPattern("/api/runtime/objects/values/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3392,7 +3536,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteExtension", runtime.WithHTTPPathPattern("/api/extensions/delete/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteExtension", runtime.WithHTTPPathPattern("/api/extensions/delete/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3442,7 +3586,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/StartExtension", runtime.WithHTTPPathPattern("/api/extensions/start/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/StartExtension", runtime.WithHTTPPathPattern("/api/extensions/start/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3467,7 +3611,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/StopExtension", runtime.WithHTTPPathPattern("/api/extensions/stop/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/StopExtension", runtime.WithHTTPPathPattern("/api/extensions/stop/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3517,7 +3661,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetHost", runtime.WithHTTPPathPattern("/api/hosts/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetHost", runtime.WithHTTPPathPattern("/api/hosts/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3592,7 +3736,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateHost", runtime.WithHTTPPathPattern("/api/hosts/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateHost", runtime.WithHTTPPathPattern("/api/hosts/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3617,7 +3761,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteHost", runtime.WithHTTPPathPattern("/api/hosts/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteHost", runtime.WithHTTPPathPattern("/api/hosts/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3642,7 +3786,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/EnableHost", runtime.WithHTTPPathPattern("/api/hosts/{uuid}/enable"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/EnableHost", runtime.WithHTTPPathPattern("/api/hosts/{UUID}/enable"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3667,7 +3811,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/DisableHost", runtime.WithHTTPPathPattern("/api/hosts/{uuid}/disable"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/DisableHost", runtime.WithHTTPPathPattern("/api/hosts/{UUID}/disable"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3717,7 +3861,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetTicket", runtime.WithHTTPPathPattern("/api/tickets/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetTicket", runtime.WithHTTPPathPattern("/api/tickets/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3792,7 +3936,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTicket", runtime.WithHTTPPathPattern("/api/tickets/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTicket", runtime.WithHTTPPathPattern("/api/tickets/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3817,7 +3961,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteTicket", runtime.WithHTTPPathPattern("/api/tickets/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteTicket", runtime.WithHTTPPathPattern("/api/tickets/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3842,7 +3986,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTicketUsers", runtime.WithHTTPPathPattern("/api/tickets/{uuid}/users"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTicketUsers", runtime.WithHTTPPathPattern("/api/tickets/{UUID}/users"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3892,7 +4036,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTicketComment", runtime.WithHTTPPathPattern("/api/tickets/comments/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTicketComment", runtime.WithHTTPPathPattern("/api/tickets/comments/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3917,7 +4061,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteTicketComment", runtime.WithHTTPPathPattern("/api/tickets/comments/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteTicketComment", runtime.WithHTTPPathPattern("/api/tickets/comments/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3942,7 +4086,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetTeam", runtime.WithHTTPPathPattern("/api/teams/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetTeam", runtime.WithHTTPPathPattern("/api/teams/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4017,7 +4161,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTeam", runtime.WithHTTPPathPattern("/api/teams/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTeam", runtime.WithHTTPPathPattern("/api/teams/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4042,7 +4186,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteTeam", runtime.WithHTTPPathPattern("/api/teams/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteTeam", runtime.WithHTTPPathPattern("/api/teams/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4067,7 +4211,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTeamRoles", runtime.WithHTTPPathPattern("/api/teams/{uuid}/roles"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTeamRoles", runtime.WithHTTPPathPattern("/api/teams/{UUID}/roles"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4092,7 +4236,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetUser", runtime.WithHTTPPathPattern("/api/users/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetUser", runtime.WithHTTPPathPattern("/api/users/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4167,7 +4311,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateUser", runtime.WithHTTPPathPattern("/api/users/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateUser", runtime.WithHTTPPathPattern("/api/users/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4192,7 +4336,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteUser", runtime.WithHTTPPathPattern("/api/users/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteUser", runtime.WithHTTPPathPattern("/api/users/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4217,7 +4361,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateUserTickets", runtime.WithHTTPPathPattern("/api/users/{uuid}/tickets"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateUserTickets", runtime.WithHTTPPathPattern("/api/users/{UUID}/tickets"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4242,7 +4386,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetRole", runtime.WithHTTPPathPattern("/api/roles/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetRole", runtime.WithHTTPPathPattern("/api/roles/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4317,7 +4461,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateRole", runtime.WithHTTPPathPattern("/api/roles/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateRole", runtime.WithHTTPPathPattern("/api/roles/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4342,7 +4486,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteRole", runtime.WithHTTPPathPattern("/api/roles/{uuid}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteRole", runtime.WithHTTPPathPattern("/api/roles/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4367,7 +4511,7 @@ func RegisterRuntimeServiceHandlerServer(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateRolePermissions", runtime.WithHTTPPathPattern("/api/roles/{uuid}/permissions"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateRolePermissions", runtime.WithHTTPPathPattern("/api/roles/{UUID}/permissions"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4475,7 +4619,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectSettingsSchema", runtime.WithHTTPPathPattern("/api/runtime/objects/settings/schema/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectSettingsSchema", runtime.WithHTTPPathPattern("/api/runtime/objects/settings/schema/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4497,7 +4641,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectSettings", runtime.WithHTTPPathPattern("/api/runtime/objects/settings/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectSettings", runtime.WithHTTPPathPattern("/api/runtime/objects/settings/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4519,7 +4663,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/ObjectRest", runtime.WithHTTPPathPattern("/api/runtime/objects/reset/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/ObjectRest", runtime.WithHTTPPathPattern("/api/runtime/objects/reset/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4541,7 +4685,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateObjectTransformations", runtime.WithHTTPPathPattern("/api/runtime/objects/transformations/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateObjectTransformations", runtime.WithHTTPPathPattern("/api/runtime/objects/transformations/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4563,7 +4707,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateObjectSettings", runtime.WithHTTPPathPattern("/api/runtime/objects/settings/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateObjectSettings", runtime.WithHTTPPathPattern("/api/runtime/objects/settings/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4585,7 +4729,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectChilds", runtime.WithHTTPPathPattern("/api/runtime/childs/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectChilds", runtime.WithHTTPPathPattern("/api/runtime/childs/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4607,7 +4751,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectParentsChilds", runtime.WithHTTPPathPattern("/api/runtime/grandparent/childs/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectParentsChilds", runtime.WithHTTPPathPattern("/api/runtime/grandparent/childs/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4629,7 +4773,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObject", runtime.WithHTTPPathPattern("/api/runtime/objects/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObject", runtime.WithHTTPPathPattern("/api/runtime/objects/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4849,7 +4993,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectValues", runtime.WithHTTPPathPattern("/api/runtime/objects/values/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetObjectValues", runtime.WithHTTPPathPattern("/api/runtime/objects/values/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4937,7 +5081,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteExtension", runtime.WithHTTPPathPattern("/api/extensions/delete/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteExtension", runtime.WithHTTPPathPattern("/api/extensions/delete/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4981,7 +5125,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/StartExtension", runtime.WithHTTPPathPattern("/api/extensions/start/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/StartExtension", runtime.WithHTTPPathPattern("/api/extensions/start/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5003,7 +5147,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/StopExtension", runtime.WithHTTPPathPattern("/api/extensions/stop/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/StopExtension", runtime.WithHTTPPathPattern("/api/extensions/stop/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5047,7 +5191,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetHost", runtime.WithHTTPPathPattern("/api/hosts/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetHost", runtime.WithHTTPPathPattern("/api/hosts/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5113,7 +5257,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateHost", runtime.WithHTTPPathPattern("/api/hosts/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateHost", runtime.WithHTTPPathPattern("/api/hosts/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5135,7 +5279,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteHost", runtime.WithHTTPPathPattern("/api/hosts/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteHost", runtime.WithHTTPPathPattern("/api/hosts/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5157,7 +5301,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/EnableHost", runtime.WithHTTPPathPattern("/api/hosts/{uuid}/enable"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/EnableHost", runtime.WithHTTPPathPattern("/api/hosts/{UUID}/enable"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5179,7 +5323,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/DisableHost", runtime.WithHTTPPathPattern("/api/hosts/{uuid}/disable"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/DisableHost", runtime.WithHTTPPathPattern("/api/hosts/{UUID}/disable"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5223,7 +5367,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetTicket", runtime.WithHTTPPathPattern("/api/tickets/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetTicket", runtime.WithHTTPPathPattern("/api/tickets/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5289,7 +5433,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTicket", runtime.WithHTTPPathPattern("/api/tickets/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTicket", runtime.WithHTTPPathPattern("/api/tickets/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5311,7 +5455,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteTicket", runtime.WithHTTPPathPattern("/api/tickets/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteTicket", runtime.WithHTTPPathPattern("/api/tickets/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5333,7 +5477,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTicketUsers", runtime.WithHTTPPathPattern("/api/tickets/{uuid}/users"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTicketUsers", runtime.WithHTTPPathPattern("/api/tickets/{UUID}/users"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5377,7 +5521,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTicketComment", runtime.WithHTTPPathPattern("/api/tickets/comments/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTicketComment", runtime.WithHTTPPathPattern("/api/tickets/comments/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5399,7 +5543,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteTicketComment", runtime.WithHTTPPathPattern("/api/tickets/comments/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteTicketComment", runtime.WithHTTPPathPattern("/api/tickets/comments/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5421,7 +5565,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetTeam", runtime.WithHTTPPathPattern("/api/teams/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetTeam", runtime.WithHTTPPathPattern("/api/teams/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5487,7 +5631,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTeam", runtime.WithHTTPPathPattern("/api/teams/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTeam", runtime.WithHTTPPathPattern("/api/teams/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5509,7 +5653,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteTeam", runtime.WithHTTPPathPattern("/api/teams/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteTeam", runtime.WithHTTPPathPattern("/api/teams/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5531,7 +5675,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTeamRoles", runtime.WithHTTPPathPattern("/api/teams/{uuid}/roles"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateTeamRoles", runtime.WithHTTPPathPattern("/api/teams/{UUID}/roles"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5553,7 +5697,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetUser", runtime.WithHTTPPathPattern("/api/users/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetUser", runtime.WithHTTPPathPattern("/api/users/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5619,7 +5763,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateUser", runtime.WithHTTPPathPattern("/api/users/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateUser", runtime.WithHTTPPathPattern("/api/users/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5641,7 +5785,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteUser", runtime.WithHTTPPathPattern("/api/users/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteUser", runtime.WithHTTPPathPattern("/api/users/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5663,7 +5807,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateUserTickets", runtime.WithHTTPPathPattern("/api/users/{uuid}/tickets"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateUserTickets", runtime.WithHTTPPathPattern("/api/users/{UUID}/tickets"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5685,7 +5829,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetRole", runtime.WithHTTPPathPattern("/api/roles/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/GetRole", runtime.WithHTTPPathPattern("/api/roles/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5751,7 +5895,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateRole", runtime.WithHTTPPathPattern("/api/roles/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateRole", runtime.WithHTTPPathPattern("/api/roles/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5773,7 +5917,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteRole", runtime.WithHTTPPathPattern("/api/roles/{uuid}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/DeleteRole", runtime.WithHTTPPathPattern("/api/roles/{UUID}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5795,7 +5939,7 @@ func RegisterRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Serve
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateRolePermissions", runtime.WithHTTPPathPattern("/api/roles/{uuid}/permissions"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/App.Runtime.RuntimeService/UpdateRolePermissions", runtime.WithHTTPPathPattern("/api/roles/{UUID}/permissions"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5819,21 +5963,21 @@ var (
 
 	pattern_RuntimeService_GetObjectsRoot_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "runtime", "root"}, ""))
 
-	pattern_RuntimeService_GetObjectSettingsSchema_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "runtime", "objects", "settings", "schema", "uuid"}, ""))
+	pattern_RuntimeService_GetObjectSettingsSchema_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "runtime", "objects", "settings", "schema", "UUID"}, ""))
 
-	pattern_RuntimeService_GetObjectSettings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "runtime", "objects", "settings", "uuid"}, ""))
+	pattern_RuntimeService_GetObjectSettings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "runtime", "objects", "settings", "UUID"}, ""))
 
-	pattern_RuntimeService_ObjectRest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "runtime", "objects", "reset", "uuid"}, ""))
+	pattern_RuntimeService_ObjectRest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "runtime", "objects", "reset", "UUID"}, ""))
 
-	pattern_RuntimeService_UpdateObjectTransformations_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "runtime", "objects", "transformations", "uuid"}, ""))
+	pattern_RuntimeService_UpdateObjectTransformations_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "runtime", "objects", "transformations", "UUID"}, ""))
 
-	pattern_RuntimeService_UpdateObjectSettings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "runtime", "objects", "settings", "uuid"}, ""))
+	pattern_RuntimeService_UpdateObjectSettings_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "runtime", "objects", "settings", "UUID"}, ""))
 
-	pattern_RuntimeService_GetObjectChilds_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "runtime", "childs", "uuid"}, ""))
+	pattern_RuntimeService_GetObjectChilds_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "runtime", "childs", "UUID"}, ""))
 
-	pattern_RuntimeService_GetObjectParentsChilds_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "runtime", "grandparent", "childs", "uuid"}, ""))
+	pattern_RuntimeService_GetObjectParentsChilds_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "runtime", "grandparent", "childs", "UUID"}, ""))
 
-	pattern_RuntimeService_GetObject_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "runtime", "objects", "uuid"}, ""))
+	pattern_RuntimeService_GetObject_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "runtime", "objects", "UUID"}, ""))
 
 	pattern_RuntimeService_GetObjectHelp_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "runtime", "objects", "help", "id"}, ""))
 
@@ -5853,7 +5997,7 @@ var (
 
 	pattern_RuntimeService_GetObjectsValues_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"api", "runtime", "objects", "values"}, ""))
 
-	pattern_RuntimeService_GetObjectValues_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "runtime", "objects", "values", "uuid"}, ""))
+	pattern_RuntimeService_GetObjectValues_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"api", "runtime", "objects", "values", "UUID"}, ""))
 
 	pattern_RuntimeService_GetPortValue_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"api", "runtime", "objects", "objectUUID", "port", "portID"}, ""))
 
@@ -5861,85 +6005,85 @@ var (
 
 	pattern_RuntimeService_AddExtension_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "extensions", "add"}, ""))
 
-	pattern_RuntimeService_DeleteExtension_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "extensions", "delete", "uuid"}, ""))
+	pattern_RuntimeService_DeleteExtension_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "extensions", "delete", "UUID"}, ""))
 
 	pattern_RuntimeService_AllExtension_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "extensions"}, ""))
 
-	pattern_RuntimeService_StartExtension_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "extensions", "start", "uuid"}, ""))
+	pattern_RuntimeService_StartExtension_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "extensions", "start", "UUID"}, ""))
 
-	pattern_RuntimeService_StopExtension_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "extensions", "stop", "uuid"}, ""))
+	pattern_RuntimeService_StopExtension_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "extensions", "stop", "UUID"}, ""))
 
 	pattern_RuntimeService_UploadZipFile_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "runtime", "upload"}, ""))
 
-	pattern_RuntimeService_GetHost_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "hosts", "uuid"}, ""))
+	pattern_RuntimeService_GetHost_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "hosts", "UUID"}, ""))
 
 	pattern_RuntimeService_GetHosts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "hosts"}, ""))
 
 	pattern_RuntimeService_CreateHost_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "hosts"}, ""))
 
-	pattern_RuntimeService_UpdateHost_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "hosts", "uuid"}, ""))
+	pattern_RuntimeService_UpdateHost_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "hosts", "UUID"}, ""))
 
-	pattern_RuntimeService_DeleteHost_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "hosts", "uuid"}, ""))
+	pattern_RuntimeService_DeleteHost_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "hosts", "UUID"}, ""))
 
-	pattern_RuntimeService_EnableHost_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"api", "hosts", "uuid", "enable"}, ""))
+	pattern_RuntimeService_EnableHost_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"api", "hosts", "UUID", "enable"}, ""))
 
-	pattern_RuntimeService_DisableHost_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"api", "hosts", "uuid", "disable"}, ""))
+	pattern_RuntimeService_DisableHost_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"api", "hosts", "UUID", "disable"}, ""))
 
 	pattern_RuntimeService_SendHostMQTT_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "hosts", "mqtt"}, ""))
 
-	pattern_RuntimeService_GetTicket_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "tickets", "uuid"}, ""))
+	pattern_RuntimeService_GetTicket_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "tickets", "UUID"}, ""))
 
 	pattern_RuntimeService_GetTickets_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "tickets"}, ""))
 
 	pattern_RuntimeService_CreateTicket_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "tickets"}, ""))
 
-	pattern_RuntimeService_UpdateTicket_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "tickets", "uuid"}, ""))
+	pattern_RuntimeService_UpdateTicket_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "tickets", "UUID"}, ""))
 
-	pattern_RuntimeService_DeleteTicket_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "tickets", "uuid"}, ""))
+	pattern_RuntimeService_DeleteTicket_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "tickets", "UUID"}, ""))
 
-	pattern_RuntimeService_UpdateTicketUsers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"api", "tickets", "uuid", "users"}, ""))
+	pattern_RuntimeService_UpdateTicketUsers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"api", "tickets", "UUID", "users"}, ""))
 
 	pattern_RuntimeService_CreateTicketComment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "tickets", "comments"}, ""))
 
-	pattern_RuntimeService_UpdateTicketComment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "tickets", "comments", "uuid"}, ""))
+	pattern_RuntimeService_UpdateTicketComment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "tickets", "comments", "UUID"}, ""))
 
-	pattern_RuntimeService_DeleteTicketComment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "tickets", "comments", "uuid"}, ""))
+	pattern_RuntimeService_DeleteTicketComment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "tickets", "comments", "UUID"}, ""))
 
-	pattern_RuntimeService_GetTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "teams", "uuid"}, ""))
+	pattern_RuntimeService_GetTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "teams", "UUID"}, ""))
 
 	pattern_RuntimeService_GetTeams_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "teams"}, ""))
 
 	pattern_RuntimeService_CreateTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "teams"}, ""))
 
-	pattern_RuntimeService_UpdateTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "teams", "uuid"}, ""))
+	pattern_RuntimeService_UpdateTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "teams", "UUID"}, ""))
 
-	pattern_RuntimeService_DeleteTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "teams", "uuid"}, ""))
+	pattern_RuntimeService_DeleteTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "teams", "UUID"}, ""))
 
-	pattern_RuntimeService_UpdateTeamRoles_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"api", "teams", "uuid", "roles"}, ""))
+	pattern_RuntimeService_UpdateTeamRoles_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"api", "teams", "UUID", "roles"}, ""))
 
-	pattern_RuntimeService_GetUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "users", "uuid"}, ""))
+	pattern_RuntimeService_GetUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "users", "UUID"}, ""))
 
 	pattern_RuntimeService_GetUsers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "users"}, ""))
 
 	pattern_RuntimeService_CreateUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "users"}, ""))
 
-	pattern_RuntimeService_UpdateUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "users", "uuid"}, ""))
+	pattern_RuntimeService_UpdateUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "users", "UUID"}, ""))
 
-	pattern_RuntimeService_DeleteUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "users", "uuid"}, ""))
+	pattern_RuntimeService_DeleteUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "users", "UUID"}, ""))
 
-	pattern_RuntimeService_UpdateUserTickets_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"api", "users", "uuid", "tickets"}, ""))
+	pattern_RuntimeService_UpdateUserTickets_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"api", "users", "UUID", "tickets"}, ""))
 
-	pattern_RuntimeService_GetRole_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "roles", "uuid"}, ""))
+	pattern_RuntimeService_GetRole_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "roles", "UUID"}, ""))
 
 	pattern_RuntimeService_GetRoles_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "roles"}, ""))
 
 	pattern_RuntimeService_CreateRole_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "roles"}, ""))
 
-	pattern_RuntimeService_UpdateRole_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "roles", "uuid"}, ""))
+	pattern_RuntimeService_UpdateRole_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "roles", "UUID"}, ""))
 
-	pattern_RuntimeService_DeleteRole_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "roles", "uuid"}, ""))
+	pattern_RuntimeService_DeleteRole_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"api", "roles", "UUID"}, ""))
 
-	pattern_RuntimeService_UpdateRolePermissions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"api", "roles", "uuid", "permissions"}, ""))
+	pattern_RuntimeService_UpdateRolePermissions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"api", "roles", "UUID", "permissions"}, ""))
 )
 
 var (

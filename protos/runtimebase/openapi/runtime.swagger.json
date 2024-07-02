@@ -102,7 +102,7 @@
         ]
       }
     },
-    "/api/extensions/delete/{uuid}": {
+    "/api/extensions/delete/{UUID}": {
       "delete": {
         "operationId": "RuntimeService_DeleteExtension",
         "responses": {
@@ -121,7 +121,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -165,7 +165,7 @@
         ]
       }
     },
-    "/api/extensions/start/{uuid}": {
+    "/api/extensions/start/{UUID}": {
       "post": {
         "operationId": "RuntimeService_StartExtension",
         "responses": {
@@ -184,7 +184,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -195,7 +195,7 @@
         ]
       }
     },
-    "/api/extensions/stop/{uuid}": {
+    "/api/extensions/stop/{UUID}": {
       "post": {
         "operationId": "RuntimeService_StopExtension",
         "responses": {
@@ -214,7 +214,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -309,7 +309,7 @@
         ]
       }
     },
-    "/api/hosts/{uuid}": {
+    "/api/hosts/{UUID}": {
       "get": {
         "summary": "Hosts",
         "operationId": "RuntimeService_GetHost",
@@ -329,7 +329,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -357,7 +357,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -385,7 +385,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -404,7 +404,7 @@
         ]
       }
     },
-    "/api/hosts/{uuid}/disable": {
+    "/api/hosts/{UUID}/disable": {
       "post": {
         "operationId": "RuntimeService_DisableHost",
         "responses": {
@@ -423,7 +423,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -434,7 +434,7 @@
         ]
       }
     },
-    "/api/hosts/{uuid}/enable": {
+    "/api/hosts/{UUID}/enable": {
       "post": {
         "operationId": "RuntimeService_EnableHost",
         "responses": {
@@ -453,7 +453,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -525,6 +525,22 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "UUID",
+            "description": "Path parameter",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "with_children",
+            "description": "Query parameter",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
         "tags": [
           "RuntimeService"
         ]
@@ -560,7 +576,7 @@
         ]
       }
     },
-    "/api/roles/{uuid}": {
+    "/api/roles/{UUID}": {
       "get": {
         "summary": "Roles",
         "operationId": "RuntimeService_GetRole",
@@ -580,10 +596,18 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
+            "description": "Path parameter",
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "with_children",
+            "description": "Query parameter",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -608,7 +632,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -636,7 +660,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -655,7 +679,7 @@
         ]
       }
     },
-    "/api/roles/{uuid}/permissions": {
+    "/api/roles/{UUID}/permissions": {
       "put": {
         "operationId": "RuntimeService_UpdateRolePermissions",
         "responses": {
@@ -674,7 +698,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -785,7 +809,7 @@
         ]
       }
     },
-    "/api/runtime/childs/{uuid}": {
+    "/api/runtime/childs/{UUID}": {
       "get": {
         "operationId": "RuntimeService_GetObjectChilds",
         "responses": {
@@ -804,7 +828,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -821,7 +845,7 @@
         ]
       }
     },
-    "/api/runtime/grandparent/childs/{uuid}": {
+    "/api/runtime/grandparent/childs/{UUID}": {
       "get": {
         "summary": "will get the childs of the parents, parents. So go up the tree two levels",
         "operationId": "RuntimeService_GetObjectParentsChilds",
@@ -841,7 +865,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -888,7 +912,7 @@
         ]
       }
     },
-    "/api/runtime/objects/reset/{uuid}": {
+    "/api/runtime/objects/reset/{UUID}": {
       "post": {
         "operationId": "RuntimeService_ObjectRest",
         "responses": {
@@ -907,7 +931,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -926,7 +950,7 @@
         ]
       }
     },
-    "/api/runtime/objects/settings/schema/{uuid}": {
+    "/api/runtime/objects/settings/schema/{UUID}": {
       "get": {
         "operationId": "RuntimeService_GetObjectSettingsSchema",
         "responses": {
@@ -945,7 +969,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -956,7 +980,7 @@
         ]
       }
     },
-    "/api/runtime/objects/settings/{uuid}": {
+    "/api/runtime/objects/settings/{UUID}": {
       "get": {
         "operationId": "RuntimeService_GetObjectSettings",
         "responses": {
@@ -975,7 +999,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1003,7 +1027,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1022,7 +1046,7 @@
         ]
       }
     },
-    "/api/runtime/objects/transformations/{uuid}": {
+    "/api/runtime/objects/transformations/{UUID}": {
       "post": {
         "operationId": "RuntimeService_UpdateObjectTransformations",
         "responses": {
@@ -1041,7 +1065,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1122,7 +1146,7 @@
         ]
       }
     },
-    "/api/runtime/objects/values/{uuid}": {
+    "/api/runtime/objects/values/{UUID}": {
       "get": {
         "summary": "all port values for an object",
         "operationId": "RuntimeService_GetObjectValues",
@@ -1142,13 +1166,49 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
             "name": "asBytes",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "RuntimeService"
+        ]
+      }
+    },
+    "/api/runtime/objects/{UUID}": {
+      "get": {
+        "operationId": "RuntimeService_GetObject",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RuntimeObjectConfig"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "UUID",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "withPoints",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -1189,42 +1249,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          }
-        ],
-        "tags": [
-          "RuntimeService"
-        ]
-      }
-    },
-    "/api/runtime/objects/{uuid}": {
-      "get": {
-        "operationId": "RuntimeService_GetObject",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/RuntimeObjectConfig"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "withPoints",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
           }
         ],
         "tags": [
@@ -1341,6 +1365,22 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "UUID",
+            "description": "Path parameter",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "with_children",
+            "description": "Query parameter",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
         "tags": [
           "RuntimeService"
         ]
@@ -1376,7 +1416,7 @@
         ]
       }
     },
-    "/api/teams/{uuid}": {
+    "/api/teams/{UUID}": {
       "get": {
         "summary": "Teams",
         "operationId": "RuntimeService_GetTeam",
@@ -1396,10 +1436,18 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
+            "description": "Path parameter",
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "with_children",
+            "description": "Query parameter",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -1424,7 +1472,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1452,7 +1500,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1471,7 +1519,7 @@
         ]
       }
     },
-    "/api/teams/{uuid}/roles": {
+    "/api/teams/{UUID}/roles": {
       "put": {
         "operationId": "RuntimeService_UpdateTeamRoles",
         "responses": {
@@ -1490,7 +1538,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1526,6 +1574,22 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "UUID",
+            "description": "Path parameter",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "with_children",
+            "description": "Query parameter",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
         "tags": [
           "RuntimeService"
         ]
@@ -1594,7 +1658,7 @@
         ]
       }
     },
-    "/api/tickets/comments/{uuid}": {
+    "/api/tickets/comments/{UUID}": {
       "delete": {
         "operationId": "RuntimeService_DeleteTicketComment",
         "responses": {
@@ -1613,7 +1677,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1641,7 +1705,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1660,7 +1724,7 @@
         ]
       }
     },
-    "/api/tickets/{uuid}": {
+    "/api/tickets/{UUID}": {
       "get": {
         "summary": "Tickets",
         "operationId": "RuntimeService_GetTicket",
@@ -1680,10 +1744,18 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
+            "description": "Path parameter",
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "with_children",
+            "description": "Query parameter",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -1708,7 +1780,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1736,7 +1808,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1755,7 +1827,7 @@
         ]
       }
     },
-    "/api/tickets/{uuid}/users": {
+    "/api/tickets/{UUID}/users": {
       "put": {
         "operationId": "RuntimeService_UpdateTicketUsers",
         "responses": {
@@ -1774,7 +1846,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1810,6 +1882,22 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "UUID",
+            "description": "Path parameter",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "with_children",
+            "description": "Query parameter",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
         "tags": [
           "RuntimeService"
         ]
@@ -1845,7 +1933,7 @@
         ]
       }
     },
-    "/api/users/{uuid}": {
+    "/api/users/{UUID}": {
       "get": {
         "summary": "Users",
         "operationId": "RuntimeService_GetUser",
@@ -1865,10 +1953,18 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
+            "description": "Path parameter",
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "with_children",
+            "description": "Query parameter",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -1893,7 +1989,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1921,7 +2017,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1940,7 +2036,7 @@
         ]
       }
     },
-    "/api/users/{uuid}/tickets": {
+    "/api/users/{UUID}/tickets": {
       "put": {
         "operationId": "RuntimeService_UpdateUserTickets",
         "responses": {
@@ -1959,7 +2055,7 @@
         },
         "parameters": [
           {
-            "name": "uuid",
+            "name": "UUID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1983,7 +2079,7 @@
     "RuntimeAncestorObjectTree": {
       "type": "object",
       "properties": {
-        "uuid": {
+        "UUID": {
           "type": "string"
         },
         "name": {
@@ -2206,7 +2302,7 @@
     "RuntimeExtension": {
       "type": "object",
       "properties": {
-        "uuid": {
+        "UUID": {
           "type": "string"
         },
         "name": {
@@ -2265,7 +2361,7 @@
     "RuntimeHost": {
       "type": "object",
       "properties": {
-        "uuid": {
+        "UUID": {
           "type": "string"
         },
         "name": {
@@ -2581,7 +2677,7 @@
         "name": {
           "type": "string"
         },
-        "uuid": {
+        "UUID": {
           "type": "string"
         },
         "parentUUID": {
@@ -2648,7 +2744,7 @@
     "RuntimeObjectSettings": {
       "type": "object",
       "properties": {
-        "uuid": {
+        "UUID": {
           "type": "string"
         },
         "value": {
@@ -2980,7 +3076,7 @@
     "RuntimeRole": {
       "type": "object",
       "properties": {
-        "uuid": {
+        "UUID": {
           "type": "string"
         },
         "name": {
@@ -3261,7 +3357,7 @@
     "RuntimeTeam": {
       "type": "object",
       "properties": {
-        "uuid": {
+        "UUID": {
           "type": "string"
         },
         "name": {
@@ -3304,7 +3400,7 @@
     "RuntimeTicket": {
       "type": "object",
       "properties": {
-        "uuid": {
+        "UUID": {
           "type": "string"
         },
         "title": {
@@ -3348,7 +3444,7 @@
     "RuntimeTicketComment": {
       "type": "object",
       "properties": {
-        "uuid": {
+        "UUID": {
           "type": "string"
         },
         "ticketUUID": {
@@ -3415,7 +3511,7 @@
     "RuntimeUser": {
       "type": "object",
       "properties": {
-        "uuid": {
+        "UUID": {
           "type": "string"
         },
         "username": {
