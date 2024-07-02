@@ -34,7 +34,7 @@ func (t *tree) GetTreeMapRoot() *runtime.ObjectsRootMap {
 		details := &runtime.ObjectExtractedDetails{
 			Id:         obj.GetID(),
 			Name:       obj.GetName(),
-			UUID:       obj.GetUUID(),
+			Uuid:       obj.GetUUID(),
 			ParentUUID: obj.GetParentUUID(),
 			Category:   obj.GetCategory(),
 			ObjectType: string(obj.GetObjectType()),
@@ -90,7 +90,7 @@ func (t *tree) buildChildTree(parentUUID string) *runtime.AncestorObjectTree {
 	for _, obj := range t.objects {
 		if obj.GetParentUUID() == parentUUID {
 			node := &runtime.AncestorObjectTree{
-				UUID:       obj.GetUUID(),
+				Uuid:       obj.GetUUID(),
 				Name:       obj.GetName(),
 				Id:         obj.GetID(),
 				ParentUUID: obj.GetUUID(),
@@ -111,7 +111,7 @@ func (t *tree) buildAncestorTree(childUUID string) *runtime.AncestorObjectTree {
 	for _, obj := range t.objects {
 		if obj.GetUUID() == childUUID {
 			node := &runtime.AncestorObjectTree{
-				UUID:       obj.GetUUID(),
+				Uuid:       obj.GetUUID(),
 				Name:       obj.GetName(),
 				Id:         obj.GetID(),
 				ParentUUID: obj.GetUUID(),

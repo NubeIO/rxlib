@@ -20,36 +20,36 @@ service RuntimeService {
     };
   };
 
-  rpc GetObjectSettingsSchema (UUID) returns (ObjectSettings) {
+  rpc GetObjectSettingsSchema (Request) returns (ObjectSettings) {
     option (google.api.http) = {
-      get: "/api/runtime/objects/settings/schema/{UUID}"
+      get: "/api/runtime/objects/settings/schema/{uuid}"
     };
   };
 
-  rpc GetObjectSettings (UUID) returns (ObjectSettings) {
+  rpc GetObjectSettings (Request) returns (ObjectSettings) {
     option (google.api.http) = {
-      get: "/api/runtime/objects/settings/{UUID}"
+      get: "/api/runtime/objects/settings/{uuid}"
     };
   };
 
 
-  rpc ObjectRest (UUID) returns (Message) {
+  rpc ObjectRest (Request) returns (Message) {
     option (google.api.http) = {
-      post: "/api/runtime/objects/reset/{UUID}"
+      post: "/api/runtime/objects/reset/{uuid}"
       body: "*"
     };
   };
 
   rpc UpdateObjectTransformations (ObjectTransformations) returns (Message) {
     option (google.api.http) = {
-      post: "/api/runtime/objects/transformations/{UUID}"
+      post: "/api/runtime/objects/transformations/{uuid}"
       body: "*"
     };
   };
 
   rpc UpdateObjectSettings (ObjectSettings) returns (ObjectSettings) {
     option (google.api.http) = {
-      post: "/api/runtime/objects/settings/{UUID}"
+      post: "/api/runtime/objects/settings/{uuid}"
       body: "*"
     };
   };
@@ -57,20 +57,20 @@ service RuntimeService {
 
   rpc GetObjectChilds (ObjectRequest) returns (ObjectsResponse) {
     option (google.api.http) = {
-      get: "/api/runtime/childs/{UUID}"
+      get: "/api/runtime/childs/{uuid}"
     };
   };
 
   // will get the childs of the parents, parents. So go up the tree two levels
   rpc GetObjectParentsChilds (ObjectRequest) returns (ObjectsResponse) {
     option (google.api.http) = {
-      get: "/api/runtime/grandparent/childs/{UUID}"
+      get: "/api/runtime/grandparent/childs/{uuid}"
     };
   };
 
   rpc GetObject (ObjectRequest) returns (ObjectConfig) {
     option (google.api.http) = {
-      get: "/api/runtime/objects/{UUID}"
+      get: "/api/runtime/objects/{uuid}"
     };
   };
 
@@ -140,7 +140,7 @@ service RuntimeService {
   // all port values for an object
   rpc GetObjectValues (ObjectsValueRequest) returns (GetObjectValuesResponse) {
     option (google.api.http) = {
-      get: "/api/runtime/objects/values/{UUID}"
+      get: "/api/runtime/objects/values/{uuid}"
     };
   };
 
@@ -168,7 +168,7 @@ service RuntimeService {
 
   rpc DeleteExtension (ExtensionId) returns (Empty) {
     option (google.api.http) = {
-      delete: "/api/extensions/delete/{UUID}"
+      delete: "/api/extensions/delete/{uuid}"
     };
   }
 
@@ -180,13 +180,13 @@ service RuntimeService {
 
   rpc StartExtension (ExtensionId) returns (Empty) {
     option (google.api.http) = {
-      post: "/api/extensions/start/{UUID}"
+      post: "/api/extensions/start/{uuid}"
     };
   }
 
   rpc StopExtension (ExtensionId) returns (Empty) {
     option (google.api.http) = {
-      post: "/api/extensions/stop/{UUID}"
+      post: "/api/extensions/stop/{uuid}"
     };
   }
 
@@ -198,9 +198,9 @@ service RuntimeService {
   }
 
   // Hosts
-  rpc GetHost (UUID) returns (Host) {
+  rpc GetHost (Request) returns (Host) {
     option (google.api.http) = {
-      get: "/api/hosts/{UUID}"
+      get: "/api/hosts/{uuid}"
     };
   }
 
@@ -219,26 +219,26 @@ service RuntimeService {
 
   rpc UpdateHost (Host) returns (Host) {
     option (google.api.http) = {
-      patch: "/api/hosts/{UUID}"
+      patch: "/api/hosts/{uuid}"
       body: "*"
     };
   }
 
-  rpc DeleteHost (UUID) returns (Message) {
+  rpc DeleteHost (Request) returns (Message) {
     option (google.api.http) = {
-      delete: "/api/hosts/{UUID}"
+      delete: "/api/hosts/{uuid}"
     };
   }
 
-  rpc EnableHost (UUID) returns (Empty) {
+  rpc EnableHost (Request) returns (Empty) {
     option (google.api.http) = {
-      post: "/api/hosts/{UUID}/enable"
+      post: "/api/hosts/{uuid}/enable"
     };
   }
 
-  rpc DisableHost (UUID) returns (Empty) {
+  rpc DisableHost (Request) returns (Empty) {
     option (google.api.http) = {
-      post: "/api/hosts/{UUID}/disable"
+      post: "/api/hosts/{uuid}/disable"
     };
   }
 
@@ -253,7 +253,7 @@ service RuntimeService {
   // Tickets
   rpc GetTicket (RequestWithChildren) returns (Ticket) {
     option (google.api.http) = {
-      get: "/api/tickets/{UUID}"
+      get: "/api/tickets/{uuid}"
     };
   }
 
@@ -273,20 +273,20 @@ service RuntimeService {
 
   rpc UpdateTicket (Ticket) returns (Ticket) {
     option (google.api.http) = {
-      patch: "/api/tickets/{UUID}"
+      patch: "/api/tickets/{uuid}"
       body: "*"
     };
   }
 
-  rpc DeleteTicket (UUID) returns (Message) {
+  rpc DeleteTicket (Request) returns (Message) {
     option (google.api.http) = {
-      delete: "/api/tickets/{UUID}"
+      delete: "/api/tickets/{uuid}"
     };
   }
 
   rpc UpdateTicketUsers (TicketUsersRequest) returns (TicketUsersResponse) {
     option (google.api.http) = {
-      put: "/api/tickets/{UUID}/users"
+      put: "/api/tickets/{uuid}/users"
       body: "*"
     };
   }
@@ -302,21 +302,21 @@ service RuntimeService {
 
   rpc UpdateTicketComment (TicketComment) returns (TicketComment) {
     option (google.api.http) = {
-      patch: "/api/tickets/comments/{UUID}"
+      patch: "/api/tickets/comments/{uuid}"
       body: "*"
     };
   }
 
-  rpc DeleteTicketComment (UUID) returns (Message) {
+  rpc DeleteTicketComment (Request) returns (Message) {
     option (google.api.http) = {
-      delete: "/api/tickets/comments/{UUID}"
+      delete: "/api/tickets/comments/{uuid}"
     };
   }
 
   // Teams
   rpc GetTeam (RequestWithChildren) returns (Team) {
     option (google.api.http) = {
-      get: "/api/teams/{UUID}"
+      get: "/api/teams/{uuid}"
     };
   }
 
@@ -335,20 +335,20 @@ service RuntimeService {
 
   rpc UpdateTeam (Team) returns (Team) {
     option (google.api.http) = {
-      patch: "/api/teams/{UUID}"
+      patch: "/api/teams/{uuid}"
       body: "*"
     };
   }
 
-  rpc DeleteTeam (UUID) returns (Message) {
+  rpc DeleteTeam (Request) returns (Message) {
     option (google.api.http) = {
-      delete: "/api/teams/{UUID}"
+      delete: "/api/teams/{uuid}"
     };
   }
 
   rpc UpdateTeamRoles (TeamRolesRequest) returns (TeamRolesResponse) {
     option (google.api.http) = {
-      put: "/api/teams/{UUID}/roles"
+      put: "/api/teams/{uuid}/roles"
       body: "*"
     };
   }
@@ -357,7 +357,7 @@ service RuntimeService {
   // Users
   rpc GetUser (RequestWithChildren) returns (User) {
     option (google.api.http) = {
-      get: "/api/users/{UUID}"
+      get: "/api/users/{uuid}"
     };
   }
 
@@ -376,20 +376,20 @@ service RuntimeService {
 
   rpc UpdateUser (User) returns (User) {
     option (google.api.http) = {
-      patch: "/api/users/{UUID}"
+      patch: "/api/users/{uuid}"
       body: "*"
     };
   }
 
-  rpc DeleteUser (UUID) returns (Message) {
+  rpc DeleteUser (Request) returns (Message) {
     option (google.api.http) = {
-      delete: "/api/users/{UUID}"
+      delete: "/api/users/{uuid}"
     };
   }
 
   rpc UpdateUserTickets (UserTicketsRequest) returns (UserTicketsResponse) {
     option (google.api.http) = {
-      put: "/api/users/{UUID}/tickets"
+      put: "/api/users/{uuid}/tickets"
       body: "*"
     };
   }
@@ -397,7 +397,7 @@ service RuntimeService {
   // Roles
   rpc GetRole (RequestWithChildren) returns (Role) {
     option (google.api.http) = {
-      get: "/api/roles/{UUID}"
+      get: "/api/roles/{uuid}"
     };
   }
 
@@ -416,20 +416,20 @@ service RuntimeService {
 
   rpc UpdateRole (Role) returns (Role) {
     option (google.api.http) = {
-      patch: "/api/roles/{UUID}"
+      patch: "/api/roles/{uuid}"
       body: "*"
     };
   }
 
-  rpc DeleteRole (UUID) returns (Message) {
+  rpc DeleteRole (Request) returns (Message) {
     option (google.api.http) = {
-      delete: "/api/roles/{UUID}"
+      delete: "/api/roles/{uuid}"
     };
   }
 
   rpc UpdateRolePermissions (PermissionsRequest) returns (PermissionsResponse) {
     option (google.api.http) = {
-      put: "/api/roles/{UUID}/permissions"
+      put: "/api/roles/{uuid}/permissions"
       body: "*"
     };
   }
@@ -438,12 +438,12 @@ service RuntimeService {
   rpc ExtensionStream(stream MessageRequest) returns (stream MessageRequest);
 }
 
-message UUID {
-  string UUID = 1;
+message Request {
+  string uuid = 1;
 }
 
 message RequestWithChildren {
-  string UUID = 1;           // Path parameter
+  string uuid = 1;           // Path parameter
   bool with_children = 2;    // Query parameter
 }
 
@@ -472,7 +472,7 @@ message MessageRequest {
 
 message PluginInfo {
   string name = 1;
-  string UUID = 2;
+  string uuid = 2;
   repeated ObjectConfig pallet = 4;
 }
 
@@ -493,7 +493,7 @@ message ObjectsValuesRequest {
 }
 
 message ObjectsValueRequest {
-  string UUID = 1;
+  string uuid = 1;
   bool asBytes = 2;
 }
 
@@ -630,13 +630,13 @@ message ObjectID {
 }
 
 message ObjectSettings {
-  string UUID = 1;
+  string uuid = 1;
   string value = 2;
   bool persist = 4;
 }
 
 message ObjectTransformations {
-  string UUID = 1;
+  string uuid = 1;
   string portID = 2;
   bool applyTransformation = 3;
   bool persist = 4;
@@ -644,7 +644,7 @@ message ObjectTransformations {
 }
 
 message ObjectRequest {
-  string UUID = 1;
+  string uuid = 1;
   bool withPoints = 2;
 }
 
@@ -768,7 +768,7 @@ message Connection {
 message ObjectExtractedDetails {
   string id = 1;
   string name = 2;
-  string UUID = 3;
+  string uuid = 3;
   string parentUUID = 4;
   string category = 5;
   string objectType = 6;
@@ -793,7 +793,7 @@ message ObjectsRootMap {
 
 
 message AncestorObjectTree {
-  string UUID = 1;
+  string uuid = 1;
   string name = 2;
   string id = 3;
   string parentUUID = 4;
@@ -802,7 +802,7 @@ message AncestorObjectTree {
 }
 
 message Extension {
-  string UUID = 1;
+  string uuid = 1;
   string name = 2;
   string pid = 3;
   string status = 4;
@@ -813,7 +813,7 @@ message Extension {
 }
 
 message ExtensionId {
-  string UUID = 1;
+  string uuid = 1;
 }
 
 message ExtensionList {
@@ -831,7 +831,7 @@ message UploadZipResponse {
 
 // Host
 message Host {
-  string UUID = 1;
+  string uuid = 1;
   string name = 2;
   string type = 3;
   string displayName = 4;
@@ -854,12 +854,12 @@ message HostsResponse {
 }
 
 message CommonUUID {
-  string UUID = 1;
+  string uuid = 1;
 }
 
 // Ticket
 message Ticket {
-  string UUID = 1;
+  string uuid = 1;
   string title = 2;
   string description = 3;
   string priority = 4;
@@ -877,7 +877,7 @@ message TicketsResponse {
 }
 
 message TicketUsersRequest {
-  string UUID = 1;
+  string uuid = 1;
   repeated string uuids = 2;
 }
 
@@ -887,7 +887,7 @@ message TicketUsersResponse {
 
 // TicketComment
 message TicketComment {
-  string UUID = 1;
+  string uuid = 1;
   string ticketUUID = 2;
   string comment = 3;
   string raisedByUserUUID = 4;
@@ -898,7 +898,7 @@ message TicketComment {
 
 // Team
 message Team {
-  string UUID = 1;
+  string uuid = 1;
   string name = 2;
   repeated Role roles = 3; // Each team can have multiple roles
 }
@@ -908,7 +908,7 @@ message TeamsResponse {
 }
 
 message TeamRolesRequest {
-  string UUID = 1;
+  string uuid = 1;
   repeated string uuids = 2;
 }
 
@@ -918,7 +918,7 @@ message TeamRolesResponse {
 
 // User
 message User {
-  string UUID = 1;
+  string uuid = 1;
   string username = 2;
   string password = 3;
   bool isAdmin = 4;
@@ -932,7 +932,7 @@ message UsersResponse {
 }
 
 message UserTicketsRequest {
-  string UUID = 1;
+  string uuid = 1;
   repeated string uuids = 2;
 }
 
@@ -942,7 +942,7 @@ message UserTicketsResponse {
 
 // Role
 message Role {
-  string UUID = 1;
+  string uuid = 1;
   string name = 2;
   repeated Permission permissions = 3; // List of permissions like "C", "R", "U", "D"
 }
@@ -957,7 +957,7 @@ message Permission {
 }
 
 message PermissionsRequest {
-  string UUID = 1 ;
+  string uuid = 1 ;
   repeated Permission permissions = 2;
 }
 
