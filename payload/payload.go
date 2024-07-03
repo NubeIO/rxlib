@@ -21,8 +21,10 @@ type Body struct {
 type Payload struct {
 	FromPortID     string
 	FromObjectUUID string
-	OverrideFloat  any
+
 	// store the original value before the transformation is set
+	FromOverride                      bool
+	OverrideFloat                     float64
 	TransformationExistingValueFloat  *float64
 	TransformationExistingValueInt    *int
 	TransformationExistingValueString *string

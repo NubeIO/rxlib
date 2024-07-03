@@ -725,7 +725,7 @@ message Port {
   int32 defaultPosition = 6;
   google.protobuf.Struct transformation = 7;
   bool enablePersistence = 8;
-  int32 xaxPersistenceCount = 9;
+  int32 PersistenceCount = 9;
 }
 
 

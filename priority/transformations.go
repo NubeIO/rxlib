@@ -17,7 +17,7 @@ type Enums struct {
 type Transformations struct {
 	EnableTransformation bool     `json:"enableTransformation"`
 	OverridePort         bool     `json:"overridePort"` // simply override the port value
-	OverridePortValue    any      `json:"overridePortValue"`
+	OverridePortValue    float64  `json:"overridePortValue"`
 	Enums                []*Enums `json:"enums"`
 	ApplyEnum            bool     `json:"applyEnum"`
 	FallBackValue        *float64 `json:"fallBackValue"`
@@ -234,7 +234,7 @@ func ToProtoStruct(t *Transformations) (*structpb.Struct, error) {
 	transformMap := map[string]interface{}{
 		"enableTransformation": t.EnableTransformation,
 		"overridePort":         t.OverridePort,
-		"vverridePortValue":    t.OverridePortValue,
+		"overridePortValue":    t.OverridePortValue,
 		"enums":                enumsList,
 		"applyEnum":            t.ApplyEnum,
 		"fallBackValue":        nils.GetFloat64(t.FallBackValue),

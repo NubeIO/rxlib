@@ -90,6 +90,7 @@ type Object interface {
 	GetInputByConnection(sourceObjectUUID, outputPortID string) *Port
 	GetInputByConnections(sourceObjectUUID, outputPortID string) []*Port
 	UpdateInputsValue(portID string, payload *payload.Payload) []error
+	OnInputUpdated(portID string, payload *payload.Payload)
 	SetDynamicInputsCount(count int)
 	GetDynamicInputsCount() int
 	DeleteInput(id string) error

@@ -40,9 +40,8 @@ type Port struct {
 	FailMessage string
 
 	// stored in db
-	EnablePersistence      bool
-	MaxPersistenceCount    int
-	RestoredPersistedValue any // is the restored value on boot on the server.
+	EnablePersistence   bool
+	MaxPersistenceCount int
 
 	OnMessage func(portID string, msg *payload.Payload) // used for the evntbus
 }
@@ -286,18 +285,6 @@ func (p *Port) SetOverride(v interface{}) error {
 
 func (p *Port) HasPersistence() bool {
 	return p.EnablePersistence
-}
-
-func (p *Port) GetRestoredPersistedValue() any {
-	return p.RestoredPersistedValue
-}
-
-func (p *Port) ClearRestoredPersistedValue() {
-	p.RestoredPersistedValue = nil
-}
-
-func (p *Port) SetRestoredPersistedValue(v any) {
-	p.RestoredPersistedValue = v
 }
 
 func (p *Port) GetHasConnection() bool {

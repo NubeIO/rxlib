@@ -2966,7 +2966,7 @@
         "enablePersistence": {
           "type": "boolean"
         },
-        "xaxPersistenceCount": {
+        "PersistenceCount": {
           "type": "integer",
           "format": "int32"
         }
