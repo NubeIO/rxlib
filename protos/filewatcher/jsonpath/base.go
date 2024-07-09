@@ -3,7 +3,7 @@ package jsonpath
 import (
 	"github.com/NubeIO/rxlib"
 	"github.com/NubeIO/rxlib/priority"
-	"github.com/NubeIO/rxlib/protos/extensionlib"
+	"github.com/NubeIO/rxlib/protos/pluginlib"
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/tidwall/gjson"
@@ -18,7 +18,7 @@ type Instance struct {
 	outputUpdated func(message *runtime.Command)
 }
 
-func New(outputUpdated func(message *runtime.Command)) extensionlib.PluginObject {
+func New(outputUpdated func(message *runtime.Command)) pluginlib.PluginObject {
 	obj := new(Instance)
 	obj.outputUpdated = outputUpdated
 	return obj
@@ -82,10 +82,10 @@ func (inst *Instance) Handler(p *runtime.MessageRequest) {
 	for _, value := range cmd.GetPortValues() {
 		for _, d := range value.PortIDs {
 			if d == "json" {
-				inst.json = value.StringValue
+				inst.json = *value.StringValue
 			}
 			if d == "path" {
-				inst.path = value.StringValue
+				inst.path = *value.StringValue
 			}
 		}
 	}
@@ -100,7 +100,7 @@ func (inst *Instance) publishOutput() {
 		TargetObjectUUID: inst.GetMeta().GetObjectUUID(),
 		PortValues: []*runtime.PortValue{&runtime.PortValue{
 			PortID:      "output",
-			StringValue: value,
+			StringValue: &value,
 			DataType:    priority.TypeString,
 		}},
 	})

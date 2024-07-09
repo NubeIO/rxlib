@@ -3,7 +3,7 @@ package add
 import (
 	"github.com/NubeIO/rxlib"
 	"github.com/NubeIO/rxlib/priority"
-	"github.com/NubeIO/rxlib/protos/extensionlib"
+	"github.com/NubeIO/rxlib/protos/pluginlib"
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"log"
@@ -26,7 +26,7 @@ type Instance struct {
 
 var infoLog = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
 
-func New(outputUpdated func(message *runtime.Command)) extensionlib.PluginObject {
+func New(outputUpdated func(message *runtime.Command)) pluginlib.PluginObject {
 	obj := new(Instance)
 	obj.outputUpdated = outputUpdated
 	return obj
@@ -91,10 +91,10 @@ func (inst *Instance) Handler(p *runtime.MessageRequest) {
 	for _, value := range cmd.GetPortValues() {
 		for _, d := range value.PortIDs {
 			if d == "input-1" {
-				inst.portOne = value.FloatValue
+				inst.portOne = *value.FloatValue
 			}
 			if d == "input-2" {
-				inst.portTwo = value.FloatValue
+				inst.portTwo = *value.FloatValue
 			}
 		}
 	}
@@ -115,7 +115,7 @@ func (inst *Instance) publishOutput() {
 			TargetObjectUUID: inst.GetMeta().GetObjectUUID(),
 			PortValues: []*runtime.PortValue{&runtime.PortValue{
 				PortID:     "output",
-				FloatValue: v,
+				FloatValue: &v,
 				DataType:   priority.TypeFloat,
 			}},
 		})
