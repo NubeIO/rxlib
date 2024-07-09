@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/NubeIO/rxlib"
 	"github.com/NubeIO/rxlib/priority"
-	"github.com/NubeIO/rxlib/protos/extensionlib"
+	"github.com/NubeIO/rxlib/protos/pluginlib"
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/fsnotify/fsnotify"
@@ -26,7 +26,7 @@ type Instance struct {
 
 var infoLog = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
 
-func New(outputUpdated func(message *runtime.Command)) extensionlib.PluginObject {
+func New(outputUpdated func(message *runtime.Command)) pluginlib.PluginObject {
 	obj := new(Instance)
 	obj.outputUpdated = outputUpdated
 	return obj
@@ -92,7 +92,7 @@ func (inst *Instance) startWatcher(filePath string) {
 					TargetObjectUUID: inst.GetMeta().GetObjectUUID(),
 					PortValues: []*runtime.PortValue{&runtime.PortValue{
 						PortID:      "output",
-						StringValue: change,
+						StringValue: &change,
 						DataType:    priority.TypeString,
 					}},
 				})
@@ -146,7 +146,7 @@ func (inst *Instance) Handler(p *runtime.MessageRequest) {
 	for _, value := range cmd.GetPortValues() {
 		for _, d := range value.PortIDs {
 			if d == "file" {
-				file := value.StringValue
+				file := *value.StringValue
 				if inst.filepath == file {
 					return
 				}

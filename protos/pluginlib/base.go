@@ -1,4 +1,4 @@
-package extensionlib
+package pluginlib
 
 import (
 	"flag"
@@ -21,7 +21,7 @@ type PluginObject interface {
 	Start() error
 }
 
-type Extensions struct {
+type Plugins struct {
 	name       string
 	server     *ginlib.Server
 	grpcClient runtime.RuntimeServiceClient
@@ -41,8 +41,8 @@ type extensionInfo struct {
 	BootTime string `json:"bootTime"`
 }
 
-func New(name string) *Extensions {
-	cli := &Extensions{
+func New(name string) *Plugins {
+	cli := &Plugins{
 		name:     name,
 		bootTime: time.Now().String(),
 	}
@@ -72,7 +72,7 @@ func New(name string) *Extensions {
 	return cli
 }
 
-func (inst *Extensions) bootGRPC() {
+func (inst *Plugins) bootGRPC() {
 	target := fmt.Sprintf("localhost:%s", inst.grpcPort)
 	conn, err := grpc.Dial(target, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {

@@ -1,4 +1,4 @@
-package extensionlib
+package pluginlib
 
 import (
 	"fmt"
@@ -10,11 +10,11 @@ import (
 	"net/http"
 )
 
-func (inst *Extensions) bootServer(opts *ginlib.Opts) {
+func (inst *Plugins) bootServer(opts *ginlib.Opts) {
 	inst.server = ginlib.NewServer(opts)
 }
 
-func (inst *Extensions) infoRoute() {
+func (inst *Plugins) infoRoute() {
 	inst.server.AddGetRoute("/api/info", func(c *gin.Context) {
 		c.JSON(http.StatusOK, extensionInfo{
 			Name:     inst.name,
@@ -24,7 +24,7 @@ func (inst *Extensions) infoRoute() {
 	})
 }
 
-func (inst *Extensions) pingRoute() {
+func (inst *Plugins) pingRoute() {
 	inst.server.AddGetRoute("/api/ping", func(c *gin.Context) {
 		err := inst.sendMessageToServer("hello", "info")
 		if err != nil {
@@ -35,26 +35,26 @@ func (inst *Extensions) pingRoute() {
 	})
 }
 
-func (inst *Extensions) runtimeRoute() {
+func (inst *Plugins) runtimeRoute() {
 	inst.server.AddGetRoute("/api/runtime", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"runtime": reactive.ConvertObjects(inst.runtime)})
 	})
 }
 
-func (inst *Extensions) messagesRoute() {
+func (inst *Plugins) messagesRoute() {
 	inst.server.AddGetRoute("/api/messages", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"messages": messages})
 	})
 }
 
-func (inst *Extensions) palletRoute() {
+func (inst *Plugins) palletRoute() {
 	inst.server.AddGetRoute("/api/pallet", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"pallet": reactive.ConvertObjects(maps.Values(inst.pallet))})
 	})
 }
 
 // streamRoute Send a message to the server
-func (inst *Extensions) streamRoute() {
+func (inst *Plugins) streamRoute() {
 	inst.server.AddGetRoute("/api/stream", func(c *gin.Context) {
 		if err := inst.stream.Send(&runtime.MessageRequest{ExtensionUUID: inst.name}); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})

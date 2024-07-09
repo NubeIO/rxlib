@@ -152,41 +152,41 @@ service RuntimeService {
   };
 
   // Extensions
-  rpc RegisterExtension (Extension) returns (Extension) {
+  rpc RegisterPlugin (Plugin) returns (Plugin) {
     option (google.api.http) = {
-      post: "/api/extensions/register"
+      post: "/api/plugins/register"
       body: "*"
     };
   }
 
-  rpc AddExtension (Extension) returns (Extension) {
+  rpc AddPlugin (Plugin) returns (Plugin) {
     option (google.api.http) = {
-      post: "/api/extensions/add"
+      post: "/api/plugins/add"
       body: "*"
     };
   }
 
-  rpc DeleteExtension (ExtensionId) returns (Empty) {
+  rpc DeletePlugin (PluginId) returns (Empty) {
     option (google.api.http) = {
-      delete: "/api/extensions/delete/{uuid}"
+      delete: "/api/plugins/delete/{uuid}"
     };
   }
 
-  rpc AllExtension (Empty) returns (ExtensionList) {
+  rpc AllPlugin (Empty) returns (PluginList) {
     option (google.api.http) = {
-      get: "/api/extensions"
+      get: "/api/plugins"
     };
   }
 
-  rpc StartExtension (ExtensionId) returns (Empty) {
+  rpc StartPlugin (PluginId) returns (Empty) {
     option (google.api.http) = {
-      post: "/api/extensions/start/{uuid}"
+      post: "/api/plugins/start/{uuid}"
     };
   }
 
-  rpc StopExtension (ExtensionId) returns (Empty) {
+  rpc StopPlugin (PluginId) returns (Empty) {
     option (google.api.http) = {
-      post: "/api/extensions/stop/{uuid}"
+      post: "/api/plugins/stop/{uuid}"
     };
   }
 
@@ -435,7 +435,7 @@ service RuntimeService {
   }
 
   // stream messages from the server to the plugin
-  rpc ExtensionStream(stream MessageRequest) returns (stream MessageRequest);
+  rpc PluginStream(stream MessageRequest) returns (stream MessageRequest);
 }
 
 message Request {
@@ -467,21 +467,6 @@ message MessageRequest {
   Command command = 6;
   string stringPayload = 7;
   string objectUUID = 8;
-}
-
-
-message PluginInfo {
-  string name = 1;
-  string uuid = 2;
-  repeated ObjectConfig pallet = 4;
-}
-
-message PluginResponse {
-  string message = 1;
-}
-
-message PluginList {
-  repeated PluginInfo plugins = 1;
 }
 
 message GetObjectValuesResponse {
@@ -534,10 +519,10 @@ message PalletRequest {
 
 
 message PalletTree {
-  map<string, Plugin> plugins = 1;
+  map<string, Plugins> plugins = 1;
 }
 
-message Plugin {
+message Plugins {
   map<string, NestedObjectConfigMap> drivers = 1;
   map<string, NestedObjectConfigMap> rubixNetwork = 2;
   map<string, NestedObjectConfigMap> logic = 3;
@@ -801,7 +786,7 @@ message AncestorObjectTree {
   repeated AncestorObjectTree children = 6;
 }
 
-message Extension {
+message Plugin {
   string uuid = 1;
   string name = 2;
   string pid = 3;
@@ -812,12 +797,12 @@ message Extension {
   int32 objectsCount = 9;
 }
 
-message ExtensionId {
+message PluginId {
   string uuid = 1;
 }
 
-message ExtensionList {
-  repeated Extension extensions = 1;
+message PluginList {
+  repeated Plugin extensions = 1;
 }
 
 message UploadZipRequest {
