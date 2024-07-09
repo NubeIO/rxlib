@@ -3,8 +3,8 @@ package watcher
 import (
 	"fmt"
 	"github.com/NubeIO/rxlib"
+	"github.com/NubeIO/rxlib/libs/pluginlib"
 	"github.com/NubeIO/rxlib/priority"
-	"github.com/NubeIO/rxlib/protos/pluginlib"
 	"github.com/NubeIO/rxlib/protos/runtimebase/reactive"
 	"github.com/NubeIO/rxlib/protos/runtimebase/runtime"
 	"github.com/fsnotify/fsnotify"

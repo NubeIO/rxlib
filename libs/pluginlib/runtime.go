@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func (inst *Plugins) Register() error {
+func (inst *Plugins) Register(name string) error {
 	var err error
 
 	var conn *grpc.ClientConn
@@ -29,7 +29,7 @@ func (inst *Plugins) Register() error {
 
 		inst.grpcClient = runtime.NewRuntimeServiceClient(conn)
 
-		if err := inst.registerExtension(); err != nil {
+		if err := inst.registerPlugin(name); err != nil {
 			log.Fatalf("could not register plugin: %v", err)
 		}
 		messages[helpers.UUID()] = fmt.Sprintf("registered ExtensionPayload")
@@ -43,10 +43,10 @@ func (inst *Plugins) Register() error {
 	}
 }
 
-// registerExtension register the Plugins with the server
-func (inst *Plugins) registerExtension() error {
+// registerPlugin register the Plugins with the server
+func (inst *Plugins) registerPlugin(name string) error {
 	grpcClient := inst.grpcClient
-	info := &runtime.Plugin{Name: "ExampleExtension", Uuid: inst.name, Pallet: reactive.ConvertObjects(maps.Values(inst.pallet))}
+	info := &runtime.Plugin{Name: name, Uuid: inst.name, Pallet: reactive.ConvertObjects(maps.Values(inst.pallet))}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
