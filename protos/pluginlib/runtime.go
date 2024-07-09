@@ -46,12 +46,12 @@ func (inst *Plugins) Register() error {
 // registerExtension register the Plugins with the server
 func (inst *Plugins) registerExtension() error {
 	grpcClient := inst.grpcClient
-	info := &runtime.Extension{Name: "ExampleExtension", Uuid: inst.name, Pallet: reactive.ConvertObjects(maps.Values(inst.pallet))}
+	info := &runtime.Plugin{Name: "ExampleExtension", Uuid: inst.name, Pallet: reactive.ConvertObjects(maps.Values(inst.pallet))}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	_, err := grpcClient.RegisterExtension(ctx, info)
+	_, err := grpcClient.RegisterPlugin(ctx, info)
 	if err != nil {
 		return fmt.Errorf("could not register Extension: %v", err)
 	}
@@ -152,7 +152,7 @@ func (inst *Plugins) objectInstance(obj *reactive.BaseObject, outputUpdated func
 // startServerStreaming stream messages from the server
 func (inst *Plugins) startServerStreaming(ctx context.Context, conn *grpc.ClientConn) error {
 	// Start bidirectional streaming with the given context
-	stream, err := inst.grpcClient.ExtensionStream(ctx)
+	stream, err := inst.grpcClient.PluginStream(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to start streaming: %v", err)
 	}

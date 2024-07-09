@@ -30,7 +30,7 @@ type Plugins struct {
 	registry   map[string]GeneratePlugin
 	runtime    []reactive.Object
 	callbacks  map[string]func(message *runtime.MessageRequest)
-	stream     runtime.RuntimeService_ExtensionStreamClient
+	stream     runtime.RuntimeService_PluginStreamClient
 	port       string
 	grpcPort   string
 }
